@@ -1,0 +1,44 @@
+# Never ship the host's node_modules into the image.
+#
+# The builder stage installs its own with `npm ci`, and this repo is developed
+# with pnpm, whose node_modules is a tree of symlinks into .pnpm/. Copying it
+# over the npm-installed one makes `COPY . .` fail with
+# "cannot replace to directory ... with file". It is also ~470MB of context.
+node_modules
+.pnpm-store
+
+# Build output — regenerated inside the image.
+.next
+out
+build
+dist
+
+# VCS and tooling
+.git
+.gitignore
+.github
+.vscode
+.idea
+
+# Local env and secrets
+.env
+.env.*
+!.env.example
+
+# Logs and caches
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+coverage
+.DS_Store
+
+# Docker's own files
+Dockerfile
+.dockerignore
+docker-compose.yml
+docker-compose.*.yml
+
+# Docs
+README.md
