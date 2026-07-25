@@ -309,7 +309,11 @@ const EventDetail = ({ slug }) => {
           id="contact"
           eyebrow="Coordinator Contact"
           title="Still need help?"
-          subtitle="Reach the people running this contest directly."
+          subtitle={
+            event.coordinators.length > 1
+              ? 'Reach the people running this contest directly.'
+              : 'Reach the coordinator running this contest directly.'
+          }
         >
           <div className="mx-auto max-w-3xl">
             <CoordinatorContact game={event} />

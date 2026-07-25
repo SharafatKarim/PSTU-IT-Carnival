@@ -1,11 +1,14 @@
-import { PhoneIcon, MailIcon, UserIcon } from '../landing/Icons';
+import { PhoneIcon, MailIcon, UserIcon, FacebookIcon } from '../landing/Icons';
 import { accentOf } from './accents';
 
 const CoordinatorContact = ({ game }) => {
   const a = accentOf(game.accent);
+  const many = game.coordinators.length > 1;
 
   return (
-    <div className="grid gap-5 sm:grid-cols-2">
+    <div
+      className={`grid gap-5 ${many ? 'sm:grid-cols-2' : 'mx-auto max-w-md'}`}
+    >
       {game.coordinators.map((c) => (
         <div
           key={c.email + c.phone}
@@ -36,6 +39,17 @@ const CoordinatorContact = ({ game }) => {
               <MailIcon className={`h-4 w-4 shrink-0 ${a.text}`} />
               {c.email}
             </a>
+            {c.facebook && (
+              <a
+                href={c.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2.5 text-sm text-mist-300 transition hover:text-white"
+              >
+                <FacebookIcon className={`h-4 w-4 shrink-0 ${a.text}`} />
+                Message on Facebook
+              </a>
+            )}
           </div>
         </div>
       ))}

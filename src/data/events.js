@@ -137,16 +137,11 @@ export const EVENT_DETAILS = [
 
     coordinators: [
       {
-        name: 'IUPC Coordinator',
-        role: 'Contest operations · CSE Club, PSTU',
-        phone: '+8801700000010',
-        email: 'iupc@pstuitcarnival2026.com',
-      },
-      {
-        name: 'Deputy Coordinator',
-        role: 'Team registration & verification',
-        phone: '+8801700000011',
-        email: 'contest@pstuitcarnival2026.com',
+        name: 'Rajesh Biswas',
+        role: 'IUPC Coordinator · CSE Club, PSTU',
+        phone: '01400234847',
+        email: 'rajesh18@cse.pstu.ac.bd',
+        facebook: 'https://www.facebook.com/rajesh.biswas.152420',
       },
     ],
   },
