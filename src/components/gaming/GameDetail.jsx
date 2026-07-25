@@ -1,13 +1,16 @@
 'use client';
 
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import Navbar from '../landing/Navbar';
 import Footer from '../landing/Footer';
 import Faq from '../landing/Faq';
 import TournamentInfo from './TournamentInfo';
 import RulesSection from './RulesSection';
 import CoordinatorContact from './CoordinatorContact';
-import GameRegistrationForm from './GameRegistrationForm';
+/* Split out of the page bundle: while a tournament's entries are closed the
+   form never renders, so none of its code is sent to the browser either. */
+const GameRegistrationForm = dynamic(() => import('./GameRegistrationForm'));
 import RegistrationClosed from './RegistrationClosed';
 import {
   ICON_MAP,
