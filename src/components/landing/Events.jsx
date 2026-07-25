@@ -95,9 +95,19 @@ const ComingSoonCard = ({ event }) => (
 /* Event that has its own page and open registration (the gaming tournaments). */
 const LiveCard = ({ event }) => (
   <div className="relative flex flex-col rounded-2xl border border-ink-600 bg-ink-800/60 p-5 shadow-card transition duration-300 hover:-translate-y-1 hover:border-grape-500/60 hover:shadow-glow-grape">
-    <span className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full border border-aqua-400/30 bg-aqua-400/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-aqua-300">
-      <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-aqua-400" />
-      Open
+    <span
+      className={`absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
+        event.registerHref
+          ? 'border-aqua-400/30 bg-aqua-400/10 text-aqua-300'
+          : 'border-gold-400/40 bg-gold-400/10 text-gold-300'
+      }`}
+    >
+      <span
+        className={`h-1.5 w-1.5 animate-pulse-glow rounded-full ${
+          event.registerHref ? 'bg-aqua-400' : 'bg-gold-400'
+        }`}
+      />
+      {event.registerHref ? 'Open' : 'Soon'}
     </span>
     <IconBox icon={event.icon} />
     <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -115,13 +125,25 @@ const LiveCard = ({ event }) => (
       >
         Details
       </Link>
-      <Link
-        href={`${event.href}#register`}
-        aria-label={`Register for ${event.name}`}
-        className="flex-1 rounded-lg bg-gold-400 px-3 py-2 text-center text-sm font-bold text-ink-950 transition hover:bg-gold-300"
-      >
-        Register
-      </Link>
+      {event.registerHref ? (
+        <Link
+          href={event.registerHref}
+          aria-label={`Register for ${event.name}`}
+          className="flex-1 rounded-lg bg-gold-400 px-3 py-2 text-center text-sm font-bold text-ink-950 transition hover:bg-gold-300"
+        >
+          Register
+        </Link>
+      ) : (
+        <button
+          type="button"
+          disabled
+          aria-disabled="true"
+          aria-label={`Registration for ${event.name} has not opened yet`}
+          className="flex-1 cursor-not-allowed rounded-lg border border-ink-600 bg-ink-700/40 px-3 py-2 text-center text-sm font-semibold text-mist-400"
+        >
+          Soon
+        </button>
+      )}
     </div>
   </div>
 );
@@ -154,8 +176,8 @@ const Events = () => {
           </h2>
           <p className="mt-4 text-base leading-relaxed text-mist-300">
             From the flagship programming contest to esports and board-game
-            showdowns — pick your arena. IUPC pre-registration and all three
-            gaming tournaments are open now; the rest go live soon.
+            showdowns — pick your arena. IUPC pre-registration is open now;
+            gaming entries and the rest of the line-up follow soon.
           </p>
         </div>
 

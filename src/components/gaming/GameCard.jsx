@@ -8,6 +8,7 @@ import {
   UsersIcon,
 } from '../landing/Icons';
 import { ROUTES } from '../../lib/routes';
+import { isGameRegistrationOpen } from '../../data/gaming';
 import { accentOf } from './accents';
 
 const Fact = ({ icon: Icon, children }) => (
@@ -21,6 +22,7 @@ const GameCard = ({ game }) => {
   const Icon = ICON_MAP[game.icon] || ICON_MAP.gamepad;
   const a = accentOf(game.accent);
   const t = game.tournament;
+  const open = isGameRegistrationOpen(game);
 
   return (
     <article
@@ -32,16 +34,23 @@ const GameCard = ({ game }) => {
 
       <div className="relative flex items-start justify-between gap-3">
         <div
-          className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-carnival text-white shadow-glow-grape ring-1 ring-white/10`}
+          className={`flex h-14 w-14 items-center justify-center rounded-2xl border bg-ink-900/70 ${a.border} ${a.glow} ${a.text}`}
         >
           <Icon className="h-7 w-7" />
         </div>
-        <span
-          className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-wide ${a.border} ${a.bgSoft} ${a.text}`}
-        >
-          <span className={`h-1.5 w-1.5 animate-pulse-glow rounded-full ${a.dot}`} />
-          Open
-        </span>
+        {open ? (
+          <span
+            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-wide ${a.border} ${a.bgSoft} ${a.text}`}
+          >
+            <span className={`h-1.5 w-1.5 animate-pulse-glow rounded-full ${a.dot}`} />
+            Open
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-gold-400/40 bg-gold-400/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-gold-300">
+            <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-gold-400" />
+            Soon
+          </span>
+        )}
       </div>
 
       <div className="relative mt-5 flex-1">
@@ -69,14 +78,26 @@ const GameCard = ({ game }) => {
         >
           View Details
         </Link>
-        <Link
-          href={ROUTES.gameRegister(game.slug)}
-          aria-label={`Register for ${game.name}`}
-          className="group/btn inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-gold-400 px-4 py-2.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
-        >
-          Register
-          <ArrowRightIcon className="h-4 w-4 transition-transform group-hover/btn:translate-x-0.5" />
-        </Link>
+        {open ? (
+          <Link
+            href={ROUTES.gameRegister(game.slug)}
+            aria-label={`Register for ${game.name}`}
+            className="group/btn inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-gold-400 px-4 py-2.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
+          >
+            Register
+            <ArrowRightIcon className="h-4 w-4 transition-transform group-hover/btn:translate-x-0.5" />
+          </Link>
+        ) : (
+          <button
+            type="button"
+            disabled
+            aria-disabled="true"
+            aria-label={`Registration for ${game.name} has not opened yet`}
+            className="inline-flex flex-1 cursor-not-allowed items-center justify-center whitespace-nowrap rounded-lg border border-ink-600 bg-ink-700/40 px-4 py-2.5 text-sm font-semibold text-mist-400"
+          >
+            Opens Soon
+          </button>
+        )}
       </div>
     </article>
   );

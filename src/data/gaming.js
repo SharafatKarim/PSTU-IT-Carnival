@@ -176,9 +176,12 @@ export const GAMES = [
       time: '10:00 AM — 6:00 PM',
       venue: 'Gaming Arena, CSE–FBA Building, PSTU',
       entryFee: '৳150 per player',
+      entryShort: '৳150',
+      entryScope: 'per player',
       prizePool: '৳15,000',
       format: 'Single-elimination knockout, 1v1',
       teamSize: 'Solo (1 player)',
+      teamSizeShort: 'Solo',
       slots: '64 players',
       platform: 'Mobile & PC stations provided',
       deadline: '5 August 2026',
@@ -232,6 +235,8 @@ export const GAMES = [
       },
     ],
 
+    // Flip to true to put this tournament's form live.
+    registrationOpen: false,
     registration: {
       kind: 'solo',
       idPrefix: 'PSTU-EFB-2026',
@@ -386,9 +391,12 @@ export const GAMES = [
       time: '11:00 AM — 7:00 PM',
       venue: 'Gaming Arena, CSE–FBA Building, PSTU',
       entryFee: '৳500 per team',
+      entryShort: '৳500',
+      entryScope: 'per team',
       prizePool: '৳40,000',
       format: 'Battle Royale — 4 rounds, points aggregated',
       teamSize: '4 players (+1 substitute)',
+      teamSizeShort: '4 + 1 sub',
       slots: '25 squads',
       platform: 'Mobile & tablet only',
       deadline: '5 August 2026',
@@ -444,6 +452,8 @@ export const GAMES = [
       },
     ],
 
+    // Flip to true to put this tournament's form live.
+    registrationOpen: false,
     registration: {
       kind: 'squad',
       idPrefix: 'PSTU-PUBG-2026',
@@ -517,9 +527,12 @@ export const GAMES = [
       time: '10:00 AM — 5:00 PM',
       venue: 'Gaming Arena, CSE–FBA Building, PSTU',
       entryFee: '৳400 per team',
+      entryShort: '৳400',
+      entryScope: 'per team',
       prizePool: '৳30,000',
       format: 'Battle Royale — 4 rounds, points aggregated',
       teamSize: '4 players (+1 substitute)',
+      teamSizeShort: '4 + 1 sub',
       slots: '24 squads',
       platform: 'Mobile & tablet only',
       deadline: '5 August 2026',
@@ -575,6 +588,8 @@ export const GAMES = [
       },
     ],
 
+    // Flip to true to put this tournament's form live.
+    registrationOpen: false,
     registration: {
       kind: 'squad',
       idPrefix: 'PSTU-FF-2026',
@@ -632,9 +647,18 @@ export const GAMING = {
   eyebrow: 'Gaming Fest',
   title: 'Three arenas. One Booyah.',
   intro:
-    'The gaming wing of PSTU IT Carnival 2026 runs three competitive tournaments — one solo, two squad-based. Read the format, check the rules, and register your entry.',
+    'The gaming wing of PSTU IT Carnival 2026 runs three competitive tournaments — one solo, two squad-based. Formats, rules and prizes are below; registration opens soon.',
   note: 'Entry fees are collected on-site at the registration desk. No payment is taken through this website.',
+  /* Shown wherever a closed tournament would otherwise offer a form. */
+  closedHeading: 'Registration opens soon',
+  closedNote:
+    'Gaming registration is not open yet. The format, rules and prize breakdown on this page are final, so you can get your squad ready now — the form goes live here once entries open.',
 };
+
+/* Registration is per-tournament, so one game can open before the others. */
+export const isGameRegistrationOpen = (game) => Boolean(game?.registrationOpen);
+
+export const OPEN_GAMES = () => GAMES.filter(isGameRegistrationOpen);
 
 export const getGame = (slug) => GAMES.find((g) => g.slug === slug);
 
