@@ -7,7 +7,7 @@ import FormField from './FormField';
 import SectionCard from './SectionCard';
 import MemberForm from './MemberForm';
 import ReviewSection from './ReviewSection';
-import { CheckIcon, CalendarIcon } from './landing/Icons';
+import { CheckIcon, CalendarIcon, AlertIcon } from './landing/Icons';
 import { createRegistration } from '../services/api';
 import Navbar from './landing/Navbar';
 import Footer from './landing/Footer';
@@ -348,6 +348,20 @@ const RegistrationForm = ({ slug = 'iupc' }) => {
                     {event?.tournament.date}
                   </strong>{' '}
                   at {event?.tournament.venue}.
+                </span>
+              </div>
+
+              {/* Pre-registration is not the final step — say so before they fill it in. */}
+              <div className="mt-3 flex items-start gap-2.5 rounded-lg border border-gold-400/25 bg-gold-400/[0.07] px-4 py-3 text-sm text-mist-200">
+                <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-gold-300" />
+                <span>
+                  This is <strong className="font-semibold text-white">pre-registration</strong> and
+                  costs nothing. Confirmed slots are published university-wise, after
+                  which final registration opens with the{' '}
+                  <strong className="font-semibold text-white">
+                    {event?.tournament.entryFee}
+                  </strong>{' '}
+                  entry fee.
                 </span>
               </div>
 

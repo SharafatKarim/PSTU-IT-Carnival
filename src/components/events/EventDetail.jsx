@@ -183,6 +183,24 @@ const RegisterCta = ({ event }) => {
 
   return (
     <div className="mx-auto max-w-4xl">
+      {r.process?.length > 0 && (
+        <ol className="mb-6 grid gap-4 sm:grid-cols-3">
+          {r.process.map((step, i) => (
+            <li
+              key={step}
+              className="rounded-2xl border border-ink-600 bg-ink-800/60 p-5 shadow-card"
+            >
+              <span
+                className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-extrabold ${a.bgSoft} ${a.text}`}
+              >
+                {i + 1}
+              </span>
+              <p className="mt-3 text-sm leading-relaxed text-mist-300">{step}</p>
+            </li>
+          ))}
+        </ol>
+      )}
+
       <div className="grid items-start gap-6 lg:grid-cols-5">
         <div className="lg:col-span-3">
           <div className="rounded-2xl border border-ink-600 bg-ink-800/60 p-6 shadow-card sm:p-7">

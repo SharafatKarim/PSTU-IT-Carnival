@@ -30,11 +30,13 @@ export const EVENT_DETAILS = [
       date: '13 August 2026',
       time: '9:00 AM — 3:00 PM',
       venue: 'CSE–FBA Building, PSTU',
-      entryFee: 'Free',
+      entryFee: '৳3,000 per team',
+      entryShort: '৳3,000',
+      entryScope: 'per team',
       format: 'ICPC-style · 4–5 hours · one workstation',
       teamSize: '3 members (+1 coach)',
       teamSizeShort: '3 + coach',
-      slots: '60 teams',
+      slots: '45 teams',
       platform: 'Onsite — workstations provided',
       deadline: '31 July 2026',
     },
@@ -109,7 +111,13 @@ export const EVENT_DETAILS = [
       /* 'form' means this event owns /events/<slug>/register. */
       kind: 'form',
       cta: 'Start Pre-Registration',
-      note: 'No payment required · Instant registration ID',
+      note: 'Pre-registration is free · Instant registration ID',
+      /* Rendered as a numbered "how it works" list on the event page. */
+      process: [
+        'Pre-register your team here. Nothing is paid at this stage.',
+        'Confirmed slots are published university-wise once pre-registration closes.',
+        'Final registration then opens for the listed teams, with the ৳3,000 entry fee.',
+      ],
       checklist: [
         'Your team name — it must be unique, so pick a backup too',
         'Your varsity name',
@@ -129,15 +137,19 @@ export const EVENT_DETAILS = [
       },
       {
         q: 'Is there an entry fee?',
-        a: 'No. IUPC pre-registration is free and no payment is taken through this website.',
+        a: 'Yes — ৳3,000 per team. It is paid at final registration, not now: pre-registering on this page costs nothing, and no payment is taken through this website.',
+      },
+      {
+        q: 'How are the 45 slots allocated?',
+        a: 'Pre-registration comes first. Once it closes we publish the confirmed slots university-wise, and final registration then opens for the teams on that list.',
       },
       {
         q: 'What happens after I submit the form?',
         a: 'You get a registration ID on screen straight away. Save it — it is how the committee identifies your team.',
       },
       {
-        q: 'Can we change our team members later?',
-        a: 'Contact the coordinators below before the registration deadline. Changes after the deadline cannot be accepted.',
+        q: 'Can we swap a team member later?',
+        a: 'Yes. Members can be swapped up to final registration — message the coordinators below with the replacement’s details and they will update your team.',
       },
     ],
 

@@ -283,7 +283,7 @@ const Format = () => (
               <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
             <p className="mt-4 text-xs text-white/70">
-              No payment required · Instant registration ID
+              Pre-registration is free · Instant registration ID
             </p>
           </div>
         </div>
