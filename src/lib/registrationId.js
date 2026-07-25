@@ -1,6 +1,6 @@
 import Registration from '../models/Registration';
 
-const PREFIX = process.env.REGISTRATION_ID_PREFIX || 'PSTU-PC-2026';
+const PREFIX = 'PSTU-IUPC-2026';
 
 export async function generateRegistrationId() {
   const count = await Registration.countDocuments();

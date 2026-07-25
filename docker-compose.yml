@@ -26,7 +26,6 @@ services:
       NODE_ENV: production
       PORT: "3000"
       MONGO_URI: mongodb://mongo:27017/${MONGO_DB:-pstu_it_carnival}
-      REGISTRATION_ID_PREFIX: ${REGISTRATION_ID_PREFIX:-PSTU-PC-2026}
     depends_on:
       mongo:
         condition: service_healthy
