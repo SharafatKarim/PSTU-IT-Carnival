@@ -3,19 +3,19 @@ import { FAQS } from '../../data/content';
 import { ChevronDownIcon } from './Icons';
 
 const FaqItem = ({ item, isOpen, onToggle }) => (
-  <div className="overflow-hidden rounded-xl border border-navy-100 bg-white transition hover:border-navy-200">
+  <div className="overflow-hidden rounded-xl border border-ink-600 bg-ink-800/40 transition hover:border-grape-500/40">
     <button
       type="button"
       onClick={onToggle}
       aria-expanded={isOpen}
       className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
     >
-      <span className="text-sm font-semibold text-navy-800 sm:text-base">
+      <span className="text-sm font-semibold text-white sm:text-base">
         {item.q}
       </span>
       <ChevronDownIcon
-        className={`h-5 w-5 shrink-0 text-navy-400 transition-transform duration-300 ${
-          isOpen ? 'rotate-180' : ''
+        className={`h-5 w-5 shrink-0 text-mist-400 transition-transform duration-300 ${
+          isOpen ? 'rotate-180 text-aqua-400' : ''
         }`}
       />
     </button>
@@ -25,7 +25,7 @@ const FaqItem = ({ item, isOpen, onToggle }) => (
       }`}
     >
       <div className="overflow-hidden">
-        <p className="px-5 pb-5 text-sm leading-relaxed text-navy-600">
+        <p className="px-5 pb-5 text-sm leading-relaxed text-mist-300">
           {item.a}
         </p>
       </div>

@@ -183,38 +183,45 @@ const RegistrationForm = ({ onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-navy-50">
-      <header className="bg-pstu-gradient text-white">
-        <div className="mx-auto max-w-4xl px-4 py-10 sm:py-14">
+    <div className="min-h-screen">
+      <header className="relative overflow-hidden bg-ink-950 text-white">
+        <div className="absolute inset-0 bg-hero" />
+        <div className="absolute inset-0 bg-grid bg-[size:44px_44px] opacity-40" />
+        <div className="relative mx-auto max-w-4xl px-4 py-10 sm:py-14">
           <button
             type="button"
             onClick={onBack}
-            className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-navy-100 transition hover:text-white"
+            className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-mist-200 transition hover:text-white"
           >
             <span aria-hidden="true">←</span> Back to home
           </button>
-          <p className="text-xs font-semibold uppercase tracking-widest text-navy-200">
+          <p className="text-xs font-semibold uppercase tracking-widest text-aqua-400">
             Patuakhali Science and Technology University
           </p>
           <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            PSTU IT Carnival 2026
+            <span className="text-white">PSTU </span>
+            <span className="text-gradient-title">IT Carnival</span>
+            <span className="text-white"> 2026</span>
           </h1>
-          <p className="mt-2 text-lg font-medium text-navy-100">
-            Programming Contest — Registration
+          <p className="mt-2 text-lg font-medium text-mist-200">
+            IUPC (South Zone) — Pre-Registration
           </p>
         </div>
       </header>
 
       <main className="mx-auto -mt-8 max-w-4xl px-4 pb-16 sm:-mt-10">
-        <div className="rounded-2xl bg-white p-6 shadow-md sm:p-8">
-          <h2 className="text-2xl font-bold text-navy-800">Registration Form</h2>
-          <p className="mt-1 text-sm text-navy-500">
-            Fill in the team, coach, and member details below. Each team must
-            have exactly 3 members.
+        <div className="rounded-2xl border border-ink-600 bg-ink-800/70 p-6 shadow-card backdrop-blur sm:p-8">
+          <h2 className="text-2xl font-bold text-white">
+            IUPC Pre-Registration Form
+          </h2>
+          <p className="mt-1 text-sm text-mist-300">
+            Fill in the team, coach, and member details below for the IUPC
+            (South Zone) programming contest. Each team must have exactly 3
+            members.
           </p>
 
           {serverError && step === 'form' && (
-            <div className="mt-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            <div className="mt-6 rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
               <p className="font-semibold">{serverError.message}</p>
               {serverError.details?.length > 0 && (
                 <ul className="mt-2 list-inside list-disc">
@@ -229,27 +236,27 @@ const RegistrationForm = ({ onBack }) => {
           )}
 
           {step === 'success' ? (
-            <div className="mt-8 rounded-xl border border-green-200 bg-green-50 p-6 text-center">
-              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-green-500 text-white">
+            <div className="mt-8 rounded-xl border border-emerald-400/30 bg-emerald-400/10 p-6 text-center">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-white">
                 ✓
               </div>
-              <h3 className="text-xl font-bold text-green-800">
+              <h3 className="text-xl font-bold text-emerald-300">
                 Registration submitted!
               </h3>
-              <p className="mt-2 text-sm text-green-700">
+              <p className="mt-2 text-sm text-emerald-200/80">
                 Your registration ID is
               </p>
-              <p className="mt-2 inline-block rounded-md bg-white px-4 py-2 font-mono text-lg font-bold text-navy-800 shadow">
+              <p className="mt-2 inline-block rounded-md border border-white/10 bg-ink-900 px-4 py-2 font-mono text-lg font-bold text-white shadow">
                 {registrationId}
               </p>
-              <p className="mt-4 text-sm text-green-700">
+              <p className="mt-4 text-sm text-emerald-200/80">
                 Please save this ID for future reference.
               </p>
               <div className="mt-6">
                 <button
                   type="button"
                   onClick={onBack}
-                  className="rounded-lg border border-green-300 px-5 py-2.5 text-sm font-semibold text-green-800 transition hover:bg-green-100"
+                  className="rounded-lg border border-emerald-400/40 px-5 py-2.5 text-sm font-semibold text-emerald-200 transition hover:bg-emerald-400/10"
                 >
                   Return to home
                 </button>
@@ -259,7 +266,7 @@ const RegistrationForm = ({ onBack }) => {
             <div className="mt-8 space-y-6">
               <ReviewSection data={getValues()} />
               {serverError && (
-                <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
                   {serverError.message}
                 </div>
               )}
@@ -267,7 +274,7 @@ const RegistrationForm = ({ onBack }) => {
                 <button
                   type="button"
                   onClick={onEdit}
-                  className="rounded-lg border border-navy-300 px-5 py-2.5 text-sm font-semibold text-navy-700 hover:bg-navy-50"
+                  className="rounded-lg border border-ink-500 px-5 py-2.5 text-sm font-semibold text-mist-200 transition hover:bg-white/5"
                 >
                   Back to edit
                 </button>
@@ -275,10 +282,10 @@ const RegistrationForm = ({ onBack }) => {
                   type="button"
                   onClick={onConfirmSubmit}
                   disabled={loading}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-navy-700 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-navy-800 disabled:cursor-not-allowed disabled:opacity-70"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-gold-400 px-5 py-2.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300 disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   {loading && (
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-ink-900 border-t-transparent" />
                   )}
                   {loading ? 'Submitting...' : 'Confirm & submit'}
                 </button>
@@ -362,7 +369,7 @@ const RegistrationForm = ({ onBack }) => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="inline-flex items-center gap-2 rounded-lg bg-navy-700 px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-navy-800 disabled:cursor-not-allowed disabled:opacity-70"
+                  className="inline-flex items-center gap-2 rounded-lg bg-gold-400 px-6 py-2.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300 disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   Continue to review
                 </button>
@@ -371,8 +378,8 @@ const RegistrationForm = ({ onBack }) => {
           )}
         </div>
 
-        <p className="mt-8 text-center text-xs text-navy-400">
-          © 2026 PSTU IT Carnival — Programming Contest
+        <p className="mt-8 text-center text-xs text-mist-500">
+          © 2026 PSTU IT Carnival
         </p>
       </main>
     </div>

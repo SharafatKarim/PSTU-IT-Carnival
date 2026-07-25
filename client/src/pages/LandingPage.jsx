@@ -1,4 +1,5 @@
 import Navbar from '../components/landing/Navbar';
+import Events from '../components/landing/Events';
 import Faq from '../components/landing/Faq';
 import {
   ICON_MAP,
@@ -18,6 +19,13 @@ import {
   PRIZES,
 } from '../data/content';
 
+const HERO_TILES = [
+  { icon: 'code', label: 'Programming' },
+  { icon: 'rocket', label: 'Hackathon' },
+  { icon: 'gamepad', label: 'Gaming' },
+  { icon: 'lightbulb', label: 'Quiz & Apps' },
+];
+
 /* ------------------------------------------------------------------ */
 /* Section shell                                                       */
 /* ------------------------------------------------------------------ */
@@ -28,17 +36,17 @@ const Section = ({ id, eyebrow, title, subtitle, children, className = '' }) => 
       {(eyebrow || title) && (
         <div className="mx-auto mb-14 max-w-2xl text-center">
           {eyebrow && (
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-navy-400">
+            <p className="text-gradient-brand text-xs font-bold uppercase tracking-[0.22em]">
               {eyebrow}
             </p>
           )}
           {title && (
-            <h2 className="mt-2 text-3xl font-extrabold text-navy-800 sm:text-4xl">
+            <h2 className="mt-3 text-3xl font-extrabold text-white sm:text-4xl">
               {title}
             </h2>
           )}
           {subtitle && (
-            <p className="mt-4 text-base leading-relaxed text-navy-500">
+            <p className="mt-4 text-base leading-relaxed text-mist-300">
               {subtitle}
             </p>
           )}
@@ -54,28 +62,36 @@ const Section = ({ id, eyebrow, title, subtitle, children, className = '' }) => 
 /* ------------------------------------------------------------------ */
 
 const Hero = ({ onRegister }) => (
-  <section
-    id="top"
-    className="relative overflow-hidden bg-pstu-gradient text-white"
-  >
-    <div className="absolute inset-0 bg-grid-navy bg-[size:44px_44px] opacity-70" />
-    <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-navy-400/20 blur-3xl" />
-    <div className="absolute -bottom-24 right-0 h-80 w-80 rounded-full bg-gold-400/10 blur-3xl" />
+  <section id="top" className="relative overflow-hidden bg-ink-950">
+    <div className="absolute inset-0 bg-hero" />
+    <div className="absolute inset-0 bg-grid bg-[size:46px_46px] opacity-50" />
+    <div className="absolute -left-24 top-10 h-72 w-72 rounded-full bg-grape-600/25 blur-3xl" />
+    <div className="absolute -right-16 top-24 h-72 w-72 rounded-full bg-aqua-500/15 blur-3xl" />
 
-    <div className="relative mx-auto max-w-6xl px-4 pb-24 pt-20 sm:pb-28 sm:pt-28">
+    <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-16 sm:pb-24 sm:pt-24">
       <div className="mx-auto max-w-3xl text-center">
-        <span className="inline-flex animate-fade-in items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-navy-100 backdrop-blur">
-          <span className="h-1.5 w-1.5 rounded-full bg-gold-400" />
-          {EVENT.university}
-        </span>
+        <div className="flex animate-fade-in flex-wrap items-center justify-center gap-2.5">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-mist-200 backdrop-blur">
+            <span className="h-1.5 w-1.5 rounded-full bg-aqua-400" />
+            {EVENT.university}
+          </span>
+          <span className="inline-flex items-center gap-2 rounded-full border border-gold-400/40 bg-gold-400/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-gold-300">
+            Prize Pool {EVENT.prizePool}
+          </span>
+        </div>
 
-        <h1 className="mt-6 animate-fade-up text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl">
-          {EVENT.title}
+        <h1 className="mt-6 animate-fade-up text-4xl font-extrabold leading-[1.04] tracking-tight sm:text-6xl">
+          <span className="text-white">PSTU </span>
+          <span className="text-gradient-title">IT Carnival</span>
+          <span className="text-white"> 2026</span>
         </h1>
-        <p className="mt-4 animate-fade-up text-xl font-semibold text-navy-100 sm:text-2xl">
-          {EVENT.tagline}
+
+        <p className="mt-4 animate-fade-up text-sm font-semibold uppercase tracking-[0.18em] text-mist-200 sm:text-base">
+          <span className="text-aqua-400">&#9668;</span> {EVENT.tagline}{' '}
+          <span className="text-aqua-400">&#9658;</span>
         </p>
-        <p className="mx-auto mt-5 max-w-2xl animate-fade-up text-base leading-relaxed text-navy-200 sm:text-lg">
+
+        <p className="mx-auto mt-5 max-w-2xl animate-fade-up text-base leading-relaxed text-mist-300 sm:text-lg">
           {EVENT.intro}
         </p>
 
@@ -83,46 +99,67 @@ const Hero = ({ onRegister }) => (
           <button
             type="button"
             onClick={onRegister}
-            className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-7 py-3.5 text-sm font-bold text-navy-800 shadow-lg shadow-navy-900/30 transition hover:bg-navy-50 sm:w-auto"
+            className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gold-400 px-7 py-3.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300 sm:w-auto"
           >
-            Register Your Team
+            Pre-Register for IUPC
             <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </button>
           <a
-            href="#about"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/25 px-7 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10 sm:w-auto"
+            href="#events"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-grape-400/40 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur transition hover:border-grape-400/70 hover:bg-white/10 sm:w-auto"
           >
-            Learn More
+            Explore Events
           </a>
         </div>
 
-        <div className="mt-10 flex animate-fade-up flex-col items-center justify-center gap-x-8 gap-y-3 text-sm text-navy-100 sm:flex-row">
+        <div className="mt-9 flex animate-fade-up flex-col items-center justify-center gap-x-8 gap-y-3 text-sm text-mist-200 sm:flex-row">
           <span className="inline-flex items-center gap-2">
-            <CalendarIcon className="h-4 w-4 text-gold-300" />
+            <CalendarIcon className="h-4 w-4 text-gold-400" />
             {EVENT.date}
           </span>
-          <span className="hidden h-4 w-px bg-white/20 sm:block" />
+          <span className="hidden h-4 w-px bg-white/15 sm:block" />
           <span className="inline-flex items-center gap-2">
-            <MapPinIcon className="h-4 w-4 text-gold-300" />
+            <MapPinIcon className="h-4 w-4 text-gold-400" />
             {EVENT.venue}
           </span>
-          <span className="hidden h-4 w-px bg-white/20 sm:block" />
+          <span className="hidden h-4 w-px bg-white/15 sm:block" />
           <span className="inline-flex items-center gap-2">
-            <FlagIcon className="h-4 w-4 text-gold-300" />
+            <FlagIcon className="h-4 w-4 text-gold-400" />
             {EVENT.format}
           </span>
+        </div>
+
+        {/* Poster-style glowing category tiles */}
+        <div className="mt-12 flex animate-fade-up flex-wrap items-center justify-center gap-4 sm:gap-6">
+          {HERO_TILES.map((tile) => {
+            const Icon = ICON_MAP[tile.icon] || ICON_MAP.code;
+            return (
+              <div key={tile.label} className="flex flex-col items-center gap-2">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-carnival text-white shadow-glow-grape ring-1 ring-white/10 sm:h-16 sm:w-16">
+                  <Icon className="h-7 w-7" />
+                </div>
+                <span className="text-[11px] font-semibold uppercase tracking-wide text-mist-300">
+                  {tile.label}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
 
-    <div className="relative border-t border-white/10 bg-navy-900/40 backdrop-blur">
+    <div className="relative border-t border-white/10 bg-ink-950/70 backdrop-blur">
       <div className="mx-auto grid max-w-6xl grid-cols-2 divide-x divide-white/10 px-4 lg:grid-cols-4">
-        {STATS.map((stat) => (
+        {STATS.map((stat, i) => (
           <div key={stat.label} className="px-4 py-6 text-center">
-            <p className="text-3xl font-extrabold text-white sm:text-4xl">
+            <p
+              className={`text-3xl font-extrabold sm:text-4xl ${
+                i === 0 ? 'text-gold-300' : 'text-white'
+              }`}
+            >
               {stat.value}
             </p>
-            <p className="mt-1 text-xs font-medium uppercase tracking-wide text-navy-200">
+            <p className="mt-1 text-xs font-medium uppercase tracking-wide text-mist-400">
               {stat.label}
             </p>
           </div>
@@ -139,9 +176,9 @@ const Hero = ({ onRegister }) => (
 const About = () => (
   <Section
     id="about"
-    eyebrow="About the Contest"
-    title="Where the best teams sharpen their edge"
-    subtitle="PSTU IT Carnival brings together the country's most competitive programmers for a day built around algorithmic problem-solving, teamwork, and pure code."
+    eyebrow="About the Carnival"
+    title="Where the south zone's best show up"
+    subtitle="PSTU IT Carnival brings together the region's sharpest students for three days of algorithmic problem-solving, building, and gaming."
   >
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {ABOUT_POINTS.map((point) => {
@@ -149,15 +186,13 @@ const About = () => (
         return (
           <div
             key={point.title}
-            className="group rounded-2xl border border-navy-100 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-navy-200 hover:shadow-lg"
+            className="group rounded-2xl border border-ink-600 bg-ink-800/60 p-6 shadow-card transition duration-300 hover:-translate-y-1 hover:border-grape-500/60 hover:shadow-glow-grape"
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-navy-50 text-navy-600 transition group-hover:bg-navy-700 group-hover:text-white">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-carnival text-white shadow-glow-grape">
               <Icon className="h-6 w-6" />
             </div>
-            <h3 className="mt-5 text-lg font-bold text-navy-800">
-              {point.title}
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-navy-500">
+            <h3 className="mt-5 text-lg font-bold text-white">{point.title}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-mist-400">
               {point.text}
             </p>
           </div>
@@ -175,12 +210,12 @@ const Timeline = () => (
   <Section
     id="timeline"
     eyebrow="Schedule"
-    title="The road to contest day"
+    title="The road to carnival day"
     subtitle="Key milestones from registration to the final buzzer. Mark your calendar and get your team ready."
-    className="bg-navy-50"
+    className="bg-ink-950/40"
   >
     <div className="relative mx-auto max-w-3xl">
-      <div className="absolute left-4 top-2 h-full w-px bg-navy-200 sm:left-1/2" />
+      <div className="absolute left-4 top-2 h-full w-px bg-gradient-to-b from-grape-500 via-magenta-500 to-aqua-500 sm:left-1/2" />
       <div className="space-y-8">
         {TIMELINE.map((item, i) => (
           <div
@@ -191,24 +226,24 @@ const Timeline = () => (
           >
             <div className="flex-1 pl-12 sm:px-8 sm:pl-0">
               <div
-                className={`rounded-2xl border border-navy-100 bg-white p-5 shadow-sm ${
+                className={`rounded-2xl border border-ink-600 bg-ink-800/60 p-5 shadow-card ${
                   i % 2 === 0 ? 'sm:text-right' : 'sm:text-left'
                 }`}
               >
-                <p className="text-xs font-bold uppercase tracking-wide text-gold-600">
+                <p className="text-xs font-bold uppercase tracking-wide text-gold-400">
                   {item.date}
                 </p>
-                <h3 className="mt-1 text-lg font-bold text-navy-800">
+                <h3 className="mt-1 text-lg font-bold text-white">
                   {item.phase}
                 </h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-navy-500">
+                <p className="mt-1.5 text-sm leading-relaxed text-mist-400">
                   {item.text}
                 </p>
               </div>
             </div>
 
-            <span className="absolute left-4 top-6 z-10 flex h-3 w-3 -translate-x-1/2 items-center justify-center sm:left-1/2 sm:top-1/2 sm:-translate-y-1/2">
-              <span className="h-3 w-3 rounded-full border-2 border-navy-600 bg-white" />
+            <span className="absolute left-4 top-6 z-10 flex h-4 w-4 -translate-x-1/2 items-center justify-center sm:left-1/2 sm:top-1/2 sm:-translate-y-1/2">
+              <span className="h-4 w-4 rounded-full border-2 border-aqua-400 bg-ink-900 shadow-glow-aqua" />
             </span>
 
             <div className="hidden flex-1 sm:block" />
@@ -226,9 +261,9 @@ const Timeline = () => (
 const Format = ({ onRegister }) => (
   <Section
     id="format"
-    eyebrow="Format & Rules"
-    title="How the contest works"
-    subtitle="A straightforward, ICPC-inspired ruleset. Know it before you register your team."
+    eyebrow="IUPC · Format & Rules"
+    title="How the IUPC works"
+    subtitle="A straightforward, ICPC-inspired ruleset for the flagship programming contest. Know it before you register your team."
   >
     <div className="grid items-start gap-8 lg:grid-cols-5">
       <div className="lg:col-span-3">
@@ -236,12 +271,12 @@ const Format = ({ onRegister }) => (
           {RULES.map((rule) => (
             <li
               key={rule}
-              className="flex items-start gap-3 rounded-xl border border-navy-100 bg-white p-4 shadow-sm"
+              className="flex items-start gap-3 rounded-xl border border-ink-600 bg-ink-800/60 p-4 shadow-card"
             >
-              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green-100 text-green-600">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-aqua-400/15 text-aqua-300">
                 <CheckIcon className="h-4 w-4" />
               </span>
-              <span className="text-sm leading-relaxed text-navy-700">
+              <span className="text-sm leading-relaxed text-mist-200">
                 {rule}
               </span>
             </li>
@@ -250,23 +285,26 @@ const Format = ({ onRegister }) => (
       </div>
 
       <div className="lg:col-span-2">
-        <div className="rounded-2xl bg-pstu-gradient p-7 text-white shadow-lg">
-          <h3 className="text-xl font-bold">Ready to compete?</h3>
-          <p className="mt-2 text-sm leading-relaxed text-navy-100">
-            Registration takes just a few minutes. Have your team name, coach
-            details, and each member's Codeforces handle ready.
-          </p>
-          <button
-            type="button"
-            onClick={onRegister}
-            className="group mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-navy-800 shadow-md transition hover:bg-navy-50"
-          >
-            Start Registration
-            <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </button>
-          <p className="mt-4 text-xs text-navy-200">
-            No payment required · Instant registration ID
-          </p>
+        <div className="relative overflow-hidden rounded-2xl bg-carnival p-7 text-white shadow-glow-grape">
+          <div className="absolute inset-0 bg-grid bg-[size:30px_30px] opacity-30" />
+          <div className="relative">
+            <h3 className="text-xl font-bold">Ready to compete in IUPC?</h3>
+            <p className="mt-2 text-sm leading-relaxed text-white/85">
+              Pre-registration takes just a few minutes. Have your team name,
+              coach details, and each member's Codeforces handle ready.
+            </p>
+            <button
+              type="button"
+              onClick={onRegister}
+              className="group mt-6 inline-flex items-center gap-2 rounded-xl bg-gold-400 px-6 py-3 text-sm font-bold text-ink-950 shadow-md transition hover:bg-gold-300"
+            >
+              Start Pre-Registration
+              <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </button>
+            <p className="mt-4 text-xs text-white/70">
+              No payment required · Instant registration ID
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -279,21 +317,21 @@ const Format = ({ onRegister }) => (
 
 const rankStyles = {
   1: {
-    ring: 'border-gold-300 ring-2 ring-gold-200',
-    badge: 'bg-gold-400 text-navy-900',
-    medal: 'text-gold-500',
+    ring: 'border-gold-400/60 shadow-glow-gold',
+    badge: 'bg-gold-400 text-ink-950',
+    medal: 'text-gold-400',
     scale: 'lg:-translate-y-4',
   },
   2: {
-    ring: 'border-navy-100',
-    badge: 'bg-navy-200 text-navy-800',
-    medal: 'text-navy-300',
+    ring: 'border-grape-400/50 shadow-glow-grape',
+    badge: 'bg-grape-500 text-white',
+    medal: 'text-grape-300',
     scale: '',
   },
   3: {
-    ring: 'border-navy-100',
-    badge: 'bg-gold-700/20 text-gold-800',
-    medal: 'text-gold-700',
+    ring: 'border-magenta-500/50 shadow-glow-magenta',
+    badge: 'bg-magenta-500 text-white',
+    medal: 'text-magenta-400',
     scale: '',
   },
 };
@@ -303,8 +341,8 @@ const Prizes = () => (
     id="prizes"
     eyebrow="Rewards"
     title="Play for the podium"
-    subtitle="Trophies, medals, and certificates for the teams that rise to the top. Every participant walks away with an event t-shirt."
-    className="bg-navy-50"
+    subtitle={`A ${EVENT.prizePool} prize pool across the carnival — trophies, medals, and certificates for the teams that rise to the top. Every participant walks away with an event t-shirt.`}
+    className="bg-ink-950/40"
   >
     <div className="grid items-center gap-6 sm:grid-cols-3">
       {PRIZES.map((prize) => {
@@ -312,7 +350,7 @@ const Prizes = () => (
         return (
           <div
             key={prize.place}
-            className={`rounded-2xl border bg-white p-7 text-center shadow-sm transition ${s.ring} ${s.scale}`}
+            className={`rounded-2xl border bg-ink-800/70 p-7 text-center transition ${s.ring} ${s.scale}`}
           >
             <div className="mx-auto flex h-16 w-16 items-center justify-center">
               <MedalIcon className={`h-14 w-14 ${s.medal}`} />
@@ -324,7 +362,7 @@ const Prizes = () => (
             </span>
             <ul className="mt-5 space-y-2">
               {prize.perks.map((perk) => (
-                <li key={perk} className="text-sm font-medium text-navy-600">
+                <li key={perk} className="text-sm font-medium text-mist-300">
                   {perk}
                 </li>
               ))}
@@ -360,23 +398,24 @@ const FaqSection = () => (
 const FinalCta = ({ onRegister }) => (
   <section className="py-20 sm:py-24">
     <div className="mx-auto max-w-6xl px-4">
-      <div className="relative overflow-hidden rounded-3xl bg-pstu-gradient px-6 py-16 text-center text-white shadow-xl sm:px-12">
-        <div className="absolute inset-0 bg-grid-navy bg-[size:36px_36px] opacity-60" />
-        <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-gold-400/10 blur-3xl" />
+      <div className="relative overflow-hidden rounded-3xl bg-carnival px-6 py-16 text-center text-white shadow-glow-grape sm:px-12">
+        <div className="absolute inset-0 bg-grid bg-[size:36px_36px] opacity-40" />
+        <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-aqua-400/20 blur-3xl" />
+        <div className="absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-gold-400/15 blur-3xl" />
         <div className="relative mx-auto max-w-2xl">
           <h2 className="text-3xl font-extrabold sm:text-4xl">
-            Your team's spot is waiting
+            Your IUPC team's spot is waiting
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-navy-100 sm:text-lg">
+          <p className="mt-4 text-base leading-relaxed text-white/85 sm:text-lg">
             Gather your three coders, pick a name worth remembering, and claim
-            your place at PSTU IT Carnival 2026.
+            your place at the flagship contest of PSTU IT Carnival 2026.
           </p>
           <button
             type="button"
             onClick={onRegister}
-            className="group mt-8 inline-flex items-center gap-2 rounded-xl bg-white px-8 py-4 text-sm font-bold text-navy-800 shadow-lg transition hover:bg-navy-50"
+            className="group mt-8 inline-flex items-center gap-2 rounded-xl bg-gold-400 px-8 py-4 text-sm font-bold text-ink-950 shadow-lg transition hover:bg-gold-300"
           >
-            Register Your Team
+            Pre-Register for IUPC
             <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </button>
         </div>
@@ -390,27 +429,31 @@ const FinalCta = ({ onRegister }) => (
 /* ------------------------------------------------------------------ */
 
 const Footer = () => (
-  <footer className="border-t border-navy-100 bg-white">
+  <footer className="border-t border-white/10 bg-ink-950/60">
     <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-8 sm:flex-row">
       <div className="flex items-center gap-2.5">
-        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-navy-700 text-sm font-extrabold text-white">
+        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-carnival text-sm font-extrabold text-white shadow-glow-grape">
           PC
         </span>
         <div className="text-sm">
-          <p className="font-bold text-navy-800">PSTU IT Carnival 2026</p>
-          <p className="text-xs text-navy-400">{EVENT.university}</p>
+          <p className="font-bold text-white">PSTU IT Carnival 2026</p>
+          <p className="text-xs text-mist-400">Organized by {EVENT.organizer}</p>
         </div>
       </div>
-      <div className="flex flex-col items-center gap-1 text-sm text-navy-500 sm:items-end">
+      <div className="flex flex-col items-center gap-1 text-sm text-mist-300 sm:items-end">
+        <a
+          href={`https://${EVENT.website}`}
+          className="font-semibold text-aqua-300 transition hover:text-aqua-200"
+        >
+          {EVENT.website}
+        </a>
         <a
           href={`mailto:${EVENT.contactEmail}`}
-          className="font-medium text-navy-600 transition hover:text-navy-900"
+          className="text-mist-400 transition hover:text-white"
         >
           {EVENT.contactEmail}
         </a>
-        <p className="text-xs text-navy-400">
-          © 2026 PSTU IT Carnival — Programming Contest
-        </p>
+        <p className="text-xs text-mist-500">© 2026 PSTU IT Carnival</p>
       </div>
     </div>
   </footer>
@@ -421,11 +464,12 @@ const Footer = () => (
 /* ------------------------------------------------------------------ */
 
 const LandingPage = ({ onRegister }) => (
-  <div className="min-h-screen bg-white">
+  <div className="min-h-screen">
     <Navbar onRegister={onRegister} />
     <main>
       <Hero onRegister={onRegister} />
       <About />
+      <Events onRegister={onRegister} />
       <Timeline />
       <Format onRegister={onRegister} />
       <Prizes />
