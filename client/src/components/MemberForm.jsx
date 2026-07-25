@@ -7,8 +7,8 @@ const MemberForm = ({ index, register, errors }) => {
   const memberErrors = errors?.members?.[index] || {};
 
   return (
-    <div className="rounded-xl border border-navy-100 bg-navy-50/40 p-5">
-      <h3 className="mb-4 text-base font-semibold text-navy-700">
+    <div className="rounded-xl border border-ink-600 bg-ink-950/40 p-5">
+      <h3 className="mb-4 text-base font-semibold text-mist-100">
         Member {index + 1}
       </h3>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
