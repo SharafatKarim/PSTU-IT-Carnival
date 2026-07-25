@@ -436,18 +436,6 @@ const RegistrationForm = ({ slug = 'iupc' }) => {
                   <>
                     <SectionCard title="Team Information">
                       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <AutocompleteField
-                          label="Varsity Name"
-                          name="varsityName"
-                          placeholder="Start typing, e.g. Patuakhali or PSTU"
-                          register={registerWithRules}
-                          error={errors.varsityName}
-                          hint="Pick from the list so your team name prefix is checked"
-                          required
-                          autoComplete="organization"
-                          search={searchUniversities}
-                          onSelect={onVarsityPick}
-                        />
                         <FormField
                           label="Team Name"
                           name="teamName"
@@ -465,6 +453,18 @@ const RegistrationForm = ({ slug = 'iupc' }) => {
                           }
                           required
                           autoComplete="off"
+                        />
+                        <AutocompleteField
+                          label="Varsity Name"
+                          name="varsityName"
+                          placeholder="Start typing, e.g. Patuakhali or PSTU"
+                          register={registerWithRules}
+                          error={errors.varsityName}
+                          hint="Pick from the list so your team name prefix is checked"
+                          required
+                          autoComplete="organization"
+                          search={searchUniversities}
+                          onSelect={onVarsityPick}
                         />
                       </div>
                     </SectionCard>
