@@ -72,13 +72,15 @@ const Hero = ({ game, registrationOpen }) => {
   ];
 
   return (
-    <section className="relative overflow-hidden bg-ink-950">
+    /* Full viewport minus the 61px sticky navbar. min-h (not h) so the hero
+       still grows on narrow screens instead of clipping its content. */
+    <section className="relative flex min-h-[calc(100dvh-61px)] flex-col overflow-hidden bg-ink-950">
       <div className="absolute inset-0 bg-hero" />
       <div className="absolute inset-0 bg-grid bg-[size:46px_46px] opacity-50" />
       <div className={`absolute -right-24 -top-10 h-80 w-80 rounded-full blur-3xl ${a.blob}`} />
       <div className="absolute -left-24 top-32 h-72 w-72 rounded-full bg-grape-600/20 blur-3xl" />
 
-      <div className="relative mx-auto max-w-6xl px-4 pt-10 sm:pt-12">
+      <div className="relative mx-auto w-full max-w-6xl px-4 pt-8">
         <Link
           href={ROUTES.gaming}
           className="inline-flex items-center gap-1.5 text-sm font-medium text-mist-300 transition hover:text-white"
@@ -86,8 +88,10 @@ const Hero = ({ game, registrationOpen }) => {
           <ArrowLeftIcon className="h-4 w-4" />
           All gaming events
         </Link>
+      </div>
 
-        <div className="mt-7 flex flex-col items-start gap-6 sm:flex-row sm:items-center">
+      <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-4 py-8 sm:py-10">
+        <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
           <div
             className={`relative flex h-[4.5rem] w-[4.5rem] shrink-0 items-center justify-center rounded-3xl border bg-ink-900/70 backdrop-blur ${a.border} ${a.glow} ${a.text}`}
           >
@@ -123,7 +127,7 @@ const Hero = ({ game, registrationOpen }) => {
           </div>
         </div>
 
-        <div className="mt-7 flex flex-col gap-x-7 gap-y-2.5 text-sm text-mist-200 sm:flex-row sm:items-center">
+        <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-mist-200">
           {quickFacts.map((fact, i) => (
             <span key={i} className="inline-flex items-center gap-2">
               <fact.icon className="h-4 w-4 text-gold-400" />
@@ -158,7 +162,7 @@ const Hero = ({ game, registrationOpen }) => {
           </a>
         </div>
 
-        <p className="mt-5 pb-10 text-xs text-mist-400">{game.heroNote}</p>
+        <p className="mt-5 text-xs text-mist-400">{game.heroNote}</p>
       </div>
 
       {/* Headline numbers — the same treatment the landing-page hero uses. */}
@@ -167,7 +171,7 @@ const Hero = ({ game, registrationOpen }) => {
           {headline.map((item) => (
             <div
               key={item.label}
-              className="flex flex-col items-center justify-center px-4 py-6 text-center"
+              className="flex flex-col items-center justify-center px-4 py-5 text-center sm:py-6"
             >
               <p
                 className={`text-2xl font-extrabold sm:text-3xl ${

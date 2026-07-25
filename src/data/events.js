@@ -33,6 +33,7 @@ export const EVENT_DETAILS = [
       entryFee: 'Free',
       format: 'ICPC-style · 4–5 hours · one workstation',
       teamSize: '3 members (+1 coach)',
+      teamSizeShort: '3 + coach',
       slots: '60 teams',
       platform: 'Onsite — workstations provided',
       deadline: '31 July 2026',
