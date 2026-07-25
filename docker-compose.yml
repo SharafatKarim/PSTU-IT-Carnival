@@ -1,0 +1,46 @@
+name: pstu-it-carnival
+
+services:
+  # ---- MongoDB ----------------------------------------------------------
+  mongo:
+    image: mongo:7
+    container_name: pstu-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+    # Uncomment to inspect the database from the host (e.g. with Compass):
+    # ports:
+    #   - "27017:27017"
+
+  # ---- Express API ------------------------------------------------------
+  server:
+    build: ./server
+    container_name: pstu-server
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "5000"
+      MONGO_URI: mongodb://mongo:27017/${MONGO_DB:-pstu_it_carnival}
+      REGISTRATION_ID_PREFIX: ${REGISTRATION_ID_PREFIX:-PSTU-PC-2026}
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  # ---- React client (nginx: serves the SPA + proxies /api) --------------
+  client:
+    build: ./client
+    container_name: pstu-client
+    restart: unless-stopped
+    ports:
+      - "${CLIENT_PORT:-8080}:80"
+    depends_on:
+      - server
+
+volumes:
+  mongo-data:

@@ -6,6 +6,45 @@ Teams can register online by submitting team, coach, and member information. Eac
 
 ---
 
+## Run with Docker (recommended)
+
+The entire stack — MongoDB, the Express API, and the React client — is
+containerized. The client is built and served by **nginx**, which also
+reverse-proxies `/api` to the API server, so the whole app runs behind a
+single port with no CORS setup.
+
+**Prerequisites:** Docker + Docker Compose (Docker Desktop covers both).
+
+```bash
+# from the project root
+docker compose up -d --build
+```
+
+Then open **http://localhost:8080** 🎉
+
+That's it — no local Node or MongoDB install required. Data is stored in a
+named volume (`mongo-data`), so it survives restarts.
+
+| Command | What it does |
+| ------- | ------------ |
+| `docker compose up -d --build` | Build images and start everything in the background |
+| `docker compose logs -f`       | Follow logs from all services |
+| `docker compose ps`            | Show container status |
+| `docker compose down`          | Stop and remove the containers |
+| `docker compose down -v`       | Also delete the database volume (fresh start) |
+
+**Optional configuration** — copy `.env.example` to `.env` in the project
+root to change the host port or database name:
+
+```bash
+cp .env.example .env    # then edit CLIENT_PORT, MONGO_DB, REGISTRATION_ID_PREFIX
+```
+
+Everything has a sensible default, so `docker compose up` also works with no
+`.env` file at all.
+
+---
+
 ## Tech Stack
 
 **Frontend**
