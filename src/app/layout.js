@@ -9,12 +9,15 @@ const inter = Inter({
 export const metadata = {
   title: "PSTU IT Carnival 2026 — Tech & Gaming Fest",
   description: "PSTU IT Carnival 2026 — South Zone's largest tech competition at Patuakhali Science and Technology University. Eleven events across programming, hackathon, data, quiz and gaming. 13–15 August 2026.",
-  themeColor: "#140d31",
   openGraph: {
     title: "PSTU IT Carnival 2026 — Tech & Gaming Fest",
     description: "South Zone's largest tech competition. Eleven events, ৳450K+ prize pool. IUPC pre-registration open now — register your team online.",
     type: "website",
   },
+};
+
+export const viewport = {
+  themeColor: "#140d31",
 };
 
 export default function RootLayout({ children }) {

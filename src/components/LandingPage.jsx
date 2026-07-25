@@ -1,8 +1,10 @@
 'use client';
 
+import Link from 'next/link';
 import Navbar from './landing/Navbar';
 import Events from './landing/Events';
 import Faq from './landing/Faq';
+import Footer from './landing/Footer';
 import {
   ICON_MAP,
   CheckIcon,
@@ -20,6 +22,7 @@ import {
   RULES,
   PRIZES,
 } from '../data/content';
+import { ROUTES } from '../lib/routes';
 
 const HERO_TILES = [
   { icon: 'code', label: 'Programming' },
@@ -55,7 +58,7 @@ const Section = ({ id, eyebrow, title, subtitle, children, className = '' }) => 
   </section>
 );
 
-const Hero = ({ onRegister }) => (
+const Hero = () => (
   <section id="top" className="relative overflow-hidden bg-ink-950">
     <div className="absolute inset-0 bg-hero" />
     <div className="absolute inset-0 bg-grid bg-[size:46px_46px] opacity-50" />
@@ -90,14 +93,13 @@ const Hero = ({ onRegister }) => (
         </p>
 
         <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <button
-            type="button"
-            onClick={onRegister}
+          <Link
+            href={ROUTES.register}
             className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gold-400 px-7 py-3.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300 sm:w-auto"
           >
             Pre-Register for IUPC
             <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </button>
+          </Link>
           <a
             href="#events"
             className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-grape-400/40 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur transition hover:border-grape-400/70 hover:bg-white/10 sm:w-auto"
@@ -238,7 +240,7 @@ const Timeline = () => (
   </Section>
 );
 
-const Format = ({ onRegister }) => (
+const Format = () => (
   <Section
     id="format"
     eyebrow="IUPC · Format & Rules"
@@ -271,16 +273,15 @@ const Format = ({ onRegister }) => (
             <h3 className="text-xl font-bold">Ready to compete in IUPC?</h3>
             <p className="mt-2 text-sm leading-relaxed text-white/85">
               Pre-registration takes just a few minutes. Have your team name,
-              coach details, and each member's Codeforces handle ready.
+              coach details, and each member&apos;s Codeforces handle ready.
             </p>
-            <button
-              type="button"
-              onClick={onRegister}
+            <Link
+              href={ROUTES.register}
               className="group mt-6 inline-flex items-center gap-2 rounded-xl bg-gold-400 px-6 py-3 text-sm font-bold text-ink-950 shadow-md transition hover:bg-gold-300"
             >
               Start Pre-Registration
               <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </button>
+            </Link>
             <p className="mt-4 text-xs text-white/70">
               No payment required · Instant registration ID
             </p>
@@ -363,7 +364,7 @@ const FaqSection = () => (
   </Section>
 );
 
-const FinalCta = ({ onRegister }) => (
+const FinalCta = () => (
   <section className="py-20 sm:py-24">
     <div className="mx-auto max-w-6xl px-4">
       <div className="relative overflow-hidden rounded-3xl bg-carnival px-6 py-16 text-center text-white shadow-glow-grape sm:px-12">
@@ -372,69 +373,38 @@ const FinalCta = ({ onRegister }) => (
         <div className="absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-gold-400/15 blur-3xl" />
         <div className="relative mx-auto max-w-2xl">
           <h2 className="text-3xl font-extrabold sm:text-4xl">
-            Your IUPC team's spot is waiting
+            Your IUPC team&apos;s spot is waiting
           </h2>
           <p className="mt-4 text-base leading-relaxed text-white/85 sm:text-lg">
             Gather your three coders, pick a name worth remembering, and claim
             your place at the flagship contest of PSTU IT Carnival 2026.
           </p>
-          <button
-            type="button"
-            onClick={onRegister}
+          <Link
+            href={ROUTES.register}
             className="group mt-8 inline-flex items-center gap-2 rounded-xl bg-gold-400 px-8 py-4 text-sm font-bold text-ink-950 shadow-lg transition hover:bg-gold-300"
           >
             Pre-Register for IUPC
             <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </button>
+          </Link>
         </div>
       </div>
     </div>
   </section>
 );
 
-const Footer = () => (
-  <footer className="border-t border-white/10 bg-ink-950/60">
-    <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-8 sm:flex-row">
-      <div className="flex items-center gap-2.5">
-        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-carnival text-sm font-extrabold text-white shadow-glow-grape">
-          PC
-        </span>
-        <div className="text-sm">
-          <p className="font-bold text-white">PSTU IT Carnival 2026</p>
-          <p className="text-xs text-mist-400">Organized by {EVENT.organizer}</p>
-        </div>
-      </div>
-      <div className="flex flex-col items-center gap-1 text-sm text-mist-300 sm:items-end">
-        <a
-          href={`https://${EVENT.website}`}
-          className="font-semibold text-aqua-300 transition hover:text-aqua-200"
-        >
-          {EVENT.website}
-        </a>
-        <a
-          href={`mailto:${EVENT.contactEmail}`}
-          className="text-mist-400 transition hover:text-white"
-        >
-          {EVENT.contactEmail}
-        </a>
-        <p className="text-xs text-mist-500">© 2026 PSTU IT Carnival</p>
-      </div>
-    </div>
-  </footer>
-);
 
-const LandingPage = ({ onRegister }) => (
+const LandingPage = () => (
   <div className="min-h-screen">
-    <Navbar onRegister={onRegister} />
+    <Navbar />
     <main>
-      <Hero onRegister={onRegister} />
+      <Hero />
       <About />
-      <Events onRegister={onRegister} />
+      <Events />
       <Timeline />
-      <Format onRegister={onRegister} />
+      <Format />
       <Prizes />
       <FaqSection />
-      <FinalCta onRegister={onRegister} />
+      <FinalCta />
     </main>
     <Footer />
   </div>

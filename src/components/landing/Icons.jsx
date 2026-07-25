@@ -197,6 +197,63 @@ export const CubeIcon = (props) => (
   </svg>
 );
 
+export const ArrowLeftIcon = (props) => (
+  <svg {...base} {...props}>
+    <line x1="19" y1="12" x2="5" y2="12" />
+    <polyline points="12 19 5 12 12 5" />
+  </svg>
+);
+
+export const UserIcon = (props) => (
+  <svg {...base} {...props}>
+    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
+
+export const TicketIcon = (props) => (
+  <svg {...base} {...props}>
+    <path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1a2 2 0 0 0 0 4v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1a2 2 0 0 0 0-4Z" />
+    <line x1="13" y1="7" x2="13" y2="17" strokeDasharray="2 3" />
+  </svg>
+);
+
+export const CoinIcon = (props) => (
+  <svg {...base} {...props}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M15 9.5a2.5 2 0 0 0-3-1c-1.5 0-2.5.8-2.5 2s1 1.7 2.5 2 2.5.8 2.5 2-1 2-2.5 2a2.5 2 0 0 1-3-1" />
+    <path d="M12 6.5v11" />
+  </svg>
+);
+
+export const PhoneIcon = (props) => (
+  <svg {...base} {...props}>
+    <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z" />
+  </svg>
+);
+
+export const MailIcon = (props) => (
+  <svg {...base} {...props}>
+    <rect x="2" y="4" width="20" height="16" rx="2" />
+    <path d="m2 7 10 6 10-6" />
+  </svg>
+);
+
+export const ShieldIcon = (props) => (
+  <svg {...base} {...props}>
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+    <polyline points="9 12 11 14 15 10" />
+  </svg>
+);
+
+export const AlertIcon = (props) => (
+  <svg {...base} {...props}>
+    <circle cx="12" cy="12" r="9" />
+    <line x1="12" y1="8" x2="12" y2="13" />
+    <line x1="12" y1="16" x2="12.01" y2="16" />
+  </svg>
+);
+
 export const ICON_MAP = {
   code: CodeIcon,
   users: UsersIcon,
@@ -215,4 +272,11 @@ export const ICON_MAP = {
   clock: ClockIcon,
   flag: FlagIcon,
   certificate: CertificateIcon,
+  user: UserIcon,
+  ticket: TicketIcon,
+  coin: CoinIcon,
+  phone: PhoneIcon,
+  mail: MailIcon,
+  shield: ShieldIcon,
+  alert: AlertIcon,
 };

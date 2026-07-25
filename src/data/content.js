@@ -1,4 +1,9 @@
 // Landing-page content. Edit copy here without touching the UI.
+//
+// Every event that is open carries an `href` built from src/lib/routes.js —
+// no path is spelled out by hand, so a route rename only happens in one place.
+
+import { ROUTES } from '../lib/routes';
 
 export const EVENT = {
   university: 'Patuakhali Science and Technology University',
@@ -22,8 +27,9 @@ export const STATS = [
   { value: '6', label: 'Gaming & fun' },
 ];
 
-// One event is 'open' at a time (featured + routes to the form); the rest
-// are 'coming-soon' (disabled cards).
+// `status: 'open'` is the one featured event; 'live' events get a linked card;
+// everything else renders as a disabled 'coming-soon' card. Any event that is
+// not 'coming-soon' must carry an `href`.
 export const EVENTS = [
   {
     id: 'iupc',
@@ -35,6 +41,7 @@ export const EVENTS = [
       'The flagship ICPC-style Inter-University Programming Contest. Teams of three, a 4–5 hour battle, one keyboard.',
     status: 'open',
     cta: 'Pre-Register',
+    href: ROUTES.register,
   },
   {
     id: 'hackathon',
@@ -78,21 +85,23 @@ export const EVENTS = [
   },
   {
     id: 'pubg',
-    name: 'PUBG',
-    scope: 'Esports',
+    name: 'PUBG Mobile',
+    scope: 'Esports · Squad',
     category: 'gaming',
     icon: 'gamepad',
     blurb: 'Squad up for the battle royale. Last team standing takes the crown.',
-    status: 'coming-soon',
+    status: 'live',
+    href: ROUTES.game('pubg-mobile'),
   },
   {
     id: 'free-fire',
     name: 'Free Fire',
-    scope: 'Esports',
+    scope: 'Esports · Squad',
     category: 'gaming',
     icon: 'flame',
     blurb: 'Fast, furious mobile battle royale. Drop in, gear up, survive.',
-    status: 'coming-soon',
+    status: 'live',
+    href: ROUTES.game('free-fire'),
   },
   {
     id: 'chess',
@@ -114,12 +123,13 @@ export const EVENTS = [
   },
   {
     id: 'pes',
-    name: 'eFootball (PES)',
-    scope: 'Esports',
+    name: 'eFootball',
+    scope: 'Esports · 1v1',
     category: 'gaming',
     icon: 'ball',
     blurb: 'Virtual football glory — skill, tactics and last-minute winners.',
-    status: 'coming-soon',
+    status: 'live',
+    href: ROUTES.game('efootball'),
   },
   {
     id: 'rubiks',
@@ -216,7 +226,7 @@ export const FAQS = [
   },
   {
     q: 'Which events are open for registration right now?',
-    a: 'IUPC (South Zone) pre-registration is live now. Registration for the remaining events opens soon — keep an eye on this page for updates.',
+    a: 'IUPC (South Zone) pre-registration is live, and so are all three gaming tournaments — eFootball, PUBG Mobile and Free Fire. Registration for the remaining events opens soon.',
   },
   {
     q: 'How many members can an IUPC team have?',

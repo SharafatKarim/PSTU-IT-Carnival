@@ -7,6 +7,7 @@ const FormField = ({
   error,
   required = false,
   autoComplete,
+  hint,
 }) => {
   return (
     <div className="flex flex-col gap-1">
@@ -26,7 +27,11 @@ const FormField = ({
             : 'border-ink-500 focus:border-grape-500 focus:ring-grape-500/30'
         }`}
       />
-      {error && <p className="text-xs text-red-400">{error.message}</p>}
+      {error ? (
+        <p className="text-xs text-red-400">{error.message}</p>
+      ) : (
+        hint && <p className="text-xs text-mist-500">{hint}</p>
+      )}
     </div>
   );
 };

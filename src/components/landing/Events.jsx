@@ -1,7 +1,9 @@
 'use client';
 
+import Link from 'next/link';
 import { EVENTS } from '../../data/content';
 import { ICON_MAP, ArrowRightIcon } from './Icons';
+import { ROUTES } from '../../lib/routes';
 
 const IconBox = ({ icon, muted }) => {
   const Icon = ICON_MAP[icon] || ICON_MAP.code;
@@ -25,7 +27,7 @@ const ScopeBadge = ({ children }) => (
 );
 
 /* Full-width highlight for the one event that is open for registration. */
-const FeaturedEvent = ({ event, onRegister }) => (
+const FeaturedEvent = ({ event }) => (
   <div className="relative overflow-hidden rounded-3xl border-2 border-gold-400/50 bg-ink-800/70 p-6 shadow-glow-gold sm:p-8">
     <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gold-400/10 blur-3xl" />
     <span className="absolute right-5 top-5 inline-flex items-center gap-1.5 rounded-full border border-aqua-400/30 bg-aqua-400/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-aqua-300">
@@ -44,14 +46,14 @@ const FeaturedEvent = ({ event, onRegister }) => (
           {event.blurb}
         </p>
       </div>
-      <button
-        type="button"
-        onClick={onRegister}
+      <Link
+        href={event.href}
+        aria-label={`${event.cta || 'Register'} for ${event.name}`}
         className="group inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-gold-400 px-6 py-3 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
       >
         {event.cta || 'Register'}
         <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-      </button>
+      </Link>
     </div>
   </div>
 );
@@ -81,17 +83,52 @@ const ComingSoonCard = ({ event }) => (
   </div>
 );
 
-const GroupHeading = ({ children }) => (
+/* Event that has its own page and open registration (the gaming tournaments). */
+const LiveCard = ({ event }) => (
+  <div className="relative flex flex-col rounded-2xl border border-ink-600 bg-ink-800/60 p-5 shadow-card transition duration-300 hover:-translate-y-1 hover:border-grape-500/60 hover:shadow-glow-grape">
+    <span className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full border border-aqua-400/30 bg-aqua-400/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-aqua-300">
+      <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-aqua-400" />
+      Open
+    </span>
+    <IconBox icon={event.icon} />
+    <div className="mt-4 flex flex-wrap items-center gap-2">
+      <h3 className="text-base font-bold text-white">{event.name}</h3>
+      <ScopeBadge>{event.scope}</ScopeBadge>
+    </div>
+    <p className="mt-2 flex-1 text-sm leading-relaxed text-mist-400">
+      {event.blurb}
+    </p>
+    <div className="mt-4 flex gap-2">
+      <Link
+        href={event.href}
+        aria-label={`View ${event.name} details`}
+        className="flex-1 rounded-lg border border-ink-500 px-3 py-2 text-center text-sm font-semibold text-mist-200 transition hover:bg-white/5 hover:text-white"
+      >
+        Details
+      </Link>
+      <Link
+        href={`${event.href}#register`}
+        aria-label={`Register for ${event.name}`}
+        className="flex-1 rounded-lg bg-gold-400 px-3 py-2 text-center text-sm font-bold text-ink-950 transition hover:bg-gold-300"
+      >
+        Register
+      </Link>
+    </div>
+  </div>
+);
+
+const GroupHeading = ({ children, action }) => (
   <div className="mb-6 mt-14 flex items-center gap-4">
     <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-mist-300">
       {children}
     </h3>
     <span className="h-px flex-1 bg-white/10" />
+    {action}
   </div>
 );
 
-const Events = ({ onRegister }) => {
-  const featured = EVENTS.find((e) => e.status === 'open');
+const Events = () => {
+  const featured = EVENTS.find((e) => e.status === 'open' && e.href);
   const isFeatured = (e) => featured && e.id === featured.id;
   const tech = EVENTS.filter((e) => e.category === 'tech' && !isFeatured(e));
   const gaming = EVENTS.filter((e) => e.category === 'gaming' && !isFeatured(e));
@@ -108,14 +145,14 @@ const Events = ({ onRegister }) => {
           </h2>
           <p className="mt-4 text-base leading-relaxed text-mist-300">
             From the flagship programming contest to esports and board-game
-            showdowns — pick your arena. IUPC pre-registration is open now; the
-            rest go live soon.
+            showdowns — pick your arena. IUPC pre-registration and all three
+            gaming tournaments are open now; the rest go live soon.
           </p>
         </div>
 
         {featured && (
           <div className="mt-10">
-            <FeaturedEvent event={featured} onRegister={onRegister} />
+            <FeaturedEvent event={featured} />
           </div>
         )}
 
@@ -126,11 +163,27 @@ const Events = ({ onRegister }) => {
           ))}
         </div>
 
-        <GroupHeading>Gaming &amp; Fun</GroupHeading>
+        <GroupHeading
+          action={
+            <Link
+              href={ROUTES.gaming}
+              className="group inline-flex shrink-0 items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-aqua-300 transition hover:text-aqua-200"
+            >
+              Gaming Fest
+              <ArrowRightIcon className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          }
+        >
+          Gaming &amp; Fun
+        </GroupHeading>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {gaming.map((event) => (
-            <ComingSoonCard key={event.id} event={event} />
-          ))}
+          {gaming.map((event) =>
+            event.href ? (
+              <LiveCard key={event.id} event={event} />
+            ) : (
+              <ComingSoonCard key={event.id} event={event} />
+            )
+          )}
         </div>
       </div>
     </section>

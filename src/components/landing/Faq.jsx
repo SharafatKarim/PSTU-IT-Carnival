@@ -35,12 +35,13 @@ const FaqItem = ({ item, isOpen, onToggle }) => (
   </div>
 );
 
-const Faq = () => {
+/* `items` defaults to the carnival FAQs; the gaming pages pass their own. */
+const Faq = ({ items = FAQS }) => {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
     <div className="space-y-3">
-      {FAQS.map((item, i) => (
+      {items.map((item, i) => (
         <FaqItem
           key={i}
           item={item}

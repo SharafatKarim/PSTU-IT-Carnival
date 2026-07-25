@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import FormField from './FormField';
 import SectionCard from './SectionCard';
@@ -8,6 +9,9 @@ import MemberForm from './MemberForm';
 import ReviewSection from './ReviewSection';
 import { CheckIcon, CalendarIcon } from './landing/Icons';
 import { createRegistration } from '../services/api';
+import Navbar from './landing/Navbar';
+import Footer from './landing/Footer';
+import { ROUTES, registerNav } from '../lib/routes';
 
 const BD_PHONE_RE = /^(?:\+?880)?1[3-9]\d{8}$/;
 
@@ -194,7 +198,7 @@ const StepIndicator = ({ current }) => (
   </div>
 );
 
-const RegistrationForm = ({ onBack }) => {
+const RegistrationForm = () => {
   const {
     register,
     getValues,
@@ -259,17 +263,22 @@ const RegistrationForm = ({ onBack }) => {
 
   return (
     <div className="min-h-screen">
+      <Navbar
+        links={registerNav}
+        homeHref={ROUTES.home}
+        ctaHref={ROUTES.gaming}
+        ctaLabel="Gaming Fest"
+      />
       <header className="relative overflow-hidden bg-ink-950 text-white">
         <div className="absolute inset-0 bg-hero" />
         <div className="absolute inset-0 bg-grid bg-[size:44px_44px] opacity-40" />
         <div className="relative mx-auto max-w-4xl px-4 py-10 sm:py-14">
-          <button
-            type="button"
-            onClick={onBack}
+          <Link
+            href={ROUTES.home}
             className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-mist-200 transition hover:text-white"
           >
             <span aria-hidden="true">←</span> Back to home
-          </button>
+          </Link>
           <p className="text-xs font-semibold uppercase tracking-widest text-aqua-400">
             Patuakhali Science and Technology University
           </p>
@@ -304,13 +313,12 @@ const RegistrationForm = ({ onBack }) => {
                 Please save this ID for future reference.
               </p>
               <div className="mt-6">
-                <button
-                  type="button"
-                  onClick={onBack}
-                  className="rounded-lg border border-emerald-400/40 px-5 py-2.5 text-sm font-semibold text-emerald-200 transition hover:bg-emerald-400/10"
+                <Link
+                  href={ROUTES.home}
+                  className="inline-block rounded-lg border border-emerald-400/40 px-5 py-2.5 text-sm font-semibold text-emerald-200 transition hover:bg-emerald-400/10"
                 >
                   Return to home
-                </button>
+                </Link>
               </div>
             </div>
           ) : (
@@ -450,13 +458,22 @@ const RegistrationForm = ({ onBack }) => {
                 )}
 
                 <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <button
-                    type="button"
-                    onClick={step === 0 ? onBack : goBack}
-                    className="rounded-lg border border-ink-500 px-5 py-2.5 text-sm font-semibold text-mist-200 transition hover:bg-white/5"
-                  >
-                    {step === 0 ? 'Cancel' : 'Back'}
-                  </button>
+                  {step === 0 ? (
+                    <Link
+                      href={ROUTES.home}
+                      className="rounded-lg border border-ink-500 px-5 py-2.5 text-center text-sm font-semibold text-mist-200 transition hover:bg-white/5"
+                    >
+                      Cancel
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={goBack}
+                      className="rounded-lg border border-ink-500 px-5 py-2.5 text-sm font-semibold text-mist-200 transition hover:bg-white/5"
+                    >
+                      Back
+                    </button>
+                  )}
 
                   <div className="flex items-center gap-3 sm:justify-end">
                     <span className="hidden text-xs text-mist-500 sm:inline">
@@ -488,11 +505,8 @@ const RegistrationForm = ({ onBack }) => {
             </>
           )}
         </div>
-
-        <p className="mt-8 text-center text-xs text-mist-500">
-          © 2026 PSTU IT Carnival
-        </p>
       </main>
+      <Footer />
     </div>
   );
 };
