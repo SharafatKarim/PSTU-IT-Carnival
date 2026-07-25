@@ -4,11 +4,15 @@
 // no path is spelled out by hand, so a route rename only happens in one place.
 
 import { ROUTES } from '../lib/routes';
+import { getEventDetail } from './events';
+
+/* Timeline dates come from the event's own data so the two can never drift. */
+const IUPC = getEventDetail('iupc')?.tournament;
 
 export const EVENT = {
   university: 'Patuakhali Science and Technology University',
   title: 'PSTU IT Carnival 2026',
-  tagline: "South Zone's Largest Tech Competition",
+  tagline: 'South Zone’s Largest Tech Competition',
   intro:
     'Three days, eleven events, one stage — competitive programming, hackathons, data science, quizzes, project showcases and gaming at Patuakhali Science and Technology University.',
   date: '13–15 August 2026',
@@ -136,7 +140,7 @@ export const EVENTS = [
   },
   {
     id: 'rubiks',
-    name: "Rubik's Cube",
+    name: 'Rubik’s Cube',
     scope: 'Speed',
     category: 'gaming',
     icon: 'cube',
@@ -154,7 +158,7 @@ export const ABOUT_POINTS = [
   {
     icon: 'code',
     title: 'Flagship IUPC · South Zone',
-    text: "The centrepiece is our ICPC-style Inter-University Programming Contest, drawing the region's strongest teams to compete for the title.",
+    text: "The centrepiece is our ICPC-style Inter-University Programming Contest, drawing the region’s strongest teams to compete for the title.",
   },
   {
     icon: 'users',
@@ -164,22 +168,22 @@ export const ABOUT_POINTS = [
   {
     icon: 'monitor',
     title: 'More Than a Competition',
-    text: 'A full festival day — project showcases, networking, an event t-shirt, and a community that celebrates building and playing.',
+    text: 'A full three-day festival — project showcases, networking, an event t-shirt, and a community that celebrates building and playing.',
   },
 ];
 
 export const TIMELINE = [
   {
-    phase: 'Registration Opens',
-    date: 'June 2026',
+    phase: 'Pre-Registration',
+    date: `Closes ${IUPC?.deadline || '31 July 2026'}`,
     icon: 'calendar',
-    text: 'IUPC pre-registration goes live. Lock in your team name early — names are first-come, first-served.',
+    text: 'Submit your team name, coach and all three members. Free — nothing is paid at this stage.',
   },
   {
-    phase: 'Registration Deadline',
-    date: 'July 2026',
+    phase: 'Slots & Final Registration',
+    date: 'Early August 2026',
     icon: 'clock',
-    text: 'Final call to submit your team, coach, and member details. Late entries cannot be accepted.',
+    text: `Confirmed slots are published university-wise, then final registration opens for the listed teams with the ${IUPC?.entryShort || '৳3,000'} entry fee.`,
   },
   {
     phase: 'Practice Round',
@@ -225,7 +229,7 @@ export const PRIZES = [
 export const FAQS = [
   {
     q: 'What events can I take part in?',
-    a: "Eleven events across tech and gaming: IUPC (South Zone), Hackathon (National), Datathon, IT Quiz (Barishal Division), Project Showcasing, plus PUBG Mobile, Free Fire, eFootball, Chess, Ludo and Rubik's Cube.",
+    a: "Eleven events across tech and gaming: IUPC (South Zone), Hackathon (National), Datathon, IT Quiz (Barishal Division), Project Showcasing, plus PUBG Mobile, Free Fire, eFootball, Chess, Ludo and Rubik’s Cube.",
   },
   {
     q: 'Which events are open for registration right now?',

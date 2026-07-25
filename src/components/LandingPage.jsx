@@ -5,6 +5,7 @@ import Navbar from './landing/Navbar';
 import Events from './landing/Events';
 import Faq from './landing/Faq';
 import Footer from './landing/Footer';
+import HeadlineStrip from './ui/HeadlineStrip';
 import {
   ICON_MAP,
   CheckIcon,
@@ -68,7 +69,7 @@ const Hero = () => (
     <div className="absolute -right-16 top-24 h-72 w-72 rounded-full bg-aqua-500/15 blur-3xl" />
 
     <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-16 sm:pb-24 sm:pt-24">
-      <div className="mx-auto max-w-3xl text-center">
+      <div className="mx-auto max-w-3xl animate-fade-up text-center">
         <div className="flex flex-wrap items-center justify-center gap-2.5">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-mist-200 backdrop-blur">
             <span className="h-1.5 w-1.5 rounded-full bg-aqua-400" />
@@ -87,8 +88,8 @@ const Hero = () => (
         </h1>
 
         <p className="mt-4 text-sm font-semibold uppercase tracking-[0.18em] text-mist-200 sm:text-base">
-          <span className="text-aqua-400">&#9668;</span> {EVENT.tagline}{' '}
-          <span className="text-aqua-400">&#9658;</span>
+          <span aria-hidden="true" className="text-aqua-400">&#9668;</span> {EVENT.tagline}{' '}
+          <span aria-hidden="true" className="text-aqua-400">&#9658;</span>
         </p>
 
         <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-mist-300 sm:text-lg">
@@ -129,7 +130,7 @@ const Hero = () => (
         </div>
 
         {/* Poster-style glowing category tiles */}
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+        <div className="mt-12 grid grid-cols-2 justify-items-center gap-4 sm:grid-cols-4 sm:gap-6">
           {HERO_TILES.map((tile) => {
             const Icon = ICON_MAP[tile.icon] || ICON_MAP.code;
             return (
@@ -149,24 +150,12 @@ const Hero = () => (
       </div>
     </div>
 
-    <div className="relative border-t border-white/10 bg-ink-950/70 backdrop-blur">
-      <div className="mx-auto grid max-w-6xl grid-cols-2 divide-x divide-white/10 px-4 lg:grid-cols-4">
-        {STATS.map((stat, i) => (
-          <div key={stat.label} className="px-4 py-6 text-center">
-            <p
-              className={`text-3xl font-extrabold sm:text-4xl ${
-                i === 0 ? 'text-gold-300' : 'text-white'
-              }`}
-            >
-              {stat.value}
-            </p>
-            <p className="mt-1 text-xs font-medium uppercase tracking-wide text-mist-400">
-              {stat.label}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
+    <HeadlineStrip
+      items={STATS.map((stat, i) => ({
+        ...stat,
+        accentClass: i === 0 ? 'text-gold-300' : undefined,
+      }))}
+    />
   </section>
 );
 
@@ -174,8 +163,8 @@ const About = () => (
   <Section
     id="about"
     eyebrow="About the Carnival"
-    title="Where the south zone's best show up"
-    subtitle="PSTU IT Carnival brings together the region's sharpest students for three days of algorithmic problem-solving, building, and gaming."
+    title="Where the south zone’s best show up"
+    subtitle="PSTU IT Carnival brings together the region’s sharpest students for three days of algorithmic problem-solving, building, and gaming."
   >
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {ABOUT_POINTS.map((point) => {
@@ -205,7 +194,6 @@ const Timeline = () => (
     eyebrow="Schedule"
     title="The road to carnival day"
     subtitle="Four milestones from registration to the final buzzer. Mark your calendar and get your team ready."
-    className="bg-ink-950/40"
   >
     <div className="relative">
       {/* Desktop connector line running through the step nodes */}
@@ -251,6 +239,7 @@ const Format = () => (
     eyebrow="IUPC · Format & Rules"
     title="How the IUPC works"
     subtitle="A straightforward, ICPC-inspired ruleset for the flagship programming contest. Full details live on the IUPC event page."
+    className="bg-ink-950/40"
   >
     <div className="grid items-start gap-8 lg:grid-cols-5">
       <div className="lg:col-span-3">
@@ -276,7 +265,7 @@ const Format = () => (
           <div className="absolute inset-0 bg-grid bg-[size:30px_30px] opacity-30" />
           <div className="relative">
             <h3 className="text-xl font-bold">Ready to compete in IUPC?</h3>
-            <p className="mt-2 text-sm leading-relaxed text-white/85">
+            <p className="mt-2 text-sm leading-relaxed text-white">
               The IUPC page has the full format, rules, slot count and
               coordinator contacts — plus the link to the registration form.
             </p>
@@ -287,7 +276,7 @@ const Format = () => (
               See full IUPC details
               <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
-            <p className="mt-4 text-xs text-white/70">
+            <p className="mt-4 text-xs text-white">
               Pre-registration is free · Instant registration ID
             </p>
           </div>
@@ -302,7 +291,7 @@ const rankStyles = {
     ring: 'border-gold-400/60 shadow-glow-gold',
     badge: 'bg-gold-400 text-ink-950',
     medal: 'text-gold-400',
-    scale: 'lg:-translate-y-4',
+    scale: 'sm:-translate-y-4',
   },
   2: {
     ring: 'border-grape-400/50 shadow-glow-grape',
@@ -323,8 +312,7 @@ const Prizes = () => (
     id="prizes"
     eyebrow="Rewards"
     title="Play for the podium"
-    subtitle="Certificates and trophies for every podium, and an event t-shirt for every participant. Prize money is announced per event — the three gaming tournaments have theirs published already."
-    className="bg-ink-950/40"
+    subtitle="A trophy and certificate of excellence for the champion, certificates of merit for both runners-up, and an event t-shirt for every participant. Prize money is announced per event — the three gaming tournaments have theirs published already."
   >
     <div className="grid items-center gap-6 sm:grid-cols-3">
       {PRIZES.map((prize) => {
@@ -362,6 +350,7 @@ const FaqSection = () => (
     eyebrow="FAQ"
     title="Questions, answered"
     subtitle="Everything you need to know before registering your team."
+    className="bg-ink-950/40"
   >
     <div className="mx-auto max-w-3xl">
       <Faq />
@@ -378,9 +367,9 @@ const FinalCta = () => (
         <div className="absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-gold-400/15 blur-3xl" />
         <div className="relative mx-auto max-w-2xl">
           <h2 className="text-3xl font-extrabold sm:text-4xl">
-            Your IUPC team&apos;s spot is waiting
+            Your IUPC team’s spot is waiting
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-white/85 sm:text-lg">
+          <p className="mt-4 text-base leading-relaxed text-white sm:text-lg">
             Gather your three coders, pick a name worth remembering, and claim
             your place at the flagship contest of PSTU IT Carnival 2026.
           </p>

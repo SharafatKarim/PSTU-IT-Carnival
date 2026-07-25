@@ -29,7 +29,7 @@ const Footer = () => (
             {EVENT.contactEmail}
           </a>
         )}
-        <p className="text-xs text-mist-500">© 2026 PSTU IT Carnival</p>
+        <p className="text-xs text-mist-400">© 2026 PSTU IT Carnival</p>
       </div>
     </div>
   </footer>

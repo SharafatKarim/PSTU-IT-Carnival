@@ -7,6 +7,10 @@ const base = {
   strokeLinecap: 'round',
   strokeLinejoin: 'round',
   viewBox: '0 0 24 24',
+  /* Every icon here is decorative and paired with its own text. A meaningful
+     one opts back in with aria-hidden={undefined} role="img" and a <title>. */
+  'aria-hidden': 'true',
+  focusable: 'false',
 };
 
 export const CodeIcon = (props) => (

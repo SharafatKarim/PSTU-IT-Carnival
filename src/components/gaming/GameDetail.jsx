@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import Navbar from '../landing/Navbar';
 import Footer from '../landing/Footer';
 import Faq from '../landing/Faq';
+import HeadlineStrip from '../ui/HeadlineStrip';
 import TournamentInfo from './TournamentInfo';
 import RulesSection from './RulesSection';
 import CoordinatorContact from './CoordinatorContact';
@@ -168,29 +169,12 @@ const Hero = ({ game, registrationOpen }) => {
         <p className="mt-5 text-xs text-mist-400">{game.heroNote}</p>
       </div>
 
-      {/* Headline numbers — the same treatment the landing-page hero uses. */}
-      <div className="relative border-t border-white/10 bg-ink-950/70 backdrop-blur">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 divide-x divide-y divide-white/10 px-4 sm:divide-y-0 lg:grid-cols-4">
-          {headline.map((item) => (
-            <div
-              key={item.label}
-              className="flex flex-col items-center justify-center px-4 py-5 text-center sm:py-6"
-            >
-              <p
-                className={`text-2xl font-extrabold sm:text-3xl ${
-                  item.accent ? a.text : 'text-white'
-                }`}
-              >
-                {item.value}
-              </p>
-              <p className="mt-1 text-[11px] font-medium uppercase tracking-wide text-mist-400">
-                {item.label}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-
+      <HeadlineStrip
+        items={headline.map((item) => ({
+          ...item,
+          accentClass: item.accent ? a.text : undefined,
+        }))}
+      />
     </section>
   );
 };

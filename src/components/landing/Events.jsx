@@ -43,7 +43,7 @@ const FeaturedEvent = ({ event }) => {
     ? [
         { icon: UsersIcon, value: t.slots, label: 'available' },
         { icon: TicketIcon, value: t.entryFee, label: 'at final registration' },
-        { icon: AlertIcon, value: t.deadline, label: 'pre-registration closes' },
+        { icon: AlertIcon, value: t.deadline, label: 'pre-registration deadline' },
       ]
     : [];
 
@@ -110,20 +110,15 @@ const ComingSoonCard = ({ event }) => (
     </span>
     <IconBox icon={event.icon} muted />
     <div className="mt-4 flex flex-wrap items-center gap-2">
-      <h3 className="text-base font-bold text-mist-100">{event.name}</h3>
+      <h4 className="text-base font-bold text-mist-100">{event.name}</h4>
       <ScopeBadge>{event.scope}</ScopeBadge>
     </div>
     <p className="mt-2 flex-1 text-sm leading-relaxed text-mist-400">
       {event.blurb}
     </p>
-    <button
-      type="button"
-      disabled
-      aria-disabled="true"
-      className="mt-4 cursor-not-allowed rounded-lg border border-ink-600 bg-ink-700/40 px-4 py-2 text-sm font-semibold text-mist-500"
-    >
-      Coming Soon
-    </button>
+    <p className="mt-4 text-sm font-medium text-mist-400">
+      Registration opens later
+    </p>
   </div>
 );
 
@@ -146,21 +141,27 @@ const LiveCard = ({ event }) => (
     </span>
     <IconBox icon={event.icon} />
     <div className="mt-4 flex flex-wrap items-center gap-2">
-      <h3 className="text-base font-bold text-white">{event.name}</h3>
+      <h4 className="text-base font-bold text-white">{event.name}</h4>
       <ScopeBadge>{event.scope}</ScopeBadge>
     </div>
     <p className="mt-2 flex-1 text-sm leading-relaxed text-mist-400">
       {event.blurb}
     </p>
+    {/* Closed entries get one full-width primary instead of a live button
+        beside a dead one — the detail page is the real destination. */}
     <div className="mt-4 flex gap-2">
       <Link
         href={event.href}
         aria-label={`View ${event.name} details`}
-        className="flex-1 rounded-lg border border-ink-500 px-3 py-2 text-center text-sm font-semibold text-mist-200 transition hover:bg-white/5 hover:text-white"
+        className={
+          event.registerHref
+            ? 'flex-1 rounded-lg border border-ink-500 px-3 py-2 text-center text-sm font-semibold text-mist-200 transition hover:bg-white/5 hover:text-white'
+            : 'w-full rounded-lg bg-gold-400 px-3 py-2 text-center text-sm font-bold text-ink-950 transition hover:bg-gold-300'
+        }
       >
-        Details
+        {event.registerHref ? 'Details' : 'View Details'}
       </Link>
-      {event.registerHref ? (
+      {event.registerHref && (
         <Link
           href={event.registerHref}
           aria-label={`Register for ${event.name}`}
@@ -168,16 +169,6 @@ const LiveCard = ({ event }) => (
         >
           Register
         </Link>
-      ) : (
-        <button
-          type="button"
-          disabled
-          aria-disabled="true"
-          aria-label={`Registration for ${event.name} has not opened yet`}
-          className="flex-1 cursor-not-allowed rounded-lg border border-ink-600 bg-ink-700/40 px-3 py-2 text-center text-sm font-semibold text-mist-400"
-        >
-          Soon
-        </button>
       )}
     </div>
   </div>
@@ -200,7 +191,7 @@ const Events = () => {
   const gaming = EVENTS.filter((e) => e.category === 'gaming' && !isFeatured(e));
 
   return (
-    <section id="events" className="scroll-mt-20 py-20 sm:py-24">
+    <section id="events" className="scroll-mt-20 bg-ink-950/40 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-4">
         <div className="mx-auto mb-4 max-w-2xl text-center">
           <p className="text-gradient-brand text-xs font-bold uppercase tracking-[0.22em]">

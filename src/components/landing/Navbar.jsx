@@ -74,7 +74,7 @@ const Navbar = ({
           <Logo />
         </NavLink>
 
-        <div className="hidden items-center gap-6 md:flex lg:gap-8">
+        <div className="hidden items-center gap-6 lg:flex lg:gap-8">
           {links.map((link) => (
             <NavLink
               key={link.href}
@@ -93,7 +93,7 @@ const Navbar = ({
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle menu"
             aria-expanded={open}
-            className="rounded-lg p-2 text-mist-200 transition hover:bg-white/10 md:hidden"
+            className="rounded-lg p-2 text-mist-200 transition hover:bg-white/10 lg:hidden"
           >
             {open ? (
               <CloseIcon className="h-6 w-6" />
@@ -105,7 +105,7 @@ const Navbar = ({
       </nav>
 
       {open && (
-        <div className="border-t border-white/10 bg-ink-900/95 backdrop-blur-md md:hidden">
+        <div className="border-t border-white/10 bg-ink-900/95 backdrop-blur-md lg:hidden">
           <div className="mx-auto flex max-w-6xl flex-col px-4 py-3">
             {links.map((link) => (
               <NavLink
