@@ -12,6 +12,7 @@ import { createRegistration } from '../services/api';
 import Navbar from './landing/Navbar';
 import Footer from './landing/Footer';
 import { ROUTES, registerNav } from '../lib/routes';
+import { getEventDetail } from '../data/events';
 
 const BD_PHONE_RE = /^(?:\+?880)?1[3-9]\d{8}$/;
 
@@ -198,7 +199,9 @@ const StepIndicator = ({ current }) => (
   </div>
 );
 
-const RegistrationForm = () => {
+const RegistrationForm = ({ slug = 'iupc' }) => {
+  const event = getEventDetail(slug);
+  const eventHref = ROUTES.event(slug);
   const {
     register,
     getValues,
@@ -274,10 +277,10 @@ const RegistrationForm = () => {
         <div className="absolute inset-0 bg-grid bg-[size:44px_44px] opacity-40" />
         <div className="relative mx-auto max-w-4xl px-4 py-10 sm:py-14">
           <Link
-            href={ROUTES.home}
+            href={eventHref}
             className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-mist-200 transition hover:text-white"
           >
-            <span aria-hidden="true">←</span> Back to home
+            <span aria-hidden="true">←</span> Back to {event?.name || 'event'} details
           </Link>
           <p className="text-xs font-semibold uppercase tracking-widest text-aqua-400">
             Patuakhali Science and Technology University
@@ -288,7 +291,7 @@ const RegistrationForm = () => {
             <span className="text-white"> 2026</span>
           </h1>
           <p className="mt-2 text-lg font-medium text-mist-200">
-            IUPC (South Zone) — Pre-Registration
+            {event ? `${event.name} (${event.scope}) — Pre-Registration` : 'Pre-Registration'}
           </p>
         </div>
       </header>
@@ -314,10 +317,10 @@ const RegistrationForm = () => {
               </p>
               <div className="mt-6">
                 <Link
-                  href={ROUTES.home}
+                  href={eventHref}
                   className="inline-block rounded-lg border border-emerald-400/40 px-5 py-2.5 text-sm font-semibold text-emerald-200 transition hover:bg-emerald-400/10"
                 >
-                  Return to home
+                  Back to {event?.name || 'event'} details
                 </Link>
               </div>
             </div>
@@ -325,11 +328,11 @@ const RegistrationForm = () => {
             <>
               <div>
                 <h2 className="text-2xl font-bold text-white">
-                  IUPC Pre-Registration Form
+                  {event?.name || 'Event'} Pre-Registration Form
                 </h2>
                 <p className="mt-1 text-sm text-mist-300">
                   {step === 0 &&
-                    'Start with your team and coach details for the IUPC (South Zone) contest.'}
+                    `Start with your team and coach details for the ${event?.name || 'contest'} (${event?.scope || ''}) contest.`}
                   {step === 1 &&
                     'Add your three team members. Emails and Codeforces handles must be unique.'}
                   {step === 2 &&
@@ -340,11 +343,11 @@ const RegistrationForm = () => {
               <div className="mt-5 flex items-start gap-2.5 rounded-lg border border-aqua-400/25 bg-aqua-400/[0.07] px-4 py-3 text-sm text-mist-200">
                 <CalendarIcon className="mt-0.5 h-4 w-4 shrink-0 text-aqua-300" />
                 <span>
-                  The IUPC (South Zone) contest will be held on{' '}
+                  The {event?.name} ({event?.scope}) contest will be held on{' '}
                   <strong className="font-semibold text-white">
-                    13 August 2026
+                    {event?.tournament.date}
                   </strong>{' '}
-                  at CSE–FBA Building, PSTU.
+                  at {event?.tournament.venue}.
                 </span>
               </div>
 
@@ -460,7 +463,7 @@ const RegistrationForm = () => {
                 <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
                   {step === 0 ? (
                     <Link
-                      href={ROUTES.home}
+                      href={eventHref}
                       className="rounded-lg border border-ink-500 px-5 py-2.5 text-center text-sm font-semibold text-mist-200 transition hover:bg-white/5"
                     >
                       Cancel

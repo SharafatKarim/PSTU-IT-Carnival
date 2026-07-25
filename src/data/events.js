@@ -103,8 +103,11 @@ export const EVENT_DETAILS = [
       },
     ],
 
+    /* Flip to false to close entries without deleting the form. */
+    registrationOpen: true,
     registration: {
-      kind: 'link',
+      /* 'form' means this event owns /events/<slug>/register. */
+      kind: 'form',
       cta: 'Start Pre-Registration',
       note: 'No payment required · Instant registration ID',
       checklist: [

@@ -13,18 +13,29 @@
 import { GAMES } from '../data/gaming';
 import { EVENT_DETAILS } from '../data/events';
 
+/* The one event that owns a registration form. Everything that says
+   "register" site-wide points at its nested route, so moving or renaming the
+   event moves the form URL with it. */
+const FORM_EVENT = EVENT_DETAILS.find((e) => e.registration?.kind === 'form');
+
 export const ROUTES = {
   home: '/',
-  register: '/register',
   gaming: '/gaming',
   game: (slug) => `/gaming/${slug}`,
   /* The registration form lives on the game page, so it is an anchor. */
   gameRegister: (slug) => `/gaming/${slug}#register`,
-  /* Tech events get a detail page; registration is a separate route. */
+  /* Tech events get a detail page, with the form nested underneath it. */
   event: (slug) => `/events/${slug}`,
-  eventRegister: (slug) => `/events/${slug}#register`,
-  iupc: '/events/iupc',
+  eventRegister: (slug) => `/events/${slug}/register`,
+  iupc: FORM_EVENT ? `/events/${FORM_EVENT.slug}` : '/events/iupc',
+  /* Site-wide "Register" CTA — resolves to /events/iupc/register today. */
+  register: FORM_EVENT ? `/events/${FORM_EVENT.slug}/register` : '/',
 };
+
+/* Events whose form should be built as a route. */
+export const REGISTRABLE_EVENTS = EVENT_DETAILS.filter(
+  (e) => e.registration?.kind === 'form'
+);
 
 /* Sections of the landing page, in the order they appear. The nav and the
    in-page anchors are both generated from this. */
@@ -98,7 +109,7 @@ export const eventDetailNav = [
 
 export const registerNav = [
   { label: 'Home', href: ROUTES.home },
-  { label: 'IUPC Details', href: ROUTES.iupc },
+  { label: 'Event Details', href: ROUTES.iupc },
   ...homeNav.filter((link) => ['Events', 'FAQ'].includes(link.label)),
   { label: 'Gaming', href: ROUTES.gaming },
 ];
@@ -107,7 +118,10 @@ export const registerNav = [
 export const siteUrls = () => [
   { path: ROUTES.home, priority: 1 },
   ...EVENT_DETAILS.map((event) => ({ path: ROUTES.event(event.slug), priority: 0.9 })),
-  { path: ROUTES.register, priority: 0.9 },
+  ...REGISTRABLE_EVENTS.map((event) => ({
+    path: ROUTES.eventRegister(event.slug),
+    priority: 0.9,
+  })),
   { path: ROUTES.gaming, priority: 0.9 },
   ...GAMES.map((game) => ({ path: ROUTES.game(game.slug), priority: 0.8 })),
 ];

@@ -115,7 +115,7 @@ const Hero = ({ event }) => {
 
         <div className="mt-9 flex flex-col gap-3 sm:flex-row">
           <Link
-            href={ROUTES.register}
+            href={ROUTES.eventRegister(event.slug)}
             className="group inline-flex items-center justify-center gap-2 rounded-xl bg-gold-400 px-7 py-3.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
           >
             Pre-Register for {event.shortName}
@@ -174,7 +174,7 @@ const RegisterCta = ({ event }) => {
                 your three members, then a review before you submit.
               </p>
               <Link
-                href={ROUTES.register}
+                href={ROUTES.eventRegister(event.slug)}
                 className="group mt-6 inline-flex items-center gap-2 rounded-xl bg-gold-400 px-6 py-3 text-sm font-bold text-ink-950 shadow-md transition hover:bg-gold-300"
               >
                 {r.cta}
@@ -201,7 +201,7 @@ const EventDetail = ({ slug }) => {
       <Navbar
         links={eventDetailNav}
         homeHref={ROUTES.home}
-        ctaHref={ROUTES.register}
+        ctaHref={ROUTES.eventRegister(event.slug)}
         ctaLabel="Pre-Register"
       />
       <main>
