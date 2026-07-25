@@ -20,7 +20,7 @@ single port with no CORS setup.
 docker compose up -d --build
 ```
 
-Then open **http://localhost:8080** 🎉
+Then open **http://localhost:5173** 🎉
 
 That's it — no local Node or MongoDB install required. Data is stored in a
 named volume (`mongo-data`), so it survives restarts.
