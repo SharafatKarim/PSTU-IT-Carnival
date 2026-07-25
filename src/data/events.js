@@ -31,7 +31,6 @@ export const EVENT_DETAILS = [
       time: '9:00 AM — 3:00 PM',
       venue: 'CSE–FBA Building, PSTU',
       entryFee: 'Free',
-      prizePool: '৳120,000',
       format: 'ICPC-style · 4–5 hours · one workstation',
       teamSize: '3 members (+1 coach)',
       slots: '60 teams',

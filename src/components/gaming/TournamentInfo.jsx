@@ -68,39 +68,43 @@ const TournamentInfo = ({ game }) => {
         ))}
       </div>
 
-      <div>
-        <h3 className="mb-5 text-sm font-bold uppercase tracking-[0.18em] text-mist-300">
-          Prize Breakdown
-        </h3>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {game.prizes.map((prize) => {
-            const s = rankStyles[prize.rank] || rankStyles[4];
-            return (
-              <div
-                key={prize.place}
-                className={`rounded-2xl border bg-ink-800/70 p-6 text-center ${s.border}`}
-              >
-                <CertificateIcon className={`mx-auto h-10 w-10 ${s.medal}`} />
-                <span
-                  className={`mt-3 inline-block rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${s.badge}`}
+      {game.prizes?.length > 0 && (
+        <div>
+          <h3 className="mb-5 text-sm font-bold uppercase tracking-[0.18em] text-mist-300">
+            Prize Breakdown
+          </h3>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {game.prizes.map((prize) => {
+              const s = rankStyles[prize.rank] || rankStyles[4];
+              return (
+                <div
+                  key={prize.place}
+                  className={`rounded-2xl border bg-ink-800/70 p-6 text-center ${s.border}`}
                 >
-                  {prize.place}
-                </span>
-                <p className="mt-4 text-2xl font-extrabold text-white">
-                  {prize.amount}
-                </p>
-                <ul className="mt-3 space-y-1">
-                  {prize.perks.map((perk) => (
-                    <li key={perk} className="text-xs text-mist-400">
-                      {perk}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            );
-          })}
+                  <CertificateIcon className={`mx-auto h-10 w-10 ${s.medal}`} />
+                  <span
+                    className={`mt-3 inline-block rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${s.badge}`}
+                  >
+                    {prize.place}
+                  </span>
+                  {prize.amount && (
+                    <p className="mt-4 text-2xl font-extrabold text-white">
+                      {prize.amount}
+                    </p>
+                  )}
+                  <ul className="mt-3 space-y-1">
+                    {prize.perks.map((perk) => (
+                      <li key={perk} className="text-xs text-mist-400">
+                        {perk}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

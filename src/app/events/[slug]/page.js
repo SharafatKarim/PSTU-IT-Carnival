@@ -12,7 +12,10 @@ export async function generateMetadata({ params }) {
   if (!event) return { title: 'Event not found — PSTU IT Carnival 2026' };
 
   const title = `${event.name} — PSTU IT Carnival 2026`;
-  const description = `${event.fullName}. ${event.tournament.date} at ${event.tournament.venue}. Prize pool ${event.tournament.prizePool}. Format, rules and pre-registration.`;
+  const pool = event.tournament.prizePool
+    ? ` Prize pool ${event.tournament.prizePool}.`
+    : '';
+  const description = `${event.fullName}. ${event.tournament.date} at ${event.tournament.venue}.${pool} Format, rules and pre-registration.`;
 
   return { title, description, openGraph: { title, description, type: 'website' } };
 }
