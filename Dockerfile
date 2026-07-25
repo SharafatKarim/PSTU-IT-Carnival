@@ -1,15 +1,30 @@
-FROM node:20-alpine AS base
+# Node 24 (LTS) to match the development machine. pnpm 11 also requires
+# >= 22.13 — it loads node:sqlite, which Node 20 does not have.
+FROM node:24-alpine AS base
+
+# pnpm is only needed to install and build — the runtime image stays without it.
+FROM base AS pnpm-base
+RUN apk add --no-cache libc6-compat
+# Pinned to the same version as the `packageManager` field in package.json, so
+# a Docker build resolves exactly what a developer's machine resolves.
+RUN npm install -g pnpm@11.6.0
 
 # Install dependencies only when needed
-FROM base AS deps
-RUN apk add --no-cache libc6-compat
+FROM pnpm-base AS deps
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
-RUN npm ci
+# pnpm-workspace.yaml carries the allowBuilds settings, so it has to be present
+# for sharp / unrs-resolver to be allowed to run their install scripts.
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+# Generous fetch timeout/retries: the Next.js tarballs are large and a slow
+# link otherwise aborts the whole install.
+RUN pnpm install --frozen-lockfile \
+      --fetch-timeout 600000 \
+      --fetch-retries 5 \
+      --network-concurrency 4
 
 # Rebuild the source code only when needed
-FROM base AS builder
+FROM pnpm-base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -17,7 +32,7 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV MONGO_URI=mongodb://localhost:27017/pstu_it_carnival
 
-RUN npm run build
+RUN pnpm build
 
 # Production image, copy all the files and run next
 FROM base AS runner
