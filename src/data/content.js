@@ -17,7 +17,7 @@ export const EVENT = {
   prizePool: '৳450K+',
   organizer: 'CSE Club, PSTU',
   website: 'pstuitcarnival2026.com',
-  contactEmail: 'rajesh18@cse.pstu.ac.bd',
+  contactEmail: '',
 };
 
 export const STATS = [
