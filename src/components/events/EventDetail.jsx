@@ -315,7 +315,7 @@ const EventDetail = ({ slug }) => {
               : 'Reach the coordinator running this contest directly.'
           }
         >
-          <div className="mx-auto max-w-3xl">
+          <div className="mx-auto max-w-4xl">
             <CoordinatorContact game={event} />
           </div>
         </Section>

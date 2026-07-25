@@ -271,7 +271,7 @@ const GameDetail = ({ slug }) => {
           title="Still need help?"
           subtitle="Reach the people running this tournament directly — they answer fastest on WhatsApp."
         >
-          <div className="mx-auto max-w-3xl">
+          <div className="mx-auto max-w-4xl">
             <CoordinatorContact game={game} />
           </div>
         </Section>

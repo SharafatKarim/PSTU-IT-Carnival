@@ -1,57 +1,123 @@
-import { PhoneIcon, MailIcon, UserIcon, FacebookIcon } from '../landing/Icons';
+import { PhoneIcon, MailIcon, FacebookIcon, ArrowRightIcon } from '../landing/Icons';
 import { accentOf } from './accents';
 
-const CoordinatorContact = ({ game }) => {
-  const a = accentOf(game.accent);
-  const many = game.coordinators.length > 1;
+const initials = (name) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join('')
+    .toUpperCase();
+
+/* Every way to reach this person, as tappable tiles rather than plain links —
+   on a phone these are the primary action of the whole page. */
+const channelsOf = (c) =>
+  [
+    c.phone && {
+      key: 'phone',
+      icon: PhoneIcon,
+      label: 'Call or WhatsApp',
+      value: c.phone,
+      href: `tel:${c.phone.replace(/\s/g, '')}`,
+    },
+    c.email && {
+      key: 'email',
+      icon: MailIcon,
+      label: 'Email',
+      value: c.email,
+      href: `mailto:${c.email}`,
+    },
+    c.facebook && {
+      key: 'facebook',
+      icon: FacebookIcon,
+      label: 'Facebook',
+      value: 'Send a message',
+      href: c.facebook,
+      external: true,
+    },
+  ].filter(Boolean);
+
+const Channel = ({ channel, accent }) => {
+  const { icon: Icon, label, value, href, external } = channel;
+
+  return (
+    <a
+      href={href}
+      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      className={`group flex items-center gap-3 rounded-xl border border-ink-600 bg-ink-900/50 p-3.5 transition hover:bg-ink-900 ${accent.hoverBorder}`}
+    >
+      <span
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${accent.bgSoft} ${accent.text}`}
+      >
+        <Icon className="h-4 w-4" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[11px] font-bold uppercase tracking-wide text-mist-400">
+          {label}
+        </span>
+        <span
+          className="block truncate text-[13px] font-semibold text-white"
+          title={value}
+        >
+          {value}
+        </span>
+      </span>
+      <ArrowRightIcon className="h-4 w-4 shrink-0 text-mist-500 transition-transform group-hover:translate-x-0.5 group-hover:text-mist-300" />
+    </a>
+  );
+};
+
+const CoordinatorCard = ({ coordinator, accent }) => {
+  const channels = channelsOf(coordinator);
 
   return (
     <div
-      className={`grid gap-5 ${many ? 'sm:grid-cols-2' : 'mx-auto max-w-md'}`}
+      className={`relative overflow-hidden rounded-2xl border border-ink-600 bg-ink-800/60 p-6 shadow-card transition sm:p-7 ${accent.hoverBorder}`}
     >
-      {game.coordinators.map((c) => (
-        <div
-          key={c.email + c.phone}
-          className={`rounded-2xl border border-ink-600 bg-ink-800/60 p-6 shadow-card transition ${a.hoverBorder}`}
-        >
-          <div className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-carnival text-white shadow-glow-grape">
-              <UserIcon className="h-5 w-5" />
-            </span>
-            <div>
-              <p className="text-base font-bold text-white">{c.name}</p>
-              <p className="text-xs text-mist-400">{c.role}</p>
-            </div>
-          </div>
+      <div
+        className={`pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full blur-3xl ${accent.blob} opacity-40`}
+      />
 
-          <div className="mt-5 space-y-2.5 border-t border-ink-600 pt-4">
-            <a
-              href={`tel:${c.phone.replace(/\s/g, '')}`}
-              className="flex items-center gap-2.5 text-sm text-mist-300 transition hover:text-white"
-            >
-              <PhoneIcon className={`h-4 w-4 shrink-0 ${a.text}`} />
-              {c.phone}
-            </a>
-            <a
-              href={`mailto:${c.email}`}
-              className="flex items-center gap-2.5 text-sm break-all text-mist-300 transition hover:text-white"
-            >
-              <MailIcon className={`h-4 w-4 shrink-0 ${a.text}`} />
-              {c.email}
-            </a>
-            {c.facebook && (
-              <a
-                href={c.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2.5 text-sm text-mist-300 transition hover:text-white"
-              >
-                <FacebookIcon className={`h-4 w-4 shrink-0 ${a.text}`} />
-                Message on Facebook
-              </a>
-            )}
-          </div>
+      <div className="relative flex items-center gap-4">
+        <span
+          className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border bg-ink-900/70 text-lg font-extrabold ${accent.border} ${accent.text}`}
+        >
+          {initials(coordinator.name)}
+        </span>
+        <div className="min-w-0">
+          <p className="text-lg font-bold text-white">{coordinator.name}</p>
+          <p className="mt-0.5 text-sm text-mist-400">{coordinator.role}</p>
         </div>
+      </div>
+
+      <div
+        className={`relative mt-6 grid gap-3 ${
+          channels.length > 2 ? 'sm:grid-cols-3' : 'sm:grid-cols-2'
+        }`}
+      >
+        {channels.map((channel) => (
+          <Channel key={channel.key} channel={channel} accent={accent} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const CoordinatorContact = ({ game }) => {
+  const accent = accentOf(game.accent);
+  const coordinators = game.coordinators || [];
+
+  /* Cards stack rather than sitting side by side: a full-width card keeps the
+     contact tiles in one row, and email addresses readable instead of clipped. */
+  return (
+    <div className="grid gap-5">
+      {coordinators.map((coordinator) => (
+        <CoordinatorCard
+          key={coordinator.email + coordinator.phone}
+          coordinator={coordinator}
+          accent={accent}
+        />
       ))}
     </div>
   );
