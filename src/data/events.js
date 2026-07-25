@@ -41,26 +41,8 @@ export const EVENT_DETAILS = [
       deadline: '31 July 2026',
     },
 
-    prizes: [
-      {
-        place: 'Champion',
-        rank: 1,
-        amount: '৳60,000',
-        perks: ['Certificate of excellence', 'Winner trophy'],
-      },
-      {
-        place: '1st Runner-Up',
-        rank: 2,
-        amount: '৳35,000',
-        perks: ['Certificate of merit'],
-      },
-      {
-        place: '2nd Runner-Up',
-        rank: 3,
-        amount: '৳25,000',
-        perks: ['Certificate of merit'],
-      },
-    ],
+    /* No prize breakdown published for IUPC yet. Add a `prizes` array here
+       — [{ place, rank, amount?, perks: [] }] — and the section reappears. */
 
     rules: [
       {
