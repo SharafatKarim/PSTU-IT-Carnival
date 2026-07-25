@@ -41,7 +41,8 @@ export const EVENTS = [
       'The flagship ICPC-style Inter-University Programming Contest. Teams of three, a 4–5 hour battle, one keyboard.',
     status: 'open',
     cta: 'Pre-Register',
-    href: ROUTES.register,
+    href: ROUTES.iupc,
+    registerHref: ROUTES.register,
   },
   {
     id: 'hackathon',

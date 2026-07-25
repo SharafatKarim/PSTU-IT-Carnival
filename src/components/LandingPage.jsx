@@ -94,10 +94,10 @@ const Hero = () => (
 
         <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
-            href={ROUTES.register}
+            href={ROUTES.iupc}
             className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gold-400 px-7 py-3.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300 sm:w-auto"
           >
-            Pre-Register for IUPC
+            Explore IUPC
             <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
           <a
@@ -245,7 +245,7 @@ const Format = () => (
     id="format"
     eyebrow="IUPC · Format & Rules"
     title="How the IUPC works"
-    subtitle="A straightforward, ICPC-inspired ruleset for the flagship programming contest. Know it before you register your team."
+    subtitle="A straightforward, ICPC-inspired ruleset for the flagship programming contest. Full details live on the IUPC event page."
   >
     <div className="grid items-start gap-8 lg:grid-cols-5">
       <div className="lg:col-span-3">
@@ -272,14 +272,14 @@ const Format = () => (
           <div className="relative">
             <h3 className="text-xl font-bold">Ready to compete in IUPC?</h3>
             <p className="mt-2 text-sm leading-relaxed text-white/85">
-              Pre-registration takes just a few minutes. Have your team name,
-              coach details, and each member&apos;s Codeforces handle ready.
+              The IUPC page has the full format, prize breakdown, rules and
+              coordinator contacts — plus the link to the registration form.
             </p>
             <Link
-              href={ROUTES.register}
+              href={ROUTES.iupc}
               className="group mt-6 inline-flex items-center gap-2 rounded-xl bg-gold-400 px-6 py-3 text-sm font-bold text-ink-950 shadow-md transition hover:bg-gold-300"
             >
-              Start Pre-Registration
+              See full IUPC details
               <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
             <p className="mt-4 text-xs text-white/70">

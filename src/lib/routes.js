@@ -11,6 +11,7 @@
 // ---------------------------------------------------------------------------
 
 import { GAMES } from '../data/gaming';
+import { EVENT_DETAILS } from '../data/events';
 
 export const ROUTES = {
   home: '/',
@@ -19,6 +20,10 @@ export const ROUTES = {
   game: (slug) => `/gaming/${slug}`,
   /* The registration form lives on the game page, so it is an anchor. */
   gameRegister: (slug) => `/gaming/${slug}#register`,
+  /* Tech events get a detail page; registration is a separate route. */
+  event: (slug) => `/events/${slug}`,
+  eventRegister: (slug) => `/events/${slug}#register`,
+  iupc: '/events/iupc',
 };
 
 /* Sections of the landing page, in the order they appear. The nav and the
@@ -33,6 +38,14 @@ export const LANDING_SECTIONS = [
 ];
 
 /* Sections of a game detail page. */
+export const EVENT_SECTIONS = [
+  { id: 'info', label: 'Info' },
+  { id: 'rules', label: 'Rules' },
+  { id: 'register', label: 'Register' },
+  { id: 'faq', label: 'FAQ' },
+  { id: 'contact', label: 'Contact' },
+];
+
 export const GAME_SECTIONS = [
   { id: 'info', label: 'Info' },
   { id: 'rules', label: 'Rules' },
@@ -47,6 +60,7 @@ export const landingNav = LANDING_SECTIONS.flatMap((section) =>
   section.id === 'events'
     ? [
         { label: section.label, href: `#${section.id}` },
+        { label: 'IUPC', href: ROUTES.iupc },
         { label: 'Gaming', href: ROUTES.gaming },
       ]
     : [{ label: section.label, href: `#${section.id}` }]
@@ -73,15 +87,26 @@ export const gameDetailNav = [
   })),
 ];
 
+export const eventDetailNav = [
+  { label: 'Home', href: ROUTES.home },
+  { label: 'All Events', href: `${ROUTES.home}#events` },
+  ...EVENT_SECTIONS.filter((s) => s.id !== 'register').map((s) => ({
+    label: s.label,
+    href: `#${s.id}`,
+  })),
+];
+
 export const registerNav = [
   { label: 'Home', href: ROUTES.home },
-  ...homeNav.filter((link) => ['Events', 'Format', 'FAQ'].includes(link.label)),
+  { label: 'IUPC Details', href: ROUTES.iupc },
+  ...homeNav.filter((link) => ['Events', 'FAQ'].includes(link.label)),
   { label: 'Gaming', href: ROUTES.gaming },
 ];
 
 /* Every crawlable page. Consumed by src/app/sitemap.js. */
 export const siteUrls = () => [
   { path: ROUTES.home, priority: 1 },
+  ...EVENT_DETAILS.map((event) => ({ path: ROUTES.event(event.slug), priority: 0.9 })),
   { path: ROUTES.register, priority: 0.9 },
   { path: ROUTES.gaming, priority: 0.9 },
   ...GAMES.map((game) => ({ path: ROUTES.game(game.slug), priority: 0.8 })),

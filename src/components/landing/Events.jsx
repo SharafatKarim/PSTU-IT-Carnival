@@ -46,14 +46,23 @@ const FeaturedEvent = ({ event }) => (
           {event.blurb}
         </p>
       </div>
-      <Link
-        href={event.href}
-        aria-label={`${event.cta || 'Register'} for ${event.name}`}
-        className="group inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-gold-400 px-6 py-3 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
-      >
-        {event.cta || 'Register'}
-        <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-      </Link>
+      <div className="flex shrink-0 flex-col gap-2.5 sm:flex-row">
+        <Link
+          href={event.href}
+          aria-label={`View ${event.name} details`}
+          className="inline-flex items-center justify-center gap-2 rounded-xl border border-ink-500 px-6 py-3 text-sm font-semibold text-mist-200 transition hover:bg-white/5 hover:text-white"
+        >
+          View Details
+        </Link>
+        <Link
+          href={event.registerHref || event.href}
+          aria-label={`${event.cta || 'Register'} for ${event.name}`}
+          className="group inline-flex items-center justify-center gap-2 rounded-xl bg-gold-400 px-6 py-3 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
+        >
+          {event.cta || 'Register'}
+          <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+        </Link>
+      </div>
     </div>
   </div>
 );
