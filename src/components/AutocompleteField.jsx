@@ -127,7 +127,14 @@ const AutocompleteField = ({
                   i === active ? 'bg-grape-600/30 text-white' : 'text-mist-200'
                 }`}
               >
-                <span className="min-w-0 flex-1 truncate">{option.name}</span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate">{option.name}</span>
+                  {option.district && (
+                    <span className="block truncate text-xs text-mist-400">
+                      {option.district}
+                    </span>
+                  )}
+                </span>
                 <span className="shrink-0 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 font-mono text-[11px] font-bold text-aqua-300">
                   {option.short}
                 </span>
