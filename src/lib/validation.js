@@ -1,5 +1,7 @@
 const bdPhoneRegex = /^(?:\+?880)?1[3-9]\d{8}$/;
 const tshirtSizes = ['S', 'M', 'L', 'XL', 'XXL'];
+// Team names carry the varsity short form and use underscores, never spaces.
+const teamNameRegex = /^[A-Za-z0-9_]+$/;
 
 export function validateRegistration(body) {
   const errors = [];
@@ -7,6 +9,12 @@ export function validateRegistration(body) {
 
   if (!teamName || typeof teamName !== 'string' || teamName.trim().length < 3 || teamName.trim().length > 100) {
     errors.push({ field: 'teamName', message: 'Team name must be 3-100 characters' });
+  } else if (!teamNameRegex.test(teamName.trim())) {
+    errors.push({
+      field: 'teamName',
+      message:
+        'Team name may only contain letters, numbers and underscores — no spaces (e.g. PSTU_Array_Of_Hope)',
+    });
   }
   if (!varsityName || typeof varsityName !== 'string' || varsityName.trim().length === 0 || varsityName.trim().length > 150) {
     errors.push({ field: 'varsityName', message: 'Varsity name is required and cannot exceed 150 characters' });

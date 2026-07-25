@@ -2,8 +2,9 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import FormField from './FormField';
+import AutocompleteField from './AutocompleteField';
 import SectionCard from './SectionCard';
 import MemberForm from './MemberForm';
 import ReviewSection from './ReviewSection';
@@ -13,6 +14,7 @@ import Navbar from './landing/Navbar';
 import Footer from './landing/Footer';
 import { ROUTES, registerNav } from '../lib/routes';
 import { getEventDetail } from '../data/events';
+import { searchUniversities, shortFormOf } from '../data/universities';
 
 const BD_PHONE_RE = /^(?:\+?880)?1[3-9]\d{8}$/;
 
@@ -56,6 +58,24 @@ const buildRules = (getValues) => ({
     required: 'Team name is required',
     minLength: { value: 3, message: 'Team name must be at least 3 characters' },
     maxLength: { value: 100, message: 'Team name cannot exceed 100 characters' },
+    validate: {
+      /* No spaces at all — underscores stand in, e.g. PSTU_Array_Of_Hope. */
+      noSpaces: (v) =>
+        !/\s/.test(v || '') ||
+        'Team name cannot contain spaces — use underscores instead',
+      charset: (v) =>
+        /^[A-Za-z0-9_]*$/.test(v || '') ||
+        'Use only letters, numbers and underscores',
+      /* Must be prefixed with the varsity short form when we know it. */
+      varsityPrefix: (v) => {
+        const short = shortFormOf(getValues('varsityName'));
+        if (!short || !v) return true;
+        return (
+          v.toUpperCase().startsWith(`${short.toUpperCase()}_`) ||
+          `Team name must start with ${short}_ (e.g. ${short}_Array_Of_Hope)`
+        );
+      },
+    },
   },
   varsityName: {
     required: 'Varsity name is required',
@@ -204,10 +224,32 @@ const RegistrationForm = ({ slug = 'iupc' }) => {
   const eventHref = ROUTES.event(slug);
   const {
     register,
+    control,
     getValues,
+    setValue,
     trigger,
     formState: { errors },
   } = useForm({ defaultValues, mode: 'onTouched', shouldUnregister: false });
+
+  /* Short form of the chosen varsity — drives the team name prefix rule.
+     useWatch subscribes to just this field instead of re-rendering on every
+     keystroke anywhere in the form. */
+  const varsityName = useWatch({ control, name: 'varsityName' });
+  const varsityShort = shortFormOf(varsityName);
+
+  const onVarsityPick = (option) => {
+    setValue('varsityName', option.name, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+    /* Give them the prefix to type after, but never overwrite existing input. */
+    const current = getValues('teamName');
+    if (!current) {
+      setValue('teamName', `${option.short}_`, { shouldDirty: true });
+    } else if (!current.toUpperCase().startsWith(`${option.short.toUpperCase()}_`)) {
+      trigger('teamName');
+    }
+  };
 
   // getValues is stable, so the rules object is built once, not per field.
   const rules = useMemo(() => buildRules(getValues), [getValues]);
@@ -394,23 +436,35 @@ const RegistrationForm = ({ slug = 'iupc' }) => {
                   <>
                     <SectionCard title="Team Information">
                       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <FormField
-                           label="Team Name"
-                           name="teamName"
-                           placeholder="e.g. Code Wizards"
-                           register={registerWithRules}
-                           error={errors.teamName}
-                           required
-                           autoComplete="off"
+                        <AutocompleteField
+                          label="Varsity Name"
+                          name="varsityName"
+                          placeholder="Start typing, e.g. Patuakhali or PSTU"
+                          register={registerWithRules}
+                          error={errors.varsityName}
+                          hint="Pick from the list so your team name prefix is checked"
+                          required
+                          autoComplete="organization"
+                          search={searchUniversities}
+                          onSelect={onVarsityPick}
                         />
                         <FormField
-                           label="Varsity Name"
-                           name="varsityName"
-                           placeholder="e.g. Patuakhali Science and Technology University"
-                           register={registerWithRules}
-                           error={errors.varsityName}
-                           required
-                           autoComplete="organization"
+                          label="Team Name"
+                          name="teamName"
+                          placeholder={
+                            varsityShort
+                              ? `${varsityShort}_Array_Of_Hope`
+                              : 'e.g. PSTU_Array_Of_Hope'
+                          }
+                          register={registerWithRules}
+                          error={errors.teamName}
+                          hint={
+                            varsityShort
+                              ? `Must start with ${varsityShort}_ · no spaces`
+                              : 'Starts with your varsity short form · no spaces'
+                          }
+                          required
+                          autoComplete="off"
                         />
                       </div>
                     </SectionCard>
