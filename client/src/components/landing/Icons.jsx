@@ -63,6 +63,16 @@ export const MedalIcon = (props) => (
   </svg>
 );
 
+export const CertificateIcon = (props) => (
+  <svg {...base} {...props}>
+    <rect x="4" y="3" width="16" height="11" rx="2" />
+    <line x1="8" y1="7" x2="16" y2="7" />
+    <line x1="8" y1="10" x2="13" y2="10" />
+    <circle cx="12" cy="17" r="3" />
+    <path d="M10.3 19 9.5 22.5 12 21l2.5 1.5-.8-3.5" />
+  </svg>
+);
+
 export const CalendarIcon = (props) => (
   <svg {...base} {...props}>
     <rect x="3" y="4" width="18" height="18" rx="2" />

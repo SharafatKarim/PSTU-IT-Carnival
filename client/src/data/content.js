@@ -42,7 +42,7 @@ export const EVENTS = [
     category: 'tech',
     icon: 'code',
     blurb:
-      'The flagship ICPC-style Inter-University Programming Contest. Teams of three, five hours, one keyboard.',
+      'The flagship ICPC-style Inter-University Programming Contest. Teams of three, a 4–5 hour battle, one keyboard.',
     status: 'open',
     cta: 'Pre-Register',
   },
@@ -159,7 +159,7 @@ export const ABOUT_POINTS = [
     text: 'Whether you live in an IDE, a chessboard, or a battle-royale lobby, there is an arena with your name on it.',
   },
   {
-    icon: 'trophy',
+    icon: 'monitor',
     title: 'More Than a Competition',
     text: 'A full festival day — project showcases, networking, an event t-shirt, and a community that celebrates building and playing.',
   },
@@ -184,7 +184,7 @@ export const TIMELINE = [
   {
     phase: 'Carnival Days',
     date: '13–15 August 2026',
-    text: 'Three days of onsite battles across every arena — from the five-hour IUPC to the gaming finals.',
+    text: 'Three days of onsite battles across every arena — from the 4–5 hour IUPC to the gaming finals.',
   },
 ];
 
@@ -201,17 +201,17 @@ export const PRIZES = [
   {
     place: 'Champion',
     rank: 1,
-    perks: ['Champion trophy', 'Winner medals', 'Certificate of excellence'],
+    perks: ['Certificate of excellence', 'Cash prize from the pool'],
   },
   {
     place: '1st Runner-Up',
     rank: 2,
-    perks: ['Runner-up trophy', 'Silver medals', 'Certificate of merit'],
+    perks: ['Certificate of merit', 'Cash prize from the pool'],
   },
   {
     place: '2nd Runner-Up',
     rank: 3,
-    perks: ['Runner-up trophy', 'Bronze medals', 'Certificate of merit'],
+    perks: ['Certificate of merit', 'Cash prize from the pool'],
   },
 ];
 

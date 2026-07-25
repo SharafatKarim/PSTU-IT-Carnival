@@ -4,7 +4,7 @@ import Faq from '../components/landing/Faq';
 import {
   ICON_MAP,
   CheckIcon,
-  MedalIcon,
+  CertificateIcon,
   CalendarIcon,
   MapPinIcon,
   FlagIcon,
@@ -341,7 +341,7 @@ const Prizes = () => (
     id="prizes"
     eyebrow="Rewards"
     title="Play for the podium"
-    subtitle={`A ${EVENT.prizePool} prize pool across the carnival — trophies, medals, and certificates for the teams that rise to the top. Every participant walks away with an event t-shirt.`}
+    subtitle={`A ${EVENT.prizePool} prize pool across the carnival — cash prizes and certificates for the teams that rise to the top. Every participant walks away with an event t-shirt.`}
     className="bg-ink-950/40"
   >
     <div className="grid items-center gap-6 sm:grid-cols-3">
@@ -353,7 +353,7 @@ const Prizes = () => (
             className={`rounded-2xl border bg-ink-800/70 p-7 text-center transition ${s.ring} ${s.scale}`}
           >
             <div className="mx-auto flex h-16 w-16 items-center justify-center">
-              <MedalIcon className={`h-14 w-14 ${s.medal}`} />
+              <CertificateIcon className={`h-12 w-12 ${s.medal}`} />
             </div>
             <span
               className={`mt-3 inline-block rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${s.badge}`}
