@@ -82,6 +82,13 @@ export const CalendarIcon = (props) => (
   </svg>
 );
 
+export const ClockIcon = (props) => (
+  <svg {...base} {...props}>
+    <circle cx="12" cy="12" r="9" />
+    <polyline points="12 7 12 12 15 14" />
+  </svg>
+);
+
 export const MapPinIcon = (props) => (
   <svg {...base} {...props}>
     <path d="M20 10c0 4.4-8 12-8 12s-8-7.6-8-12a8 8 0 0 1 16 0Z" />
@@ -229,4 +236,8 @@ export const ICON_MAP = {
   dice: DiceIcon,
   ball: BallIcon,
   cube: CubeIcon,
+  calendar: CalendarIcon,
+  clock: ClockIcon,
+  flag: FlagIcon,
+  certificate: CertificateIcon,
 };

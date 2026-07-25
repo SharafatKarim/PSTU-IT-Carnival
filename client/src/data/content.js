@@ -169,21 +169,25 @@ export const TIMELINE = [
   {
     phase: 'Registration Opens',
     date: 'June 2026',
+    icon: 'calendar',
     text: 'IUPC pre-registration goes live. Lock in your team name early — names are first-come, first-served.',
   },
   {
     phase: 'Registration Deadline',
     date: 'July 2026',
+    icon: 'clock',
     text: 'Final call to submit your team, coach, and member details. Late entries cannot be accepted.',
   },
   {
     phase: 'Practice Round',
     date: '12 August 2026',
+    icon: 'code',
     text: 'Get familiar with the judge, the environment, and the workstation setup before it counts.',
   },
   {
     phase: 'Carnival Days',
     date: '13–15 August 2026',
+    icon: 'flag',
     text: 'Three days of onsite battles across every arena — from the 4–5 hour IUPC to the gaming finals.',
   },
 ];

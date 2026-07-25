@@ -211,45 +211,43 @@ const Timeline = () => (
     id="timeline"
     eyebrow="Schedule"
     title="The road to carnival day"
-    subtitle="Key milestones from registration to the final buzzer. Mark your calendar and get your team ready."
+    subtitle="Four milestones from registration to the final buzzer. Mark your calendar and get your team ready."
     className="bg-ink-950/40"
   >
-    <div className="relative mx-auto max-w-3xl">
-      <div className="absolute left-4 top-2 h-full w-px bg-gradient-to-b from-grape-500 via-magenta-500 to-aqua-500 sm:left-1/2" />
-      <div className="space-y-8">
-        {TIMELINE.map((item, i) => (
-          <div
-            key={item.phase}
-            className={`relative flex flex-col gap-4 sm:flex-row sm:items-center ${
-              i % 2 === 0 ? 'sm:flex-row' : 'sm:flex-row-reverse'
-            }`}
-          >
-            <div className="flex-1 pl-12 sm:px-8 sm:pl-0">
-              <div
-                className={`rounded-2xl border border-ink-600 bg-ink-800/60 p-5 shadow-card ${
-                  i % 2 === 0 ? 'sm:text-right' : 'sm:text-left'
-                }`}
-              >
-                <p className="text-xs font-bold uppercase tracking-wide text-gold-400">
+    <div className="relative">
+      {/* Desktop connector line running through the step nodes */}
+      <div className="pointer-events-none absolute left-[12.5%] right-[12.5%] top-7 hidden h-0.5 bg-gradient-to-r from-grape-500 via-magenta-500 to-aqua-500 opacity-70 lg:block" />
+
+      <ol className="grid gap-8 lg:grid-cols-4 lg:gap-6">
+        {TIMELINE.map((item, i) => {
+          const Icon = ICON_MAP[item.icon] || CalendarIcon;
+          return (
+            <li
+              key={item.phase}
+              className="group relative flex flex-col items-center text-center"
+            >
+              <div className="relative z-10 mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-carnival text-white shadow-glow-grape ring-4 ring-ink-950 transition-transform duration-300 group-hover:scale-105">
+                <Icon className="h-6 w-6" />
+                <span className="absolute -right-2 -top-2 grid h-6 w-6 place-items-center rounded-full bg-gold-400 text-[11px] font-extrabold text-ink-950 ring-2 ring-ink-950">
+                  {i + 1}
+                </span>
+              </div>
+
+              <div className="w-full rounded-2xl border border-ink-600 bg-ink-800/60 p-5 shadow-card transition duration-300 group-hover:-translate-y-1 group-hover:border-grape-500/60 group-hover:shadow-glow-grape">
+                <span className="inline-block rounded-full border border-gold-400/30 bg-gold-400/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-gold-300">
                   {item.date}
-                </p>
-                <h3 className="mt-1 text-lg font-bold text-white">
+                </span>
+                <h3 className="mt-3 text-lg font-bold text-white">
                   {item.phase}
                 </h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-mist-400">
                   {item.text}
                 </p>
               </div>
-            </div>
-
-            <span className="absolute left-4 top-6 z-10 flex h-4 w-4 -translate-x-1/2 items-center justify-center sm:left-1/2 sm:top-1/2 sm:-translate-y-1/2">
-              <span className="h-4 w-4 rounded-full border-2 border-aqua-400 bg-ink-900 shadow-glow-aqua" />
-            </span>
-
-            <div className="hidden flex-1 sm:block" />
-          </div>
-        ))}
-      </div>
+            </li>
+          );
+        })}
+      </ol>
     </div>
   </Section>
 );
