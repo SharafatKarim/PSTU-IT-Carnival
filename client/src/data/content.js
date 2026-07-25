@@ -1,13 +1,7 @@
-/**
- * Central content file for the PSTU IT Carnival 2026 landing page.
- * Edit the copy here — events, venue, dates, prizes, FAQs — without touching
- * the UI. Anything marked as illustrative should be replaced with the official
- * details once they are confirmed by the organizing committee.
- */
+// Landing-page content. Edit copy here without touching the UI.
 
 export const EVENT = {
   university: 'Patuakhali Science and Technology University',
-  shortName: 'PSTU IT Carnival 2026',
   title: 'PSTU IT Carnival 2026',
   tagline: "South Zone's Largest Tech Competition",
   intro:
@@ -28,12 +22,8 @@ export const STATS = [
   { value: '6', label: 'Gaming & fun' },
 ];
 
-/**
- * The full event line-up. Only ONE event is open for registration at a time.
- * Flip a `status` to 'open' (and set `cta`) when its registration goes live.
- *   status: 'open'        -> active card, routes to the registration form
- *   status: 'coming-soon' -> muted card, disabled "Coming Soon" button
- */
+// One event is 'open' at a time (featured + routes to the form); the rest
+// are 'coming-soon' (disabled cards).
 export const EVENTS = [
   {
     id: 'iupc',

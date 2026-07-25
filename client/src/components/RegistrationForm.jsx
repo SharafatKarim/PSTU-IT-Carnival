@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import FormField from './FormField';
 import SectionCard from './SectionCard';
@@ -143,10 +143,6 @@ function memberHandleRule(i, getValues) {
   };
 }
 
-/* ------------------------------------------------------------------ */
-/* Step progress indicator                                             */
-/* ------------------------------------------------------------------ */
-
 const StepIndicator = ({ current }) => (
   <div className="mt-6">
     <ol className="flex items-center">
@@ -196,10 +192,6 @@ const StepIndicator = ({ current }) => (
   </div>
 );
 
-/* ------------------------------------------------------------------ */
-/* Registration wizard                                                 */
-/* ------------------------------------------------------------------ */
-
 const RegistrationForm = ({ onBack }) => {
   const {
     register,
@@ -208,10 +200,10 @@ const RegistrationForm = ({ onBack }) => {
     formState: { errors },
   } = useForm({ defaultValues, mode: 'onTouched', shouldUnregister: false });
 
-  const registerWithRules = (name) => {
-    const rules = buildRules(getValues)[name];
-    return rules ? register(name, rules) : register(name);
-  };
+  // getValues is stable, so the rules object is built once, not per field.
+  const rules = useMemo(() => buildRules(getValues), [getValues]);
+  const registerWithRules = (name) =>
+    rules[name] ? register(name, rules[name]) : register(name);
 
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);

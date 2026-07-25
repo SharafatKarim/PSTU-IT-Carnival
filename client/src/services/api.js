@@ -1,21 +1,23 @@
-import axios from 'axios';
-
 const baseURL = import.meta.env.VITE_API_URL || '/api/v1';
 
-const api = axios.create({
-  baseURL,
-  headers: { 'Content-Type': 'application/json' },
-  timeout: 20000,
-});
-
 export const createRegistration = async (payload) => {
-  const { data } = await api.post('/registrations', payload);
+  let res;
+  try {
+    res = await fetch(`${baseURL}/registrations`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+  } catch {
+    throw new Error('Network error — please check your connection and try again.');
+  }
+
+  const data = await res.json().catch(() => null);
+  if (!res.ok) {
+    // Mirror the axios-style { response: { data } } shape the caller reads.
+    const err = new Error(data?.message || 'Request failed');
+    err.response = { data };
+    throw err;
+  }
   return data;
 };
-
-export const getHealth = async () => {
-  const { data } = await api.get('/health');
-  return data;
-};
-
-export default api;
