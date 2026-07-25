@@ -411,12 +411,14 @@ const Footer = () => (
         >
           {EVENT.website}
         </a>
-        <a
-          href={`mailto:${EVENT.contactEmail}`}
-          className="text-mist-400 transition hover:text-white"
-        >
-          {EVENT.contactEmail}
-        </a>
+        {EVENT.contactEmail && (
+          <a
+            href={`mailto:${EVENT.contactEmail}`}
+            className="text-mist-400 transition hover:text-white"
+          >
+            {EVENT.contactEmail}
+          </a>
+        )}
         <p className="text-xs text-mist-500">© 2026 PSTU IT Carnival</p>
       </div>
     </div>
