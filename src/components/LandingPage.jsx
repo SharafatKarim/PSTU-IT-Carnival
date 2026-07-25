@@ -24,11 +24,13 @@ import {
 } from '../data/content';
 import { ROUTES } from '../lib/routes';
 
+/* Accents mirror the detail pages, so the front door and the event pages read
+   as one system instead of a wall of identical purple tiles. */
 const HERO_TILES = [
-  { icon: 'code', label: 'Programming' },
-  { icon: 'rocket', label: 'Hackathon' },
-  { icon: 'gamepad', label: 'Gaming' },
-  { icon: 'lightbulb', label: 'Quiz & Apps' },
+  { icon: 'code', label: 'Programming', tile: 'border-aqua-400/40 text-aqua-300 shadow-glow-aqua' },
+  { icon: 'rocket', label: 'Hackathon', tile: 'border-grape-400/40 text-grape-300 shadow-glow-grape' },
+  { icon: 'gamepad', label: 'Gaming', tile: 'border-magenta-500/40 text-magenta-300 shadow-glow-magenta' },
+  { icon: 'lightbulb', label: 'Quiz & Apps', tile: 'border-gold-400/40 text-gold-300 shadow-glow-gold' },
 ];
 
 const Section = ({ id, eyebrow, title, subtitle, children, className = '' }) => (
@@ -73,7 +75,8 @@ const Hero = () => (
             {EVENT.university}
           </span>
           <span className="inline-flex items-center gap-2 rounded-full border border-gold-400/40 bg-gold-400/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-gold-300">
-            Prize Pool {EVENT.prizePool}
+            <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-gold-400" />
+            IUPC pre-register by {EVENT.registrationDeadline}
           </span>
         </div>
 
@@ -131,7 +134,9 @@ const Hero = () => (
             const Icon = ICON_MAP[tile.icon] || ICON_MAP.code;
             return (
               <div key={tile.label} className="flex flex-col items-center gap-2">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-carnival text-white shadow-glow-grape ring-1 ring-white/10 sm:h-16 sm:w-16">
+                <div
+                  className={`flex h-14 w-14 items-center justify-center rounded-2xl border bg-ink-900/70 backdrop-blur sm:h-16 sm:w-16 ${tile.tile}`}
+                >
                   <Icon className="h-7 w-7" />
                 </div>
                 <span className="text-[11px] font-semibold uppercase tracking-wide text-mist-300">
@@ -272,7 +277,7 @@ const Format = () => (
           <div className="relative">
             <h3 className="text-xl font-bold">Ready to compete in IUPC?</h3>
             <p className="mt-2 text-sm leading-relaxed text-white/85">
-              The IUPC page has the full format, prize breakdown, rules and
+              The IUPC page has the full format, rules, slot count and
               coordinator contacts — plus the link to the registration form.
             </p>
             <Link
@@ -318,7 +323,7 @@ const Prizes = () => (
     id="prizes"
     eyebrow="Rewards"
     title="Play for the podium"
-    subtitle={`A ${EVENT.prizePool} prize pool across the carnival — cash prizes and certificates for the teams that rise to the top. Every participant walks away with an event t-shirt.`}
+    subtitle="Certificates and trophies for every podium, and an event t-shirt for every participant. Prize money is announced per event — the three gaming tournaments have theirs published already."
     className="bg-ink-950/40"
   >
     <div className="grid items-center gap-6 sm:grid-cols-3">

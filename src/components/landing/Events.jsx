@@ -2,7 +2,14 @@
 
 import Link from 'next/link';
 import { EVENTS } from '../../data/content';
-import { ICON_MAP, ArrowRightIcon } from './Icons';
+import {
+  ICON_MAP,
+  ArrowRightIcon,
+  UsersIcon,
+  TicketIcon,
+  AlertIcon,
+} from './Icons';
+import { getEventDetail } from '../../data/events';
 import { ROUTES } from '../../lib/routes';
 
 const IconBox = ({ icon, muted }) => {
@@ -26,8 +33,21 @@ const ScopeBadge = ({ children }) => (
   </span>
 );
 
-/* Full-width highlight for the one event that is open for registration. */
-const FeaturedEvent = ({ event }) => (
+/* Full-width highlight for the one event that is open for registration.
+   Its headline numbers come from the event's own detail data, so the card and
+   the detail page can never drift apart. */
+const FeaturedEvent = ({ event }) => {
+  const detail = getEventDetail(event.id);
+  const t = detail?.tournament;
+  const facts = t
+    ? [
+        { icon: UsersIcon, value: t.slots, label: 'available' },
+        { icon: TicketIcon, value: t.entryFee, label: 'at final registration' },
+        { icon: AlertIcon, value: t.deadline, label: 'pre-registration closes' },
+      ]
+    : [];
+
+  return (
   <div className="relative overflow-hidden rounded-3xl border-2 border-gold-400/50 bg-ink-800/70 p-6 shadow-glow-gold sm:p-8">
     <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gold-400/10 blur-3xl" />
     <span className="absolute right-5 top-5 inline-flex items-center gap-1.5 rounded-full border border-aqua-400/30 bg-aqua-400/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-aqua-300">
@@ -45,6 +65,20 @@ const FeaturedEvent = ({ event }) => (
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-mist-300">
           {event.blurb}
         </p>
+        {facts.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+            {facts.map((fact) => (
+              <span
+                key={fact.label}
+                className="inline-flex items-center gap-2 text-xs text-mist-300"
+              >
+                <fact.icon className="h-4 w-4 shrink-0 text-gold-400" />
+                <span className="font-semibold text-white">{fact.value}</span>
+                {fact.label}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
       <div className="flex shrink-0 flex-col gap-2.5 sm:flex-row">
         <Link
@@ -65,7 +99,8 @@ const FeaturedEvent = ({ event }) => (
       </div>
     </div>
   </div>
-);
+  );
+};
 
 /* Muted, non-interactive card for events that are not open yet. */
 const ComingSoonCard = ({ event }) => (

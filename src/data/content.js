@@ -14,16 +14,18 @@ export const EVENT = {
   date: '13–15 August 2026',
   venue: 'CSE–FBA Building, PSTU',
   format: 'Onsite · 3 Days',
-  prizePool: '৳450K+',
+  /* Deadline drives the hero badge — the old "৳450K+ prize pool" claim went
+     when IUPC stopped publishing prize figures. */
+  registrationDeadline: '31 July 2026',
   organizer: 'CSE Club, PSTU',
   website: 'pstuitcarnival2026.com',
   contactEmail: '',
 };
 
 export const STATS = [
-  { value: '৳450K+', label: 'Prize pool' },
   { value: '11', label: 'Events' },
-  { value: '5', label: 'Tech competitions' },
+  { value: '45', label: 'IUPC team slots' },
+  { value: '3', label: 'Days onsite' },
   { value: '6', label: 'Gaming & fun' },
 ];
 
@@ -57,7 +59,7 @@ export const EVENTS = [
   {
     id: 'datathon',
     name: 'Datathon',
-    scope: 'Open',
+    scope: 'All Students',
     category: 'tech',
     icon: 'chart',
     blurb:
@@ -77,7 +79,7 @@ export const EVENTS = [
   {
     id: 'project-showcase',
     name: 'Project Showcasing',
-    scope: 'Open',
+    scope: 'All Students',
     category: 'tech',
     icon: 'monitor',
     blurb:
@@ -206,28 +208,28 @@ export const PRIZES = [
   {
     place: 'Champion',
     rank: 1,
-    perks: ['Certificate of excellence', 'Cash prize from the pool'],
+    perks: ['Certificate of excellence', 'Winner trophy'],
   },
   {
     place: '1st Runner-Up',
     rank: 2,
-    perks: ['Certificate of merit', 'Cash prize from the pool'],
+    perks: ['Certificate of merit'],
   },
   {
     place: '2nd Runner-Up',
     rank: 3,
-    perks: ['Certificate of merit', 'Cash prize from the pool'],
+    perks: ['Certificate of merit'],
   },
 ];
 
 export const FAQS = [
   {
     q: 'What events can I take part in?',
-    a: "Eleven events across tech and gaming: IUPC (South Zone), Hackathon (National), Datathon, IT Quiz (Barishal Division), Project Showcasing, plus PUBG, Free Fire, Chess, Ludo, eFootball (PES) and Rubik's Cube.",
+    a: "Eleven events across tech and gaming: IUPC (South Zone), Hackathon (National), Datathon, IT Quiz (Barishal Division), Project Showcasing, plus PUBG Mobile, Free Fire, eFootball, Chess, Ludo and Rubik's Cube.",
   },
   {
     q: 'Which events are open for registration right now?',
-    a: 'IUPC (South Zone) pre-registration is live, and so are all three gaming tournaments — eFootball, PUBG Mobile and Free Fire. Registration for the remaining events opens soon.',
+    a: 'Only IUPC (South Zone), and only for pre-registration. The three gaming tournaments have their formats, rules and prizes published, but entries have not opened yet. The rest of the line-up follows later.',
   },
   {
     q: 'How many members can an IUPC team have?',
@@ -239,10 +241,10 @@ export const FAQS = [
   },
   {
     q: 'Is there a registration or participation fee?',
-    a: 'No payment is collected through this portal. Any on-site logistics will be communicated by the organizing committee after registration.',
+    a: 'IUPC pre-registration is free. The ৳3,000 per-team entry fee applies at final registration, once confirmed slots are published university-wise. Gaming tournaments have their own entry fees, listed on each game page. No payment is ever collected through this website.',
   },
   {
     q: 'How will I know my registration went through?',
-    a: 'After submitting, you receive a unique registration ID (e.g. PSTU-PC-2026-0001). Save it — it is your reference for all future correspondence.',
+    a: 'After submitting, you receive a unique registration ID (e.g. PSTU-IUPC-2026-0001). Save it — it is your reference for all future correspondence.',
   },
 ];
