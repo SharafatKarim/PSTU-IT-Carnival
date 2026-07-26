@@ -33,10 +33,24 @@ import { EVENT_DETAILS } from '@/data/events';
    --------------------------------------------------------------------------- */
 
 /* Events with a detail page at /events/<slug>. */
-export const EVENT_PAGE_SLUGS = ['iupc', 'datathon'];
+export const EVENT_PAGE_SLUGS = [
+  'iupc',
+  'datathon',
+  'hackathon',
+  'it-quiz',
+  'ctf',
+  'project-showcase',
+];
 
 /* Games with a detail page at /events/gaming/<slug>. */
-export const GAME_PAGE_SLUGS = ['efootball', 'pubg-mobile', 'free-fire'];
+export const GAME_PAGE_SLUGS = [
+  'efootball',
+  'pubg-mobile',
+  'free-fire',
+  'chess',
+  'ludo',
+  'rubiks-cube',
+];
 
 const EVENTS_BASE = '/events';
 const GAMING_BASE = `${EVENTS_BASE}/gaming`;
@@ -128,11 +142,14 @@ export const eventsIndexNav = [
   ...homeNav.filter((link) => ['Schedule', 'FAQ'].includes(link.label)),
 ];
 
+/* Fixed anchors, not one link per game. Spreading GAMES worked at three games
+   and overflowed the 768px navbar at six — and it would break again on the
+   seventh. The two family sections are the stable way in. */
 export const gamingNav = [
   { label: 'Home', href: ROUTES.home },
   { label: 'All Events', href: ROUTES.events },
-  { label: 'Games', href: '#games' },
-  ...GAMES.map((game) => ({ label: game.shortName, href: ROUTES.game(game.slug) })),
+  { label: 'Esports', href: '#esports' },
+  { label: 'Board & Puzzle', href: '#board' },
 ];
 
 export const gameDetailNav = [
@@ -188,7 +205,15 @@ export const gameRegisterNav = (slug) => [
 export const siteUrls = () => [
   { path: ROUTES.home, priority: 1 },
   { path: ROUTES.events, priority: 0.9 },
-  ...EVENT_PAGE_SLUGS.map((slug) => ({ path: ROUTES.event(slug), priority: 0.9 })),
+  ...EVENT_PAGE_SLUGS.map((slug) => ({
+    path: ROUTES.event(slug),
+    /* An announced page carries a paragraph; a published one carries the
+       whole event. Rank them accordingly. */
+    priority:
+      EVENT_DETAILS.find((e) => e.slug === slug)?.stage === 'announced'
+        ? 0.5
+        : 0.9,
+  })),
   ...REGISTRABLE_EVENTS.flatMap((event) => [
     { path: ROUTES.eventRegister(event.slug), priority: 0.9 },
     { path: ROUTES.eventTeams(event.slug), priority: 0.6 },
@@ -198,7 +223,7 @@ export const siteUrls = () => [
   ...GAME_PAGE_SLUGS.flatMap((slug) => {
     const game = GAMES.find((g) => g.slug === slug);
     return [
-      { path: ROUTES.game(slug), priority: 0.8 },
+      { path: ROUTES.game(slug), priority: game?.stage === 'announced' ? 0.5 : 0.8 },
       /* A closed form is a thin "opens soon" page — not worth indexing. */
       ...(game?.registrationOpen
         ? [{ path: ROUTES.gameRegister(slug), priority: 0.7 }]
@@ -257,23 +282,30 @@ if (process.env.NODE_ENV !== 'production') {
   import('@/data/content')
     .then(({ EVENTS }) => {
       EVENTS.filter((e) => e.slug).forEach((e) => {
-        const open =
+        const detail =
           e.kind === 'game'
-            ? GAMES.find((g) => g.slug === e.slug)?.registrationOpen
-            : EVENT_DETAILS.find((d) => d.slug === e.slug)?.registrationOpen;
+            ? GAMES.find((g) => g.slug === e.slug)
+            : EVENT_DETAILS.find((d) => d.slug === e.slug);
 
-        if (open === undefined) {
+        if (!detail) {
           console.warn(
             `[routes] EVENTS entry "${e.id}" points at slug "${e.slug}", which ` +
               `is not in ${e.kind === 'game' ? 'gaming.js' : 'events.js'}.`
           );
           return;
         }
-        const expected = open ? 'open' : 'live';
-        if (e.status !== expected) {
+        const expected = { open: 'open', published: 'live', announced: 'coming-soon' }[
+          detail.stage
+        ];
+        if (!expected) {
+          console.warn(
+            `[routes] "${e.slug}" has stage "${detail.stage}". Expected one of ` +
+              `open | published | announced.`
+          );
+        } else if (e.status !== expected) {
           console.warn(
             `[routes] EVENTS entry "${e.id}" has status "${e.status}" but ` +
-              `${e.slug} has registrationOpen: ${open}. Set status to ` +
+              `${e.slug} has stage "${detail.stage}". Set status to ` +
               `"${expected}" in src/data/content.js, or the landing page will ` +
               `advertise the wrong state.`
           );

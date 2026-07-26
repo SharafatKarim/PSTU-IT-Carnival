@@ -23,6 +23,8 @@ const GameCard = ({ game }) => {
   const a = accentOf(game.accent);
   const t = game.tournament;
   const open = isGameRegistrationOpen(game);
+  /* Board events are announced only — no tournament block to read facts from. */
+  const announced = game.stage === 'announced';
 
   return (
     <article
@@ -38,7 +40,11 @@ const GameCard = ({ game }) => {
         >
           <Icon className="h-7 w-7" />
         </div>
-        {open ? (
+        {announced ? (
+          <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-mist-400">
+            Announced
+          </span>
+        ) : open ? (
           <span
             className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-wide ${a.border} ${a.bgSoft} ${a.text}`}
           >
@@ -62,23 +68,35 @@ const GameCard = ({ game }) => {
         </div>
         <p className="mt-2 text-sm leading-relaxed text-mist-400">{game.blurb}</p>
 
-        <div className="mt-5 grid grid-cols-2 gap-y-2 border-t border-ink-600 pt-4">
-          <Fact icon={CalendarIcon}>{t.date}</Fact>
-          <Fact icon={UsersIcon}>{t.teamSize}</Fact>
-          <Fact icon={TicketIcon}>{t.entryFee}</Fact>
-          <Fact icon={CoinIcon}>{t.prizePool} pool</Fact>
-        </div>
+        {t ? (
+          <div className="mt-5 grid grid-cols-2 gap-y-2 border-t border-ink-600 pt-4">
+            <Fact icon={CalendarIcon}>{t.date}</Fact>
+            <Fact icon={UsersIcon}>{t.teamSize}</Fact>
+            <Fact icon={TicketIcon}>{t.entryFee}</Fact>
+            <Fact icon={CoinIcon}>{t.prizePool} pool</Fact>
+          </div>
+        ) : (
+          /* Nothing is decided yet, so the card says that rather than
+             printing a row of blanks. */
+          <p className="mt-5 border-t border-ink-600 pt-4 text-xs text-mist-500">
+            Date, format and prizes to be announced.
+          </p>
+        )}
       </div>
 
       <div className="relative mt-6 flex flex-col gap-2.5 sm:flex-row">
         <Link
           href={ROUTES.game(game.slug)}
           aria-label={`View ${game.name} details`}
-          className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-ink-500 px-4 py-2.5 text-sm font-semibold text-mist-200 transition hover:bg-white/5 hover:text-white"
+          className={
+            announced
+              ? 'inline-flex w-full items-center justify-center gap-2 rounded-lg border border-ink-500 px-4 py-2.5 text-sm font-semibold text-mist-200 transition hover:bg-white/5 hover:text-white'
+              : 'inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-ink-500 px-4 py-2.5 text-sm font-semibold text-mist-200 transition hover:bg-white/5 hover:text-white'
+          }
         >
           View Details
         </Link>
-        {open ? (
+        {announced ? null : open ? (
           <Link
             href={ROUTES.gameRegister(game.slug)}
             aria-label={`Register for ${game.name}`}

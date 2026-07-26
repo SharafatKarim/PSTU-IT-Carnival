@@ -175,7 +175,7 @@ const Hero = () => (
             href="#events"
             className="mt-7 inline-flex items-center gap-2 self-start text-sm font-semibold text-mist-200 transition hover:text-white"
           >
-            See all eleven events
+            See all twelve events
             <ArrowRightIcon className="h-4 w-4" />
           </a>
         </div>
@@ -200,7 +200,7 @@ const LineupSection = () => (
   <Section
     id="events"
     eyebrow="The line-up"
-    title="Eleven events. One carnival."
+    title="Twelve events. One carnival."
     lede="One is taking entries. Three have their format, rules and prizes published while entries stay closed. The rest are announced."
     action={
       <Link

@@ -160,6 +160,7 @@ export const GAMES = [
     slug: 'efootball',
     name: 'eFootball',
     shortName: 'eFootball',
+    family: 'esports',
     icon: 'ball',
     accent: 'aqua',
     scope: 'Esports · 1v1',
@@ -233,6 +234,7 @@ export const GAMES = [
       },
     ],
 
+    stage: 'published',
     // Flip to true to put this tournament's form live.
     registrationOpen: false,
     registration: {
@@ -375,6 +377,7 @@ export const GAMES = [
     slug: 'pubg-mobile',
     name: 'PUBG Mobile',
     shortName: 'PUBG',
+    family: 'esports',
     icon: 'gamepad',
     /* Not gold: gold is reserved for actions site-wide, and PUBG's identity
        tile would otherwise be indistinguishable from a status pill. */
@@ -452,6 +455,7 @@ export const GAMES = [
       },
     ],
 
+    stage: 'published',
     // Flip to true to put this tournament's form live.
     registrationOpen: false,
     registration: {
@@ -513,6 +517,7 @@ export const GAMES = [
     slug: 'free-fire',
     name: 'Free Fire',
     shortName: 'Free Fire',
+    family: 'esports',
     icon: 'flame',
     accent: 'magenta',
     scope: 'Esports · Squad',
@@ -588,6 +593,7 @@ export const GAMES = [
       },
     ],
 
+    stage: 'published',
     // Flip to true to put this tournament's form live.
     registrationOpen: false,
     registration: {
@@ -641,13 +647,63 @@ export const GAMES = [
       },
     ],
   },
+
+  /* -------------------------------------------------------------------------
+     Board and puzzle events.
+
+     Announced only — no dates, entry fees, prizes, rules or coordinators are
+     invented here. `stage: 'announced'` renders the honest short page; fill in
+     a `tournament` block and the rest in the shape above to promote one.
+     ------------------------------------------------------------------------- */
+  {
+    slug: 'chess',
+    name: 'Chess',
+    shortName: 'Chess',
+    family: 'board',
+    icon: 'crown',
+    accent: 'aqua',
+    scope: 'Board',
+    mode: 'Solo',
+    tagline: 'Classic strategy on 64 squares.',
+    blurb: 'Outthink your opponent, move by move.',
+    stage: 'announced',
+    registrationOpen: false,
+  },
+  {
+    slug: 'ludo',
+    name: 'Ludo',
+    shortName: 'Ludo',
+    family: 'board',
+    icon: 'dice',
+    accent: 'magenta',
+    scope: 'Board',
+    mode: 'Solo',
+    tagline: 'Roll the dice and race home.',
+    blurb: 'The ever-chaotic fan favourite.',
+    stage: 'announced',
+    registrationOpen: false,
+  },
+  {
+    slug: 'rubiks-cube',
+    name: "Rubik's Cube",
+    shortName: "Rubik's",
+    family: 'board',
+    icon: 'cube',
+    accent: 'gold',
+    scope: 'Speed',
+    mode: 'Solo',
+    tagline: 'Race the clock to solve the cube.',
+    blurb: 'Fastest fingers, sharpest mind.',
+    stage: 'announced',
+    registrationOpen: false,
+  },
 ];
 
 export const GAMING = {
   eyebrow: 'Gaming Fest',
-  title: 'Three arenas. One Booyah.',
+  title: 'Six arenas. One Booyah.',
   intro:
-    'The gaming wing of PSTU IT Carnival 2026 runs three competitive tournaments — one solo, two squad-based. Formats, rules and prizes are below; registration opens soon.',
+    'The gaming wing of PSTU IT Carnival 2026 runs three esports tournaments — one solo, two squad-based — alongside three board and puzzle events. Esports formats, rules and prizes are below; entries open soon.',
   note: 'Entry fees are collected on-site at the registration desk. No payment is taken through this website.',
   /* Shown wherever a closed tournament would otherwise offer a form. */
   closedHeading: 'Registration opens soon',

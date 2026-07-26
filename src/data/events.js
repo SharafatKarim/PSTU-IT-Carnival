@@ -93,6 +93,10 @@ export const EVENT_DETAILS = [
       },
     ],
 
+    /* How far along this event is. The landing ledger groups by this rather
+       than inferring from registrationOpen, which cannot tell "announced only"
+       apart from "published but closed". */
+    stage: 'open',
     /* Flip to false to close entries without deleting the form. */
     registrationOpen: true,
     registration: {
@@ -163,7 +167,8 @@ export const EVENT_DETAILS = [
     tagline: 'Specially tailored for beginners in Data Science and Machine Learning.',
     blurb: 'An online datathon featuring a beginner-friendly tabular dataset. Test your skills in Exploratory Data Analysis, feature engineering, and model validation.',
     heroNote: 'Max 2 members per team (solo participation is also allowed).',
-    cover: '/events/datathon/cover.jpg',
+    /* No cover art yet. The hero skips both the image and its scrim when this
+       is absent — pointing at a missing file only made the page darker. */
 
     tournament: {
       date: '8–12 August 2026',
@@ -224,6 +229,7 @@ export const EVENT_DETAILS = [
       },
     ],
 
+    stage: 'published',
     registrationOpen: false,
     registration: {
       kind: 'none',
@@ -281,6 +287,71 @@ export const EVENT_DETAILS = [
         email: 'ug2102009@cse.pstu.ac.bd',
       },
     ],
+  },
+
+  /* -------------------------------------------------------------------------
+     Announced events.
+
+   These carry only what is actually known — a name, what the event is, and who
+   it is open to. No dates, fees, rules, slots or coordinators are invented:
+   `stage: 'announced'` tells the UI to render the honest short page instead of
+   a detail page full of placeholders.
+
+   To promote one: add a `tournament` block, `rules`, `registration`, `faqs`
+   and `coordinators` in the shape IUPC uses above, then change stage to
+   'published'. The page fills itself in — no component changes.
+   --------------------------------------------------------------------------- */
+  {
+    slug: 'hackathon',
+    name: 'Hackathon',
+    fullName: 'National Hackathon',
+    shortName: 'Hackathon',
+    icon: 'rocket',
+    accent: 'magenta',
+    scope: 'National',
+    tagline: 'Build a working product against the clock.',
+    blurb:
+      'A national-level innovation sprint for student teams — ship something that runs, not a slide deck.',
+    stage: 'announced',
+  },
+  {
+    slug: 'it-quiz',
+    name: 'IT Quiz',
+    fullName: 'IT Quiz — Barishal Division',
+    shortName: 'IT Quiz',
+    icon: 'lightbulb',
+    accent: 'gold',
+    scope: 'Division · Barishal',
+    tagline: 'Computing, history and trivia, on the buzzer.',
+    blurb:
+      'A fast-paced buzzer quiz across computing, its history and the trivia in between.',
+    stage: 'announced',
+  },
+  {
+    slug: 'project-showcase',
+    name: 'Project Showcasing',
+    fullName: 'Project Showcasing',
+    shortName: 'Showcase',
+    icon: 'monitor',
+    accent: 'aqua',
+    scope: 'All Students',
+    tagline: 'Put your best build in front of judges.',
+    blurb:
+      'Present your best software or hardware project to judges and the wider community.',
+    stage: 'announced',
+  },
+  {
+    slug: 'ctf',
+    name: 'CTF',
+    fullName: 'Capture The Flag',
+    shortName: 'CTF',
+    icon: 'shield',
+    accent: 'aqua',
+    scope: 'Inter-University',
+    tagline: 'Break it before someone else does.',
+    blurb:
+      'A jeopardy-style security contest — web, forensics, reverse engineering and cryptography challenges solved against the clock.',
+    stage: 'announced',
   },
 ];
 

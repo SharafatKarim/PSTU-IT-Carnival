@@ -8,10 +8,10 @@ const inter = Inter({
 
 export const metadata = {
   title: "PSTU IT Carnival 2026 — Tech & Gaming Fest",
-  description: "PSTU IT Carnival 2026 — South Zone's largest tech competition at Patuakhali Science and Technology University. Eleven events across programming, hackathon, data, quiz and gaming. 13–15 August 2026.",
+  description: "PSTU IT Carnival 2026 — South Zone's largest tech competition at Patuakhali Science and Technology University. Twelve events across programming, hackathon, data, quiz, security and gaming. 13–15 August 2026.",
   openGraph: {
     title: "PSTU IT Carnival 2026 — Tech & Gaming Fest",
-    description: "South Zone's largest tech competition. Eleven events across programming, hackathon, data, quiz and gaming. IUPC pre-registration is open — 45 team slots, closing 31 July 2026.",
+    description: "South Zone's largest tech competition. Twelve events across programming, hackathon, data, quiz, security and gaming. IUPC pre-registration is open — 45 team slots, closing 31 July 2026.",
     type: "website",
   },
 };

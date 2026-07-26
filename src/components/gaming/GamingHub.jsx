@@ -9,6 +9,16 @@ import { GAMES, GAMING } from '@/data/gaming';
 import { EVENT } from '@/data/content';
 import { ROUTES, gamingNav } from '@/lib/routes';
 
+/* Order matters: the tournaments with published rules and prizes come first. */
+const FAMILIES = [
+  {
+    key: 'esports',
+    label: 'Esports',
+    note: 'Format, rules and prizes published — entries have not opened yet',
+  },
+  { key: 'board', label: 'Board & Puzzle', note: 'Details to follow' },
+];
+
 const GamingHub = () => (
   <div className="min-h-screen">
     <Navbar
@@ -67,15 +77,38 @@ const GamingHub = () => (
         </div>
       </section>
 
-      <section id="games" className="scroll-mt-20 py-16 sm:py-20">
+      <section id="games" className="py-16 sm:py-20">
         <div className="mx-auto max-w-6xl px-4">
-          <div className="grid gap-6 lg:grid-cols-3">
-            {GAMES.map((game) => (
-              <GameCard key={game.slug} game={game} />
-            ))}
-          </div>
+          {/* Split by family so a chess card is not read as a peer of a
+              tournament with published prizes. Each heading carries the note
+              once, which is what lets the cards themselves stay quiet. */}
+          {FAMILIES.map((family) => {
+            const games = GAMES.filter((game) => game.family === family.key);
+            if (games.length === 0) return null;
 
-          <p className="mx-auto mt-10 flex max-w-2xl items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm text-mist-300">
+            return (
+              <div
+                key={family.key}
+                id={family.key}
+                className="scroll-mt-20 [&+&]:mt-14"
+              >
+                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-white/10 pb-3">
+                  <h2 className="text-[11px] font-bold uppercase tracking-[0.22em] text-mist-300">
+                    {family.label}
+                  </h2>
+                  <p className="text-xs text-mist-500">{family.note}</p>
+                </div>
+
+                <div className="mt-6 grid gap-6 lg:grid-cols-3">
+                  {games.map((game) => (
+                    <GameCard key={game.slug} game={game} />
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+
+          <p className="mx-auto mt-12 flex max-w-2xl items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm text-mist-300">
             <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-mist-400" />
             <span>{GAMING.note}</span>
           </p>

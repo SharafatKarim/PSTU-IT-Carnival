@@ -11,7 +11,7 @@ import { accentOf } from '@/lib/accents';
 // ---------------------------------------------------------------------------
 // The line-up, as a ledger rather than a wall of cards.
 //
-// Eleven events used to render as eleven bordered cards, six of which
+// Every event used to render as a bordered card, most of which
 // apologised in two different ways. They are now rows in three tiers, and the
 // tier is derived from the real registration flag in events.js / gaming.js —
 // not from the hand-written `status` string, which drifts. routes.js warns in
@@ -28,11 +28,11 @@ const detailFor = (event) => {
   return event.kind === 'game' ? getGame(event.slug) : getEventDetail(event.slug);
 };
 
-const tierOf = (event) => {
-  const detail = detailFor(event);
-  if (!detail) return 'announced';
-  return detail.registrationOpen ? 'open' : 'published';
-};
+/* Read the stage the data states rather than inferring it. registrationOpen
+   cannot tell "announced only" apart from "published but entries closed", and
+   every announced event now has a detail entry, so inference would promote all
+   of them into Published. routes.js warns if stage and status disagree. */
+const tierOf = (event) => detailFor(event)?.stage || 'announced';
 
 const IconTile = ({ icon, accent, muted }) => {
   const Icon = ICON_MAP[icon] || ICON_MAP.code;
@@ -153,19 +153,37 @@ const PublishedRow = ({ event, detail }) => {
 };
 
 /* Announced only. No badge, no button, no chevron — the tier label above says
-   it once, and repeating it eleven times is what made the old grid a wall. */
-const AnnouncedRow = ({ event }) => (
-  <div className="flex items-center gap-4 border-t border-white/10 py-3 first:border-t-0">
-    <IconTile icon={event.icon} muted />
-    <span className="min-w-0 flex-1">
-      <span className="font-semibold text-mist-200">{event.name}</span>
-      <span className="ml-3 text-xs text-mist-500">{event.scope}</span>
-      <span className="mt-0.5 block truncate text-sm text-mist-500">
-        {event.blurb}
+   it once, and repeating it on every row is what made the old grid a wall. */
+const AnnouncedRow = ({ event }) => {
+  const body = (
+    <>
+      <IconTile icon={event.icon} muted />
+      <span className="min-w-0 flex-1">
+        <span className="font-semibold text-mist-200">{event.name}</span>
+        <span className="ml-3 text-xs text-mist-500">{event.scope}</span>
+        <span className="mt-0.5 block truncate text-sm text-mist-500">
+          {event.blurb}
+        </span>
       </span>
-    </span>
-  </div>
-);
+    </>
+  );
+
+  /* Linked only if the event actually has a page — an unlinked row is still
+     valid for anything added to the data before its route exists. */
+  return event.href ? (
+    <Link
+      href={event.href}
+      className="group flex items-center gap-4 border-t border-white/10 py-3 transition first:border-t-0 hover:bg-white/[0.03]"
+    >
+      {body}
+      <ArrowRightIcon className="h-4 w-4 shrink-0 text-mist-500 transition-transform group-hover:translate-x-0.5 group-hover:text-mist-300" />
+    </Link>
+  ) : (
+    <div className="flex items-center gap-4 border-t border-white/10 py-3 first:border-t-0">
+      {body}
+    </div>
+  );
+};
 
 const Tier = ({ label, note, children }) => (
   <section className="mt-12 first:mt-0">

@@ -14,7 +14,7 @@ export const EVENT = {
   title: 'PSTU IT Carnival 2026',
   tagline: 'South Zone’s Largest Tech Competition',
   intro:
-    'Three days, eleven events, one stage — competitive programming, hackathons, data science, quizzes, project showcases and gaming at Patuakhali Science and Technology University.',
+    'Three days, twelve events, one stage — competitive programming, hackathons, data science, quizzes, project showcases and gaming at Patuakhali Science and Technology University.',
   date: '13–15 August 2026',
   venue: 'CSE–FBA Building, PSTU',
   format: 'Onsite · 3 Days',
@@ -25,15 +25,6 @@ export const EVENT = {
   website: 'itcarnival26.pstu.ac.bd',
   contactEmail: '',
 };
-
-/* The four numbers the hero band shows. `Events` is read by name in
-   EventsIndex.jsx — keep the label if you reorder these. */
-export const STATS = [
-  { value: '45', label: 'Team slots' },
-  { value: 'Free', label: 'To pre-register' },
-  { value: '31 Jul', label: 'Entries close' },
-  { value: '11', label: 'Events' },
-];
 
 // `status: 'open'` is the one featured event; 'live' events get a linked card;
 // everything else renders as a disabled 'coming-soon' card. Any event that is
@@ -65,6 +56,9 @@ export const EVENTS = [
     blurb:
       'Build a working product against the clock in a national-level innovation sprint for student teams.',
     status: 'coming-soon',
+    slug: 'hackathon',
+    kind: 'event',
+    href: ROUTES.event('hackathon'),
   },
   {
     id: 'datathon',
@@ -88,6 +82,22 @@ export const EVENTS = [
     blurb:
       'Test your tech knowledge across computing, history and trivia in a fast-paced buzzer quiz.',
     status: 'coming-soon',
+    slug: 'it-quiz',
+    kind: 'event',
+    href: ROUTES.event('it-quiz'),
+  },
+  {
+    id: 'ctf',
+    name: 'CTF',
+    scope: 'Inter-University',
+    category: 'tech',
+    icon: 'shield',
+    blurb:
+      'A jeopardy-style security contest — web, forensics, reverse engineering and cryptography challenges solved against the clock.',
+    status: 'coming-soon',
+    slug: 'ctf',
+    kind: 'event',
+    href: ROUTES.event('ctf'),
   },
   {
     id: 'project-showcase',
@@ -98,6 +108,9 @@ export const EVENTS = [
     blurb:
       'Present your best software or hardware project to judges and the wider community.',
     status: 'coming-soon',
+    slug: 'project-showcase',
+    kind: 'event',
+    href: ROUTES.event('project-showcase'),
   },
   {
     id: 'pubg',
@@ -131,6 +144,9 @@ export const EVENTS = [
     icon: 'crown',
     blurb: 'Classic strategy on 64 squares. Outthink your opponent, move by move.',
     status: 'coming-soon',
+    slug: 'chess',
+    kind: 'game',
+    href: ROUTES.game('chess'),
   },
   {
     id: 'ludo',
@@ -140,6 +156,9 @@ export const EVENTS = [
     icon: 'dice',
     blurb: 'Roll the dice and race home in the ever-chaotic fan favourite.',
     status: 'coming-soon',
+    slug: 'ludo',
+    kind: 'game',
+    href: ROUTES.game('ludo'),
   },
   {
     id: 'pes',
@@ -161,14 +180,29 @@ export const EVENTS = [
     icon: 'cube',
     blurb: 'Race the clock to solve the cube. Fastest fingers, sharpest mind.',
     status: 'coming-soon',
+    slug: 'rubiks-cube',
+    kind: 'game',
+    href: ROUTES.game('rubiks-cube'),
   },
+];
+
+/* The four numbers the hero band shows. `Events` is read by name in
+   EventsIndex.jsx — keep the label if you reorder these.
+
+   Declared after EVENTS so the count can be counted. It was typed by hand and
+   said 11 the day a twelfth event landed. */
+export const STATS = [
+  { value: '45', label: 'Team slots' },
+  { value: 'Free', label: 'To pre-register' },
+  { value: '31 Jul', label: 'Entries close' },
+  { value: String(EVENTS.length), label: 'Events' },
 ];
 
 export const ABOUT_POINTS = [
   {
     icon: 'spark',
-    title: 'One Carnival, Eleven Arenas',
-    text: 'From competitive programming to board games and esports, eleven events span every kind of talent under a single festival banner.',
+    title: 'One Carnival, Twelve Arenas',
+    text: 'From competitive programming to board games and esports, twelve events span every kind of talent under a single festival banner.',
   },
   {
     icon: 'code',
@@ -244,7 +278,7 @@ export const PRIZES = [
 export const FAQS = [
   {
     q: 'What events can I take part in?',
-    a: "Eleven events across tech and gaming: IUPC (South Zone), Hackathon (National), Datathon, IT Quiz (Barishal Division), Project Showcasing, plus PUBG Mobile, Free Fire, eFootball, Chess, Ludo and Rubik’s Cube.",
+    a: "Twelve events across tech and gaming: IUPC (South Zone), Hackathon (National), Datathon, IT Quiz (Barishal Division), CTF, Project Showcasing, plus PUBG Mobile, Free Fire, eFootball, Chess, Ludo and Rubik’s Cube.",
   },
   {
     q: 'Which events are open for registration right now?',

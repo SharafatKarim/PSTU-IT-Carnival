@@ -23,9 +23,18 @@ const build = (title, description) => ({
    calls notFound(), this is only what the tab says on the way there. */
 const missing = (what) => ({ title: `${what} not found — ${SUFFIX}` });
 
+/* An announced event has no tournament block — describing it as though it did
+   would print "undefined at undefined" into a search result. */
+const announced = (event) =>
+  build(
+    `${event.name} — ${SUFFIX}`,
+    `${event.blurb} Announced for ${SUFFIX}; date, format and registration to be confirmed.`
+  );
+
 export function eventMetadata(slug) {
   const event = getEventDetail(slug);
   if (!event) return missing('Event');
+  if (!event.tournament) return announced(event);
 
   const t = event.tournament;
   const pool = t.prizePool ? ` Prize pool ${t.prizePool}.` : '';
@@ -71,6 +80,7 @@ export function eventSlotsMetadata(slug) {
 export function gameMetadata(slug) {
   const game = getGame(slug);
   if (!game) return missing('Game');
+  if (!game.tournament) return announced(game);
 
   const t = game.tournament;
 
