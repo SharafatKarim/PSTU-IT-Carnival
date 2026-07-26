@@ -4,19 +4,27 @@ import { useId, useState } from 'react';
 import { FAQS } from '@/data/content';
 import { ChevronDownIcon } from './Icons';
 
+/* Rows on a divided list, not five floating boxes. Every other list on the
+   landing page — the ledger, the steps, the schedule — separates with a
+   hairline, and five bordered cards read as five objects when they are one
+   list of five questions. */
 const FaqItem = ({ item, isOpen, onToggle }) => {
   const panelId = useId();
 
   return (
-    <div className="overflow-hidden rounded-xl border border-ink-600 bg-ink-800/40 transition hover:border-grape-500/40">
+    <div className="border-t border-white/10 first:border-t-0">
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={isOpen}
         aria-controls={panelId}
-        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+        className="group flex w-full items-center justify-between gap-4 py-4 text-left"
       >
-        <span className="text-sm font-semibold text-white sm:text-base">
+        <span
+          className={`text-sm font-semibold transition sm:text-base ${
+            isOpen ? 'text-white' : 'text-mist-200 group-hover:text-white'
+          }`}
+        >
           {item.q}
         </span>
         <ChevronDownIcon
@@ -36,7 +44,7 @@ const FaqItem = ({ item, isOpen, onToggle }) => {
         }`}
       >
         <div className="overflow-hidden">
-          <p className="px-5 pb-5 text-sm leading-relaxed text-mist-300">
+          <p className="max-w-[76ch] pb-5 text-sm leading-relaxed text-mist-300">
             {item.a}
           </p>
         </div>
@@ -50,7 +58,7 @@ const Faq = ({ items = FAQS }) => {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
-    <div className="space-y-3">
+    <div className="border-y border-white/10">
       {items.map((item, i) => (
         <FaqItem
           key={i}

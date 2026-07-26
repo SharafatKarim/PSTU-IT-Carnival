@@ -415,37 +415,29 @@ const Schedule = () => {
   );
 };
 
+/* The header is the same two-column band every other section uses. It used to
+   be a 4/8 split with a sticky left column holding a title, one sentence and a
+   link — and then 300px of nothing, because there was nothing else to put
+   there. */
 const FaqSection = () => (
   <Section
     id="faq"
+    eyebrow="FAQ"
+    title="Questions, answered"
+    titleNowrap
     className="border-y border-white/10 bg-ink-950/40"
     pad="py-16 sm:py-20"
+    action={
+      <Link
+        href={`${ROUTES.iupc}#contact`}
+        className="group inline-flex items-center gap-2 text-sm font-semibold text-mist-300 transition hover:text-white"
+      >
+        Contact the coordinator
+        <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+      </Link>
+    }
   >
-    <div className="grid gap-8 lg:grid-cols-12 lg:gap-12">
-      <div className="lg:col-span-4">
-        <div className="lg:sticky lg:top-24">
-          <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-mist-400">
-            FAQ
-          </p>
-          <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-            Questions, answered
-          </h2>
-          <p className="mt-4 max-w-[46ch] text-base leading-relaxed text-mist-300">
-            Still stuck? The IUPC page lists the coordinator who can help.
-          </p>
-          <Link
-            href={`${ROUTES.iupc}#contact`}
-            className="group mt-5 inline-flex items-center gap-2 text-sm font-semibold text-mist-300 transition hover:text-white"
-          >
-            Contact the coordinator
-            <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </Link>
-        </div>
-      </div>
-      <div className="lg:col-span-8">
-        <Faq />
-      </div>
-    </div>
+    <Faq />
   </Section>
 );
 
