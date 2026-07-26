@@ -47,7 +47,7 @@ const Section = ({
   <section id={id} className={`scroll-mt-20 ${pad} ${className}`}>
     <div className="mx-auto max-w-6xl px-4">
       {title && (
-        <header className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4 border-b border-white/10 pb-6">
+        <header className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
           <div className={titleNowrap ? 'lg:shrink-0' : 'max-w-[46ch]'}>
             {eyebrow && (
               <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-mist-400">
