@@ -7,9 +7,11 @@ import { landingNav, ROUTES, isRouteHref } from '@/lib/routes';
 
 const Logo = () => (
   <div className="flex items-center gap-2.5">
-    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-carnival text-sm font-extrabold text-white shadow-glow-grape">
-      PC
-    </span>
+    <img
+      src="/logo.png"
+      alt="PSTU IT Carnival Logo"
+      className="h-9 w-auto object-contain"
+    />
     <span className="text-sm font-bold leading-tight text-white">
       PSTU IT Carnival
       <span className="block text-[11px] font-medium text-mist-400">

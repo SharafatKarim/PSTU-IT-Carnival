@@ -3,11 +3,6 @@ import { EVENT, EVENT_TIERS } from '@/data/content';
 import { ROUTES } from '@/lib/routes';
 import { CalendarIcon, MapPinIcon } from './Icons';
 
-/* The footer used to be a logo on the left and a URL on the right — a bar with
-   nothing in it, on a site with twenty-one routes. It is the last chance to
-   hand someone a link, so it hands them the ones that matter: everything that
-   has published rules, plus the two hubs. */
-
 const FooterLink = ({ href, children }) => (
   <li>
     <Link
@@ -31,9 +26,11 @@ const Footer = () => {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-5">
             <Link href={ROUTES.home} className="inline-flex items-center gap-2.5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-carnival text-sm font-extrabold text-white shadow-glow-grape">
-                PC
-              </span>
+              <img
+                src="/logo.png"
+                alt="PSTU IT Carnival Logo"
+                className="h-9 w-auto object-contain"
+              />
               <span className="text-sm">
                 <span className="block font-bold text-white">{EVENT.title}</span>
                 <span className="block text-xs text-mist-400">
