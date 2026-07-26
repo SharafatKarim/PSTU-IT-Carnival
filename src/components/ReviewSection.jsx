@@ -30,7 +30,7 @@ const ReviewSection = ({ data }) => {
         {members.map((m, i) => (
           <div key={i} className="mb-3 rounded-lg border border-ink-600 bg-ink-950/40 p-3">
             <p className="mb-1 text-sm font-semibold text-mist-200">
-              Member {i + 1}
+              {i === 0 ? 'Team Leader' : `Member ${i + 1}`}
             </p>
             <Row label="Name" value={m.name} />
             <Row label="Email" value={m.email} />

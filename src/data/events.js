@@ -33,7 +33,7 @@ export const EVENT_DETAILS = [
     cover: '/events/iupc/cover.jpg',
 
     tournament: {
-      date: '13 August 2026',
+      date: '15 August 2026',
       time: '9:00 AM — 3:00 PM',
       venue: 'CSE–FBA Building, PSTU',
       entryFee: '৳3,000 per team',
@@ -68,7 +68,8 @@ export const EVENT_DETAILS = [
           'Each team must have exactly 3 members — no more, no fewer.',
           'Every team competes with one registered coach.',
           'Team names must be unique across all registrations.',
-          'Each member needs a distinct email address and Codeforces handle.',
+          'Each member needs a distinct email address and student ID.',
+          'The first member is the team leader — all correspondence goes to them.',
         ],
       },
       {
@@ -124,7 +125,8 @@ export const EVENT_DETAILS = [
         'Your team name — it must be unique, so pick a backup too',
         'Your varsity name',
         'Coach name, email and phone number',
-        'For each of the three members: name, email, phone, Codeforces handle and t-shirt size',
+        'For each of the three members: name, email, phone, student ID and t-shirt size',
+        'Which member is the team leader — they receive every email about your registration',
       ],
     },
 

@@ -2,6 +2,17 @@ import mongoose from 'mongoose';
 
 const memberSchema = new mongoose.Schema(
   {
+    /* The first member is the team leader, and correspondence goes to them
+       alone rather than to all three — one mail per team instead of three
+       keeps us inside the sending quota.
+       Stored explicitly rather than inferred from position: a mailer should be
+       able to query `members.isTeamLeader` instead of trusting that nothing
+       ever reorders the array. The API sets it from the index, so a submitted
+       payload cannot nominate two leaders. */
+    isTeamLeader: {
+      type: Boolean,
+      default: false,
+    },
     name: {
       type: String,
       required: [true, 'Member name is required'],

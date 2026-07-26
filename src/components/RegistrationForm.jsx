@@ -102,30 +102,34 @@ const buildRules = (getValues) => ({
   'members.2.tshirtSize': tshirtSizeRule(2),
 });
 
+/* Matches the heading MemberForm shows, so an error never says "Member 1"
+   about a field labelled "Team Leader". */
+const memberLabel = (i) => (i === 0 ? 'Team leader' : `Member ${i + 1}`);
+
 function memberNameRule(i) {
   return {
-    required: `Member ${i + 1} name is required`,
+    required: `${memberLabel(i)} name is required`,
     maxLength: { value: 100, message: 'Name cannot exceed 100 characters' },
   };
 }
 
 function memberPhoneRule(i) {
   return {
-    required: `Member ${i + 1} phone is required`,
+    required: `${memberLabel(i)} phone is required`,
     pattern: { value: BD_PHONE_RE, message: PHONE_HINT },
   };
 }
 
 function tshirtSizeRule(i) {
   return {
-    required: `Member ${i + 1} t-shirt size is required`,
+    required: `${memberLabel(i)} t-shirt size is required`,
     validate: (v) => T_SHIRT_SIZES.includes(v) || 'Select a valid t-shirt size',
   };
 }
 
 function memberEmailRule(i, getValues) {
   return {
-    required: `Member ${i + 1} email is required`,
+    required: `${memberLabel(i)} email is required`,
     pattern: { value: EMAIL_RE, message: 'Please enter a valid email' },
     validate: (v) => {
       if (!v) return true;
@@ -141,7 +145,7 @@ function memberEmailRule(i, getValues) {
 
 function memberStudentIdRule(i, getValues) {
   return {
-    required: `Member ${i + 1} student ID is required`,
+    required: `${memberLabel(i)} student ID is required`,
     minLength: { value: 2, message: 'Student ID must be at least 2 characters' },
     maxLength: { value: 50, message: 'Student ID cannot exceed 50 characters' },
     validate: (v) => {

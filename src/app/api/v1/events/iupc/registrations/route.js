@@ -189,11 +189,19 @@ export async function POST(req) {
     // 4. Generate ID & Create
     const registrationId = await generateRegistrationId();
 
+    /* The leader is row one, decided here rather than taken from the payload —
+       a caller could otherwise flag all three and defeat the point of mailing
+       one address per team. */
+    const membersWithLeader = members.map((member, index) => ({
+      ...member,
+      isTeamLeader: index === 0,
+    }));
+
     const created = await Registration.create({
       teamName,
       varsityName,
       coach,
-      members,
+      members: membersWithLeader,
       registrationId,
     });
 
