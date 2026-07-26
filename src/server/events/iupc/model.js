@@ -20,11 +20,11 @@ const memberSchema = new mongoose.Schema(
       required: [true, 'Member phone is required'],
       trim: true,
     },
-    codeforcesHandle: {
+    studentId: {
       type: String,
-      required: [true, 'Codeforces handle is required'],
+      required: [true, 'Student ID is required'],
       trim: true,
-      maxlength: [50, 'Codeforces handle cannot exceed 50 characters'],
+      maxlength: [50, 'Student ID cannot exceed 50 characters'],
     },
     tshirtSize: {
       type: String,
@@ -90,10 +90,16 @@ const registrationSchema = new mongoose.Schema(
         message: 'A team must have exactly 3 members',
       },
     },
+    /* Lifecycle: every team lands as 'pre-registered'. When final registration
+       opens and a team pays the entry fee, it moves to 'paid'. 'rejected' is
+       for withdrawn or disqualified entries.
+       Legacy rows may still hold 'pending'/'approved' from before this
+       vocabulary existed — see normaliseStatus in ./teams.js, which maps them
+       for display. Keep them accepted here so an old row can still be saved. */
     registrationStatus: {
       type: String,
-      enum: ['pending', 'approved', 'rejected'],
-      default: 'pending',
+      enum: ['pre-registered', 'paid', 'rejected', 'pending', 'approved'],
+      default: 'pre-registered',
     },
     registrationId: {
       type: String,

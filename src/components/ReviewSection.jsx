@@ -35,7 +35,7 @@ const ReviewSection = ({ data }) => {
             <Row label="Name" value={m.name} />
             <Row label="Email" value={m.email} />
             <Row label="Phone" value={m.phone} />
-            <Row label="Codeforces" value={m.codeforcesHandle} />
+            <Row label="Student ID" value={m.studentId} />
             <Row label="T-Shirt" value={m.tshirtSize} />
           </div>
         ))}

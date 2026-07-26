@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import FormField from './FormField';
 import AutocompleteField from './AutocompleteField';
 import SectionCard from './SectionCard';
@@ -14,9 +14,8 @@ import Navbar from './landing/Navbar';
 import Footer from './landing/Footer';
 import { ROUTES, registerNav } from '@/lib/routes';
 import { getEventDetail } from '@/data/events';
-import { searchUniversities, shortFormOf } from '@/data/universities';
-
-const BD_PHONE_RE = /^(?:\+?880)?1[3-9]\d{8}$/;
+import { searchUniversities } from '@/data/universities';
+import { BD_PHONE_RE, EMAIL_RE, PHONE_HINT } from '@/lib/patterns';
 
 const T_SHIRT_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
 
@@ -33,7 +32,7 @@ const STEP_FIELDS = [
     `members.${i}.name`,
     `members.${i}.email`,
     `members.${i}.phone`,
-    `members.${i}.codeforcesHandle`,
+    `members.${i}.studentId`,
     `members.${i}.tshirtSize`,
   ]),
 ];
@@ -42,7 +41,7 @@ const emptyMember = () => ({
   name: '',
   email: '',
   phone: '',
-  codeforcesHandle: '',
+  studentId: '',
   tshirtSize: '',
 });
 
@@ -59,22 +58,14 @@ const buildRules = (getValues) => ({
     minLength: { value: 3, message: 'Team name must be at least 3 characters' },
     maxLength: { value: 100, message: 'Team name cannot exceed 100 characters' },
     validate: {
-      /* No spaces at all — underscores stand in, e.g. PSTU_Array_Of_Hope. */
+      /* No spaces at all — underscores stand in. Teams pick any name they
+         like; there is no varsity prefix requirement. */
       noSpaces: (v) =>
         !/\s/.test(v || '') ||
         'Team name cannot contain spaces — use underscores instead',
       charset: (v) =>
         /^[A-Za-z0-9_]*$/.test(v || '') ||
         'Use only letters, numbers and underscores',
-      /* Must be prefixed with the varsity short form when we know it. */
-      varsityPrefix: (v) => {
-        const short = shortFormOf(getValues('varsityName'));
-        if (!short || !v) return true;
-        return (
-          v.toUpperCase().startsWith(`${short.toUpperCase()}_`) ||
-          `Team name must start with ${short}_ (e.g. ${short}_Array_Of_Hope)`
-        );
-      },
     },
   },
   varsityName: {
@@ -87,29 +78,26 @@ const buildRules = (getValues) => ({
   },
   'coach.email': {
     required: 'Coach email is required',
-    pattern: { value: /^\S+@\S+\.\S+$/, message: 'Please enter a valid email' },
+    pattern: { value: EMAIL_RE, message: 'Please enter a valid email' },
   },
   'coach.phone': {
     required: 'Coach phone is required',
-    pattern: {
-      value: BD_PHONE_RE,
-      message: 'Use 017XXXXXXXX or +88017XXXXXXXX',
-    },
+    pattern: { value: BD_PHONE_RE, message: PHONE_HINT },
   },
   'members.0.name': memberNameRule(0),
   'members.0.email': memberEmailRule(0, getValues),
   'members.0.phone': memberPhoneRule(0),
-  'members.0.codeforcesHandle': memberHandleRule(0, getValues),
+  'members.0.studentId': memberStudentIdRule(0, getValues),
   'members.0.tshirtSize': tshirtSizeRule(0),
   'members.1.name': memberNameRule(1),
   'members.1.email': memberEmailRule(1, getValues),
   'members.1.phone': memberPhoneRule(1),
-  'members.1.codeforcesHandle': memberHandleRule(1, getValues),
+  'members.1.studentId': memberStudentIdRule(1, getValues),
   'members.1.tshirtSize': tshirtSizeRule(1),
   'members.2.name': memberNameRule(2),
   'members.2.email': memberEmailRule(2, getValues),
   'members.2.phone': memberPhoneRule(2),
-  'members.2.codeforcesHandle': memberHandleRule(2, getValues),
+  'members.2.studentId': memberStudentIdRule(2, getValues),
   'members.2.tshirtSize': tshirtSizeRule(2),
 });
 
@@ -123,10 +111,7 @@ function memberNameRule(i) {
 function memberPhoneRule(i) {
   return {
     required: `Member ${i + 1} phone is required`,
-    pattern: {
-      value: BD_PHONE_RE,
-      message: 'Use +88017XXXXXXXX',
-    },
+    pattern: { value: BD_PHONE_RE, message: PHONE_HINT },
   };
 }
 
@@ -140,7 +125,7 @@ function tshirtSizeRule(i) {
 function memberEmailRule(i, getValues) {
   return {
     required: `Member ${i + 1} email is required`,
-    pattern: { value: /^\S+@\S+\.\S+$/, message: 'Please enter a valid email' },
+    pattern: { value: EMAIL_RE, message: 'Please enter a valid email' },
     validate: (v) => {
       if (!v) return true;
       const all = getValues('members') || [];
@@ -153,19 +138,19 @@ function memberEmailRule(i, getValues) {
   };
 }
 
-function memberHandleRule(i, getValues) {
+function memberStudentIdRule(i, getValues) {
   return {
-    required: `Member ${i + 1} Codeforces handle is required`,
-    minLength: { value: 2, message: 'Handle must be at least 2 characters' },
-    maxLength: { value: 50, message: 'Handle cannot exceed 50 characters' },
+    required: `Member ${i + 1} student ID is required`,
+    minLength: { value: 2, message: 'Student ID must be at least 2 characters' },
+    maxLength: { value: 50, message: 'Student ID cannot exceed 50 characters' },
     validate: (v) => {
       if (!v) return true;
       const all = getValues('members') || [];
       const lower = v.toLowerCase().trim();
       const dupes = all.filter(
-        (m, j) => j !== i && m?.codeforcesHandle?.toLowerCase().trim() === lower
+        (m, j) => j !== i && m?.studentId?.toLowerCase().trim() === lower
       );
-      return dupes.length === 0 || 'Each Codeforces handle must be different';
+      return dupes.length === 0 || 'Each student ID must be different';
     },
   };
 }
@@ -224,31 +209,19 @@ const RegistrationForm = ({ slug = 'iupc' }) => {
   const eventHref = ROUTES.event(slug);
   const {
     register,
-    control,
     getValues,
     setValue,
     trigger,
     formState: { errors },
   } = useForm({ defaultValues, mode: 'onTouched', shouldUnregister: false });
 
-  /* Short form of the chosen varsity — drives the team name prefix rule.
-     useWatch subscribes to just this field instead of re-rendering on every
-     keystroke anywhere in the form. */
-  const varsityName = useWatch({ control, name: 'varsityName' });
-  const varsityShort = shortFormOf(varsityName);
-
+  /* Picking from the list only fills the varsity field. The team name is the
+     team's own — it is never prefilled or prefixed. */
   const onVarsityPick = (option) => {
     setValue('varsityName', option.name, {
       shouldValidate: true,
       shouldDirty: true,
     });
-    /* Give them the prefix to type after, but never overwrite existing input. */
-    const current = getValues('teamName');
-    if (!current) {
-      setValue('teamName', `${option.short}_`, { shouldDirty: true });
-    } else if (!current.toUpperCase().startsWith(`${option.short.toUpperCase()}_`)) {
-      trigger('teamName');
-    }
   };
 
   // getValues is stable, so the rules object is built once, not per field.
@@ -376,36 +349,41 @@ const RegistrationForm = ({ slug = 'iupc' }) => {
                   {step === 0 &&
                     `Start with your team and coach details for the ${event?.name || 'contest'} (${event?.scope || ''}) contest.`}
                   {step === 1 &&
-                    'Add your three team members. Emails and Codeforces handles must be unique.'}
+                    'Add your three team members. Emails and student IDs must be unique.'}
                   {step === 2 &&
                     'Review everything below, then confirm to complete your pre-registration.'}
                 </p>
               </div>
 
-              <div className="mt-5 flex items-start gap-2.5 rounded-lg border border-aqua-400/25 bg-aqua-400/[0.07] px-4 py-3 text-sm text-mist-200">
-                <CalendarIcon className="mt-0.5 h-4 w-4 shrink-0 text-aqua-300" />
-                <span>
-                  The {event?.name} ({event?.scope}) contest will be held on{' '}
-                  <strong className="font-semibold text-white">
-                    {event?.tournament.date}
-                  </strong>{' '}
-                  at {event?.tournament.venue}.
-                </span>
-              </div>
+              {/* Orientation only — shown once, on the first step. Repeating
+                  it above every step just pushed the fields off screen. */}
+              {step === 0 && (
+                <div className="mt-5 space-y-3">
+                  <div className="flex items-start gap-2.5 rounded-lg border border-aqua-400/25 bg-aqua-400/[0.07] px-4 py-3 text-sm text-mist-200">
+                    <CalendarIcon className="mt-0.5 h-4 w-4 shrink-0 text-aqua-300" />
+                    <span>
+                      Held{' '}
+                      <strong className="font-semibold text-white">
+                        {event?.tournament.date}
+                      </strong>{' '}
+                      at {event?.tournament.venue}.
+                    </span>
+                  </div>
 
-              {/* Pre-registration is not the final step — say so before they fill it in. */}
-              <div className="mt-3 flex items-start gap-2.5 rounded-lg border border-gold-400/25 bg-gold-400/[0.07] px-4 py-3 text-sm text-mist-200">
-                <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-gold-300" />
-                <span>
-                  This is <strong className="font-semibold text-white">pre-registration</strong> and
-                  costs nothing. Confirmed slots are published university-wise, after
-                  which final registration opens with the{' '}
-                  <strong className="font-semibold text-white">
-                    {event?.tournament.entryFee}
-                  </strong>{' '}
-                  entry fee.
-                </span>
-              </div>
+                  <div className="flex items-start gap-2.5 rounded-lg border border-gold-400/25 bg-gold-400/[0.07] px-4 py-3 text-sm text-mist-200">
+                    <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-gold-300" />
+                    <span>
+                      Pre-registration is free. Slots are published
+                      university-wise, after which final registration opens with
+                      the{' '}
+                      <strong className="font-semibold text-white">
+                        {event?.tournament.entryFee}
+                      </strong>{' '}
+                      entry fee.
+                    </span>
+                  </div>
+                </div>
+              )}
 
               <StepIndicator current={step} />
 
@@ -439,28 +417,19 @@ const RegistrationForm = ({ slug = 'iupc' }) => {
                         <FormField
                           label="Team Name"
                           name="teamName"
-                          placeholder={
-                            varsityShort
-                              ? `${varsityShort}_Array_Of_Hope`
-                              : 'e.g. PSTU_Array_Of_Hope'
-                          }
                           register={registerWithRules}
                           error={errors.teamName}
-                          hint={
-                            varsityShort
-                              ? `Must start with ${varsityShort}_ · no spaces`
-                              : 'Starts with your varsity short form · no spaces'
-                          }
+                          hint="Letters, numbers and underscores · no spaces"
                           required
                           autoComplete="off"
                         />
                         <AutocompleteField
                           label="Varsity Name"
                           name="varsityName"
-                          placeholder="Start typing, e.g. Patuakhali or PSTU"
+                          placeholder="Start typing to search"
                           register={registerWithRules}
                           error={errors.varsityName}
-                          hint="Pick from the list so your team name prefix is checked"
+                          hint="Pick your university from the list"
                           required
                           autoComplete="organization"
                           search={searchUniversities}
@@ -474,7 +443,6 @@ const RegistrationForm = ({ slug = 'iupc' }) => {
                         <FormField
                           label="Coach Name"
                           name="coach.name"
-                          placeholder="e.g. Dr. Karim"
                           register={registerWithRules}
                           error={errors.coach?.name}
                           required
@@ -484,7 +452,6 @@ const RegistrationForm = ({ slug = 'iupc' }) => {
                           label="Coach Email"
                           name="coach.email"
                           type="email"
-                          placeholder="coach@example.com"
                           register={registerWithRules}
                           error={errors.coach?.email}
                           required
@@ -493,9 +460,9 @@ const RegistrationForm = ({ slug = 'iupc' }) => {
                         <FormField
                           label="Coach Phone Number"
                           name="coach.phone"
-                          placeholder="017XXXXXXXX or +88017XXXXXXXX"
                           register={registerWithRules}
                           error={errors.coach?.phone}
+                          hint={PHONE_HINT}
                           required
                           autoComplete="tel"
                         />

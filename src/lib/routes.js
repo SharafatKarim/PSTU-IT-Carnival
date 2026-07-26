@@ -53,6 +53,10 @@ export const ROUTES = {
   /* Tech events get a detail page, with the form nested underneath it. */
   event: (slug) => `${EVENTS_BASE}/${slug}`,
   eventRegister: (slug) => `${EVENTS_BASE}/${slug}/register`,
+  /* Public directory of registered teams. */
+  eventTeams: (slug) => `${EVENTS_BASE}/${slug}/teams`,
+  /* University-wise slot split, published after entries close. */
+  eventSlots: (slug) => `${EVENTS_BASE}/${slug}/slots`,
   /* Gaming is an event like any other — it just has games nested below it. */
   gaming: GAMING_BASE,
   game: (slug) => `${GAMING_BASE}/${slug}`,
@@ -156,6 +160,22 @@ export const registerNav = [
   { label: 'Gaming', href: ROUTES.gaming },
 ];
 
+/* Nav for an event's directory pages. Each links to its sibling so the two
+   are reachable from one another without going back to the event page. */
+export const eventTeamsNav = (slug) => [
+  { label: 'Home', href: ROUTES.home },
+  { label: 'Event Details', href: ROUTES.event(slug) },
+  { label: 'Slot Allocations', href: ROUTES.eventSlots(slug) },
+  { label: 'All Events', href: ROUTES.events },
+];
+
+export const eventSlotsNav = (slug) => [
+  { label: 'Home', href: ROUTES.home },
+  { label: 'Event Details', href: ROUTES.event(slug) },
+  { label: 'Registered Teams', href: ROUTES.eventTeams(slug) },
+  { label: 'All Events', href: ROUTES.events },
+];
+
 /* Nav for a game's registration page — back out to the game, or sideways. */
 export const gameRegisterNav = (slug) => [
   { label: 'Home', href: ROUTES.home },
@@ -168,10 +188,11 @@ export const siteUrls = () => [
   { path: ROUTES.home, priority: 1 },
   { path: ROUTES.events, priority: 0.9 },
   ...EVENT_PAGE_SLUGS.map((slug) => ({ path: ROUTES.event(slug), priority: 0.9 })),
-  ...REGISTRABLE_EVENTS.map((event) => ({
-    path: ROUTES.eventRegister(event.slug),
-    priority: 0.9,
-  })),
+  ...REGISTRABLE_EVENTS.flatMap((event) => [
+    { path: ROUTES.eventRegister(event.slug), priority: 0.9 },
+    { path: ROUTES.eventTeams(event.slug), priority: 0.6 },
+    { path: ROUTES.eventSlots(event.slug), priority: 0.6 },
+  ]),
   { path: ROUTES.gaming, priority: 0.9 },
   ...GAME_PAGE_SLUGS.flatMap((slug) => {
     const game = GAMES.find((g) => g.slug === slug);

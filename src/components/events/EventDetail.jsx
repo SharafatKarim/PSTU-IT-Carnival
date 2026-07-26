@@ -21,6 +21,10 @@ import {
 import { getEventDetail } from '@/data/events';
 import { ROUTES, eventDetailNav } from '@/lib/routes';
 
+/* Shared by every non-primary hero button, so they stay visually identical. */
+const SECONDARY_CTA =
+  'inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-grape-400/40 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur transition hover:border-grape-400/70 hover:bg-white/10 sm:flex-none';
+
 const Section = ({ id, eyebrow, title, subtitle, children, className = '' }) => (
   <section id={id} className={`scroll-mt-20 py-16 sm:py-20 ${className}`}>
     <div className="mx-auto max-w-6xl px-4">
@@ -73,7 +77,24 @@ const Hero = ({ event }) => {
     /* Full viewport minus the 61px sticky navbar. min-h (not h) so the hero
        still grows on narrow screens instead of clipping its content. */
     <section className="relative flex min-h-[calc(100dvh-61px)] flex-col overflow-hidden bg-ink-950">
-      <div className="absolute inset-0 bg-hero" />
+      {/* Cover art sits underneath everything, with a scrim over it so the
+          headline keeps its contrast whatever image is dropped in. A plain
+          background layer rather than next/image: it is decorative, it must
+          not shift the layout, and it accepts any file format. */}
+      {event.cover && (
+        <>
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-cover bg-center opacity-40"
+            style={{ backgroundImage: `url(${event.cover})` }}
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-b from-ink-950/70 via-ink-950/50 to-ink-950"
+          />
+        </>
+      )}
+      <div className="absolute inset-0 bg-hero opacity-80" />
       <div className="absolute inset-0 bg-grid bg-[size:46px_46px] opacity-50" />
       <div className={`absolute -right-24 -top-10 h-80 w-80 rounded-full blur-3xl ${a.blob}`} />
       <div className="absolute -left-24 top-32 h-72 w-72 rounded-full bg-grape-600/20 blur-3xl" />
@@ -139,10 +160,15 @@ const Hero = ({ event }) => {
             Pre-Register for {event.shortName}
             <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
-          <a
-            href="#rules"
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-grape-400/40 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur transition hover:border-grape-400/70 hover:bg-white/10"
-          >
+          {/* Two secondaries share one class string so the row stays even
+              however long the labels get. */}
+          <Link href={ROUTES.eventTeams(event.slug)} className={SECONDARY_CTA}>
+            View Teams
+          </Link>
+          <Link href={ROUTES.eventSlots(event.slug)} className={SECONDARY_CTA}>
+            Slot Allocations
+          </Link>
+          <a href="#rules" className={SECONDARY_CTA}>
             Read the Rules
           </a>
         </div>

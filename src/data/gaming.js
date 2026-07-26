@@ -10,13 +10,11 @@
 // stand-ins. Replace them with the confirmed figures before going live.
 // ---------------------------------------------------------------------------
 
-// Accepts the three ways people actually write a BD mobile number:
-// 01712345678, 1712345678 and +8801712345678.
-const BD_PHONE_RE = /^(?:\+?880|0)?1[3-9]\d{8}$/;
-const EMAIL_RE = /^\S+@\S+\.\S+$/;
+// patterns.js imports nothing, so this stays clear of the routes.js cycle.
+import { BD_PHONE_RE, EMAIL_RE, PHONE_HINT } from '@/lib/patterns';
 
 const PHONE_RULES = {
-  pattern: { value: BD_PHONE_RE, message: 'Use 017XXXXXXXX or +88017XXXXXXXX' },
+  pattern: { value: BD_PHONE_RE, message: PHONE_HINT },
 };
 
 const EMAIL_RULES = {
