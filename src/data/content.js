@@ -22,7 +22,7 @@ export const EVENT = {
      when IUPC stopped publishing prize figures. */
   registrationDeadline: '31 July 2026',
   organizer: 'CSE Club, PSTU',
-  website: 'pstuitcarnival2026.com',
+  website: 'itcarnival26.pstu.ac.bd',
   contactEmail: '',
 };
 

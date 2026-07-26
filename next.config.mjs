@@ -12,13 +12,17 @@ const TURNSTILE = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
   ? 'https://challenges.cloudflare.com'
   : '';
 
+const IS_DEV = process.env.NODE_ENV === 'development';
+const EVAL_DIRECTIVE = IS_DEV ? "'unsafe-eval'" : "";
+const DEV_CONNECT = IS_DEV ? "ws: wss:" : "";
+
 const CSP = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline' ${TURNSTILE}`,
+  `script-src 'self' 'unsafe-inline' ${EVAL_DIRECTIVE} ${TURNSTILE}`.trim(),
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
-  `connect-src 'self' ${TURNSTILE}`,
+  `connect-src 'self' ${DEV_CONNECT} ${TURNSTILE}`.trim(),
   `frame-src ${TURNSTILE || "'none'"}`,
   "form-action 'self'",
   "base-uri 'self'",
