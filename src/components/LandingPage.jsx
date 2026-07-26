@@ -138,7 +138,16 @@ const Hero = () => (
     id="top"
     className="relative flex min-h-[calc(100svh-65px)] flex-col overflow-hidden bg-ink-950 md:min-h-[calc(100svh-61px)]"
   >
-    <div className="absolute inset-0 bg-hero" />
+    <div
+      aria-hidden="true"
+      className="absolute inset-0 bg-cover bg-center opacity-25"
+      style={{ backgroundImage: 'url(/cover.jpg)' }}
+    />
+    <div
+      aria-hidden="true"
+      className="absolute inset-0 bg-gradient-to-b from-ink-950/80 via-ink-950/60 to-ink-950"
+    />
+    <div className="absolute inset-0 bg-hero opacity-80" />
     <div className="absolute inset-0 bg-grid bg-[size:46px_46px] opacity-50" />
     <div className="absolute -left-24 top-10 h-72 w-72 rounded-full bg-grape-600/25 blur-3xl" />
     <div className="absolute -right-16 top-24 h-72 w-72 rounded-full bg-aqua-500/15 blur-3xl" />
