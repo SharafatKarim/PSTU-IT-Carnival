@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { ICON_MAP, ArrowRightIcon } from './Icons';
 import Countdown from './Countdown';
-import { EVENTS } from '@/data/content';
+import { EVENT_TIERS } from '@/data/content';
 import { getEventDetail } from '@/data/events';
 import { getGame } from '@/data/gaming';
 import { accentOf } from '@/lib/accents';
@@ -11,15 +11,15 @@ import { accentOf } from '@/lib/accents';
 // ---------------------------------------------------------------------------
 // The line-up, as a ledger rather than a wall of cards.
 //
-// Every event used to render as a bordered card, most of which
-// apologised in two different ways. They are now rows in three tiers, and the
-// tier is derived from the real registration flag in events.js / gaming.js —
-// not from the hand-written `status` string, which drifts. routes.js warns in
-// development when the two disagree.
+// Every event used to render as a bordered card, most of which apologised in
+// two different ways. They are now rows in three tiers, and the tier comes from
+// the `stage` field in events.js / gaming.js — not from the hand-written
+// `status` string, which drifts. routes.js warns in development when the two
+// disagree.
 //
-// Density is the ranking mechanic: py-5 for the one open event, py-4 for the
-// three that are published, py-3 for the seven merely announced. A row gets a
-// border only if it is a link.
+// Density is the ranking mechanic, not colour: py-5 open, py-4 published, py-3
+// announced. No count is written down here — EVENT_TIERS does the counting, so
+// this comment cannot go stale the way the lede below it did.
 // ---------------------------------------------------------------------------
 
 /* Resolve an EVENTS entry against the data that actually knows its state. */
@@ -27,12 +27,6 @@ const detailFor = (event) => {
   if (!event.slug) return null;
   return event.kind === 'game' ? getGame(event.slug) : getEventDetail(event.slug);
 };
-
-/* Read the stage the data states rather than inferring it. registrationOpen
-   cannot tell "announced only" apart from "published but entries closed", and
-   every announced event now has a detail entry, so inference would promote all
-   of them into Published. routes.js warns if stage and status disagree. */
-const tierOf = (event) => detailFor(event)?.stage || 'announced';
 
 const IconTile = ({ icon, accent, muted }) => {
   const Icon = ICON_MAP[icon] || ICON_MAP.code;
@@ -160,8 +154,8 @@ const AnnouncedRow = ({ event }) => {
       <IconTile icon={event.icon} muted />
       <span className="min-w-0 flex-1">
         <span className="font-semibold text-mist-200">{event.name}</span>
-        <span className="ml-3 text-xs text-mist-500">{event.scope}</span>
-        <span className="mt-0.5 block truncate text-sm text-mist-500">
+        <span className="ml-3 text-xs text-mist-400">{event.scope}</span>
+        <span className="mt-0.5 block truncate text-sm text-mist-400">
           {event.blurb}
         </span>
       </span>
@@ -191,15 +185,15 @@ const Tier = ({ label, note, children }) => (
       <h3 className="text-[11px] font-bold uppercase tracking-[0.22em] text-mist-300">
         {label}
       </h3>
-      {note && <p className="text-xs text-mist-500">{note}</p>}
+      {note && <p className="text-xs text-mist-400">{note}</p>}
     </div>
     <div>{children}</div>
   </section>
 );
 
 const Lineup = () => {
-  const grouped = { open: [], published: [], announced: [] };
-  EVENTS.forEach((event) => grouped[tierOf(event)].push(event));
+  /* Grouped in content.js, beside the lede that counts the same tiers. */
+  const grouped = EVENT_TIERS;
 
   return (
     <div>

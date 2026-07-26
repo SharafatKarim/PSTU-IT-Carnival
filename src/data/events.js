@@ -47,8 +47,18 @@ export const EVENT_DETAILS = [
       deadline: '31 July 2026',
     },
 
-    /* No prize breakdown published for IUPC yet. Add a `prizes` array here
-       — [{ place, rank, amount?, perks: [] }] — and the section reappears. */
+    /* Non-monetary only. Prize money has not been announced; add an `amount`
+       to an entry when a figure is confirmed and TournamentInfo prints it.
+       The landing page reads this same array, so the two cannot disagree. */
+    prizes: [
+      {
+        place: 'Champion',
+        rank: 1,
+        perks: ['Winner trophy', 'Certificate of excellence'],
+      },
+      { place: '1st Runner-Up', rank: 2, perks: ['Certificate of merit'] },
+      { place: '2nd Runner-Up', rank: 3, perks: ['Certificate of merit'] },
+    ],
 
     rules: [
       {
@@ -103,7 +113,7 @@ export const EVENT_DETAILS = [
       /* 'form' means this event owns /events/<slug>/register. */
       kind: 'form',
       cta: 'Start Pre-Registration',
-      note: 'Pre-registration is free · Instant registration ID',
+      note: 'Pre-registration is free · Instant registration ID · Event t-shirt for every participant',
       /* Rendered as a numbered "how it works" list on the event page. */
       process: [
         'Pre-register your team here. Nothing is paid at this stage.',

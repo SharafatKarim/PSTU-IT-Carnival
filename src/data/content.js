@@ -5,9 +5,11 @@
 
 import { ROUTES } from '@/lib/routes';
 import { getEventDetail } from './events';
+import { getGame } from './gaming';
 
 /* Timeline dates come from the event's own data so the two can never drift. */
 const IUPC = getEventDetail('iupc')?.tournament;
+const DATATHON = getEventDetail('datathon')?.tournament;
 
 export const EVENT = {
   university: 'Patuakhali Science and Technology University',
@@ -18,9 +20,6 @@ export const EVENT = {
   date: '13–15 August 2026',
   venue: 'CSE–FBA Building, PSTU',
   format: 'Onsite · 3 Days',
-  /* Deadline drives the hero badge — the old "৳450K+ prize pool" claim went
-     when IUPC stopped publishing prize figures. */
-  registrationDeadline: '31 July 2026',
   organizer: 'CSE Club, PSTU',
   website: 'itcarnival26.pstu.ac.bd',
   contactEmail: '',
@@ -186,103 +185,124 @@ export const EVENTS = [
   },
 ];
 
-/* The four numbers the hero band shows. `Events` is read by name in
-   EventsIndex.jsx — keep the label if you reorder these.
+/* ---------------------------------------------------------------------------
+   Everything below is counted, not typed.
 
-   Declared after EVENTS so the count can be counted. It was typed by hand and
-   said 11 the day a twelfth event landed. */
+   The hand-written version said eleven the day a twelfth event landed, and left
+   the line-up lede claiming "Three" published after the datathon became the
+   fourth. Both numbers now come from the same `stage` field the ledger groups
+   on, so the sentence and the list it introduces cannot disagree.
+
+   This lives here rather than in Lineup.jsx because that component is
+   'use client' and data logic does not belong there. The import is acyclic —
+   gaming.js pulls only @/lib/patterns, events.js pulls nothing.
+   --------------------------------------------------------------------------- */
+const detailFor = (event) =>
+  !event.slug
+    ? null
+    : event.kind === 'game'
+      ? getGame(event.slug)
+      : getEventDetail(event.slug);
+
+export const tierOf = (event) => detailFor(event)?.stage || 'announced';
+
+export const EVENT_TIERS = EVENTS.reduce(
+  (acc, event) => {
+    acc[tierOf(event)].push(event);
+    return acc;
+  },
+  { open: [], published: [], announced: [] }
+);
+
+/* The page spells its numbers as words everywhere else, so these match. */
+const WORDS = [
+  'No',
+  'One',
+  'Two',
+  'Three',
+  'Four',
+  'Five',
+  'Six',
+  'Seven',
+  'Eight',
+  'Nine',
+  'Ten',
+  'Eleven',
+  'Twelve',
+];
+export const word = (n) => WORDS[n] || String(n);
+
+/* "The rest are announced" stays literal — correct by construction. */
+export const LINEUP_LEDE =
+  `${word(EVENT_TIERS.open.length)} ${EVENT_TIERS.open.length === 1 ? 'is' : 'are'} taking entries. ` +
+  `${word(EVENT_TIERS.published.length)} ${EVENT_TIERS.published.length === 1 ? 'has its' : 'have their'} format, rules and prizes ` +
+  `published while entries stay closed. The rest are announced.`;
+
+/* The four numbers the hero band shows. Exactly four — HeadlineStrip slices to
+   four and its per-cell border maths assumes it.
+
+   These used to be 45 team slots / Free / 31 Jul, all three of which the hero's
+   own panel prints 200px above, and two of which were hand-typed copies of
+   events.js. The band now says what only the band can say: what the carnival
+   contains. `Events` is read BY NAME in EventsIndex.jsx — keep that label. */
+const countTier = (tier) => EVENT_TIERS[tier].length;
+const countCategory = (category) =>
+  EVENTS.filter((event) => event.category === category).length;
+
 export const STATS = [
-  { value: '45', label: 'Team slots' },
-  { value: 'Free', label: 'To pre-register' },
-  { value: '31 Jul', label: 'Entries close' },
   { value: String(EVENTS.length), label: 'Events' },
-];
-
-export const ABOUT_POINTS = [
+  { value: String(countCategory('tech')), label: 'Tech contests' },
+  { value: String(countCategory('gaming')), label: 'Gaming arenas' },
   {
-    icon: 'spark',
-    title: 'One Carnival, Twelve Arenas',
-    text: 'From competitive programming to board games and esports, twelve events span every kind of talent under a single festival banner.',
-  },
-  {
-    icon: 'code',
-    title: 'Flagship IUPC · South Zone',
-    text: "The centrepiece is our ICPC-style Inter-University Programming Contest, drawing the region’s strongest teams to compete for the title.",
-  },
-  {
-    icon: 'users',
-    title: 'For Coders & Gamers Alike',
-    text: 'Whether you live in an IDE, a chessboard, or a battle-royale lobby, there is an arena with your name on it.',
-  },
-  {
-    icon: 'monitor',
-    title: 'More Than a Competition',
-    text: 'A full three-day festival — project showcases, networking, an event t-shirt, and a community that celebrates building and playing.',
+    value: String(countTier('open') + countTier('published')),
+    label: 'With full rules',
   },
 ];
 
+
+/* Four stops, chronological — currentStop() requires the order, and
+   sm:grid-cols-2 lg:grid-cols-4 on the landing page requires the count.
+
+   Every stop names whose deadline it is. The old list was IUPC, IUPC, IUPC,
+   carnival under a section titled "The road to carnival day", which read as the
+   whole festival's schedule. The dropped practice round is still stated on
+   /events/iupc, the page that owns it. */
 export const TIMELINE = [
   {
-    phase: 'Pre-Registration',
+    phase: 'IUPC pre-registration',
     date: `Closes ${IUPC?.deadline || '31 July 2026'}`,
     icon: 'calendar',
     text: 'Submit your team name, coach and all three members. Free — nothing is paid at this stage.',
   },
   {
-    phase: 'Slots & Final Registration',
+    phase: 'IUPC final registration',
     date: 'Early August 2026',
     icon: 'clock',
     text: `Confirmed slots are published university-wise, then final registration opens for the listed teams with the ${IUPC?.entryShort || '৳3,000'} entry fee.`,
   },
   {
-    phase: 'Practice Round',
-    date: '12 August 2026',
-    icon: 'code',
-    text: 'Get familiar with the judge, the environment, and the workstation setup before it counts.',
+    phase: 'Datathon window',
+    date: DATATHON?.date || 'August 2026',
+    icon: 'chart',
+    /* No submission time printed — events.js disagrees with itself on whether
+       it is 11:58 or 11:59 PM. And no call to action: the datathon has
+       registrationOpen: false, so inviting entries here would be a dead end. */
+    text: 'The one contest that finishes before anyone reaches Patuakhali — days of work online, submitted from wherever you are. Entries have not opened yet.',
   },
   {
-    phase: 'Carnival Days',
-    date: '13–15 August 2026',
+    phase: 'Carnival days',
+    date: EVENT.date,
     icon: 'flag',
-    text: 'Three days of onsite battles across every arena — from the 4–5 hour IUPC to the gaming finals.',
+    text: 'Three days onsite across every arena — the IUPC, the gaming finals, and the closing ceremony.',
   },
 ];
 
-export const RULES = [
-  'Each team must have exactly 3 members — no more, no fewer.',
-  'Every team competes with one registered coach.',
-  'Team names must be unique across all registrations.',
-  'Each member needs a distinct email address and Codeforces handle.',
-  'Members share a single workstation during the contest.',
-  'Standings follow ICPC scoring: problems solved first, then penalty time.',
-];
 
-export const PRIZES = [
-  {
-    place: 'Champion',
-    rank: 1,
-    perks: ['Certificate of excellence', 'Winner trophy'],
-  },
-  {
-    place: '1st Runner-Up',
-    rank: 2,
-    perks: ['Certificate of merit'],
-  },
-  {
-    place: '2nd Runner-Up',
-    rank: 3,
-    perks: ['Certificate of merit'],
-  },
-];
 
 export const FAQS = [
   {
-    q: 'What events can I take part in?',
-    a: "Twelve events across tech and gaming: IUPC (South Zone), Hackathon (National), Datathon, IT Quiz (Barishal Division), CTF, Project Showcasing, plus PUBG Mobile, Free Fire, eFootball, Chess, Ludo and Rubik’s Cube.",
-  },
-  {
     q: 'Which events are open for registration right now?',
-    a: 'Only IUPC (South Zone), and only for pre-registration. The three gaming tournaments have their formats, rules and prizes published, but entries have not opened yet. The rest of the line-up follows later.',
+    a: 'Only IUPC (South Zone), and only for pre-registration. The datathon and the three esports tournaments have their formats, rules and prizes published, but entries have not opened yet. The rest of the line-up follows later.',
   },
   {
     q: 'How many members can an IUPC team have?',

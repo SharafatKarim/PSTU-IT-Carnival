@@ -87,10 +87,12 @@ export const REGISTRABLE_EVENTS = EVENT_DETAILS.filter(
 );
 
 /* Sections of the landing page, in the order they appear. The nav and the
-   in-page anchors are both generated from this. */
-/* Five, not eight. The About / Format / Prizes sections were cut — Format
+   in-page anchors are both generated from this.
+
+   Four, not eight. The About / Format / Prizes sections were cut — Format
    duplicated the rules that live on /events/iupc and Prizes had no figures to
-   show. Fewer links is also what lets the desktop nav start at md:. */
+   show. What the md: breakpoint actually depends on is the RENDERED link count
+   in landingNav below, not this array — see the measurement there. */
 export const LANDING_SECTIONS = [
   { id: 'events', label: 'Events' },
   { id: 'register', label: 'How to enter' },
@@ -117,13 +119,23 @@ export const GAME_SECTIONS = [
   { id: 'contact', label: 'Contact' },
 ];
 
-/* Landing nav: same-page anchors, with the event routes slotted in after
-   Events so the "what's on" entries sit together. */
+/* Landing nav: same-page anchors, plus the one cross-route entry with no other
+   home in the header.
+
+   Five links, and the count is load-bearing. At six this measured 734px inside
+   a 736px container at the md: breakpoint — and the scrollbar declared in
+   globals.css is 12px wide, so the real box is 724px and the header wrapped
+   between 768px and ~778px. That is the same bug the gamingNav comment below
+   describes. At five it measures 677px, in line with every other nav here.
+
+   IUPC is deliberately absent: the gold CTA already resolves to
+   ROUTES.eventRegister('iupc') and the "How to enter" section links to
+   ROUTES.iupc, while /events/gaming has six events behind it and no other
+   route link in the header. */
 export const landingNav = LANDING_SECTIONS.flatMap((section) =>
   section.id === 'events'
     ? [
         { label: section.label, href: `#${section.id}` },
-        { label: 'IUPC', href: ROUTES.iupc },
         { label: 'Gaming', href: ROUTES.gaming },
       ]
     : [{ label: section.label, href: `#${section.id}` }]

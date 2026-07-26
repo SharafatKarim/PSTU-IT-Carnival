@@ -17,7 +17,14 @@ import {
   UsersIcon,
   AlertIcon,
 } from './landing/Icons';
-import { EVENT, STATS, TIMELINE } from '@/data/content';
+import {
+  EVENT,
+  EVENTS,
+  LINEUP_LEDE,
+  STATS,
+  TIMELINE,
+  word,
+} from '@/data/content';
 import { getEventDetail } from '@/data/events';
 import { ROUTES } from '@/lib/routes';
 import { currentStop } from '@/lib/schedule';
@@ -142,7 +149,7 @@ const Hero = () => (
             {EVENT.university}
           </p>
 
-          <h1 className="mt-4 text-4xl font-extrabold leading-[1.04] tracking-tight sm:text-6xl">
+          <h1 className="mt-4 text-5xl font-extrabold leading-[1.04] tracking-tight sm:text-6xl">
             <span className="text-white">PSTU </span>
             <span className="text-gradient-title">IT Carnival</span>
             <span className="text-white"> 2026</span>
@@ -175,7 +182,7 @@ const Hero = () => (
             href="#events"
             className="mt-7 inline-flex items-center gap-2 self-start text-sm font-semibold text-mist-200 transition hover:text-white"
           >
-            See all twelve events
+            See all {word(EVENTS.length).toLowerCase()} events
             <ArrowRightIcon className="h-4 w-4" />
           </a>
         </div>
@@ -187,12 +194,7 @@ const Hero = () => (
       </div>
     </div>
 
-    <HeadlineStrip
-      items={STATS.map((stat, i) => ({
-        ...stat,
-        accentClass: i === 0 ? 'text-gold-300' : undefined,
-      }))}
-    />
+    <HeadlineStrip items={STATS} />
   </section>
 );
 
@@ -200,8 +202,8 @@ const LineupSection = () => (
   <Section
     id="events"
     eyebrow="The line-up"
-    title="Twelve events. One carnival."
-    lede="One is taking entries. Three have their format, rules and prizes published while entries stay closed. The rest are announced."
+    title={`${word(EVENTS.length)} events. One carnival.`}
+    lede={LINEUP_LEDE}
     action={
       <Link
         href={ROUTES.gaming}
@@ -228,7 +230,7 @@ const HowToEnter = () => {
       id="register"
       eyebrow="IUPC · how to enter"
       title="Three steps, and the first one is free"
-      className="bg-ink-950/40"
+      className="border-y border-white/10 bg-ink-950/40"
       pad="py-24 sm:py-28"
       action={
         <Link
@@ -273,23 +275,31 @@ const HowToEnter = () => {
         <div className="lg:col-span-5">
           <div className="rounded-2xl border border-ink-600 bg-ink-800/60 p-6 shadow-card sm:p-7 lg:sticky lg:top-24">
             <h3 className="text-lg font-bold text-white">Awards</h3>
+            {/* Read from the same array /events/iupc renders. Hand-typing this
+                list is how the landing page came to advertise awards the IUPC
+                page did not show at all. */}
             <ul className="mt-4 space-y-2.5">
-              {[
-                'Trophy and certificate of excellence for the champion',
-                'Certificates of merit for both runners-up',
-                'An event t-shirt for every participant',
-              ].map((line) => (
-                <li key={line} className="flex items-start gap-2.5">
+              {IUPC.prizes.map((prize) => (
+                <li key={prize.place} className="flex items-start gap-2.5">
                   <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-mist-400" />
                   <span className="text-sm leading-relaxed text-mist-300">
-                    {line}
+                    <span className="font-semibold text-mist-200">
+                      {prize.place}
+                    </span>{' '}
+                    — {prize.perks.join(', ')}
                   </span>
                 </li>
               ))}
+              <li className="flex items-start gap-2.5">
+                <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-mist-400" />
+                <span className="text-sm leading-relaxed text-mist-300">
+                  An event t-shirt for every participant
+                </span>
+              </li>
             </ul>
             <p className="mt-4 border-t border-white/10 pt-4 text-xs leading-relaxed text-mist-400">
-              IUPC prize money is not published yet. The three gaming
-              tournaments publish theirs on their own pages.
+              IUPC prize money is not published yet. The datathon and the three
+              esports tournaments publish theirs on their own pages.
             </p>
 
             <Link
@@ -313,7 +323,10 @@ const HowToEnter = () => {
    the page does not go stale on 1 August. */
 const Schedule = () => {
   const now = useNow();
-  const stop = currentStop(TIMELINE, now || undefined);
+  /* -1 until the client knows what day it is, which marks every stop neutral.
+     Guessing here would bake the build-time marker into the prerendered HTML,
+     and React does not patch mismatched attributes — it would stay there. */
+  const stop = now === null ? -1 : currentStop(TIMELINE, now);
 
   return (
     <Section id="timeline" eyebrow="Schedule" title="The road to carnival day">
@@ -367,7 +380,11 @@ const Schedule = () => {
 };
 
 const FaqSection = () => (
-  <Section id="faq" className="bg-ink-950/40" pad="py-16 sm:py-20">
+  <Section
+    id="faq"
+    className="border-y border-white/10 bg-ink-950/40"
+    pad="py-16 sm:py-20"
+  >
     <div className="grid gap-8 lg:grid-cols-12 lg:gap-12">
       <div className="lg:col-span-4">
         <div className="lg:sticky lg:top-24">
