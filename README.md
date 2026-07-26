@@ -1,5 +1,13 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+##
+
+```
+docker compose up -d
+```
+
+Open [http://localhost:5173](http://localhost:5173) with your browser to see the result.
+
 ## Getting Started
 
 First, run the development server:

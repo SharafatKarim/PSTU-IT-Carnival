@@ -1,13 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import Navbar from '../landing/Navbar';
-import Footer from '../landing/Footer';
+import Navbar from '@/components/landing/Navbar';
+import Footer from '@/components/landing/Footer';
 import GameCard from './GameCard';
-import { ArrowLeftIcon, AlertIcon, GamepadIcon } from '../landing/Icons';
-import { GAMES, GAMING } from '../../data/gaming';
-import { EVENT } from '../../data/content';
-import { ROUTES, gamingNav } from '../../lib/routes';
+import { ArrowLeftIcon, AlertIcon, GamepadIcon } from '@/components/landing/Icons';
+import { GAMES, GAMING } from '@/data/gaming';
+import { EVENT } from '@/data/content';
+import { ROUTES, gamingNav } from '@/lib/routes';
 
 const GamingHub = () => (
   <div className="min-h-screen">

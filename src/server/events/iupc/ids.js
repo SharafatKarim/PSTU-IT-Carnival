@@ -1,4 +1,4 @@
-import Registration from '../models/Registration';
+import Registration from './model';
 
 const PREFIX = 'PSTU-IUPC-2026';
 

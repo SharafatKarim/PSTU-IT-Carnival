@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { EVENT } from '../../data/content';
-import { ROUTES } from '../../lib/routes';
+import { EVENT } from '@/data/content';
+import { ROUTES } from '@/lib/routes';
 
 const Footer = () => (
   <footer className="border-t border-white/10 bg-ink-950/60">

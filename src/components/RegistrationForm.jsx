@@ -9,12 +9,12 @@ import SectionCard from './SectionCard';
 import MemberForm from './MemberForm';
 import ReviewSection from './ReviewSection';
 import { CheckIcon, CalendarIcon, AlertIcon } from './landing/Icons';
-import { createRegistration } from '../services/api';
+import { createRegistration } from '@/services/events/iupc';
 import Navbar from './landing/Navbar';
 import Footer from './landing/Footer';
-import { ROUTES, registerNav } from '../lib/routes';
-import { getEventDetail } from '../data/events';
-import { searchUniversities, shortFormOf } from '../data/universities';
+import { ROUTES, registerNav } from '@/lib/routes';
+import { getEventDetail } from '@/data/events';
+import { searchUniversities, shortFormOf } from '@/data/universities';
 
 const BD_PHONE_RE = /^(?:\+?880)?1[3-9]\d{8}$/;
 

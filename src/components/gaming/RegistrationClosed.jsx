@@ -1,27 +1,19 @@
-import { ClockIcon, MailIcon, PhoneIcon, CheckIcon } from '../landing/Icons';
-import { GAMING } from '../../data/gaming';
+import Link from 'next/link';
+import { ClockIcon, MailIcon, PhoneIcon, CheckIcon } from '@/components/landing/Icons';
+import { GAMING } from '@/data/gaming';
+import { ROUTES } from '@/lib/routes';
 import { accentOf } from './accents';
+import { prepList } from './prep';
 
 /* Stands in for the registration form while a tournament's entries are shut.
-   Keeps the page useful: what to prepare, when it opens, who to ask. */
+   Keeps the page useful: what to prepare, when it opens, who to ask.
+   Rendered on both the detail page and the registration route, so the
+   coordinator link resolves against the detail page rather than assuming a
+   #contact section exists on the current page. */
 const RegistrationClosed = ({ game }) => {
   const a = accentOf(game.accent);
-  const t = game.tournament;
   const lead = game.coordinators?.[0];
-
-  const prep =
-    game.registration.kind === 'solo'
-      ? [
-          'Your in-game name and account ID, exactly as they appear in game',
-          'A valid student ID for eligibility checks',
-          `The entry fee (${t.entryFee}) — collected on-site`,
-        ]
-      : [
-          'A squad name, plus four players and an optional substitute',
-          'Every player’s in-game name and UID',
-          'A captain who can receive room IDs and passwords',
-          `The entry fee (${t.entryFee}) — collected on-site`,
-        ];
+  const prep = prepList(game);
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -98,12 +90,12 @@ const RegistrationClosed = ({ game }) => {
               </div>
             )}
 
-            <a
-              href="#contact"
+            <Link
+              href={`${ROUTES.game(game.slug)}#contact`}
               className="mt-5 inline-flex w-full items-center justify-center rounded-lg border border-ink-500 px-4 py-2.5 text-sm font-semibold text-mist-200 transition hover:bg-white/5 hover:text-white"
             >
               All coordinators
-            </a>
+            </Link>
           </div>
         </div>
       </div>

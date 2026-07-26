@@ -1,18 +1,15 @@
 'use client';
 
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
-import Navbar from '../landing/Navbar';
-import Footer from '../landing/Footer';
-import Faq from '../landing/Faq';
-import HeadlineStrip from '../ui/HeadlineStrip';
+import Navbar from '@/components/landing/Navbar';
+import Footer from '@/components/landing/Footer';
+import Faq from '@/components/landing/Faq';
+import HeadlineStrip from '@/components/ui/HeadlineStrip';
 import TournamentInfo from './TournamentInfo';
 import RulesSection from './RulesSection';
 import CoordinatorContact from './CoordinatorContact';
-/* Split out of the page bundle: while a tournament's entries are closed the
-   form never renders, so none of its code is sent to the browser either. */
-const GameRegistrationForm = dynamic(() => import('./GameRegistrationForm'));
 import RegistrationClosed from './RegistrationClosed';
+import { prepList } from './prep';
 import {
   ICON_MAP,
   ArrowLeftIcon,
@@ -20,9 +17,10 @@ import {
   CalendarIcon,
   ClockIcon,
   MapPinIcon,
-} from '../landing/Icons';
-import { getGame, isGameRegistrationOpen } from '../../data/gaming';
-import { ROUTES, gameDetailNav } from '../../lib/routes';
+  CheckIcon,
+} from '@/components/landing/Icons';
+import { getGame, isGameRegistrationOpen } from '@/data/gaming';
+import { ROUTES, gameDetailNav } from '@/lib/routes';
 import { accentOf } from './accents';
 
 const Section = ({ id, eyebrow, title, subtitle, children, className = '' }) => (
@@ -142,13 +140,13 @@ const Hero = ({ game, registrationOpen }) => {
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           {registrationOpen ? (
-            <a
-              href="#register"
+            <Link
+              href={ROUTES.gameRegister(game.slug)}
               className="group inline-flex items-center justify-center gap-2 rounded-xl bg-gold-400 px-7 py-3.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
             >
               Register for {game.shortName}
               <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </a>
+            </Link>
           ) : (
             <a
               href="#rules"
@@ -179,6 +177,67 @@ const Hero = ({ game, registrationOpen }) => {
   );
 };
 
+/* Registration is its own route (matching IUPC), so this section is a
+   prepare-then-go panel rather than an inline form. */
+const RegisterCta = ({ game }) => {
+  const a = accentOf(game.accent);
+  const t = game.tournament;
+
+  return (
+    <div className="mx-auto max-w-4xl">
+      <div className="grid items-start gap-6 lg:grid-cols-5">
+        <div className="lg:col-span-3">
+          <div className="rounded-2xl border border-ink-600 bg-ink-800/60 p-6 shadow-card sm:p-7">
+            <h3 className="text-base font-bold text-white">
+              Have this ready before you start
+            </h3>
+            <ul className="mt-4 space-y-3">
+              {prepList(game).map((item) => (
+                <li key={item} className="flex items-start gap-3">
+                  <span
+                    className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${a.bgSoft} ${a.text}`}
+                  >
+                    <CheckIcon className="h-3 w-3" />
+                  </span>
+                  <span className="text-sm leading-relaxed text-mist-300">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="lg:col-span-2">
+          <div className="relative overflow-hidden rounded-2xl bg-carnival p-7 text-white shadow-glow-grape">
+            <div className="absolute inset-0 bg-grid bg-[size:30px_30px] opacity-30" />
+            <div className="relative">
+              <h3 className="text-xl font-bold">Ready to enter?</h3>
+              <p className="mt-2 text-sm leading-relaxed text-white/85">
+                {game.registration.kind === 'solo'
+                  ? 'The form is short — your player details and a couple of confirmations.'
+                  : 'The form takes a few minutes — squad details, then each player in turn.'}
+              </p>
+              <Link
+                href={ROUTES.gameRegister(game.slug)}
+                className="group mt-6 inline-flex items-center gap-2 rounded-xl bg-gold-400 px-6 py-3 text-sm font-bold text-ink-950 shadow-md transition hover:bg-gold-300"
+              >
+                Register for {game.shortName}
+                <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+              <p className="mt-4 text-xs text-white/70">
+                Entry fee {t.entryFee}, collected on-site — no payment is taken
+                through this website.
+              </p>
+              <p className="mt-1 text-xs text-white/70">
+                Registration closes {t.deadline} · {t.slots}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const GameDetail = ({ slug }) => {
   const game = getGame(slug);
   if (!game) return null;
@@ -190,7 +249,7 @@ const GameDetail = ({ slug }) => {
       <Navbar
         links={gameDetailNav}
         homeHref={ROUTES.home}
-        ctaHref="#register"
+        ctaHref={registrationOpen ? ROUTES.gameRegister(game.slug) : '#register'}
         ctaLabel={registrationOpen ? 'Register Now' : 'Get Notified'}
       />
       <main>
@@ -225,16 +284,12 @@ const GameDetail = ({ slug }) => {
           }
           subtitle={
             registrationOpen
-              ? game.registration.kind === 'solo'
-                ? 'Fill in your player details below. Everything marked with * is required.'
-                : 'Fill in your squad details below. Everything marked with * is required — the substitute row is optional.'
+              ? 'Registration happens on a separate page so you can fill it in one sitting.'
               : 'Entries are not open yet. Here is what to get ready and who to ask.'
           }
         >
           {registrationOpen ? (
-            <div className="mx-auto max-w-4xl">
-              <GameRegistrationForm game={game} />
-            </div>
+            <RegisterCta game={game} />
           ) : (
             <RegistrationClosed game={game} />
           )}

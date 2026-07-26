@@ -3,13 +3,13 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
-import FormField from '../FormField';
-import SelectField from '../SelectField';
-import SectionCard from '../SectionCard';
+import FormField from '@/components/FormField';
+import SelectField from '@/components/SelectField';
+import SectionCard from '@/components/SectionCard';
 import CheckboxField from './CheckboxField';
-import { CheckIcon, AlertIcon, TicketIcon } from '../landing/Icons';
-import { submitGameRegistration, DEMO_MODE } from '../../services/gamingApi';
-import { ROUTES } from '../../lib/routes';
+import { CheckIcon, AlertIcon, TicketIcon } from '@/components/landing/Icons';
+import { submitGameRegistration, DEMO_MODE } from '@/services/events/gaming';
+import { ROUTES } from '@/lib/routes';
 import { accentOf } from './accents';
 
 /* --- helpers -------------------------------------------------------------- */

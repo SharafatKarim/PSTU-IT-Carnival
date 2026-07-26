@@ -22,8 +22,8 @@ import {
   TIMELINE,
   RULES,
   PRIZES,
-} from '../data/content';
-import { ROUTES } from '../lib/routes';
+} from '@/data/content';
+import { ROUTES } from '@/lib/routes';
 
 /* Accents mirror the detail pages, so the front door and the event pages read
    as one system instead of a wall of identical purple tiles. */

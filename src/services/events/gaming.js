@@ -1,13 +1,15 @@
 // ---------------------------------------------------------------------------
 // Gaming tournament registration — FRONT-END ONLY.
 //
-// There is no gaming API yet, so this resolves locally: it validates nothing
-// server-side and stores nothing. The reference number it returns is generated
-// in the browser purely so the success screen has something to show.
+// The gaming endpoint exists but does not persist yet (it validates, then
+// answers 501 — see src/app/api/v1/events/gaming/[game]/registrations/route.js),
+// so this still resolves locally. It stores nothing, and the reference number
+// it returns is generated in the browser purely so the success screen has
+// something to show.
 //
-// To wire it to a real backend later, replace the body of
-// submitGameRegistration with the fetch call below and flip DEMO_MODE to false.
-// The success screen hides its "not yet saved" notice automatically.
+// To go live: make that route write to a store, then flip DEMO_MODE to false —
+// the fetch call below is already pointed at it. The success screen hides its
+// "not yet saved" notice automatically.
 // ---------------------------------------------------------------------------
 
 export const DEMO_MODE = true;
@@ -25,7 +27,7 @@ export const submitGameRegistration = async (game, payload) => {
 
   let res;
   try {
-    res = await fetch(`/api/v1/gaming/${game.slug}/registrations`, {
+    res = await fetch(`/api/v1/events/gaming/${game.slug}/registrations`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

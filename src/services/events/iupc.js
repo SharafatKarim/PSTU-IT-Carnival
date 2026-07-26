@@ -1,4 +1,6 @@
-const baseURL = '/api/v1';
+// IUPC pre-registration client. Talks to the event's own API namespace —
+// see src/app/api/v1/events/iupc/registrations/route.js.
+const baseURL = '/api/v1/events/iupc';
 
 export const createRegistration = async (payload) => {
   let res;

@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import Footer from '../components/landing/Footer';
-import { ArrowLeftIcon, ArrowRightIcon, GamepadIcon, CodeIcon } from '../components/landing/Icons';
-import { ROUTES } from '../lib/routes';
-import { GAMES } from '../data/gaming';
+import Footer from '@/components/landing/Footer';
+import { ArrowLeftIcon, ArrowRightIcon, GamepadIcon, CodeIcon } from '@/components/landing/Icons';
+import { ROUTES } from '@/lib/routes';
+import { GAMES } from '@/data/gaming';
 
 export const metadata = {
   title: 'Page not found — PSTU IT Carnival 2026',

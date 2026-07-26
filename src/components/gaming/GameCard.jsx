@@ -6,9 +6,9 @@ import {
   CoinIcon,
   TicketIcon,
   UsersIcon,
-} from '../landing/Icons';
-import { ROUTES } from '../../lib/routes';
-import { isGameRegistrationOpen } from '../../data/gaming';
+} from '@/components/landing/Icons';
+import { ROUTES } from '@/lib/routes';
+import { isGameRegistrationOpen } from '@/data/gaming';
 import { accentOf } from './accents';
 
 const Fact = ({ icon: Icon, children }) => (

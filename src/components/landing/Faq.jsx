@@ -1,7 +1,7 @@
 'use client';
 
 import { useId, useState } from 'react';
-import { FAQS } from '../../data/content';
+import { FAQS } from '@/data/content';
 import { ChevronDownIcon } from './Icons';
 
 const FaqItem = ({ item, isOpen, onToggle }) => {

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { EVENTS } from '../../data/content';
+import { EVENTS } from '@/data/content';
 import {
   ICON_MAP,
   ArrowRightIcon,
@@ -9,8 +9,8 @@ import {
   TicketIcon,
   AlertIcon,
 } from './Icons';
-import { getEventDetail } from '../../data/events';
-import { ROUTES } from '../../lib/routes';
+import { getEventDetail } from '@/data/events';
+import { ROUTES } from '@/lib/routes';
 
 const IconBox = ({ icon, muted }) => {
   const Icon = ICON_MAP[icon] || ICON_MAP.code;
@@ -184,7 +184,9 @@ const GroupHeading = ({ children, action }) => (
   </div>
 );
 
-const Events = () => {
+/* `intro` is off on /events, where the page's own hero already carries the
+   heading — the card grids below are the part that gets reused. */
+const Events = ({ intro = true }) => {
   const featured = EVENTS.find((e) => e.status === 'open' && e.href);
   const isFeatured = (e) => featured && e.id === featured.id;
   const tech = EVENTS.filter((e) => e.category === 'tech' && !isFeatured(e));
@@ -193,19 +195,21 @@ const Events = () => {
   return (
     <section id="events" className="scroll-mt-20 bg-ink-950/40 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-4">
-        <div className="mx-auto mb-4 max-w-2xl text-center">
-          <p className="text-gradient-brand text-xs font-bold uppercase tracking-[0.22em]">
-            The Line-Up
-          </p>
-          <h2 className="mt-3 text-3xl font-extrabold text-white sm:text-4xl">
-            Eleven events. One carnival.
-          </h2>
-          <p className="mt-4 text-base leading-relaxed text-mist-300">
-            From the flagship programming contest to esports and board-game
-            showdowns — pick your arena. IUPC pre-registration is open now;
-            gaming entries and the rest of the line-up follow soon.
-          </p>
-        </div>
+        {intro && (
+          <div className="mx-auto mb-4 max-w-2xl text-center">
+            <p className="text-gradient-brand text-xs font-bold uppercase tracking-[0.22em]">
+              The Line-Up
+            </p>
+            <h2 className="mt-3 text-3xl font-extrabold text-white sm:text-4xl">
+              Eleven events. One carnival.
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-mist-300">
+              From the flagship programming contest to esports and board-game
+              showdowns — pick your arena. IUPC pre-registration is open now;
+              gaming entries and the rest of the line-up follow soon.
+            </p>
+          </div>
+        )}
 
         {featured && (
           <div className="mt-10">

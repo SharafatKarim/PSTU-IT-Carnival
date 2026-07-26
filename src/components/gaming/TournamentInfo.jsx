@@ -9,7 +9,7 @@ import {
   MonitorIcon,
   AlertIcon,
   CertificateIcon,
-} from '../landing/Icons';
+} from '@/components/landing/Icons';
 import { accentOf } from './accents';
 
 const FIELDS = [

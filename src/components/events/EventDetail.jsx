@@ -1,14 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import Navbar from '../landing/Navbar';
-import Footer from '../landing/Footer';
-import Faq from '../landing/Faq';
-import HeadlineStrip from '../ui/HeadlineStrip';
-import TournamentInfo from '../gaming/TournamentInfo';
-import RulesSection from '../gaming/RulesSection';
-import CoordinatorContact from '../gaming/CoordinatorContact';
-import { accentOf } from '../gaming/accents';
+import Navbar from '@/components/landing/Navbar';
+import Footer from '@/components/landing/Footer';
+import Faq from '@/components/landing/Faq';
+import HeadlineStrip from '@/components/ui/HeadlineStrip';
+import TournamentInfo from '@/components/gaming/TournamentInfo';
+import RulesSection from '@/components/gaming/RulesSection';
+import CoordinatorContact from '@/components/gaming/CoordinatorContact';
+import { accentOf } from '@/components/gaming/accents';
 import {
   ICON_MAP,
   ArrowLeftIcon,
@@ -17,9 +17,9 @@ import {
   ClockIcon,
   MapPinIcon,
   CheckIcon,
-} from '../landing/Icons';
-import { getEventDetail } from '../../data/events';
-import { ROUTES, eventDetailNav } from '../../lib/routes';
+} from '@/components/landing/Icons';
+import { getEventDetail } from '@/data/events';
+import { ROUTES, eventDetailNav } from '@/lib/routes';
 
 const Section = ({ id, eyebrow, title, subtitle, children, className = '' }) => (
   <section id={id} className={`scroll-mt-20 py-16 sm:py-20 ${className}`}>

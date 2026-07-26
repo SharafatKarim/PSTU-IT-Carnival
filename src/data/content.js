@@ -3,7 +3,7 @@
 // Every event that is open carries an `href` built from src/lib/routes.js —
 // no path is spelled out by hand, so a route rename only happens in one place.
 
-import { ROUTES } from '../lib/routes';
+import { ROUTES } from '@/lib/routes';
 import { getEventDetail } from './events';
 
 /* Timeline dates come from the event's own data so the two can never drift. */

@@ -1,4 +1,4 @@
-import { ICON_MAP, CheckIcon } from '../landing/Icons';
+import { ICON_MAP, CheckIcon } from '@/components/landing/Icons';
 import { accentOf } from './accents';
 
 const RulesSection = ({ game }) => {

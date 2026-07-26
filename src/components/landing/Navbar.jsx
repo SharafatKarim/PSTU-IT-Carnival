@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { MenuIcon, CloseIcon } from './Icons';
-import { landingNav, ROUTES, isRouteHref } from '../../lib/routes';
+import { landingNav, ROUTES, isRouteHref } from '@/lib/routes';
 
 const Logo = () => (
   <div className="flex items-center gap-2.5">
