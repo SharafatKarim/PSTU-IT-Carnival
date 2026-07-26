@@ -36,6 +36,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# A literal "~" directory: pnpm writes here when HOME is unset or wrong, e.g.
+# inside a sandboxed shell. It is a state cache, never project source.
+~/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
