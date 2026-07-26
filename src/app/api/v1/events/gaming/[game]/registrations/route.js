@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getGame, isGameRegistrationOpen } from '@/data/gaming';
 import { validateGameRegistration } from '@/server/events/gaming/validation';
-import { rateLimit, clientKey } from '@/server/rateLimit';
+import { checkWriteLimits } from '@/server/rateLimit';
 
 // ---------------------------------------------------------------------------
 // Gaming registration intake — SCAFFOLD, NOT YET STORING ANYTHING.
@@ -21,11 +21,7 @@ import { rateLimit, clientKey } from '@/server/rateLimit';
 export async function POST(req, { params }) {
   /* Same throttle as IUPC, applied now so it is already in place on the day
      this route starts writing. */
-  const limit = rateLimit({
-    key: `gaming:register:${clientKey(req)}`,
-    limit: 5,
-    windowMs: 10 * 60 * 1000,
-  });
+  const limit = checkWriteLimits(req, 'gaming:register');
   if (!limit.ok) {
     return NextResponse.json(
       { success: false, message: 'Too many attempts. Please try again shortly.' },
