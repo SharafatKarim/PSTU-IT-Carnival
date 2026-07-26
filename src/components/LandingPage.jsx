@@ -218,6 +218,14 @@ const LineupSection = () => (
     }
   >
     <Lineup />
+
+    <Link
+      href={ROUTES.events}
+      className="group mt-10 inline-flex items-center gap-2 text-sm font-semibold text-mist-300 transition hover:text-white"
+    >
+      Browse all twelve by category
+      <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+    </Link>
   </Section>
 );
 

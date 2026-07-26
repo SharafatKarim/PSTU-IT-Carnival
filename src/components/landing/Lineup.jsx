@@ -17,9 +17,10 @@ import { accentOf } from '@/lib/accents';
 // `status` string, which drifts. routes.js warns in development when the two
 // disagree.
 //
-// Density is the ranking mechanic, not colour: py-5 open, py-4 published, py-3
-// announced. No count is written down here — EVENT_TIERS does the counting, so
-// this comment cannot go stale the way the lede below it did.
+// Density is the ranking mechanic, not colour: the open event is a full row
+// with a button, published events are rows, and announced events are chips in a
+// grid. No count is written down here — EVENT_TIERS does the counting, so this
+// comment cannot go stale the way the lede below it did.
 // ---------------------------------------------------------------------------
 
 /* Resolve an EVENTS entry against the data that actually knows its state. */
@@ -28,17 +29,19 @@ const detailFor = (event) => {
   return event.kind === 'game' ? getGame(event.slug) : getEventDetail(event.slug);
 };
 
-const IconTile = ({ icon, accent, muted }) => {
+const IconTile = ({ icon, accent, muted, small }) => {
   const Icon = ICON_MAP[icon] || ICON_MAP.code;
   return (
     <span
-      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${
+      className={`flex shrink-0 items-center justify-center rounded-xl border ${
+        small ? 'h-8 w-8' : 'h-10 w-10'
+      } ${
         muted
           ? 'border-white/5 bg-white/[0.03] text-mist-500'
           : `bg-ink-900/70 ${accent.border} ${accent.text}`
       }`}
     >
-      <Icon className="h-5 w-5" />
+      <Icon className={small ? 'h-4 w-4' : 'h-5 w-5'} />
     </span>
   );
 };
@@ -118,7 +121,7 @@ const PublishedRow = ({ event, detail }) => {
           <span className="font-bold text-white">{event.name}</span>
           <span className="text-xs text-mist-400">{event.scope}</span>
         </span>
-        <span className="mt-0.5 block truncate text-sm text-mist-400">
+        <span className="mt-0.5 block line-clamp-2 text-sm text-mist-400">
           {event.blurb}
         </span>
         {/* The date is the whole point of this tier, so it stays on narrow
@@ -146,36 +149,43 @@ const PublishedRow = ({ event, detail }) => {
   );
 };
 
-/* Announced only. No badge, no button, no chevron — the tier label above says
-   it once, and repeating it on every row is what made the old grid a wall. */
-const AnnouncedRow = ({ event }) => {
+/* Announced only — a chip, not a row.
+
+   Seven of the twelve events are here, and as full-width rows they were 58% of
+   the section: seven identical bands whose only content was a sentence that
+   said nothing had been decided. A chip carries the same information a visitor
+   can act on — the name, the scope, and a way in — in a fifth of the height,
+   and the grid makes them read as one set rather than seven disappointments.
+   The blurb is on the event's own page, which is one tap away. */
+const AnnouncedChip = ({ event }) => {
   const body = (
     <>
-      <IconTile icon={event.icon} muted />
-      <span className="min-w-0 flex-1">
-        <span className="font-semibold text-mist-200">{event.name}</span>
-        <span className="ml-3 text-xs text-mist-400">{event.scope}</span>
-        <span className="mt-0.5 block truncate text-sm text-mist-400">
-          {event.blurb}
+      <IconTile icon={event.icon} muted small />
+      <span className="min-w-0">
+        <span className="block truncate text-sm font-semibold text-mist-200">
+          {event.name}
+        </span>
+        <span className="block truncate text-xs text-mist-400">
+          {event.scope}
         </span>
       </span>
     </>
   );
 
-  /* Linked only if the event actually has a page — an unlinked row is still
+  const shell =
+    'flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2.5';
+
+  /* Linked only if the event actually has a page — an unlinked chip is still
      valid for anything added to the data before its route exists. */
   return event.href ? (
     <Link
       href={event.href}
-      className="group flex items-center gap-4 border-t border-white/10 py-3 transition first:border-t-0 hover:bg-white/[0.03]"
+      className={`${shell} transition hover:border-white/20 hover:bg-white/[0.05]`}
     >
       {body}
-      <ArrowRightIcon className="h-4 w-4 shrink-0 text-mist-500 transition-transform group-hover:translate-x-0.5 group-hover:text-mist-300" />
     </Link>
   ) : (
-    <div className="flex items-center gap-4 border-t border-white/10 py-3 first:border-t-0">
-      {body}
-    </div>
+    <div className={shell}>{body}</div>
   );
 };
 
@@ -217,10 +227,12 @@ const Lineup = () => {
       )}
 
       {grouped.announced.length > 0 && (
-        <Tier label="Announced" note="Details to follow">
-          {grouped.announced.map((event) => (
-            <AnnouncedRow key={event.id} event={event} />
-          ))}
+        <Tier label="Announced" note="Named, dated later">
+          <div className="mt-4 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+            {grouped.announced.map((event) => (
+              <AnnouncedChip key={event.id} event={event} />
+            ))}
+          </div>
         </Tier>
       )}
     </div>

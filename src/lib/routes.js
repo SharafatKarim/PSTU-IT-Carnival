@@ -147,11 +147,16 @@ export const homeNav = LANDING_SECTIONS.map((section) => ({
   href: `${ROUTES.home}#${section.id}`,
 }));
 
+/* The catalogue's own two groups come first — they are the page's structure,
+   and a nav that skips straight past it to Schedule and FAQ was navigating
+   around the content rather than through it. Five links, the same ceiling
+   landingNav sits under. */
 export const eventsIndexNav = [
   { label: 'Home', href: ROUTES.home },
-  { label: 'IUPC', href: ROUTES.iupc },
-  { label: 'Gaming', href: ROUTES.gaming },
-  ...homeNav.filter((link) => ['Schedule', 'FAQ'].includes(link.label)),
+  { label: 'Tech', href: '#tech' },
+  { label: 'Gaming Arenas', href: '#gaming' },
+  { label: 'Gaming Fest', href: ROUTES.gaming },
+  ...homeNav.filter((link) => link.label === 'FAQ'),
 ];
 
 /* Fixed anchors, not one link per game. Spreading GAMES worked at three games
