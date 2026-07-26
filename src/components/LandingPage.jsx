@@ -441,39 +441,71 @@ const FaqSection = () => (
   </Section>
 );
 
-/* The only centred block, and the only bg-carnival surface, on the page. */
-const FinalCta = () => (
-  <section className="py-20 sm:py-24">
-    <div className="mx-auto max-w-6xl px-4">
-      <div className="relative overflow-hidden rounded-3xl bg-carnival px-6 py-16 text-center text-white shadow-glow-grape sm:px-12">
-        <div className="absolute inset-0 bg-grid bg-[size:36px_36px] opacity-40" />
-        <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-aqua-400/20 blur-3xl" />
-        <div className="absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-gold-400/15 blur-3xl" />
-        <div className="relative mx-auto max-w-2xl">
-          <h2 className="text-3xl font-extrabold sm:text-4xl">
-            Your IUPC team&rsquo;s spot is waiting
-          </h2>
-          <p className="mt-4 text-base leading-relaxed text-white sm:text-lg">
-            Gather your three coders, pick a name worth remembering, and claim
-            your place at the flagship contest of PSTU IT Carnival 2026.
-          </p>
-          <Link
-            href={ROUTES.register}
-            className="group mt-8 inline-flex items-center gap-2 rounded-xl bg-gold-400 px-8 py-4 text-sm font-bold text-ink-950 shadow-lg transition hover:bg-gold-300"
-          >
-            Pre-register for IUPC
-            <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </Link>
-          {IUPC?.tournament && (
-            <p className="mt-4 text-xs text-white tabular-nums">
-              {IUPC.tournament.slots} · entries close {IUPC.tournament.deadline}
+/* The only centred block, and the only bg-carnival surface, on the page.
+   That scarcity is what gives it force, so it stays centred — but it had a
+   headline, a sentence, a button and a 12px footnote in a 350px-tall gradient,
+   which is a lot of surface for very little. It carries the deadline properly
+   now: a live countdown above the fold of the panel, and the two numbers that
+   decide the thing on either side of the button. */
+const FinalCta = () => {
+  const t = IUPC?.tournament;
+
+  return (
+    <section className="py-20 sm:py-24">
+      <div className="mx-auto max-w-6xl px-4">
+        <div className="relative overflow-hidden rounded-3xl bg-carnival px-6 py-14 text-center text-white shadow-glow-grape sm:px-12">
+          <div className="absolute inset-0 bg-grid bg-[size:36px_36px] opacity-40" />
+          <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-aqua-400/20 blur-3xl" />
+          <div className="absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-gold-400/15 blur-3xl" />
+
+          <div className="relative mx-auto max-w-2xl">
+            {t?.deadline && (
+              <Countdown
+                date={t.deadline}
+                className="!border-white/25 !bg-white/10 !text-white"
+              />
+            )}
+
+            <h2 className="mt-5 text-3xl font-extrabold sm:text-4xl">
+              Your IUPC team&rsquo;s spot is waiting
+            </h2>
+            <p className="mx-auto mt-4 max-w-[52ch] text-base leading-relaxed text-white/90">
+              Gather your three coders, pick a name worth remembering, and claim
+              your place at the flagship contest.
             </p>
-          )}
+
+            <Link
+              href={ROUTES.register}
+              className="group mt-8 inline-flex items-center gap-2 rounded-xl bg-gold-400 px-8 py-4 text-sm font-bold text-ink-950 shadow-lg transition hover:bg-gold-300"
+            >
+              Pre-register for IUPC
+              <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+
+            {t && (
+              <dl className="mx-auto mt-8 grid max-w-md grid-cols-3 gap-px overflow-hidden rounded-xl bg-white/15 text-left">
+                {[
+                  { label: 'Team slots', value: t.slots },
+                  { label: 'To pre-register', value: 'Free' },
+                  { label: 'Entries close', value: t.deadline },
+                ].map((fact) => (
+                  <div key={fact.label} className="bg-grape-700/40 px-3 py-3 text-center">
+                    <dt className="text-[10px] uppercase tracking-wide text-white/70">
+                      {fact.label}
+                    </dt>
+                    <dd className="mt-1 text-sm font-bold tabular-nums">
+                      {fact.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 const LandingPage = () => (
   <div className="min-h-screen">
