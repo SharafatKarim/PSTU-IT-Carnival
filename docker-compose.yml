@@ -27,16 +27,14 @@ services:
     volumes:
       - mongo-data:/data/db
     healthcheck:
-      # The ping needs credentials now, so it authenticates against admin.
+      # Reads the credentials from the container's own environment instead of
+      # interpolating them here — otherwise the password is copied into the
+      # container's Healthcheck config as well, where `docker inspect` prints
+      # it in plain sight. $$ escapes the $ so compose leaves it for the shell.
       test:
         [
-          "CMD",
-          "mongosh",
-          "--quiet",
-          "-u", "${MONGO_ROOT_USER:-carnival}",
-          "-p", "${MONGO_ROOT_PASSWORD}",
-          "--authenticationDatabase", "admin",
-          "--eval", "db.adminCommand('ping').ok",
+          "CMD-SHELL",
+          'mongosh --quiet -u "$$MONGO_INITDB_ROOT_USERNAME" -p "$$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --eval "db.adminCommand({ping:1}).ok" | grep -q 1',
         ]
       interval: 10s
       timeout: 5s

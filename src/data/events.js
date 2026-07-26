@@ -29,9 +29,8 @@ export const EVENT_DETAILS = [
     /* Hero cover art, layered behind the gradients. Drop a replacement at
        public/events/iupc/ and point this at it — any format works, and the
        hero falls back to the plain gradient if this is removed.
-       Aim for ~1600x900 and under 300 KB; it loads on every visit.
-       The current file is a generated placeholder, not a photograph. */
-    cover: '/events/iupc/cover.svg',
+       Aim for ~1600x900 and under 300 KB; it loads on every visit. */
+    cover: '/events/iupc/cover.jpg',
 
     tournament: {
       date: '13 August 2026',
