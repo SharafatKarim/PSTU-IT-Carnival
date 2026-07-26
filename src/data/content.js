@@ -232,12 +232,6 @@ const WORDS = [
 ];
 export const word = (n) => WORDS[n] || String(n);
 
-/* "The rest are announced" stays literal — correct by construction. */
-export const LINEUP_LEDE =
-  `${word(EVENT_TIERS.open.length)} ${EVENT_TIERS.open.length === 1 ? 'is' : 'are'} taking entries. ` +
-  `${word(EVENT_TIERS.published.length)} ${EVENT_TIERS.published.length === 1 ? 'has its' : 'have their'} format, rules and prizes ` +
-  `published while entries stay closed. The rest are announced.`;
-
 /* The four numbers the hero band shows. Exactly four — HeadlineStrip slices to
    four and its per-cell border maths assumes it.
 

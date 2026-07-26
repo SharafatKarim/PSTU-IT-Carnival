@@ -190,7 +190,7 @@ const AnnouncedChip = ({ event }) => {
 };
 
 const Tier = ({ label, note, children }) => (
-  <section className="mt-12 first:mt-0">
+  <section className="mt-10 first:mt-0">
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-white/10 pb-3">
       <h3 className="text-[11px] font-bold uppercase tracking-[0.22em] text-mist-300">
         {label}
@@ -208,7 +208,7 @@ const Lineup = () => {
   return (
     <div>
       {grouped.open.length > 0 && (
-        <Tier label="Open now" note="Taking entries">
+        <Tier label="Open now">
           {grouped.open.map((event) => (
             <OpenRow key={event.id} event={event} detail={detailFor(event)} />
           ))}
@@ -216,10 +216,7 @@ const Lineup = () => {
       )}
 
       {grouped.published.length > 0 && (
-        <Tier
-          label="Published"
-          note="Format, rules and prizes are final — entries have not opened yet"
-        >
+        <Tier label="Published" note="Entries have not opened yet">
           {grouped.published.map((event) => (
             <PublishedRow key={event.id} event={event} detail={detailFor(event)} />
           ))}
@@ -227,7 +224,7 @@ const Lineup = () => {
       )}
 
       {grouped.announced.length > 0 && (
-        <Tier label="Announced" note="Named, dated later">
+        <Tier label="Announced" note="Dated later">
           <div className="mt-4 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
             {grouped.announced.map((event) => (
               <AnnouncedChip key={event.id} event={event} />

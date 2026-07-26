@@ -17,14 +17,7 @@ import {
   UsersIcon,
   AlertIcon,
 } from './landing/Icons';
-import {
-  EVENT,
-  EVENTS,
-  LINEUP_LEDE,
-  STATS,
-  TIMELINE,
-  word,
-} from '@/data/content';
+import { EVENT, EVENTS, STATS, TIMELINE, word } from '@/data/content';
 import { getEventDetail } from '@/data/events';
 import { ROUTES } from '@/lib/routes';
 import { currentStop } from '@/lib/schedule';
@@ -77,7 +70,7 @@ const Section = ({
           {lede}
         </p>
       )}
-      <div className={title ? 'mt-10' : ''}>{children}</div>
+      <div className={title ? 'mt-8' : ''}>{children}</div>
     </div>
   </section>
 );
@@ -212,16 +205,6 @@ const LineupSection = () => (
     eyebrow="The line-up"
     title={`${word(EVENTS.length)} events. One carnival.`}
     titleNowrap
-    lede={LINEUP_LEDE}
-    action={
-      <Link
-        href={ROUTES.gaming}
-        className="group inline-flex items-center gap-2 text-sm font-semibold text-mist-300 transition hover:text-white"
-      >
-        Gaming Fest
-        <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-      </Link>
-    }
   >
     <Lineup />
 
