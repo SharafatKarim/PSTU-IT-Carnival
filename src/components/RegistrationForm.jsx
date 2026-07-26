@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import FormField from './FormField';
@@ -8,6 +8,7 @@ import AutocompleteField from './AutocompleteField';
 import SectionCard from './SectionCard';
 import MemberForm from './MemberForm';
 import ReviewSection from './ReviewSection';
+import TurnstileWidget, { isTurnstileConfigured } from './TurnstileWidget';
 import { CheckIcon, CalendarIcon, AlertIcon } from './landing/Icons';
 import { createRegistration } from '@/services/events/iupc';
 import Navbar from './landing/Navbar';
@@ -234,6 +235,12 @@ const RegistrationForm = ({ slug = 'iupc' }) => {
   const [serverError, setServerError] = useState(null);
   const [registrationId, setRegistrationId] = useState(null);
   const [done, setDone] = useState(false);
+  /* Stays null when Turnstile is not configured, and nothing below gates on
+     it in that case. */
+  const [captchaToken, setCaptchaToken] = useState(null);
+  /* Stable identity so the widget is not torn down on every render. */
+  const onCaptchaToken = useCallback((token) => setCaptchaToken(token), []);
+  const awaitingCaptcha = isTurnstileConfigured && !captchaToken;
 
   const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -256,6 +263,7 @@ const RegistrationForm = ({ slug = 'iupc' }) => {
     setServerError(null);
     try {
       const payload = getValues();
+      if (captchaToken) payload.turnstileToken = captchaToken;
       const res = await createRegistration(payload);
       setRegistrationId(res.data.registrationId);
       setDone(true);
@@ -273,6 +281,8 @@ const RegistrationForm = ({ slug = 'iupc' }) => {
           details: [],
         });
       }
+      /* A token is single-use — a rejected submission needs a fresh one. */
+      setCaptchaToken(null);
       scrollTop();
     } finally {
       setLoading(false);
@@ -490,9 +500,19 @@ const RegistrationForm = ({ slug = 'iupc' }) => {
                 )}
 
                 {step === 2 && (
-                  <SectionCard title="Review Your Details">
-                    <ReviewSection data={getValues()} />
-                  </SectionCard>
+                  <>
+                    <SectionCard title="Review Your Details">
+                      <ReviewSection data={getValues()} />
+                    </SectionCard>
+                    {isTurnstileConfigured && (
+                      <SectionCard
+                        title="Verification"
+                        subtitle="Confirm you are not a bot before submitting."
+                      >
+                        <TurnstileWidget onToken={onCaptchaToken} />
+                      </SectionCard>
+                    )}
+                  </>
                 )}
 
                 <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -528,7 +548,12 @@ const RegistrationForm = ({ slug = 'iupc' }) => {
                       <button
                         type="button"
                         onClick={onConfirmSubmit}
-                        disabled={loading}
+                        disabled={loading || awaitingCaptcha}
+                        title={
+                          awaitingCaptcha
+                            ? 'Complete the verification challenge first'
+                            : undefined
+                        }
                         className="inline-flex items-center justify-center gap-2 rounded-lg bg-gold-400 px-6 py-2.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300 disabled:cursor-not-allowed disabled:opacity-70"
                       >
                         {loading && (

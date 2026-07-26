@@ -1,15 +1,43 @@
 name: pstu-it-carnival
 
+# MongoDB runs with authentication enabled. MONGO_ROOT_PASSWORD has no default
+# on purpose — compose refuses to start rather than quietly bringing up an open
+# database. Set it in .env (see .env.example); generate one with:
+#
+#   LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c 40
+#
+# Keep it alphanumeric: MONGO_URI below is a URI, and + / = @ : in a password
+# break it unless percent-encoded. `openssl rand -base64` emits exactly those.
+#
+# The credentials only take effect on a FRESH data volume. Enabling auth on an
+# existing volume needs the user created once by hand — see .env.example.
+
 services:
   # ---- MongoDB ----------------------------------------------------------
   mongo:
     image: mongo:7
     container_name: pstu-mongo
     restart: unless-stopped
+    # No `ports:` — the database is reachable only on the compose network.
+    # Do not publish it; nothing outside this stack needs to reach it.
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:-carnival}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?set MONGO_ROOT_PASSWORD in .env — see .env.example}
+      MONGO_INITDB_DATABASE: ${MONGO_DB:-pstu_it_carnival}
     volumes:
       - mongo-data:/data/db
     healthcheck:
-      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      # The ping needs credentials now, so it authenticates against admin.
+      test:
+        [
+          "CMD",
+          "mongosh",
+          "--quiet",
+          "-u", "${MONGO_ROOT_USER:-carnival}",
+          "-p", "${MONGO_ROOT_PASSWORD}",
+          "--authenticationDatabase", "admin",
+          "--eval", "db.adminCommand('ping').ok",
+        ]
       interval: 10s
       timeout: 5s
       retries: 6
@@ -17,7 +45,11 @@ services:
 
   # ---- Next.js Web App --------------------------------------------------
   web:
-    build: .
+    build:
+      context: .
+      args:
+        # Must be a build arg, not just an environment variable — see Dockerfile.
+        NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}
     container_name: pstu-web
     restart: unless-stopped
     ports:
@@ -25,7 +57,15 @@ services:
     environment:
       NODE_ENV: production
       PORT: "3000"
-      MONGO_URI: mongodb://mongo:27017/${MONGO_DB:-pstu_it_carnival}
+      # authSource=admin because the user lives in the admin database while the
+      # application data lives in its own.
+      MONGO_URI: mongodb://${MONGO_ROOT_USER:-carnival}:${MONGO_ROOT_PASSWORD}@mongo:27017/${MONGO_DB:-pstu_it_carnival}?authSource=admin
+      # Optional Cloudflare Turnstile. Left unset, the check is skipped and the
+      # form behaves exactly as before.
+      TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-}
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}
+      # Set to "true" only when a proxy you control sets X-Forwarded-For.
+      TRUST_PROXY_HEADERS: ${TRUST_PROXY_HEADERS:-false}
     depends_on:
       mongo:
         condition: service_healthy

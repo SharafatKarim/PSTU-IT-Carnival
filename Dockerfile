@@ -32,6 +32,13 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV MONGO_URI=mongodb://localhost:27017/pstu_it_carnival
 
+# NEXT_PUBLIC_* values are inlined into the browser bundle during `next build`,
+# so this has to arrive as a build arg — setting it only at runtime leaves it
+# undefined in the browser. Empty by default, which keeps Turnstile off.
+# It is a public site key, not a secret; the secret half stays server-side.
+ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY=""
+ENV NEXT_PUBLIC_TURNSTILE_SITE_KEY=$NEXT_PUBLIC_TURNSTILE_SITE_KEY
+
 RUN pnpm build
 
 # Production image, copy all the files and run next

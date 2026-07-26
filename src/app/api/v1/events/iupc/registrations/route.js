@@ -4,7 +4,8 @@ import Registration from '@/server/events/iupc/model';
 import { validateRegistration } from '@/server/events/iupc/validation';
 import { generateRegistrationId } from '@/server/events/iupc/ids';
 import { listTeams } from '@/server/events/iupc/teams';
-import { rateLimit, clientKey } from '@/server/rateLimit';
+import { checkWriteLimits, clientKey } from '@/server/rateLimit';
+import { verifyTurnstile } from '@/server/turnstile';
 
 /* A registration is ~1 KB. Anything far larger is not a real submission, so
    reject it before parsing rather than buffering it into memory. */
@@ -45,16 +46,15 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     /* Throttle before touching the database, so a flood costs us nothing. */
-    const limit = rateLimit({
-      key: `iupc:register:${clientKey(req)}`,
-      limit: 5,
-      windowMs: 10 * 60 * 1000,
-    });
+    const limit = checkWriteLimits(req, 'iupc:register');
     if (!limit.ok) {
       return NextResponse.json(
         {
           success: false,
-          message: 'Too many registration attempts. Please try again shortly.',
+          message:
+            limit.layer === 'global'
+              ? 'Registrations are busy right now. Please try again in a few minutes.'
+              : 'Too many registration attempts. Please try again shortly.',
         },
         { status: 429, headers: { 'Retry-After': String(limit.retryAfter) } }
       );
@@ -86,6 +86,15 @@ export async function POST(req) {
       return NextResponse.json(
         { success: false, message: 'Request body must be a JSON object' },
         { status: 400 }
+      );
+    }
+
+    /* No-op unless TURNSTILE_SECRET_KEY is configured. */
+    const challenge = await verifyTurnstile(body.turnstileToken, clientKey(req));
+    if (!challenge.ok) {
+      return NextResponse.json(
+        { success: false, message: challenge.message },
+        { status: 403 }
       );
     }
 

@@ -5,19 +5,29 @@
    injection loading external code or phoning data out, since script-src,
    connect-src and img-src are pinned to this origin. Tightening it further
    means adding nonce middleware. */
+/* Turnstile needs to load a script, open a frame and call home. Those origins
+   are only allow-listed when a site key was supplied at build time, so a
+   deployment without the challenge keeps the tighter policy. */
+const TURNSTILE = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+  ? 'https://challenges.cloudflare.com'
+  : '';
+
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline' ${TURNSTILE}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
-  "connect-src 'self'",
+  `connect-src 'self' ${TURNSTILE}`,
+  `frame-src ${TURNSTILE || "'none'"}`,
   "form-action 'self'",
   "base-uri 'self'",
   "object-src 'none'",
   "frame-ancestors 'none'",
   'upgrade-insecure-requests',
-].join('; ');
+]
+  .map((directive) => directive.trim().replace(/\s+/g, ' '))
+  .join('; ');
 
 const SECURITY_HEADERS = [
   { key: 'Content-Security-Policy', value: CSP },
