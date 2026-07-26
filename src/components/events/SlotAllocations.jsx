@@ -6,7 +6,7 @@ import { UNIVERSITIES } from '@/data/universities';
 import { slotsFor, totalAllocated, hasAllocations } from '@/data/slots';
 import { getEventDetail } from '@/data/events';
 import { eventSlotsNav } from '@/lib/routes';
-import { accentOf } from '@/components/gaming/accents';
+import { accentOf } from '@/lib/accents';
 import EventSubPage, { SubPageTabs } from './EventSubPage';
 
 const COLS = 'sm:grid-cols-[minmax(0,1fr)_9rem_6rem]';

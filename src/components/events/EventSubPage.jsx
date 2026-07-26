@@ -5,7 +5,7 @@ import Navbar from '@/components/landing/Navbar';
 import Footer from '@/components/landing/Footer';
 import { ArrowLeftIcon } from '@/components/landing/Icons';
 import { ROUTES } from '@/lib/routes';
-import { accentOf } from '@/components/gaming/accents';
+import { accentOf } from '@/lib/accents';
 
 /* Shell shared by an event's directory pages (teams, slots).
    Three things it exists to get right:

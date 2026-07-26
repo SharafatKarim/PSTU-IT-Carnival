@@ -5,7 +5,7 @@ import { AlertIcon, ArrowLeftIcon, ArrowRightIcon, CheckIcon } from '@/component
 import { fetchTeams } from '@/services/events/iupc';
 import { getEventDetail } from '@/data/events';
 import { eventTeamsNav } from '@/lib/routes';
-import { accentOf } from '@/components/gaming/accents';
+import { accentOf } from '@/lib/accents';
 import EventSubPage, { SubPageTabs } from './EventSubPage';
 
 const PAGE_SIZE = 25;
