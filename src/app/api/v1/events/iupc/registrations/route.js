@@ -3,9 +3,71 @@ import connectDB from '@/server/db';
 import Registration from '@/server/events/iupc/model';
 import { validateRegistration } from '@/server/events/iupc/validation';
 import { generateRegistrationId } from '@/server/events/iupc/ids';
+import { listTeams } from '@/server/events/iupc/teams';
+import { rateLimit, clientKey } from '@/server/rateLimit';
+
+/* A registration is ~1 KB. Anything far larger is not a real submission, so
+   reject it before parsing rather than buffering it into memory. */
+const MAX_BODY_BYTES = 16 * 1024;
+
+/* Never hand a raw driver error to the client — connection failures quote the
+   host, port and sometimes the credentials from MONGO_URI. Log it, return a
+   flat message. */
+const serverError = (context, error) => {
+  console.error(`[iupc/registrations] ${context}:`, error);
+  return NextResponse.json(
+    { success: false, message: 'Something went wrong. Please try again.' },
+    { status: 500 }
+  );
+};
+
+/* Public team directory. Returns an allow-listed projection only — see the
+   PRIVACY note in src/server/events/iupc/teams.js before widening it. */
+export async function GET(req) {
+  try {
+    await connectDB();
+
+    const { searchParams } = new URL(req.url);
+    const search = searchParams.get('search') || '';
+    const page = Math.max(1, Number(searchParams.get('page')) || 1);
+    /* Capped so the endpoint cannot be used to pull the whole table at once. */
+    const limit = Math.min(100, Math.max(1, Number(searchParams.get('limit')) || 20));
+
+    /* Long search strings cost a collection scan and buy nothing. */
+    const data = await listTeams({ search: search.slice(0, 100), page, limit });
+
+    return NextResponse.json({ success: true, data });
+  } catch (error) {
+    return serverError('GET', error);
+  }
+}
 
 export async function POST(req) {
   try {
+    /* Throttle before touching the database, so a flood costs us nothing. */
+    const limit = rateLimit({
+      key: `iupc:register:${clientKey(req)}`,
+      limit: 5,
+      windowMs: 10 * 60 * 1000,
+    });
+    if (!limit.ok) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Too many registration attempts. Please try again shortly.',
+        },
+        { status: 429, headers: { 'Retry-After': String(limit.retryAfter) } }
+      );
+    }
+
+    const declared = Number(req.headers.get('content-length') || 0);
+    if (declared > MAX_BODY_BYTES) {
+      return NextResponse.json(
+        { success: false, message: 'Request body too large' },
+        { status: 413 }
+      );
+    }
+
     await connectDB();
 
     let body;
@@ -14,6 +76,15 @@ export async function POST(req) {
     } catch {
       return NextResponse.json(
         { success: false, message: 'Invalid JSON body' },
+        { status: 400 }
+      );
+    }
+
+    /* A JSON array passes typeof 'object'; the destructure below would then
+       silently yield undefined for every field. */
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return NextResponse.json(
+        { success: false, message: 'Request body must be a JSON object' },
         { status: 400 }
       );
     }
@@ -34,7 +105,7 @@ export async function POST(req) {
     const { teamName, varsityName, coach, members } = body;
 
     const memberEmails = members.map((m) => m.email.toLowerCase());
-    const memberHandles = members.map((m) => m.codeforcesHandle.toLowerCase());
+    const memberStudentIds = members.map((m) => m.studentId.toLowerCase());
 
     // 2. Duplicate Checks in current request
     const duplicateEmails = memberEmails.filter(
@@ -51,15 +122,15 @@ export async function POST(req) {
       );
     }
 
-    const duplicateHandles = memberHandles.filter(
-      (h, i) => memberHandles.indexOf(h) !== i
+    const duplicateStudentIds = memberStudentIds.filter(
+      (s, i) => memberStudentIds.indexOf(s) !== i
     );
-    if (duplicateHandles.length > 0) {
+    if (duplicateStudentIds.length > 0) {
       return NextResponse.json(
         {
           success: false,
-          message: 'Codeforces handles must be unique across members',
-          errors: [{ field: 'members', message: `Duplicate handle(s): ${[...new Set(duplicateHandles)].join(', ')}` }],
+          message: 'Student IDs must be unique across members',
+          errors: [{ field: 'members', message: `Duplicate student ID(s): ${[...new Set(duplicateStudentIds)].join(', ')}` }],
         },
         { status: 400 }
       );
@@ -92,15 +163,15 @@ export async function POST(req) {
       );
     }
 
-    const existingHandle = await Registration.findOne({
-      'members.codeforcesHandle': { $in: memberHandles },
+    const existingStudentId = await Registration.findOne({
+      'members.studentId': { $in: memberStudentIds },
     });
-    if (existingHandle) {
+    if (existingStudentId) {
       return NextResponse.json(
         {
           success: false,
-          message: 'One or more Codeforces handles are already registered',
-          errors: [{ field: 'members', message: 'A Codeforces handle is already registered' }],
+          message: 'One or more student IDs are already registered',
+          errors: [{ field: 'members', message: 'A student with this ID is already on another team' }],
         },
         { status: 409 }
       );
@@ -137,12 +208,6 @@ export async function POST(req) {
         { status: 409 }
       );
     }
-    return NextResponse.json(
-      {
-        success: false,
-        message: error.message || 'Internal Server Error',
-      },
-      { status: 500 }
-    );
+    return serverError('POST', error);
   }
 }

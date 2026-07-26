@@ -1,5 +1,6 @@
 import FormField from './FormField';
 import SelectField from './SelectField';
+import { PHONE_HINT } from '@/lib/patterns';
 
 const TSHIRT_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
 
@@ -15,7 +16,6 @@ const MemberForm = ({ index, register, errors }) => {
         <FormField
           label="Member Name"
           name={`members.${index}.name`}
-          placeholder="e.g. Rahim Uddin"
           register={register}
           error={memberErrors.name}
           required
@@ -25,7 +25,6 @@ const MemberForm = ({ index, register, errors }) => {
           label="Member Email"
           name={`members.${index}.email`}
           type="email"
-          placeholder="member@example.com"
           register={register}
           error={memberErrors.email}
           required
@@ -34,18 +33,18 @@ const MemberForm = ({ index, register, errors }) => {
         <FormField
           label="Member Phone Number"
           name={`members.${index}.phone`}
-          placeholder="017XXXXXXXX or +88017XXXXXXXX"
           register={register}
           error={memberErrors.phone}
+          hint={PHONE_HINT}
           required
           autoComplete="tel"
         />
         <FormField
-          label="Codeforces Handle"
-          name={`members.${index}.codeforcesHandle`}
-          placeholder="e.g. tourist"
+          label="Student ID"
+          name={`members.${index}.studentId`}
           register={register}
-          error={memberErrors.codeforcesHandle}
+          error={memberErrors.studentId}
+          hint="As printed on your university ID card"
           required
         />
         <div className="md:col-span-2">

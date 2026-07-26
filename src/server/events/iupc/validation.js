@@ -1,7 +1,6 @@
-const bdPhoneRegex = /^(?:\+?880)?1[3-9]\d{8}$/;
+import { BD_PHONE_RE, EMAIL_RE, TEAM_NAME_RE, PHONE_HINT } from '@/lib/patterns';
+
 const tshirtSizes = ['S', 'M', 'L', 'XL', 'XXL'];
-// Team names carry the varsity short form and use underscores, never spaces.
-const teamNameRegex = /^[A-Za-z0-9_]+$/;
 
 export function validateRegistration(body) {
   const errors = [];
@@ -9,11 +8,11 @@ export function validateRegistration(body) {
 
   if (!teamName || typeof teamName !== 'string' || teamName.trim().length < 3 || teamName.trim().length > 100) {
     errors.push({ field: 'teamName', message: 'Team name must be 3-100 characters' });
-  } else if (!teamNameRegex.test(teamName.trim())) {
+  } else if (!TEAM_NAME_RE.test(teamName.trim())) {
     errors.push({
       field: 'teamName',
       message:
-        'Team name may only contain letters, numbers and underscores — no spaces (e.g. PSTU_Array_Of_Hope)',
+        'Team name may only contain letters, numbers and underscores — no spaces',
     });
   }
   if (!varsityName || typeof varsityName !== 'string' || varsityName.trim().length === 0 || varsityName.trim().length > 150) {
@@ -27,12 +26,11 @@ export function validateRegistration(body) {
     if (!coach.name || typeof coach.name !== 'string' || coach.name.trim().length === 0 || coach.name.trim().length > 100) {
       errors.push({ field: 'coach.name', message: 'Coach name cannot exceed 100 characters' });
     }
-    const emailRegex = /^\S+@\S+\.\S+$/;
-    if (!coach.email || typeof coach.email !== 'string' || !emailRegex.test(coach.email.trim())) {
+    if (!coach.email || typeof coach.email !== 'string' || !EMAIL_RE.test(coach.email.trim())) {
       errors.push({ field: 'coach.email', message: 'Please provide a valid coach email' });
     }
-    if (!coach.phone || typeof coach.phone !== 'string' || !bdPhoneRegex.test(coach.phone.trim())) {
-      errors.push({ field: 'coach.phone', message: 'Coach phone must be a valid Bangladeshi number (e.g. 017XXXXXXXX or +88017XXXXXXXX)' });
+    if (!coach.phone || typeof coach.phone !== 'string' || !BD_PHONE_RE.test(coach.phone.trim())) {
+      errors.push({ field: 'coach.phone', message: `Coach phone must be a valid Bangladeshi number. ${PHONE_HINT}` });
     }
   }
 
@@ -48,15 +46,14 @@ export function validateRegistration(body) {
       if (!m.name || typeof m.name !== 'string' || m.name.trim().length === 0 || m.name.trim().length > 100) {
         errors.push({ field: `members[${idx}].name`, message: 'Member name is required and cannot exceed 100 characters' });
       }
-      const emailRegex = /^\S+@\S+\.\S+$/;
-      if (!m.email || typeof m.email !== 'string' || !emailRegex.test(m.email.trim())) {
+      if (!m.email || typeof m.email !== 'string' || !EMAIL_RE.test(m.email.trim())) {
         errors.push({ field: `members[${idx}].email`, message: 'Please provide a valid member email' });
       }
-      if (!m.phone || typeof m.phone !== 'string' || !bdPhoneRegex.test(m.phone.trim())) {
-        errors.push({ field: `members[${idx}].phone`, message: 'Phone must be a valid Bangladeshi number (e.g. 017XXXXXXXX or +88017XXXXXXXX)' });
+      if (!m.phone || typeof m.phone !== 'string' || !BD_PHONE_RE.test(m.phone.trim())) {
+        errors.push({ field: `members[${idx}].phone`, message: `Phone must be a valid Bangladeshi number. ${PHONE_HINT}` });
       }
-      if (!m.codeforcesHandle || typeof m.codeforcesHandle !== 'string' || m.codeforcesHandle.trim().length < 2 || m.codeforcesHandle.trim().length > 50) {
-        errors.push({ field: `members[${idx}].codeforcesHandle`, message: 'Codeforces handle must be 2-50 characters' });
+      if (!m.studentId || typeof m.studentId !== 'string' || m.studentId.trim().length < 2 || m.studentId.trim().length > 50) {
+        errors.push({ field: `members[${idx}].studentId`, message: 'Student ID must be 2-50 characters' });
       }
       if (!m.tshirtSize || typeof m.tshirtSize !== 'string' || !tshirtSizes.includes(m.tshirtSize.trim())) {
         errors.push({ field: `members[${idx}].tshirtSize`, message: 'T-shirt size must be one of S, M, L, XL, XXL' });

@@ -26,6 +26,13 @@ export const EVENT_DETAILS = [
       'Teams of three share a single workstation and race through an algorithmic problem set. Standings follow ICPC scoring: problems solved first, then penalty time.',
     heroNote: 'Team entry — exactly 3 members, plus one registered coach.',
 
+    /* Hero cover art, layered behind the gradients. Drop a replacement at
+       public/events/iupc/ and point this at it — any format works, and the
+       hero falls back to the plain gradient if this is removed.
+       Aim for ~1600x900 and under 300 KB; it loads on every visit.
+       The current file is a generated placeholder, not a photograph. */
+    cover: '/events/iupc/cover.svg',
+
     tournament: {
       date: '13 August 2026',
       time: '9:00 AM — 3:00 PM',

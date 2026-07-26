@@ -5,12 +5,12 @@
 // that sit south or west of the river (Gopalganj, Shariatpur, Faridpur,
 // Madaripur, Rajbari). Institutions north of the Padma are deliberately absent.
 //
-// `short` is what a team name must be prefixed with, e.g. PSTU_Array_Of_Hope,
-// so it doubles as data and as a rule. `aliases` only widen the search — a
-// team searching "BSMRSTU" still finds Gopalganj under its current name.
+// `short` is the abbreviation shown while searching; it carries no rule —
+// teams name themselves whatever they like. `aliases` only widen the search:
+// a team searching "BSMRSTU" still finds Gopalganj under its current name.
 //
-// The field stays free text, so an institution missing here can still be typed
-// in; it simply will not have a prefix enforced.
+// The field stays free text, so an institution missing here can still be
+// typed in by hand.
 //
 // To add one: append { name, short, district } to the right block.
 // ---------------------------------------------------------------------------
@@ -104,14 +104,6 @@ export const UNIVERSITIES = [
     district: 'Shariatpur',
   },
 ];
-
-/* Exact-name lookup — returns the short form, or undefined for a typed-in
-   institution that is not on the list. */
-export const shortFormOf = (name) => {
-  if (!name) return undefined;
-  const needle = name.trim().toLowerCase();
-  return UNIVERSITIES.find((u) => u.name.toLowerCase() === needle)?.short;
-};
 
 /* Ranked matches for a partial query: exact short form first, then name or
    district prefixes, then anything containing the query (aliases included). */

@@ -48,6 +48,26 @@ export function eventRegisterMetadata(slug) {
   );
 }
 
+export function eventTeamsMetadata(slug) {
+  const event = getEventDetail(slug);
+  if (!event) return missing('Teams');
+
+  return build(
+    `${event.name} Registered Teams — ${SUFFIX}`,
+    `Every team pre-registered for ${event.fullName} at ${SUFFIX}. Search by team name, university, member or serial number.`
+  );
+}
+
+export function eventSlotsMetadata(slug) {
+  const event = getEventDetail(slug);
+  if (!event) return missing('Slot allocations');
+
+  return build(
+    `${event.name} Slot Allocations — ${SUFFIX}`,
+    `University-wise slot allocation for ${event.fullName} at ${SUFFIX}.`
+  );
+}
+
 export function gameMetadata(slug) {
   const game = getGame(slug);
   if (!game) return missing('Game');
