@@ -44,6 +44,7 @@ const Section = ({
   id,
   eyebrow,
   title,
+  titleNowrap = false,
   lede,
   action,
   children,
@@ -54,13 +55,17 @@ const Section = ({
     <div className="mx-auto max-w-6xl px-4">
       {title && (
         <header className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4 border-b border-white/10 pb-6">
-          <div className="max-w-[46ch]">
+          <div className={titleNowrap ? 'lg:shrink-0' : 'max-w-[46ch]'}>
             {eyebrow && (
               <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-mist-400">
                 {eyebrow}
               </p>
             )}
-            <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+            <h2
+              className={`mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl ${
+                titleNowrap ? 'lg:whitespace-nowrap' : ''
+              }`}
+            >
               {title}
             </h2>
           </div>
@@ -206,6 +211,7 @@ const LineupSection = () => (
     id="events"
     eyebrow="The line-up"
     title={`${word(EVENTS.length)} events. One carnival.`}
+    titleNowrap
     lede={LINEUP_LEDE}
     action={
       <Link
