@@ -46,56 +46,85 @@ const IconTile = ({ icon, accent, muted, small }) => {
   );
 };
 
-/* The one event taking entries. The only row with a button. */
+/* The one event taking entries.
+
+   It used to be a Published row with more padding, a hairline of gold down its
+   left edge and a button bolted on the right — the same object as the four
+   below it, only taller. It is not the same object: it is the one thing on the
+   page a visitor can act on today.
+
+   So it is a card, and it borrows the treatment the hero's open panel already
+   established: a gold-tinted border and a glow. The run-on fact line becomes
+   three labelled cells, because "45 teams · ৳3,000 per team at final
+   registration · closes 31 July 2026" is three facts pretending to be a
+   sentence. */
 const OpenRow = ({ event, detail }) => {
   const accent = accentOf(detail?.accent);
   const t = detail?.tournament;
 
-  return (
-    <div className="border-t border-white/10 first:border-t-0">
-      <div className="relative flex flex-col gap-4 py-5 pl-5 sm:flex-row sm:items-center sm:gap-6">
-        <span
-          aria-hidden="true"
-          className="absolute inset-y-4 left-0 w-0.5 rounded-full bg-gold-400"
-        />
-        <IconTile icon={event.icon} accent={accent} />
+  const facts = t
+    ? [
+        { label: 'Team slots', value: t.slots },
+        { label: 'At final registration', value: t.entryFee },
+        { label: 'Entries close', value: t.deadline },
+      ].filter((f) => f.value)
+    : [];
 
+  return (
+    <div className="rounded-2xl border border-gold-400/30 bg-ink-900/40 p-5 shadow-glow-gold sm:p-6">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-8">
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-            <Link
-              href={event.href}
-              className="text-lg font-bold text-white transition hover:text-gold-300"
-            >
-              {event.name}
-            </Link>
-            <span className="text-xs text-mist-400">{event.scope}</span>
-            {t?.deadline && <Countdown date={t.deadline} />}
+          <div className="flex items-start gap-4">
+            <IconTile icon={event.icon} accent={accent} />
+
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                <Link
+                  href={event.href}
+                  className="text-lg font-bold text-white transition hover:text-gold-300"
+                >
+                  {event.name}
+                </Link>
+                <span className="text-xs text-mist-400">{event.scope}</span>
+                {t?.deadline && <Countdown date={t.deadline} />}
+              </div>
+              <p className="mt-1.5 max-w-[62ch] text-sm leading-relaxed text-mist-300">
+                {event.blurb}
+              </p>
+            </div>
           </div>
-          <p className="mt-1 max-w-[62ch] text-sm leading-relaxed text-mist-400">
-            {event.blurb}
-          </p>
-          {t && (
-            <p className="mt-2 text-xs text-mist-400 tabular-nums">
-              <span className="text-mist-200">{t.slots}</span> ·{' '}
-              <span className="text-mist-200">{t.entryFee}</span> at final
-              registration · closes {t.deadline}
-            </p>
+
+          {facts.length > 0 && (
+            <dl className="mt-5 grid grid-cols-2 gap-x-6 gap-y-3 border-t border-white/10 pt-4 sm:grid-cols-3">
+              {facts.map((fact) => (
+                <div key={fact.label}>
+                  <dt className="text-[11px] uppercase tracking-wide text-mist-400">
+                    {fact.label}
+                  </dt>
+                  <dd className="mt-0.5 text-sm font-semibold text-white tabular-nums">
+                    {fact.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
           )}
         </div>
 
-        <div className="flex shrink-0 items-center gap-3">
-          <Link
-            href={event.href}
-            className="text-sm font-semibold text-mist-300 transition hover:text-white"
-          >
-            Details
-          </Link>
+        {/* Full-width on a phone, a fixed column beside the facts on desktop —
+            the button was competing with a 62ch paragraph for the same row. */}
+        <div className="flex shrink-0 flex-col gap-2.5 lg:w-48 lg:self-center">
           <Link
             href={event.registerHref || event.href}
-            className="inline-flex items-center gap-2 rounded-lg bg-gold-400 px-5 py-2.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
+            className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gold-400 px-5 py-3 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
           >
             {event.cta || 'Register'}
-            <ArrowRightIcon className="h-4 w-4" />
+            <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          </Link>
+          <Link
+            href={event.href}
+            className="inline-flex w-full items-center justify-center rounded-xl border border-ink-500 px-5 py-2.5 text-sm font-semibold text-mist-200 transition hover:bg-white/5 hover:text-white"
+          >
+            Details
           </Link>
         </div>
       </div>
