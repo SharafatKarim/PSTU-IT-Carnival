@@ -9,7 +9,7 @@ import {
 } from '@/components/landing/Icons';
 import { ROUTES } from '@/lib/routes';
 import { isGameRegistrationOpen } from '@/data/gaming';
-import { accentOf } from './accents';
+import { accentOf } from '@/lib/accents';
 
 const Fact = ({ icon: Icon, children }) => (
   <span className="inline-flex items-center gap-1.5 text-xs text-mist-400">

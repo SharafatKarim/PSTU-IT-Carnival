@@ -1,5 +1,8 @@
-/* Per-game accent palettes, drawn from the carnival theme tokens.
-   Full class strings only — Tailwind needs to see them literally. */
+/* Accent palettes drawn from the carnival theme tokens.
+   Full class strings only — Tailwind needs to see them literally.
+   Lives in lib/ rather than components/gaming/ because the landing page and
+   the events index colour-code by event family too, and importing a palette
+   from a sibling feature folder was the drift smell it looks like. */
 
 export const ACCENTS = {
   aqua: {
@@ -28,6 +31,20 @@ export const ACCENTS = {
     hoverBorder: 'hover:border-gold-400/60',
     blob: 'bg-gold-400/20',
   },
+  /* The house purple. Used for events that have no family of their own. */
+  grape: {
+    text: 'text-grape-300',
+    textStrong: 'text-grape-400',
+    border: 'border-grape-400/40',
+    borderSoft: 'border-grape-400/25',
+    bgSoft: 'bg-grape-500/10',
+    bgFaint: 'bg-grape-500/5',
+    dot: 'bg-grape-400',
+    glow: 'shadow-glow-grape',
+    ring: 'ring-grape-400/30',
+    hoverBorder: 'hover:border-grape-400/60',
+    blob: 'bg-grape-600/20',
+  },
   magenta: {
     text: 'text-magenta-300',
     textStrong: 'text-magenta-400',
@@ -43,4 +60,4 @@ export const ACCENTS = {
   },
 };
 
-export const accentOf = (key) => ACCENTS[key] || ACCENTS.aqua;
+export const accentOf = (key) => ACCENTS[key] || ACCENTS.grape;

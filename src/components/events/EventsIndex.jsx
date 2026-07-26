@@ -3,15 +3,15 @@
 import Link from 'next/link';
 import Navbar from '@/components/landing/Navbar';
 import Footer from '@/components/landing/Footer';
-import Events from '@/components/landing/Events';
+import Lineup from '@/components/landing/Lineup';
 import { ArrowLeftIcon, CalendarIcon, MapPinIcon } from '@/components/landing/Icons';
 import { EVENT, STATS } from '@/data/content';
 import { ROUTES, eventsIndexNav } from '@/lib/routes';
 
 /* The whole line-up on its own page.
-   It reuses the landing page's <Events> grid rather than restating the list,
+   It reuses the landing page's <Lineup> ledger rather than restating the list,
    so the two can never disagree — this page supplies the hero, the nav and
-   the URL, and turns the intro off so its own h1 is the only heading. */
+   the URL. */
 const EventsIndex = () => (
   <div className="min-h-screen">
     <Navbar
@@ -50,11 +50,11 @@ const EventsIndex = () => (
 
             <div className="mt-7 flex flex-wrap gap-x-8 gap-y-2 text-sm text-mist-200">
               <span className="inline-flex items-center gap-2">
-                <CalendarIcon className="h-4 w-4 text-gold-400" />
+                <CalendarIcon className="h-4 w-4 text-mist-400" />
                 {EVENT.date}
               </span>
               <span className="inline-flex items-center gap-2">
-                <MapPinIcon className="h-4 w-4 text-gold-400" />
+                <MapPinIcon className="h-4 w-4 text-mist-400" />
                 {EVENT.venue}
               </span>
               <span>
@@ -68,7 +68,11 @@ const EventsIndex = () => (
         </div>
       </section>
 
-      <Events intro={false} />
+      <section className="py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4">
+          <Lineup />
+        </div>
+      </section>
     </main>
 
     <Footer />

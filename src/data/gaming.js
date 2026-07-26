@@ -378,7 +378,9 @@ export const GAMES = [
     name: 'PUBG Mobile',
     shortName: 'PUBG',
     icon: 'gamepad',
-    accent: 'gold',
+    /* Not gold: gold is reserved for actions site-wide, and PUBG's identity
+       tile would otherwise be indistinguishable from a status pill. */
+    accent: 'grape',
     scope: 'Esports · Squad',
     mode: 'Squad of 4',
     tagline: 'Squad up for the battle royale. Last team standing takes the crown.',

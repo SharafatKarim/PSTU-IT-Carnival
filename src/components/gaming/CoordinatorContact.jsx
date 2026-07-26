@@ -1,5 +1,5 @@
 import { PhoneIcon, MailIcon, FacebookIcon, ArrowRightIcon } from '@/components/landing/Icons';
-import { accentOf } from './accents';
+import { accentOf } from '@/lib/accents';
 
 const initials = (name) =>
   name

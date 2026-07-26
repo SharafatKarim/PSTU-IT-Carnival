@@ -8,7 +8,7 @@ import HeadlineStrip from '@/components/ui/HeadlineStrip';
 import TournamentInfo from '@/components/gaming/TournamentInfo';
 import RulesSection from '@/components/gaming/RulesSection';
 import CoordinatorContact from '@/components/gaming/CoordinatorContact';
-import { accentOf } from '@/components/gaming/accents';
+import { accentOf } from '@/lib/accents';
 import {
   ICON_MAP,
   ArrowLeftIcon,
@@ -125,7 +125,7 @@ const Hero = ({ event }) => {
         <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-mist-200">
           {quickFacts.map((fact, i) => (
             <span key={i} className="inline-flex items-center gap-2">
-              <fact.icon className="h-4 w-4 text-gold-400" />
+              <fact.icon className="h-4 w-4 text-mist-400" />
               {fact.value}
             </span>
           ))}

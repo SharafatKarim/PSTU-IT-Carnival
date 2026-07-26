@@ -26,11 +26,13 @@ export const EVENT = {
   contactEmail: '',
 };
 
+/* The four numbers the hero band shows. `Events` is read by name in
+   EventsIndex.jsx — keep the label if you reorder these. */
 export const STATS = [
+  { value: '45', label: 'Team slots' },
+  { value: 'Free', label: 'To pre-register' },
+  { value: '31 Jul', label: 'Entries close' },
   { value: '11', label: 'Events' },
-  { value: '45', label: 'IUPC team slots' },
-  { value: '3', label: 'Days onsite' },
-  { value: '6', label: 'Gaming & fun' },
 ];
 
 // `status: 'open'` is the one featured event; 'live' events get a linked card;
@@ -47,6 +49,10 @@ export const EVENTS = [
       'The flagship ICPC-style Inter-University Programming Contest. Teams of three, a 4–5 hour battle, one keyboard.',
     status: 'open',
     cta: 'Pre-Register',
+    /* Resolves against src/data/events.js. The id 'iupc' happens to match its
+       slug; the gaming ids do not, so every linked event states it. */
+    slug: 'iupc',
+    kind: 'event',
     href: ROUTES.iupc,
     registerHref: ROUTES.register,
   },
@@ -98,6 +104,8 @@ export const EVENTS = [
     icon: 'gamepad',
     blurb: 'Squad up for the battle royale. Last team standing takes the crown.',
     status: 'live',
+    slug: 'pubg-mobile',
+    kind: 'game',
     href: ROUTES.game('pubg-mobile'),
   },
   {
@@ -108,6 +116,8 @@ export const EVENTS = [
     icon: 'flame',
     blurb: 'Fast, furious mobile battle royale. Drop in, gear up, survive.',
     status: 'live',
+    slug: 'free-fire',
+    kind: 'game',
     href: ROUTES.game('free-fire'),
   },
   {
@@ -136,6 +146,8 @@ export const EVENTS = [
     icon: 'ball',
     blurb: 'Virtual football glory — skill, tactics and last-minute winners.',
     status: 'live',
+    slug: 'efootball',
+    kind: 'game',
     href: ROUTES.game('efootball'),
   },
   {

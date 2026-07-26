@@ -10,7 +10,7 @@ import {
   AlertIcon,
   CertificateIcon,
 } from '@/components/landing/Icons';
-import { accentOf } from './accents';
+import { accentOf } from '@/lib/accents';
 
 const FIELDS = [
   { key: 'date', label: 'Date', icon: CalendarIcon },

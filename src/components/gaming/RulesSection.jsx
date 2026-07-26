@@ -1,5 +1,5 @@
 import { ICON_MAP, CheckIcon } from '@/components/landing/Icons';
-import { accentOf } from './accents';
+import { accentOf } from '@/lib/accents';
 
 const RulesSection = ({ game }) => {
   const a = accentOf(game.accent);

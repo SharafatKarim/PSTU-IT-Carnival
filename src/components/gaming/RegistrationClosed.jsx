@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { ClockIcon, MailIcon, PhoneIcon, CheckIcon } from '@/components/landing/Icons';
 import { GAMING } from '@/data/gaming';
 import { ROUTES } from '@/lib/routes';
-import { accentOf } from './accents';
+import { accentOf } from '@/lib/accents';
 import { prepList } from './prep';
 
 /* Stands in for the registration form while a tournament's entries are shut.

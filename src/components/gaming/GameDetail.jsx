@@ -21,7 +21,7 @@ import {
 } from '@/components/landing/Icons';
 import { getGame, isGameRegistrationOpen } from '@/data/gaming';
 import { ROUTES, gameDetailNav } from '@/lib/routes';
-import { accentOf } from './accents';
+import { accentOf } from '@/lib/accents';
 
 const Section = ({ id, eyebrow, title, subtitle, children, className = '' }) => (
   <section id={id} className={`scroll-mt-20 py-16 sm:py-20 ${className}`}>
@@ -132,7 +132,7 @@ const Hero = ({ game, registrationOpen }) => {
         <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-mist-200">
           {quickFacts.map((fact, i) => (
             <span key={i} className="inline-flex items-center gap-2">
-              <fact.icon className="h-4 w-4 text-gold-400" />
+              <fact.icon className="h-4 w-4 text-mist-400" />
               {fact.value}
             </span>
           ))}

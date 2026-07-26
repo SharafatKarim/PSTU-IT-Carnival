@@ -75,8 +75,8 @@ const GamingHub = () => (
             ))}
           </div>
 
-          <p className="mx-auto mt-10 flex max-w-2xl items-start gap-2.5 rounded-xl border border-gold-400/25 bg-gold-400/5 p-4 text-sm text-mist-300">
-            <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-gold-400" />
+          <p className="mx-auto mt-10 flex max-w-2xl items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm text-mist-300">
+            <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-mist-400" />
             <span>{GAMING.note}</span>
           </p>
         </div>

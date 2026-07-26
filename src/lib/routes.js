@@ -70,12 +70,13 @@ export const REGISTRABLE_EVENTS = EVENT_DETAILS.filter(
 
 /* Sections of the landing page, in the order they appear. The nav and the
    in-page anchors are both generated from this. */
+/* Five, not eight. The About / Format / Prizes sections were cut — Format
+   duplicated the rules that live on /events/iupc and Prizes had no figures to
+   show. Fewer links is also what lets the desktop nav start at md:. */
 export const LANDING_SECTIONS = [
-  { id: 'about', label: 'About' },
   { id: 'events', label: 'Events' },
-  { id: 'timeline', label: 'Timeline' },
-  { id: 'format', label: 'Format' },
-  { id: 'prizes', label: 'Prizes' },
+  { id: 'register', label: 'How to enter' },
+  { id: 'timeline', label: 'Schedule' },
   { id: 'faq', label: 'FAQ' },
 ];
 
@@ -120,7 +121,7 @@ export const eventsIndexNav = [
   { label: 'Home', href: ROUTES.home },
   { label: 'IUPC', href: ROUTES.iupc },
   { label: 'Gaming', href: ROUTES.gaming },
-  ...homeNav.filter((link) => ['Timeline', 'FAQ'].includes(link.label)),
+  ...homeNav.filter((link) => ['Schedule', 'FAQ'].includes(link.label)),
 ];
 
 export const gamingNav = [
@@ -228,4 +229,35 @@ if (process.env.NODE_ENV !== 'production') {
     GAME_PAGE_SLUGS,
     'src/app/events/gaming/'
   );
+
+  /* content.js hand-writes a `status` per event, but whether registration is
+     actually open lives in events.js / gaming.js. The landing ledger derives
+     the tier from the real flag; this catches the label going stale. */
+  import('@/data/content')
+    .then(({ EVENTS }) => {
+      EVENTS.filter((e) => e.slug).forEach((e) => {
+        const open =
+          e.kind === 'game'
+            ? GAMES.find((g) => g.slug === e.slug)?.registrationOpen
+            : EVENT_DETAILS.find((d) => d.slug === e.slug)?.registrationOpen;
+
+        if (open === undefined) {
+          console.warn(
+            `[routes] EVENTS entry "${e.id}" points at slug "${e.slug}", which ` +
+              `is not in ${e.kind === 'game' ? 'gaming.js' : 'events.js'}.`
+          );
+          return;
+        }
+        const expected = open ? 'open' : 'live';
+        if (e.status !== expected) {
+          console.warn(
+            `[routes] EVENTS entry "${e.id}" has status "${e.status}" but ` +
+              `${e.slug} has registrationOpen: ${open}. Set status to ` +
+              `"${expected}" in src/data/content.js, or the landing page will ` +
+              `advertise the wrong state.`
+          );
+        }
+      });
+    })
+    .catch(() => {});
 }

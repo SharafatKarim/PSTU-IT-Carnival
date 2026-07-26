@@ -10,7 +10,7 @@ import CheckboxField from './CheckboxField';
 import { CheckIcon, AlertIcon, TicketIcon } from '@/components/landing/Icons';
 import { submitGameRegistration, DEMO_MODE } from '@/services/events/gaming';
 import { ROUTES } from '@/lib/routes';
-import { accentOf } from './accents';
+import { accentOf } from '@/lib/accents';
 
 /* --- helpers -------------------------------------------------------------- */
 

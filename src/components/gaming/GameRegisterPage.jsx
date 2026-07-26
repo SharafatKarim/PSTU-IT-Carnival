@@ -8,7 +8,7 @@ import RegistrationClosed from './RegistrationClosed';
 import { ArrowLeftIcon } from '@/components/landing/Icons';
 import { getGame, isGameRegistrationOpen } from '@/data/gaming';
 import { ROUTES, gameRegisterNav } from '@/lib/routes';
-import { accentOf } from './accents';
+import { accentOf } from '@/lib/accents';
 
 /* A game's registration page, matching how IUPC works: the detail page hands
    off to this route rather than embedding the form. Entries that are not open
