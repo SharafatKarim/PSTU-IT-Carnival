@@ -73,6 +73,8 @@ const Hero = ({ event }) => {
     { label: 'Closes', value: t.deadline },
   ].filter(Boolean);
 
+  const registrationOpen = event.registrationOpen !== false;
+
   return (
     /* Full viewport minus the 61px sticky navbar. min-h (not h) so the hero
        still grows on narrow screens instead of clipping its content. */
@@ -119,12 +121,19 @@ const Hero = ({ event }) => {
 
           <div className="flex-1">
             <div className="flex flex-wrap items-center gap-2.5">
-              <span
-                className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-widest ${a.border} ${a.bgSoft} ${a.text}`}
-              >
-                <span className={`h-1.5 w-1.5 animate-pulse-glow rounded-full ${a.dot}`} />
-                Pre-Registration Open
-              </span>
+              {registrationOpen ? (
+                <span
+                  className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-widest ${a.border} ${a.bgSoft} ${a.text}`}
+                >
+                  <span className={`h-1.5 w-1.5 animate-pulse-glow rounded-full ${a.dot}`} />
+                  Pre-Registration Open
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-2 rounded-full border border-gold-400/40 bg-gold-400/10 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-gold-300">
+                  <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-gold-400" />
+                  Registration Opens Soon
+                </span>
+              )}
               <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-mist-300">
                 {event.scope}
               </span>
@@ -153,21 +162,31 @@ const Hero = ({ event }) => {
         </div>
 
         <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-          <Link
-            href={ROUTES.eventRegister(event.slug)}
-            className="group inline-flex items-center justify-center gap-2 rounded-xl bg-gold-400 px-7 py-3.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
-          >
-            Pre-Register for {event.shortName}
-            <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </Link>
-          {/* Two secondaries share one class string so the row stays even
-              however long the labels get. */}
-          <Link href={ROUTES.eventTeams(event.slug)} className={SECONDARY_CTA}>
-            View Teams
-          </Link>
-          <Link href={ROUTES.eventSlots(event.slug)} className={SECONDARY_CTA}>
-            Slot Allocations
-          </Link>
+          {registrationOpen ? (
+            <>
+              <Link
+                href={ROUTES.eventRegister(event.slug)}
+                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-gold-400 px-7 py-3.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
+              >
+                Pre-Register for {event.shortName}
+                <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+              <Link href={ROUTES.eventTeams(event.slug)} className={SECONDARY_CTA}>
+                View Teams
+              </Link>
+              <Link href={ROUTES.eventSlots(event.slug)} className={SECONDARY_CTA}>
+                Slot Allocations
+              </Link>
+            </>
+          ) : (
+            <a
+              href="#rules"
+              className="group inline-flex items-center justify-center gap-2 rounded-xl bg-gold-400 px-7 py-3.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
+            >
+              Read the Rules
+              <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </a>
+          )}
           <a href="#rules" className={SECONDARY_CTA}>
             Read the Rules
           </a>
@@ -265,13 +284,15 @@ const EventDetail = ({ slug }) => {
   const event = getEventDetail(slug);
   if (!event) return null;
 
+  const registrationOpen = event.registrationOpen !== false;
+
   return (
     <div className="min-h-screen">
       <Navbar
         links={eventDetailNav}
         homeHref={ROUTES.home}
-        ctaHref={ROUTES.eventRegister(event.slug)}
-        ctaLabel="Pre-Register"
+        ctaHref={registrationOpen ? ROUTES.eventRegister(event.slug) : '#contact'}
+        ctaLabel={registrationOpen ? 'Pre-Register' : 'Contact Support'}
       />
       <main>
         <Hero event={event} />
@@ -298,10 +319,20 @@ const EventDetail = ({ slug }) => {
         <Section
           id="register"
           eyebrow="Registration"
-          title={`Pre-register for ${event.name}`}
-          subtitle="Registration happens on a separate page so you can fill it in one sitting."
+          title={registrationOpen ? `Pre-register for ${event.name}` : `Registration for ${event.name}`}
+          subtitle={registrationOpen ? "Registration happens on a separate page so you can fill it in one sitting." : "Registration details for this event."}
         >
-          <RegisterCta event={event} />
+          {registrationOpen ? (
+            <RegisterCta event={event} />
+          ) : (
+            <div className="mx-auto max-w-2xl text-center rounded-2xl border border-ink-600 bg-ink-800/40 p-8 shadow-card">
+              <p className="text-sm font-semibold uppercase tracking-widest text-gold-400">Registration Opens Later</p>
+              <h3 className="mt-3 text-lg font-bold text-white">Online registration is not open yet</h3>
+              <p className="mt-2 text-sm leading-relaxed text-mist-300">
+                Pre-registration for the {event.name} is not open on this platform. Please prepare your team according to the rules and contact the coordinators for queries.
+              </p>
+            </div>
+          )}
         </Section>
 
         <Section

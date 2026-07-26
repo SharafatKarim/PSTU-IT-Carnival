@@ -74,7 +74,10 @@ export const EVENTS = [
     icon: 'chart',
     blurb:
       'Turn raw data into insight — a data-science and analytics showdown for the sharpest minds.',
-    status: 'coming-soon',
+    status: 'live',
+    slug: 'datathon',
+    kind: 'event',
+    href: ROUTES.event('datathon'),
   },
   {
     id: 'it-quiz',

@@ -33,7 +33,7 @@ import { EVENT_DETAILS } from '@/data/events';
    --------------------------------------------------------------------------- */
 
 /* Events with a detail page at /events/<slug>. */
-export const EVENT_PAGE_SLUGS = ['iupc'];
+export const EVENT_PAGE_SLUGS = ['iupc', 'datathon'];
 
 /* Games with a detail page at /events/gaming/<slug>. */
 export const GAME_PAGE_SLUGS = ['efootball', 'pubg-mobile', 'free-fire'];

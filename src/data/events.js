@@ -151,6 +151,137 @@ export const EVENT_DETAILS = [
       },
     ],
   },
+  {
+    slug: 'datathon',
+    name: 'Datathon',
+    fullName: 'PSTU Online Datathon 2026',
+    shortName: 'Datathon',
+    icon: 'chart',
+    accent: 'magenta',
+    scope: 'National',
+    mode: 'Solo or Team of 2',
+    tagline: 'Specially tailored for beginners in Data Science and Machine Learning.',
+    blurb: 'An online datathon featuring a beginner-friendly tabular dataset. Test your skills in Exploratory Data Analysis, feature engineering, and model validation.',
+    heroNote: 'Max 2 members per team (solo participation is also allowed).',
+    cover: '/events/datathon/cover.jpg',
+
+    tournament: {
+      date: '8–12 August 2026',
+      time: 'Starts Aug 8 (12:00 AM) — Ends Aug 12 (11:58 PM)',
+      venue: 'Online (Code Submission via Google Form)',
+      entryFee: '৳300 per team/participant',
+      entryShort: '৳300',
+      entryScope: 'per team',
+      format: 'Private Leaderboard evaluation + Jupyter Notebook Markdown review',
+      teamSize: 'Max 2 members',
+      teamSizeShort: 'Max 2',
+      slots: 'Open to all university students',
+      platform: 'Online',
+      deadline: '12 August 2026, 11:58 PM',
+    },
+
+    rules: [
+      {
+        title: 'Eligibility & Team Rules',
+        icon: 'users',
+        items: [
+          'All participants must be currently enrolled university students (undergraduate or postgraduate). Verification of student ID will be conducted.',
+          'Teams can consist of a maximum of 2 members (solo participation is allowed).',
+          'Members of a team can be from different universities.',
+          'Registration fee is BDT 300 per team or participant.',
+          'All team members must be declared during the initial registration process. Altering teams on the platform differs from official registration and leads to disqualification.',
+          'Unregistered individual submissions without prior team registration will face immediate disqualification.'
+        ],
+      },
+      {
+        title: 'Event Schedule',
+        icon: 'calendar',
+        items: [
+          'Competition starts: August 8, 2026 (12:00 AM).',
+          'Google Form released for code submission: August 11, 2026.',
+          'Competition ends & code submission deadline: August 12, 2026 (11:59 PM).',
+          'Winners announcement & award ceremony: August 15, 2026, during the Grand Closing Ceremony of IT Carnival 2026.',
+          'Physical presence is NOT mandatory. All prize money, digital certificates, and rewards will be transferred/dispatched online.'
+        ],
+      },
+      {
+        title: 'Evaluation Criteria',
+        icon: 'chart',
+        items: [
+          'Private Leaderboard Score (90%): Evaluated against the hidden private test set.',
+          'Hidden Metric: The exact evaluation metric will remain hidden/undisclosed from participants.',
+          'Code Quality & Markdown Documentation (10%): Evaluated based on code cleanliness, reproducibility, and clear explanations in Markdown cells.'
+        ],
+      },
+      {
+        title: 'Fair Play & APIs',
+        icon: 'shield',
+        items: [
+          'External paid or proprietary API keys (e.g. OpenAI, Claude, Gemini) are strictly prohibited.',
+          'Open-source libraries and open pre-trained models (e.g. Hugging Face, LightGBM, XGBoost, CatBoost, PyTorch) are fully allowed.',
+          'Plagiarism, multiple accounts, and private code sharing outside your team are strictly forbidden.'
+        ],
+      },
+    ],
+
+    registrationOpen: false,
+    registration: {
+      kind: 'none',
+      cta: 'Registration Closed',
+      note: 'Online registration opens soon',
+      process: [
+        'Registration remains open until 1 minute before the contest ends.',
+        'Ensure all team members are declared during registration to avoid disqualification.',
+        'Submit BDT 300 entry fee online.'
+      ],
+      checklist: [
+        'Team Name',
+        'Varsity name for all members',
+        'Verification document (e.g., student ID card)',
+        'For each member: name, email, phone, and t-shirt size'
+      ],
+    },
+
+    faqs: [
+      {
+        q: 'Is physical presence at PSTU mandatory?',
+        a: 'No. Physical presence at the venue is NOT mandatory for participants. All prize money, digital certificates, and rewards will be transferred/dispatched online to the winners.',
+      },
+      {
+        q: 'Can members of a team be from different universities?',
+        a: 'Yes, cross-university teams are fully allowed.',
+      },
+      {
+        q: 'What models and libraries are allowed?',
+        a: 'You are fully allowed to use open-source frameworks, PyTorch/TensorFlow, and open pre-trained models (including Hugging Face Transformers, LightGBM, XGBoost, CatBoost, etc.). Proprietary API keys like OpenAI or Gemini are prohibited.',
+      },
+      {
+        q: 'When do I need to submit my code?',
+        a: 'An official Google Form link will be provided on August 11, 2026. All participants must submit their final code (Jupyter Notebook / GitHub repository link) by August 12, 2026, at 11:59 PM.',
+      },
+    ],
+
+    coordinators: [
+      {
+        name: 'Technical Support',
+        role: 'Datathon Tech Team · CSE Club, PSTU',
+        phone: 'Contact via Support Emails',
+        email: 'ug2102030@cse.pstu.ac.bd',
+      },
+      {
+        name: 'Technical Support',
+        role: 'Datathon Tech Team · CSE Club, PSTU',
+        phone: 'Contact via Support Emails',
+        email: 'ug2102024@cse.pstu.ac.bd',
+      },
+      {
+        name: 'Technical Support',
+        role: 'Datathon Tech Team · CSE Club, PSTU',
+        phone: 'Contact via Support Emails',
+        email: 'ug2102009@cse.pstu.ac.bd',
+      },
+    ],
+  },
 ];
 
 export const getEventDetail = (slug) =>
