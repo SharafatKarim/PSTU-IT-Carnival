@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import Navbar from '@/components/landing/Navbar';
 import Footer from '@/components/landing/Footer';
 import Faq from '@/components/landing/Faq';
@@ -11,7 +12,6 @@ import CoordinatorContact from '@/components/gaming/CoordinatorContact';
 import { accentOf } from '@/lib/accents';
 import {
   ICON_MAP,
-  ArrowLeftIcon,
   ArrowRightIcon,
   CalendarIcon,
   ClockIcon,
@@ -74,101 +74,150 @@ const Hero = ({ event }) => {
   ].filter(Boolean);
 
   const registrationOpen = event.registrationOpen !== false;
+  const hasCover = Boolean(event.cover);
 
   return (
-    /* Full viewport minus the 61px sticky navbar. min-h (not h) so the hero
-       still grows on narrow screens instead of clipping its content. */
-    <section className="relative flex min-h-[calc(100dvh-61px)] flex-col overflow-hidden bg-ink-950">
-      {/* Cover art sits underneath everything, with a scrim over it so the
-          headline keeps its contrast whatever image is dropped in. A plain
-          background layer rather than next/image: it is decorative, it must
-          not shift the layout, and it accepts any file format. */}
-      {event.cover && (
-        <>
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-cover bg-center opacity-40"
-            style={{ backgroundImage: `url(${event.cover})` }}
-          />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-b from-ink-950/70 via-ink-950/50 to-ink-950"
-          />
-        </>
-      )}
+    /* Natural height, not a full viewport: with a cover banner on top the page
+       reads top-to-bottom — cover, then identity, then the CTAs — rather than
+       centring one screenful over a background image. */
+    <section className="relative overflow-hidden bg-ink-950">
       <div className="absolute inset-0 bg-hero opacity-80" />
       <div className="absolute inset-0 bg-grid bg-[size:46px_46px] opacity-50" />
       <div className={`absolute -right-24 -top-10 h-80 w-80 rounded-full blur-3xl ${a.blob}`} />
       <div className="absolute -left-24 top-32 h-72 w-72 rounded-full bg-grape-600/20 blur-3xl" />
 
-      <div className="relative mx-auto w-full max-w-6xl px-4 pt-8">
-        <Link
-          href={`${ROUTES.home}#events`}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-mist-300 transition hover:text-white"
-        >
-          <ArrowLeftIcon className="h-4 w-4" />
-          All carnival events
-        </Link>
-      </div>
+      {/* The cover keeps the artwork's own 16:9 at every width — the poster
+          carries dates, a prize figure and a QR code, and a banner crop cut
+          them off. Width is what flexes; height follows the ratio. */}
+      {hasCover && (
+        <div className="relative mx-auto mt-5 w-full max-w-6xl px-4 sm:mt-6">
+          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-ink-600 bg-ink-900 shadow-card">
+            <Image
+              src={event.cover}
+              alt={`${event.name} cover`}
+              fill
+              priority
+              sizes="(max-width: 1152px) 100vw, 1152px"
+              className="object-cover"
+            />
 
-      <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-4 py-8 sm:py-10">
-        <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
-          <div
-            className={`relative flex h-[4.5rem] w-[4.5rem] shrink-0 items-center justify-center rounded-3xl border bg-ink-900/70 backdrop-blur ${a.border} ${a.glow} ${a.text}`}
-          >
-            <Icon className="h-9 w-9" />
-          </div>
+            {/* Scrim only across the top band, where the overlay sits, so the
+                artwork below it stays untouched. */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-ink-950/90 via-ink-950/55 to-transparent"
+            />
 
-          <div className="flex-1">
-            <div className="flex flex-wrap items-center gap-2.5">
-              {registrationOpen ? (
+            {/* Identity left, schedule right — the two anchors of the strip. */}
+            <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-3 sm:p-5">
+              <div className="flex min-w-0 items-center gap-2.5 sm:gap-3.5">
                 <span
-                  className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-widest ${a.border} ${a.bgSoft} ${a.text}`}
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border bg-ink-950/70 backdrop-blur sm:h-14 sm:w-14 sm:rounded-2xl ${a.border} ${a.text}`}
                 >
-                  <span className={`h-1.5 w-1.5 animate-pulse-glow rounded-full ${a.dot}`} />
-                  Pre-Registration Open
+                  <Icon className="h-5 w-5 sm:h-7 sm:w-7" />
                 </span>
-              ) : (
-                <span className="inline-flex items-center gap-2 rounded-full border border-gold-400/40 bg-gold-400/10 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-gold-300">
-                  <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-gold-400" />
-                  Registration Opens Soon
+                <span className="min-w-0">
+                  <h1 className="truncate text-xl font-extrabold leading-tight tracking-tight text-white drop-shadow-lg sm:text-3xl lg:text-4xl">
+                    {event.name}
+                  </h1>
+                  <p className="truncate text-[10px] font-medium text-mist-300 drop-shadow sm:text-sm">
+                    {event.fullName}
+                  </p>
                 </span>
-              )}
-              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-mist-300">
-                {event.scope}
-              </span>
-              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-mist-300">
-                {event.mode}
-              </span>
-            </div>
+              </div>
 
-            <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
-              {event.name}
-            </h1>
-            <p className="mt-1 text-sm font-medium text-mist-400">{event.fullName}</p>
-            <p className="mt-3 max-w-2xl text-base leading-relaxed text-mist-300">
-              {event.tagline}
-            </p>
+              <dl className="hidden shrink-0 flex-col items-end gap-1 text-right sm:flex">
+                {quickFacts.map((fact) => (
+                  <dd
+                    key={fact.value}
+                    className="inline-flex items-center gap-2 text-xs font-medium text-mist-100 drop-shadow sm:text-sm"
+                  >
+                    {fact.value}
+                    <fact.icon className={`h-4 w-4 shrink-0 ${a.text}`} />
+                  </dd>
+                ))}
+              </dl>
+            </div>
           </div>
         </div>
+      )}
 
-        <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-mist-200">
-          {quickFacts.map((fact, i) => (
-            <span key={i} className="inline-flex items-center gap-2">
+      {/* Padding lives here, not on the section, so HeadlineStrip stays flush
+          against the hero's bottom edge as a full-width band. */}
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col px-4 pb-10 pt-6 sm:pb-12 sm:pt-8">
+        {/* Without a cover there is no overlay, so the identity has to appear
+            here instead. */}
+        {!hasCover && (
+          <div className="mb-5 flex items-center gap-4">
+            <span
+              className={`flex h-[4.5rem] w-[4.5rem] shrink-0 items-center justify-center rounded-3xl border bg-ink-900/70 ${a.border} ${a.glow} ${a.text}`}
+            >
+              <Icon className="h-9 w-9" />
+            </span>
+            <span>
+              <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+                {event.name}
+              </h1>
+              <p className="mt-1 text-sm font-medium text-mist-400">{event.fullName}</p>
+            </span>
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-center justify-center gap-2.5">
+          {registrationOpen ? (
+            <span
+              className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-widest ${a.border} ${a.bgSoft} ${a.text}`}
+            >
+              <span className={`h-1.5 w-1.5 animate-pulse-glow rounded-full ${a.dot}`} />
+              Pre-Registration Open
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-2 rounded-full border border-gold-400/40 bg-gold-400/10 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-gold-300">
+              <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-gold-400" />
+              Registration Opens Soon
+            </span>
+          )}
+          <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-mist-300">
+            {event.scope}
+          </span>
+          <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-mist-300">
+            {event.mode}
+          </span>
+        </div>
+
+        <p className="mx-auto mt-4 max-w-2xl text-center text-base leading-relaxed text-mist-300">
+          {event.tagline}
+        </p>
+
+        {/* The schedule lives in the cover overlay on wide screens; below the
+            sm breakpoint that overlay is hidden, so it reappears here. */}
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-mist-200 sm:hidden">
+          {quickFacts.map((fact) => (
+            <span key={fact.value} className="inline-flex items-center gap-1.5">
               <fact.icon className="h-4 w-4 text-mist-400" />
               {fact.value}
             </span>
           ))}
         </div>
 
-        <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+        {/* Equal-width cells rather than a flex row: every button gets the same
+            footprint and the same gap, whatever its label length. An event that
+            is not open yet has only one action, so the grid collapses to a
+            single centred button instead of leaving three empty columns. */}
+        <div
+          className={`mt-8 grid gap-3 ${
+            registrationOpen
+              ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
+              : 'mx-auto w-full max-w-xs grid-cols-1'
+          }`}
+        >
           {registrationOpen ? (
             <>
               <Link
                 href={ROUTES.eventRegister(event.slug)}
-                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-gold-400 px-7 py-3.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
+                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-gold-400 px-5 py-3.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
               >
-                Pre-Register for {event.shortName}
+                Pre-Register
                 <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
               <Link href={ROUTES.eventTeams(event.slug)} className={SECONDARY_CTA}>
@@ -177,22 +226,22 @@ const Hero = ({ event }) => {
               <Link href={ROUTES.eventSlots(event.slug)} className={SECONDARY_CTA}>
                 Slot Allocations
               </Link>
+              <a href="#rules" className={SECONDARY_CTA}>
+                Read the Rules
+              </a>
             </>
           ) : (
             <a
               href="#rules"
-              className="group inline-flex items-center justify-center gap-2 rounded-xl bg-gold-400 px-7 py-3.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
+              className="group inline-flex items-center justify-center gap-2 rounded-xl bg-gold-400 px-5 py-3.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
             >
               Read the Rules
               <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </a>
           )}
-          <a href="#rules" className={SECONDARY_CTA}>
-            Read the Rules
-          </a>
         </div>
 
-        <p className="mt-5 text-xs text-mist-400">{event.heroNote}</p>
+        <p className="mt-5 text-center text-xs text-mist-400">{event.heroNote}</p>
       </div>
 
       <HeadlineStrip
