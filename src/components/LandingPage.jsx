@@ -106,7 +106,7 @@ const OpenNowPanel = () => {
         {IUPC.name} pre-registration
       </h2>
       <p className="mt-1.5 text-sm leading-relaxed text-mist-300">
-        {IUPC.fullName} — {t.teamSize}.
+        {IUPC.fullName} — {t.teamSize.replace(/\s*\(.*\)/, '')}.
       </p>
 
       <dl className="mt-5 divide-y divide-white/10 border-y border-white/10">
@@ -136,14 +136,17 @@ const OpenNowPanel = () => {
 };
 
 const Hero = () => (
-  <section id="top" className="relative overflow-hidden bg-ink-950">
+  <section
+    id="top"
+    className="relative flex min-h-[calc(100svh-65px)] flex-col overflow-hidden bg-ink-950 md:min-h-[calc(100svh-61px)]"
+  >
     <div className="absolute inset-0 bg-hero" />
     <div className="absolute inset-0 bg-grid bg-[size:46px_46px] opacity-50" />
     <div className="absolute -left-24 top-10 h-72 w-72 rounded-full bg-grape-600/25 blur-3xl" />
     <div className="absolute -right-16 top-24 h-72 w-72 rounded-full bg-aqua-500/15 blur-3xl" />
 
-    <div className="relative mx-auto max-w-6xl animate-fade-up px-4 pb-16 pt-14 sm:pb-20 sm:pt-20">
-      <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-12">
+    <div className="relative mx-auto flex w-full max-w-6xl flex-1 animate-fade-up items-center px-4 pb-12 pt-10 sm:pb-16 sm:pt-16">
+      <div className="grid w-full items-start gap-10 lg:grid-cols-12 lg:gap-12">
         <div className="flex flex-col lg:col-span-7">
           <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-aqua-300">
             {EVENT.university}
