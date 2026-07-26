@@ -230,6 +230,7 @@ const HowToEnter = () => {
       id="register"
       eyebrow="IUPC · how to enter"
       title="Three steps, and the first one is free"
+      titleNowrap
       className="border-y border-white/10 bg-ink-950/40"
       pad="py-24 sm:py-28"
       action={
@@ -242,25 +243,27 @@ const HowToEnter = () => {
         </Link>
       }
     >
-      <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
-        <div className="lg:col-span-7">
-          <ol className="divide-y divide-white/10 border-y border-white/10">
-            {r.process.map((step, i) => (
-              <li key={step} className="flex gap-4 py-5">
-                <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-aqua-400/10 text-xs font-extrabold text-aqua-300 tabular-nums">
-                  {i + 1}
-                </span>
-                <p className="max-w-[62ch] text-sm leading-relaxed text-mist-300">
-                  {step}
-                </p>
-              </li>
-            ))}
-          </ol>
+      {/* The three steps run across the full width, not down a 7-column
+          gutter. They are a sequence, and a sequence reads left to right — as
+          a stacked list each step was one short line in a py-5 band, so the
+          section spent a third of its height on three sentences. */}
+      <ol className="grid gap-x-8 gap-y-6 sm:grid-cols-3">
+        {r.process.map((step, i) => (
+          <li key={step} className="border-t border-white/10 pt-5">
+            <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-aqua-300 tabular-nums">
+              Step {i + 1}
+            </span>
+            <p className="mt-2 text-sm leading-relaxed text-mist-300">{step}</p>
+          </li>
+        ))}
+      </ol>
 
-          <p className="mt-8 text-[11px] font-bold uppercase tracking-[0.22em] text-mist-400">
+      <div className="mt-14 grid gap-10 lg:grid-cols-12 lg:gap-12">
+        <div className="lg:col-span-7">
+          <h3 className="text-[11px] font-bold uppercase tracking-[0.22em] text-mist-400">
             Have this ready
-          </p>
-          <ul className="mt-4 grid gap-2.5 sm:grid-cols-2">
+          </h3>
+          <ul className="mt-5 grid gap-x-8 gap-y-3.5 sm:grid-cols-2">
             {r.checklist.map((item) => (
               <li key={item} className="flex items-start gap-2.5">
                 <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-aqua-400" />
@@ -270,48 +273,81 @@ const HowToEnter = () => {
               </li>
             ))}
           </ul>
-        </div>
 
-        <div className="lg:col-span-5">
-          <div className="rounded-2xl border border-ink-600 bg-ink-800/60 p-6 shadow-card sm:p-7 lg:sticky lg:top-24">
-            <h3 className="text-lg font-bold text-white">Awards</h3>
+          {/* Awards sat inside the CTA panel, which made one box hold four
+              unrelated things: what you win, what is not decided, the button,
+              and the deadline. What you win belongs with what you need. */}
+          <h3 className="mt-10 text-[11px] font-bold uppercase tracking-[0.22em] text-mist-400">
+            What the winners get
+          </h3>
+          <ul className="mt-5 grid gap-x-8 gap-y-3.5 sm:grid-cols-2">
             {/* Read from the same array /events/iupc renders. Hand-typing this
                 list is how the landing page came to advertise awards the IUPC
                 page did not show at all. */}
-            <ul className="mt-4 space-y-2.5">
-              {IUPC.prizes.map((prize) => (
-                <li key={prize.place} className="flex items-start gap-2.5">
-                  <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-mist-400" />
-                  <span className="text-sm leading-relaxed text-mist-300">
-                    <span className="font-semibold text-mist-200">
-                      {prize.place}
-                    </span>{' '}
-                    — {prize.perks.join(', ')}
-                  </span>
-                </li>
-              ))}
-              <li className="flex items-start gap-2.5">
+            {IUPC.prizes.map((prize) => (
+              <li key={prize.place} className="flex items-start gap-2.5">
                 <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-mist-400" />
                 <span className="text-sm leading-relaxed text-mist-300">
-                  An event t-shirt for every participant
+                  <span className="font-semibold text-mist-200">
+                    {prize.place}
+                  </span>{' '}
+                  — {prize.perks.join(', ')}
                 </span>
               </li>
-            </ul>
-            <p className="mt-4 border-t border-white/10 pt-4 text-xs leading-relaxed text-mist-400">
-              IUPC prize money is not published yet. The datathon and the three
-              esports tournaments publish theirs on their own pages.
+            ))}
+            <li className="flex items-start gap-2.5">
+              <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-mist-400" />
+              <span className="text-sm leading-relaxed text-mist-300">
+                An event t-shirt for every participant
+              </span>
+            </li>
+          </ul>
+          <p className="mt-5 text-xs leading-relaxed text-mist-400">
+            IUPC prize money is not published yet. The datathon and the three
+            esports tournaments publish theirs on their own pages.
+          </p>
+        </div>
+
+        {/* The panel does one job now: take the action. */}
+        <div className="lg:col-span-5">
+          <div className="rounded-2xl border border-gold-400/30 bg-ink-900/40 p-6 shadow-glow-gold sm:p-7 lg:sticky lg:top-24">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="inline-flex items-center gap-2 rounded-full border border-gold-400/40 bg-gold-400/10 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-gold-300">
+                <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-gold-400" />
+                Open now
+              </span>
+              {t.deadline && <Countdown date={t.deadline} />}
+            </div>
+
+            <h3 className="mt-4 text-lg font-bold text-white">
+              Step one takes a minute
+            </h3>
+            <p className="mt-1.5 text-sm leading-relaxed text-mist-300">
+              Nothing is paid until your slot is confirmed.
             </p>
+
+            <dl className="mt-5 divide-y divide-white/10 border-y border-white/10">
+              {[
+                { label: 'Team slots', value: t.slots },
+                { label: 'To pre-register', value: 'Free' },
+                { label: 'Entries close', value: t.deadline },
+              ].map((fact) => (
+                <div key={fact.label} className="flex items-center gap-3 py-2.5">
+                  <dt className="flex-1 text-sm text-mist-400">{fact.label}</dt>
+                  <dd className="text-sm font-semibold text-white tabular-nums">
+                    {fact.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
 
             <Link
               href={ROUTES.register}
-              className="group mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gold-400 px-6 py-3.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
+              className="group mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gold-400 px-6 py-3.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
             >
               Start pre-registration
               <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
-            <p className="mt-3 text-center text-xs text-mist-400 tabular-nums">
-              {t.slots} · closes {t.deadline}
-            </p>
           </div>
         </div>
       </div>
