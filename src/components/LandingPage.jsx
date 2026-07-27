@@ -157,6 +157,11 @@ const Hero = () => (
     <div className="relative mx-auto flex w-full max-w-6xl flex-1 animate-fade-up items-center px-4 pb-12 pt-10 sm:pb-16 sm:pt-16">
       <div className="grid w-full items-start gap-10 lg:grid-cols-12 lg:gap-12">
         <div className="flex flex-col lg:col-span-7">
+          {/* <img
+            src="/logo.png"
+            alt="PSTU IT Carnival Logo"
+            className="h-64 w-auto object-contain self-start mb-6 animate-pulse"
+          /> */}
           <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-aqua-300">
             {EVENT.university}
           </p>
