@@ -14,7 +14,7 @@ import { accentOf } from '@/lib/accents';
    off to this route rather than embedding the form. Entries that are not open
    yet still render — as the "what to prepare" panel — so a shared link never
    dead-ends. */
-const GameRegisterPage = ({ slug, coordinators, paymentAccount }) => {
+const GameRegisterPage = ({ slug }) => {
   const game = getGame(slug);
   if (!game) return null;
 
@@ -63,10 +63,13 @@ const GameRegisterPage = ({ slug, coordinators, paymentAccount }) => {
       </header>
 
       <main className="mx-auto max-w-4xl px-4 py-12 sm:py-16">
+        {/* No coordinators prop: this route makes no database call, so the
+            closed notice falls back to its "All coordinators" link out to the
+            detail page, which is where the contact section actually lives. */}
         {open ? (
-          <GameRegistrationForm game={game} paymentAccount={paymentAccount} />
+          <GameRegistrationForm game={game} />
         ) : (
-          <RegistrationClosed game={game} coordinators={coordinators} />
+          <RegistrationClosed game={game} />
         )}
       </main>
 

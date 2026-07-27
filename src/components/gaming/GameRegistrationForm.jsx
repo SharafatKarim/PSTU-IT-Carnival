@@ -183,7 +183,7 @@ const PayTo = ({ game, entryType, account, accent }) => {
 
 /* --- form ----------------------------------------------------------------- */
 
-const GameRegistrationForm = ({ game, paymentAccount }) => {
+const GameRegistrationForm = ({ game }) => {
   const a = accentOf(game.accent);
   const allSections = game.registration.sections;
 
@@ -218,10 +218,9 @@ const GameRegistrationForm = ({ game, paymentAccount }) => {
      still has to be worked out from something. */
   const resolvedEntryType = game.registration.entryType || entryType;
 
-  /* Read from the database by the page's server component. The constant is the
-     fallback for a database that was unreachable at render time — a form that
-     cannot say where to send the fee cannot be completed. */
-  const account = paymentAccount || GAMING_PAYMENT;
+  /* A constant, not a lookup — see the note on GAMING_PAYMENT in
+     src/data/gaming.js. This route touches no database at all. */
+  const account = GAMING_PAYMENT;
 
   /* Rules are built from every section, not just the visible ones: a section
      that appears mid-fill must already have its rules ready. */

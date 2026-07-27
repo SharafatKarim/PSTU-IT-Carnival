@@ -5,14 +5,13 @@
 // venue, entry fees, prize money, slot counts, rules, FAQs and the registration
 // form itself. The UI reads it all from here, so no component needs touching.
 //
-// Two things are the exception — they live in the database, not here, so they
-// can be corrected without a redeploy:
+// Coordinator contacts are the one exception — they live in the database, not
+// here, so a phone number can be corrected without a redeploy. See
+// src/server/coordinators/ and scripts/seed-db.sh. GAMING_DESK below is only
+// the fallback for when that lookup returns nothing.
 //
-//   coordinator contacts   src/server/coordinators/
-//   the payment number     src/server/payments/
-//
-// Both are seeded with scripts/seed-db.sh. GAMING_DESK and GAMING_PAYMENT
-// below are only the fallbacks for when those lookups return nothing.
+// The payment number is NOT one of those: it is the constant GAMING_PAYMENT
+// below, so the registration pages need no database at all.
 //
 // >>> STILL UNCONFIRMED <<<
 //   · Free Fire and eFootball start times (date and venue are set)
@@ -53,23 +52,24 @@ export const GAMING_DESK = [
 /* ---------------------------------------------------------------------------
    Payment.
 
-   The number entrants send the fee to lives in the database (see
-   src/server/payments/) so it can be changed from an admin panel without a
-   redeploy. GAMING_PAYMENT below is the fallback for when that lookup fails —
-   a registration page that cannot say where to send money is useless.
+   Both of these are constants, deliberately. The registration pages are
+   server-rendered from this file alone, so there is no database round trip
+   anywhere in the payment step — the number is baked into the build.
 
-   The METHOD LIST, by contrast, stays here. It is the select field's options
-   and the server validates against it, so moving it into the database would
-   mean an admin could add a method the validator then rejects.
+   Changing the number therefore means editing the line below and redeploying.
+   That is the trade: no query per render, no admin panel.
+
+   The METHOD LIST is what the select offers AND what the server validates
+   against, so the two can never disagree.
    --------------------------------------------------------------------------- */
 
-export const PAYMENT_METHODS = ['bKash', 'Nagad', 'Rocket'];
+export const PAYMENT_METHODS = ['bKash', 'Nagad'];
 
 export const GAMING_PAYMENT = {
-  number: '01790876257',
+  number: '01601425302',
   accountType: 'Personal',
   instructions:
-    'Use “Send Money” (not Payment) from any of the accepted wallets above, then enter the transaction ID it gives you.',
+    'Use “Send Money” (not Payment) from either wallet above, then enter the transaction ID it gives you.',
 };
 
 /* A squad pays for four; anyone else pays for one. Shared by the form (to show

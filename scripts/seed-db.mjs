@@ -1,22 +1,23 @@
 // ---------------------------------------------------------------------------
-// Seed / update the settings the site reads from the database.
+// Seed / update the coordinator contacts the event pages read.
 //
-// Two things live in Mongo rather than in src/data/ so they can be corrected
-// without a redeploy — and both are ones that cause real harm when stale:
+// Contacts live in Mongo rather than in src/data/ so they can be corrected
+// without a redeploy — a stale phone number on a live registration page is the
+// one thing nobody can work around.
 //
-//   coordinators     who to contact (src/server/coordinators/model.js)
-//   payment accounts where the entry fee is sent (src/server/payments/model.js)
+// The payment number is NOT here: it is the constant GAMING_PAYMENT in
+// src/data/gaming.js, so the registration pages make no database call at all.
 //
-// This script is how they get there the first time, and the safest way to
+// This script is how contacts get there the first time, and the safest way to
 // change one afterwards. Run it through scripts/seed-db.sh, which executes it
 // inside the builder image where mongoose and MONGO_URI live.
 //
 //   ./scripts/seed-db.sh            # show what is stored today
-//   ./scripts/seed-db.sh --apply    # write the lists below
+//   ./scripts/seed-db.sh --apply    # write CONTACTS below
 //
-// Both upsert on their scope key, so re-running is safe: an existing row is
-// updated in place rather than duplicated. Nothing is ever deleted — retire a
-// row by setting active:false on it.
+// Upserts on scope + email, so re-running is safe: an existing row is updated
+// in place rather than duplicated. Nothing is ever deleted — retire a
+// coordinator by setting active:false on their row.
 // ---------------------------------------------------------------------------
 
 import mongoose from 'mongoose';
@@ -41,21 +42,6 @@ const CONTACTS = [
   },
 ];
 
-/* The wallet entrants send the registration fee to. One number covers all
-   three tournaments. The ACCEPTED METHODS are not here — they live in
-   PAYMENT_METHODS in src/data/gaming.js, because the server validates the
-   submitted method against that list. */
-const PAYMENT_ACCOUNTS = [
-  {
-    scope: 'gaming',
-    number: '01790876257',
-    accountType: 'Personal',
-    instructions:
-      'Use “Send Money” (not Payment) from any of the accepted wallets above, then enter the transaction ID it gives you.',
-    active: true,
-  },
-];
-
 const coordinatorSchema = new mongoose.Schema(
   {
     scope: { type: String, required: true, trim: true, index: true },
@@ -70,24 +56,9 @@ const coordinatorSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const paymentAccountSchema = new mongoose.Schema(
-  {
-    scope: { type: String, required: true, trim: true, index: true },
-    number: { type: String, required: true, trim: true },
-    accountType: { type: String, trim: true, default: 'Personal' },
-    instructions: { type: String, trim: true, default: '' },
-    active: { type: Boolean, default: true },
-  },
-  { timestamps: true }
-);
-
 const Coordinator =
   mongoose.models.Coordinator ||
   mongoose.model('Coordinator', coordinatorSchema, 'coordinators');
-
-const PaymentAccount =
-  mongoose.models.PaymentAccount ||
-  mongoose.model('PaymentAccount', paymentAccountSchema, 'payment_accounts');
 
 const apply = process.argv.includes('--apply');
 const uri = process.env.MONGO_URI;
@@ -117,7 +88,6 @@ const upsert = async (Model, rows, keyOf, describe) => {
 };
 
 if (apply) {
-  console.log('  coordinators:');
   await upsert(
     Coordinator,
     CONTACTS,
@@ -126,20 +96,9 @@ if (apply) {
   );
 
   console.log('');
-  console.log('  payment accounts:');
-  await upsert(
-    PaymentAccount,
-    PAYMENT_ACCOUNTS,
-    ({ scope }) => ({ scope }),
-    (a) => `${a.scope} · ${a.number} (${a.accountType})`
-  );
-  console.log('');
 }
 
-const [coordinators, accounts] = await Promise.all([
-  Coordinator.find({}).sort({ scope: 1, order: 1 }).lean(),
-  PaymentAccount.find({}).sort({ scope: 1 }).lean(),
-]);
+const coordinators = await Coordinator.find({}).sort({ scope: 1, order: 1 }).lean();
 
 console.log(`  stored coordinators (${coordinators.length}):`);
 if (coordinators.length === 0) {
@@ -148,16 +107,6 @@ if (coordinators.length === 0) {
 for (const doc of coordinators) {
   const state = doc.active ? '' : '  [inactive]';
   console.log(`    ${doc.scope.padEnd(14)} ${doc.name} · ${doc.phone} · ${doc.email}${state}`);
-}
-
-console.log('');
-console.log(`  stored payment accounts (${accounts.length}):`);
-if (accounts.length === 0) {
-  console.log('    (none — the site falls back to GAMING_PAYMENT in src/data/gaming.js)');
-}
-for (const doc of accounts) {
-  const state = doc.active ? '' : '  [inactive]';
-  console.log(`    ${doc.scope.padEnd(14)} ${doc.number} (${doc.accountType})${state}`);
 }
 
 await mongoose.disconnect();

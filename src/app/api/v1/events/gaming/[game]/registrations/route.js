@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/server/db';
-import { getGame, isGameRegistrationOpen } from '@/data/gaming';
+import { getGame, isGameRegistrationOpen, GAMING_PAYMENT } from '@/data/gaming';
 import GamingRegistration from '@/server/events/gaming/model';
 import { validateGameRegistration } from '@/server/events/gaming/validation';
 import { normalizeGameRegistration } from '@/server/events/gaming/normalize';
 import { generateGameRegistrationId } from '@/server/events/gaming/ids';
 import { listGameRegistrations } from '@/server/events/gaming/directory';
-import { gamePaymentAccount } from '@/server/payments';
 import { checkWriteLimits, clientKey } from '@/server/rateLimit';
 import { verifyTurnstile } from '@/server/turnstile';
 import { sendGamingConfirmationEmail } from '@/lib/email';
@@ -156,11 +155,12 @@ export async function POST(req, { params }) {
 
     await connectDB();
 
-    /* The wallet that was on screen when they paid, recorded on the row so the
-       payment stays reconcilable after an admin changes the number. */
-    const account = await gamePaymentAccount(game.slug);
+    /* The wallet that was on screen when they paid, stamped onto the row so a
+       payment stays reconcilable if the constant is ever changed and
+       redeployed. Read from the same constant the form renders from, so the
+       two can never disagree. */
     const doc = normalizeGameRegistration(game, body, {
-      receiverNumber: account.number,
+      receiverNumber: GAMING_PAYMENT.number,
     });
 
     // 2. Duplicate checks — all scoped to this game. The same person may enter
