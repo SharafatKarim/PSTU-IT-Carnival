@@ -7,6 +7,7 @@ import Footer from './landing/Footer';
 import Lineup from './landing/Lineup';
 import Countdown from './landing/Countdown';
 import HeadlineStrip from './ui/HeadlineStrip';
+import ImageGallery from './landing/ImageGallery';
 import {
   CheckIcon,
   CalendarIcon,
@@ -441,6 +442,7 @@ const LandingPage = () => (
       <FaqSection />
       <FinalCta />
     </main>
+    <ImageGallery />
     <Footer />
   </div>
 );

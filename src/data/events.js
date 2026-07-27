@@ -21,9 +21,9 @@ export const EVENT_DETAILS = [
     scope: 'South Zone',
     mode: 'Team of 3',
     tagline:
-      'The flagship ICPC-style contest — three coders, one keyboard, five hours.',
+        'The flagship ICPC-style contest — three coders, one keyboard, five hours.',
     blurb:
-      'Teams of three share a single workstation and race through an algorithmic problem set. Standings follow ICPC scoring: problems solved first, then penalty time.',
+        'Teams of three share a single workstation and race through an algorithmic problem set. Standings follow ICPC scoring: problems solved first, then penalty time.',
     heroNote: 'Team entry — exactly 3 members, plus one registered coach.',
 
     /* Hero cover art, layered behind the gradients. Drop a replacement at
@@ -164,11 +164,42 @@ export const EVENT_DETAILS = [
     accent: 'magenta',
     scope: 'National',
     mode: 'Solo or Team of 2',
-    tagline: 'Specially tailored for beginners in Data Science and Machine Learning.',
-    blurb: 'An online datathon featuring a beginner-friendly tabular dataset. Test your skills in Exploratory Data Analysis, feature engineering, and model validation.',
+    tagline:
+        'Specially tailored for beginners in Data Science and Machine Learning.',
+    blurb:
+        'An online datathon featuring a beginner-friendly tabular dataset. Test your skills in Exploratory Data Analysis, feature engineering, and model validation.',
     heroNote: 'Max 2 members per team (solo participation is also allowed).',
     /* No cover art yet. The hero skips both the image and its scrim when this
        is absent — pointing at a missing file only made the page darker. */
+
+    /* Prizes accounment: */
+    prizeNote: 'Prize will be announced very soon',
+    prizes: [
+      {
+        place: '1st Prize',
+        rank: 1,
+        amount: 'To be announced',
+        perks: ['Prize details will be announced soon']
+      },
+      {
+        place: '2nd Prize',
+        rank: 2,
+        amount: 'To be announced',
+        perks: ['Prize details will be announced soon']
+      },
+      {
+        place: '3rd Prize',
+        rank: 3,
+        amount: 'To be announced',
+        perks: ['Prize details will be announced soon']
+      },
+      {
+        place: 'PSTU Best Junior Team Prize',
+        rank: 4,
+        amount: 'To be announced',
+        perks: ['Prize details will be announced soon']
+      },
+    ],
 
     tournament: {
       date: '8–12 August 2026',
@@ -177,7 +208,9 @@ export const EVENT_DETAILS = [
       entryFee: '৳300 per team/participant',
       entryShort: '৳300',
       entryScope: 'per team',
-      format: 'Private Leaderboard evaluation + Jupyter Notebook Markdown review',
+      prizePool: 'To be announced',
+      format:
+          'Private Leaderboard evaluation + Jupyter Notebook Markdown review',
       teamSize: 'Max 2 members',
       teamSizeShort: 'Max 2',
       slots: 'Open to all university students',
@@ -215,7 +248,7 @@ export const EVENT_DETAILS = [
         items: [
           'Private Leaderboard Score (90%): Evaluated against the hidden private test set.',
           'Hidden Metric: The exact evaluation metric will remain hidden/undisclosed from participants.',
-          'Code Quality & Markdown Documentation (10%): Evaluated based on code cleanliness, reproducibility, and clear explanations in Markdown cells.'
+          'Code Quality, Documentation & Presentation (10%): Evaluated based on code cleanliness, reproducibility, and clear Markdown documentation. The very top of your Jupyter Notebook must feature a comprehensive summary detailing your problem-solving approach (e.g., EDA, feature engineering, model selection). Additionally, participants are required to submit an online video presentation explaining their solution.'
         ],
       },
       {
@@ -241,8 +274,7 @@ export const EVENT_DETAILS = [
         'Submit BDT 300 entry fee online.'
       ],
       checklist: [
-        'Team Name',
-        'Varsity name for all members',
+        'Team Name', 'Varsity name for all members',
         'Verification document (e.g., student ID card)',
         'For each member: name, email, phone, and t-shirt size'
       ],
@@ -300,7 +332,8 @@ export const EVENT_DETAILS = [
    To promote one: add a `tournament` block, `rules`, `registration`, `faqs`
    and `coordinators` in the shape IUPC uses above, then change stage to
    'published'. The page fills itself in — no component changes.
-   --------------------------------------------------------------------------- */
+   ---------------------------------------------------------------------------
+ */
   {
     slug: 'hackathon',
     name: 'Hackathon',
@@ -311,7 +344,7 @@ export const EVENT_DETAILS = [
     scope: 'National',
     tagline: 'Build a working product against the clock.',
     blurb:
-      'A national-level innovation sprint for student teams — ship something that runs, not a slide deck.',
+        'A national-level innovation sprint for student teams — ship something that runs, not a slide deck.',
     stage: 'announced',
   },
   {
@@ -324,7 +357,7 @@ export const EVENT_DETAILS = [
     scope: 'Division · Barishal',
     tagline: 'Computing, history and trivia, on the buzzer.',
     blurb:
-      'A fast-paced buzzer quiz across computing, its history and the trivia in between.',
+        'A fast-paced buzzer quiz across computing, its history and the trivia in between.',
     stage: 'announced',
   },
   {
@@ -337,7 +370,7 @@ export const EVENT_DETAILS = [
     scope: 'All Students',
     tagline: 'Put your best build in front of judges.',
     blurb:
-      'Present your best software or hardware project to judges and the wider community.',
+        'Present your best software or hardware project to judges and the wider community.',
     stage: 'announced',
   },
   {
@@ -350,12 +383,12 @@ export const EVENT_DETAILS = [
     scope: 'Inter-University',
     tagline: 'Break it before someone else does.',
     blurb:
-      'A jeopardy-style security contest — web, forensics, reverse engineering and cryptography challenges solved against the clock.',
+        'A jeopardy-style security contest — web, forensics, reverse engineering and cryptography challenges solved against the clock.',
     stage: 'announced',
   },
 ];
 
 export const getEventDetail = (slug) =>
-  EVENT_DETAILS.find((event) => event.slug === slug);
+    EVENT_DETAILS.find((event) => event.slug === slug);
 
 export const EVENT_DETAIL_SLUGS = EVENT_DETAILS.map((event) => event.slug);
