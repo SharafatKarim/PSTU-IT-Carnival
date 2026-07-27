@@ -56,8 +56,8 @@ export const EVENT_DETAILS = [
         rank: 1,
         perks: ['Winner trophy', 'Certificate of excellence'],
       },
-      { place: '1st Runner-Up', rank: 2, perks: ['Certificate of merit'] },
-      { place: '2nd Runner-Up', rank: 3, perks: ['Certificate of merit'] },
+      {place: '1st Runner-Up', rank: 2, perks: ['Certificate of merit']},
+      {place: '2nd Runner-Up', rank: 3, perks: ['Certificate of merit']},
     ],
 
     rules: [
@@ -114,7 +114,8 @@ export const EVENT_DETAILS = [
       /* 'form' means this event owns /events/<slug>/register. */
       kind: 'form',
       cta: 'Start Pre-Registration',
-      note: 'Pre-registration is free · Instant registration ID · Event t-shirt for every participant',
+      note:
+          'Pre-registration is free · Instant registration ID · Event t-shirt for every participant',
       /* Rendered as a numbered "how it works" list on the event page. */
       process: [
         'Pre-register your team here. Nothing is paid at this stage.',
@@ -169,10 +170,10 @@ export const EVENT_DETAILS = [
   },
   {
     slug: 'datathon',
-    name: 'Datathon',
-    fullName: 'PSTU Online Datathon 2026',
+    /*name: 'Datathon',*/
+    /*fullName: 'PSTU Online Datathon 2026',*/
     shortName: 'Datathon',
-    icon: 'chart',
+    /*icon: 'chart',*/
     accent: 'magenta',
     scope: 'National',
     mode: 'Solo or Team of 2',
@@ -184,6 +185,7 @@ export const EVENT_DETAILS = [
     /* No cover art yet. The hero skips both the image and its scrim when this
        is absent — pointing at a missing file only made the page darker. */
 
+    cover: '/events/datathon/datathon3.jpg',
     /* Prizes accounment: */
     prizeNote: 'Prize will be announced very soon',
     prizes: [

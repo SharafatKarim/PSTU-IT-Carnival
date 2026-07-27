@@ -53,7 +53,8 @@ const Section = ({ id, eyebrow, title, subtitle, children, className = '' }) => 
 );
 
 const Hero = ({ event }) => {
-  const Icon = ICON_MAP[event.icon] || ICON_MAP.code;
+  /* icon না থাকলে বা 'none' থাকলে Icon null হবে */
+  const Icon = event.icon && event.icon !== 'none' ? ICON_MAP[event.icon] : null;
   const a = accentOf(event.accent);
   const t = event.tournament;
 
@@ -63,8 +64,6 @@ const Hero = ({ event }) => {
     { icon: MapPinIcon, value: t.venue },
   ];
 
-  /* Headline numbers, same treatment as the gaming heroes. Fields the event
-     does not carry (IUPC has no prize pool) simply drop out. */
   const headline = [
     t.prizePool && { label: 'Prize Pool', value: t.prizePool, accent: true },
     t.entryFee && { label: 'Entry Fee', value: t.entryShort || t.entryFee },
@@ -77,18 +76,12 @@ const Hero = ({ event }) => {
   const hasCover = Boolean(event.cover);
 
   return (
-    /* Natural height, not a full viewport: with a cover banner on top the page
-       reads top-to-bottom — cover, then identity, then the CTAs — rather than
-       centring one screenful over a background image. */
     <section className="relative overflow-hidden bg-ink-950">
       <div className="absolute inset-0 bg-hero opacity-80" />
       <div className="absolute inset-0 bg-grid bg-[size:46px_46px] opacity-50" />
       <div className={`absolute -right-24 -top-10 h-80 w-80 rounded-full blur-3xl ${a.blob}`} />
       <div className="absolute -left-24 top-32 h-72 w-72 rounded-full bg-grape-600/20 blur-3xl" />
 
-      {/* The cover keeps the artwork's own 16:9 at every width — the poster
-          carries dates, a prize figure and a QR code, and a banner crop cut
-          them off. Width is what flexes; height follows the ratio. */}
       {hasCover && (
         <div className="relative mx-auto mt-5 w-full max-w-6xl px-4 sm:mt-6">
           <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-ink-600 bg-ink-900 shadow-card">
@@ -101,21 +94,21 @@ const Hero = ({ event }) => {
               className="object-cover"
             />
 
-            {/* Scrim only across the top band, where the overlay sits, so the
-                artwork below it stays untouched. */}
             <div
               aria-hidden="true"
               className="absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-ink-950/90 via-ink-950/55 to-transparent"
             />
 
-            {/* Identity left, schedule right — the two anchors of the strip. */}
             <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-3 sm:p-5">
               <div className="flex min-w-0 items-center gap-2.5 sm:gap-3.5">
-                <span
-                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border bg-ink-950/70 backdrop-blur sm:h-14 sm:w-14 sm:rounded-2xl ${a.border} ${a.text}`}
-                >
-                  <Icon className="h-5 w-5 sm:h-7 sm:w-7" />
-                </span>
+                {/* Icon থাকলে শুধু তখনই দেখাবে */}
+                {Icon && (
+                  <span
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border bg-ink-950/70 backdrop-blur sm:h-14 sm:w-14 sm:rounded-2xl ${a.border} ${a.text}`}
+                  >
+                    <Icon className="h-5 w-5 sm:h-7 sm:w-7" />
+                  </span>
+                )}
                 <span className="min-w-0">
                   <h1 className="truncate text-xl font-extrabold leading-tight tracking-tight text-white drop-shadow-lg sm:text-3xl lg:text-4xl">
                     {event.name}
@@ -142,18 +135,17 @@ const Hero = ({ event }) => {
         </div>
       )}
 
-      {/* Padding lives here, not on the section, so HeadlineStrip stays flush
-          against the hero's bottom edge as a full-width band. */}
       <div className="relative mx-auto flex w-full max-w-6xl flex-col px-4 pb-10 pt-6 sm:pb-12 sm:pt-8">
-        {/* Without a cover there is no overlay, so the identity has to appear
-            here instead. */}
         {!hasCover && (
           <div className="mb-5 flex items-center gap-4">
-            <span
-              className={`flex h-[4.5rem] w-[4.5rem] shrink-0 items-center justify-center rounded-3xl border bg-ink-900/70 ${a.border} ${a.glow} ${a.text}`}
-            >
-              <Icon className="h-9 w-9" />
-            </span>
+            {/* Icon থাকলে শুধু তখনই দেখাবে */}
+            {Icon && (
+              <span
+                className={`flex h-[4.5rem] w-[4.5rem] shrink-0 items-center justify-center rounded-3xl border bg-ink-900/70 ${a.border} ${a.glow} ${a.text}`}
+              >
+                <Icon className="h-9 w-9" />
+              </span>
+            )}
             <span>
               <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
                 {event.name}
@@ -189,8 +181,6 @@ const Hero = ({ event }) => {
           {event.tagline}
         </p>
 
-        {/* The schedule lives in the cover overlay on wide screens; below the
-            sm breakpoint that overlay is hidden, so it reappears here. */}
         <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-mist-200 sm:hidden">
           {quickFacts.map((fact) => (
             <span key={fact.value} className="inline-flex items-center gap-1.5">
@@ -200,10 +190,6 @@ const Hero = ({ event }) => {
           ))}
         </div>
 
-        {/* Equal-width cells rather than a flex row: every button gets the same
-            footprint and the same gap, whatever its label length. An event that
-            is not open yet has only one action, so the grid collapses to a
-            single centred button instead of leaving three empty columns. */}
         <div
           className={`mt-8 grid gap-3 ${
             registrationOpen
@@ -260,8 +246,6 @@ const Hero = ({ event }) => {
   );
 };
 
-/* Registration is a separate route for IUPC (a three-step wizard), so this
-   section is a prepare-then-go panel rather than an inline form. */
 const RegisterCta = ({ event }) => {
   const a = accentOf(event.accent);
   const r = event.registration;
