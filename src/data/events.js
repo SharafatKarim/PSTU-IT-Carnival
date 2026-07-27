@@ -142,7 +142,7 @@ export const EVENT_DETAILS = [
       },
       {
         q: 'Is there an entry fee?',
-        a: 'Yes — ৳3,000 per team. It is paid at final registration, not now: pre-registering on this page costs nothing, and no payment is taken through this website.',
+        a: 'Yes — ৳3,000 per team, but not at this stage. Pre-registering on this page costs nothing; the fee applies at final registration, which opens for the teams on the confirmed slot list. Payment details are published with that list.',
       },
       {
         q: 'How are the 45 slots allocated?',

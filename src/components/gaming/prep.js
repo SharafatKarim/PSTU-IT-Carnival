@@ -9,7 +9,7 @@
 export const prepList = (game) => {
   if (game.registration?.prep?.length > 0) return game.registration.prep;
 
-  const fee = `The entry fee (${game.tournament.entryFee}) — collected on-site`;
+  const fee = `The entry fee (${game.tournament.entryFee}) sent by bKash or Nagad, plus the transaction ID`;
 
   return game.registration?.kind === 'solo'
     ? [

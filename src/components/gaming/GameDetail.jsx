@@ -239,8 +239,8 @@ const RegisterCta = ({ game }) => {
                 <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
               <p className="mt-4 text-xs text-white/70">
-                Entry fee {t.entryFee}, collected on-site — no payment is taken
-                through this website.
+                Entry fee {t.entryFee}, paid with the form via bKash or Nagad
+                Send Money — have the transaction ID ready.
               </p>
               <p className="mt-1 text-xs text-white/70">
                 Registration closes {t.deadline} · {t.slots}
