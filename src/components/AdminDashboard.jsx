@@ -11,6 +11,8 @@ export default function AdminDashboard({ user }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [actionLoading, setActionLoading] = useState(null); // stores team._id being approved
+  const [bulkText, setBulkText] = useState('');
+  const [bulkLoading, setBulkLoading] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -34,9 +36,6 @@ export default function AdminDashboard({ user }) {
     fetchData();
   }, []);
 
-  /* eventType is a parameter, not a constant: the same button now serves the
-     Datathon and Gaming tables, and the two record "approved" differently —
-     Datathon has a `paid` boolean, gaming has `registrationStatus`. */
   const handleApprovePayment = async (id, eventType) => {
     setActionLoading(id);
     try {
@@ -47,7 +46,6 @@ export default function AdminDashboard({ user }) {
       });
       const result = await res.json();
       if (res.ok && result.success) {
-        // Reflect it locally so the row updates without a full refetch.
         setData((prev) => ({
           ...prev,
           [eventType]: prev[eventType].map((t) =>
@@ -66,6 +64,33 @@ export default function AdminDashboard({ user }) {
       alert('Network error. Failed to process approval.');
     } finally {
       setActionLoading(null);
+    }
+  };
+
+  const handleBulkApprove = async () => {
+    if (!bulkText.trim()) {
+      alert('Please paste some text first!');
+      return;
+    }
+    setBulkLoading(true);
+    try {
+      const res = await fetch('/api/v1/admin/registrations', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'bulk_approve_payments', text: bulkText }),
+      });
+      const result = await res.json();
+      if (res.ok && result.success) {
+        alert(result.message);
+        setBulkText('');
+        fetchData();
+      } else {
+        alert(result.message || 'Bulk approval failed.');
+      }
+    } catch (e) {
+      alert('Network error. Failed to process bulk approval.');
+    } finally {
+      setBulkLoading(false);
     }
   };
 
@@ -121,13 +146,38 @@ export default function AdminDashboard({ user }) {
             onClick={() => setActiveTab('gaming')}
             className={`px-6 py-3 text-sm font-bold border-b-2 transition ${
               activeTab === 'gaming'
-                ? 'border-gold-400 text-white'
+                ? 'border-gold-500 text-white'
                 : 'border-transparent text-mist-400 hover:text-white'
             }`}
           >
-            Gaming ({data.gaming?.length ?? 0})
+            Gaming Registrations ({data.gaming?.length || 0})
           </button>
         </div>
+
+        {(activeTab === 'datathon' || activeTab === 'gaming') && !loading && (
+          <div className="mb-6 rounded-2xl border border-grape-500/20 bg-ink-900/30 p-5 shadow-card backdrop-blur-md">
+            <h3 className="text-sm font-bold text-white mb-1.5">Bulk Verify Payments via SMS Text</h3>
+            <p className="text-xs text-mist-400 mb-3">
+              Copy and paste the text body of your bKash payment SMS (or a list of messages) here. The system automatically extracts matching transaction IDs of unpaid teams and confirms them.
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
+              <textarea
+                value={bulkText}
+                onChange={(e) => setBulkText(e.target.value)}
+                placeholder="Example SMS: You have received BDT 300.00 from 017XXXXXXXX. Ref: PSTU. TxnID BKB123XYZ..."
+                rows={2}
+                className="w-full flex-1 rounded-xl border border-ink-500 bg-ink-950/50 px-3 py-2 text-sm text-white placeholder-mist-500 outline-none focus:border-magenta-500 focus:ring-1 focus:ring-magenta-500/25 transition"
+              />
+              <button
+                onClick={handleBulkApprove}
+                disabled={bulkLoading}
+                className="px-5 py-2.5 text-xs font-bold rounded-xl bg-magenta-600 hover:bg-magenta-500 text-white transition disabled:opacity-50 flex items-center justify-center min-w-[150px] shadow-glow-magenta"
+              >
+                {bulkLoading ? 'Processing...' : 'Bulk Approve SMS'}
+              </button>
+            </div>
+          </div>
+        )}
 
         {loading ? (
           <div className="py-20 text-center text-sm text-mist-400 animate-pulse">
@@ -135,7 +185,7 @@ export default function AdminDashboard({ user }) {
           </div>
         ) : (
           <div className="bg-ink-900/60 border border-ink-600 rounded-2xl overflow-hidden shadow-card">
-            {activeTab === 'datathon' ? (
+            {activeTab === 'datathon' && (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
@@ -208,7 +258,97 @@ export default function AdminDashboard({ user }) {
                   </tbody>
                 </table>
               </div>
-            ) : activeTab === 'iupc' ? (
+            )}
+
+            {activeTab === 'gaming' && (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-white/10 bg-ink-950/40 text-xs font-bold uppercase tracking-wider text-mist-400">
+                      <th className="px-6 py-4">Game</th>
+                      <th className="px-6 py-4">Reg ID / Team</th>
+                      <th className="px-6 py-4">Transaction ID</th>
+                      <th className="px-6 py-4">Contact</th>
+                      <th className="px-6 py-4">Players</th>
+                      <th className="px-6 py-4">Status</th>
+                      <th className="px-6 py-4">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5 text-sm">
+                    {data.gaming?.length === 0 ? (
+                      <tr>
+                        <td colSpan="7" className="px-6 py-10 text-center text-mist-400">
+                          No Gaming registrations found.
+                        </td>
+                      </tr>
+                    ) : (
+                      data.gaming.map((team) => (
+                        <tr key={team._id} className="hover:bg-white/[0.02] transition">
+                          <td className="px-6 py-4 font-bold text-white uppercase tracking-wider text-xs">
+                            <span className="bg-white/5 px-2 py-1 rounded border border-white/10">{team.game}</span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="font-bold text-white">{team.teamName || 'Solo Entrant'}</div>
+                            <div className="font-mono text-[11px] text-mist-400">{team.registrationId}</div>
+                            <div className="text-[10px] text-mist-500 capitalize">{team.entryType}</div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="font-mono text-xs text-mist-300">{team.payment?.transactionId || 'N/A'}</div>
+                            <div className="text-[10px] text-mist-500">Recv: {team.payment?.receiverNumber || 'N/A'}</div>
+                            <div className="text-xs text-aqua-400">৳{team.payment?.amount || 0}</div>
+                          </td>
+                          <td className="px-6 py-4 text-xs text-mist-300">
+                            <div>{team.contact?.name}</div>
+                            <div className="text-mist-400">{team.contact?.email}</div>
+                            <div className="text-mist-400">{team.contact?.phone}</div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="space-y-1.5">
+                              {team.players?.map((p, i) => (
+                                <div key={i} className="text-xs">
+                                  <span className="font-semibold text-white">
+                                    {p.name || 'Unnamed Player'} {p.isLeader && <span className="text-[9px] text-magenta-300 border border-magenta-300/30 px-1 rounded">Leader</span>}
+                                  </span>
+                                  <div className="text-mist-400">
+                                    ID: <span className="text-gold-300">{p.gameId}</span> {p.device && `· ${p.device}`}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            {team.registrationStatus === 'paid' ? (
+                              <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-1 text-xs font-bold text-green-400 border border-green-500/20">
+                                <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                                Verified
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-400 border border-amber-500/20">
+                                <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+                                Pending
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4">
+                            {team.registrationStatus !== 'paid' && (
+                              <button
+                                onClick={() => handleApprovePayment(team._id, 'gaming')}
+                                disabled={actionLoading !== null}
+                                className="px-3 py-1.5 text-xs font-bold rounded-lg bg-gold-400 text-ink-950 hover:bg-gold-300 transition disabled:opacity-50"
+                              >
+                                {actionLoading === team._id ? 'Approving...' : 'Approve'}
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {activeTab === 'iupc' && (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
@@ -254,107 +394,6 @@ export default function AdminDashboard({ user }) {
                           </td>
                         </tr>
                       ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="border-b border-white/10 bg-ink-950/40 text-xs font-bold uppercase tracking-wider text-mist-400">
-                      <th className="px-6 py-4">Game</th>
-                      <th className="px-6 py-4">Entry</th>
-                      <th className="px-6 py-4">Reg ID</th>
-                      <th className="px-6 py-4">Payment</th>
-                      <th className="px-6 py-4">Players</th>
-                      <th className="px-6 py-4">Status</th>
-                      <th className="px-6 py-4">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/5 text-sm">
-                    {(data.gaming?.length ?? 0) === 0 ? (
-                      <tr>
-                        <td colSpan="7" className="px-6 py-10 text-center text-mist-400">
-                          No gaming registrations found.
-                        </td>
-                      </tr>
-                    ) : (
-                      data.gaming.map((entry) => {
-                        const paid = entry.registrationStatus === 'paid';
-                        /* Only PUBG mails on approval; the badge says so, so an
-                           admin is not left wondering whether one went out. */
-                        const mails = entry.game === 'pubg-mobile';
-                        return (
-                          <tr key={entry._id} className="hover:bg-white/[0.02] transition">
-                            <td className="px-6 py-4">
-                              <div className="font-bold text-white">{entry.game}</div>
-                              {mails ? (
-                                <span className="text-[10px] text-gold-300">emails on approval</span>
-                              ) : (
-                                <span className="text-[10px] text-mist-500">no email</span>
-                              )}
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="font-semibold text-white">
-                                {entry.teamName || entry.contact?.name}
-                              </div>
-                              <div className="text-xs text-mist-400">
-                                {entry.entryType} · {entry.contact?.email}
-                              </div>
-                              <div className="text-xs text-mist-400">{entry.contact?.phone}</div>
-                            </td>
-                            <td className="px-6 py-4 font-mono text-xs text-mist-300">
-                              {entry.registrationId}
-                            </td>
-                            <td className="px-6 py-4 text-xs text-mist-300">
-                              <div className="font-mono text-gold-300">
-                                {entry.payment?.transactionId || '—'}
-                              </div>
-                              <div className="text-mist-400">
-                                {entry.payment?.method}
-                                {entry.payment?.amount != null && ` · ৳${entry.payment.amount}`}
-                              </div>
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="space-y-1">
-                                {(entry.players || []).map((p, i) => (
-                                  <div key={i} className="text-xs">
-                                    <span className="font-semibold text-white">{p.name}</span>
-                                    <span className="text-mist-400">
-                                      {' '}· {p.ign || p.gameId || p.uid}
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            </td>
-                            <td className="px-6 py-4">
-                              {paid ? (
-                                <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-1 text-xs font-bold text-green-400 border border-green-500/20">
-                                  <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-                                  Paid
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-400 border border-amber-500/20">
-                                  <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
-                                  {entry.registrationStatus || 'pending'}
-                                </span>
-                              )}
-                            </td>
-                            <td className="px-6 py-4">
-                              {!paid && (
-                                <button
-                                  onClick={() => handleApprovePayment(entry._id, 'gaming')}
-                                  disabled={actionLoading !== null}
-                                  className="px-3 py-1.5 text-xs font-bold rounded-lg bg-gold-400 text-ink-950 hover:bg-gold-300 transition disabled:opacity-50"
-                                >
-                                  {actionLoading === entry._id ? 'Approving...' : 'Mark Paid'}
-                                </button>
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })
                     )}
                   </tbody>
                 </table>
