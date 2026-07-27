@@ -359,6 +359,66 @@ export async function sendGamingConfirmationEmail({
 }
 
 /**
+ * Sent when an admin moves a gaming registration from pending to paid.
+ *
+ * Deliberately NOT sendGamingConfirmationEmail: that one tells the entrant
+ * "your entry is pending until the committee matches your transaction ID",
+ * which is precisely what has just stopped being true. Reusing it here would
+ * tell an approved squad they are still waiting.
+ *
+ * @param {object}  args
+ * @param {string}  args.to             Contact email on the registration
+ * @param {string}  args.name           Contact name
+ * @param {object}  args.game           Game config from src/data/gaming.js
+ * @param {string}  [args.teamName]     Squad name, absent for solo entries
+ * @param {string}  args.registrationId
+ */
+export async function sendGamingPaymentApprovedEmail({
+  to,
+  name,
+  game,
+  teamName,
+  registrationId,
+}) {
+  const t = game.tournament;
+  const who = teamName ? `your squad <strong>${esc(teamName)}</strong>` : 'your entry';
+
+  const when = [
+    t?.date && `<li>Tournament day: <strong>${esc(t.date)}</strong>${t.time ? `, ${esc(t.time)}` : ''}.</li>`,
+    t?.venue && `<li>Venue: <strong>${esc(t.venue)}</strong>.</li>`,
+  ]
+    .filter(Boolean)
+    .join('');
+
+  const html = shell({
+    title: `${game.name} Payment Confirmed`,
+    heading: 'Payment Confirmed!',
+    idLabel: 'Registration ID',
+    id: registrationId,
+    idNote: 'Bring this with you — it is how we identify you on the day.',
+    body: `
+          <p>Hi ${esc(name)},</p>
+          <p>Your payment has been verified and ${who} is now fully confirmed for the <strong>${esc(game.name)}</strong> tournament at ${BRAND}. Nothing further is needed from you.</p>
+
+          <p>What happens next?</p>
+          <ul>
+            ${when}
+            <li>Your entry now shows as <strong>confirmed</strong> on the tournament's registered list.</li>
+            <li>Room IDs, passwords and match times are shared with the contact on this registration before the first match.</li>
+          </ul>
+
+          <p>If anything above is wrong, reply to this email or contact the coordinators listed on the tournament page.</p>
+          <p>Best regards,<br>Gaming Fest Organizing Committee<br>${BRAND}</p>`,
+  });
+
+  await send({
+    to,
+    subject: `${game.name} Payment Confirmed — ${registrationId}`,
+    html,
+  });
+}
+
+/**
  * Sends a confirmation email to the Datathon team leader upon payment approval.
  * 
  * @param {string} toEmail - Leader's email address

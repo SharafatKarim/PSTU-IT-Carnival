@@ -71,6 +71,16 @@ services:
       # which is the intended off state.
       EMAIL_USER: ${EMAIL_USER:-}
       EMAIL_PASS: ${EMAIL_PASS:-}
+      # NextAuth for /admin. Without these the admin API answers 500 with
+      # [next-auth][error][NO_SECRET] — it fails closed, so no data leaks, but
+      # nobody can sign in and no payment can be approved either.
+      # ADMIN_EMAILS is the allow-list: a valid Google login that is not on it
+      # is still rejected. Comma-separated.
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:${CLIENT_PORT:-5173}}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      ADMIN_EMAILS: ${ADMIN_EMAILS:-}
     depends_on:
       mongo:
         condition: service_healthy
