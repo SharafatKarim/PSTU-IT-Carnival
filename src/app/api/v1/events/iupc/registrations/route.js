@@ -6,6 +6,7 @@ import { generateRegistrationId } from '@/server/events/iupc/ids';
 import { listTeams } from '@/server/events/iupc/teams';
 import { checkWriteLimits, clientKey } from '@/server/rateLimit';
 import { verifyTurnstile } from '@/server/turnstile';
+import { sendIupcConfirmationEmail } from '@/lib/email';
 
 /* A registration is ~1 KB. Anything far larger is not a real submission, so
    reject it before parsing rather than buffering it into memory. */
@@ -189,13 +190,31 @@ export async function POST(req) {
     // 4. Generate ID & Create
     const registrationId = await generateRegistrationId();
 
+    /* The leader is row one, decided here rather than taken from the payload —
+       a caller could otherwise flag all three and defeat the point of mailing
+       one address per team. */
+    const membersWithLeader = members.map((member, index) => ({
+      ...member,
+      isTeamLeader: index === 0,
+    }));
+
     const created = await Registration.create({
       teamName,
       varsityName,
       coach,
-      members,
+      members: membersWithLeader,
       registrationId,
     });
+
+    // Send confirmation email (awaiting it prevents Vercel from freezing the serverless function prematurely)
+    try {
+      const leader = members[0];
+      if (leader && leader.email) {
+        await sendIupcConfirmationEmail(leader.email, teamName, created.registrationId, leader.name);
+      }
+    } catch (emailError) {
+      console.error('[email] Failed to send confirmation email:', emailError);
+    }
 
     return NextResponse.json(
       {

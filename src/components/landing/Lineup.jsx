@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { ICON_MAP, ArrowRightIcon } from './Icons';
 import Countdown from './Countdown';
-import { EVENTS } from '@/data/content';
+import { EVENT_TIERS } from '@/data/content';
 import { getEventDetail } from '@/data/events';
 import { getGame } from '@/data/gaming';
 import { accentOf } from '@/lib/accents';
@@ -11,15 +11,16 @@ import { accentOf } from '@/lib/accents';
 // ---------------------------------------------------------------------------
 // The line-up, as a ledger rather than a wall of cards.
 //
-// Every event used to render as a bordered card, most of which
-// apologised in two different ways. They are now rows in three tiers, and the
-// tier is derived from the real registration flag in events.js / gaming.js —
-// not from the hand-written `status` string, which drifts. routes.js warns in
-// development when the two disagree.
+// Every event used to render as a bordered card, most of which apologised in
+// two different ways. They are now rows in three tiers, and the tier comes from
+// the `stage` field in events.js / gaming.js — not from the hand-written
+// `status` string, which drifts. routes.js warns in development when the two
+// disagree.
 //
-// Density is the ranking mechanic: py-5 for the one open event, py-4 for the
-// three that are published, py-3 for the seven merely announced. A row gets a
-// border only if it is a link.
+// Density is the ranking mechanic, not colour: the open event is a full row
+// with a button, published events are rows, and announced events are chips in a
+// grid. No count is written down here — EVENT_TIERS does the counting, so this
+// comment cannot go stale the way the lede below it did.
 // ---------------------------------------------------------------------------
 
 /* Resolve an EVENTS entry against the data that actually knows its state. */
@@ -28,77 +29,102 @@ const detailFor = (event) => {
   return event.kind === 'game' ? getGame(event.slug) : getEventDetail(event.slug);
 };
 
-/* Read the stage the data states rather than inferring it. registrationOpen
-   cannot tell "announced only" apart from "published but entries closed", and
-   every announced event now has a detail entry, so inference would promote all
-   of them into Published. routes.js warns if stage and status disagree. */
-const tierOf = (event) => detailFor(event)?.stage || 'announced';
-
-const IconTile = ({ icon, accent, muted }) => {
+const IconTile = ({ icon, accent, muted, small }) => {
   const Icon = ICON_MAP[icon] || ICON_MAP.code;
   return (
     <span
-      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${
+      className={`flex shrink-0 items-center justify-center rounded-xl border ${
+        small ? 'h-8 w-8' : 'h-10 w-10'
+      } ${
         muted
           ? 'border-white/5 bg-white/[0.03] text-mist-500'
           : `bg-ink-900/70 ${accent.border} ${accent.text}`
       }`}
     >
-      <Icon className="h-5 w-5" />
+      <Icon className={small ? 'h-4 w-4' : 'h-5 w-5'} />
     </span>
   );
 };
 
-/* The one event taking entries. The only row with a button. */
+/* The one event taking entries.
+
+   It used to be a Published row with more padding, a hairline of gold down its
+   left edge and a button bolted on the right — the same object as the four
+   below it, only taller. It is not the same object: it is the one thing on the
+   page a visitor can act on today.
+
+   So it is a card, and it borrows the treatment the hero's open panel already
+   established: a gold-tinted border and a glow. The run-on fact line becomes
+   three labelled cells, because "45 teams · ৳3,000 per team at final
+   registration · closes 31 July 2026" is three facts pretending to be a
+   sentence. */
 const OpenRow = ({ event, detail }) => {
   const accent = accentOf(detail?.accent);
   const t = detail?.tournament;
 
-  return (
-    <div className="border-t border-white/10 first:border-t-0">
-      <div className="relative flex flex-col gap-4 py-5 pl-5 sm:flex-row sm:items-center sm:gap-6">
-        <span
-          aria-hidden="true"
-          className="absolute inset-y-4 left-0 w-0.5 rounded-full bg-gold-400"
-        />
-        <IconTile icon={event.icon} accent={accent} />
+  const facts = t
+    ? [
+        { label: 'Team slots', value: t.slots },
+        { label: 'At final registration', value: t.entryFee },
+        { label: 'Entries close', value: t.deadline },
+      ].filter((f) => f.value)
+    : [];
 
+  return (
+    <div className="rounded-2xl border border-gold-400/30 bg-ink-900/40 p-5 shadow-glow-gold sm:p-6">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-8">
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-            <Link
-              href={event.href}
-              className="text-lg font-bold text-white transition hover:text-gold-300"
-            >
-              {event.name}
-            </Link>
-            <span className="text-xs text-mist-400">{event.scope}</span>
-            {t?.deadline && <Countdown date={t.deadline} />}
+          <div className="flex items-start gap-4">
+            <IconTile icon={event.icon} accent={accent} />
+
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                <Link
+                  href={event.href}
+                  className="text-lg font-bold text-white transition hover:text-gold-300"
+                >
+                  {event.name}
+                </Link>
+                <span className="text-xs text-mist-400">{event.scope}</span>
+                {t?.deadline && <Countdown date={t.deadline} />}
+              </div>
+              <p className="mt-1.5 max-w-[62ch] text-sm leading-relaxed text-mist-300">
+                {event.blurb}
+              </p>
+            </div>
           </div>
-          <p className="mt-1 max-w-[62ch] text-sm leading-relaxed text-mist-400">
-            {event.blurb}
-          </p>
-          {t && (
-            <p className="mt-2 text-xs text-mist-400 tabular-nums">
-              <span className="text-mist-200">{t.slots}</span> ·{' '}
-              <span className="text-mist-200">{t.entryFee}</span> at final
-              registration · closes {t.deadline}
-            </p>
+
+          {facts.length > 0 && (
+            <dl className="mt-5 grid grid-cols-2 gap-x-6 gap-y-3 border-t border-white/10 pt-4 sm:grid-cols-3">
+              {facts.map((fact) => (
+                <div key={fact.label}>
+                  <dt className="text-[11px] uppercase tracking-wide text-mist-400">
+                    {fact.label}
+                  </dt>
+                  <dd className="mt-0.5 text-sm font-semibold text-white tabular-nums">
+                    {fact.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
           )}
         </div>
 
-        <div className="flex shrink-0 items-center gap-3">
-          <Link
-            href={event.href}
-            className="text-sm font-semibold text-mist-300 transition hover:text-white"
-          >
-            Details
-          </Link>
+        {/* Full-width on a phone, a fixed column beside the facts on desktop —
+            the button was competing with a 62ch paragraph for the same row. */}
+        <div className="flex shrink-0 flex-col gap-2.5 lg:w-48 lg:self-center">
           <Link
             href={event.registerHref || event.href}
-            className="inline-flex items-center gap-2 rounded-lg bg-gold-400 px-5 py-2.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
+            className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gold-400 px-5 py-3 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
           >
             {event.cta || 'Register'}
-            <ArrowRightIcon className="h-4 w-4" />
+            <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          </Link>
+          <Link
+            href={event.href}
+            className="inline-flex w-full items-center justify-center rounded-xl border border-ink-500 px-5 py-2.5 text-sm font-semibold text-mist-200 transition hover:bg-white/5 hover:text-white"
+          >
+            Details
           </Link>
         </div>
       </div>
@@ -124,7 +150,7 @@ const PublishedRow = ({ event, detail }) => {
           <span className="font-bold text-white">{event.name}</span>
           <span className="text-xs text-mist-400">{event.scope}</span>
         </span>
-        <span className="mt-0.5 block truncate text-sm text-mist-400">
+        <span className="mt-0.5 block line-clamp-2 text-sm text-mist-400">
           {event.blurb}
         </span>
         {/* The date is the whole point of this tier, so it stays on narrow
@@ -152,59 +178,66 @@ const PublishedRow = ({ event, detail }) => {
   );
 };
 
-/* Announced only. No badge, no button, no chevron — the tier label above says
-   it once, and repeating it on every row is what made the old grid a wall. */
-const AnnouncedRow = ({ event }) => {
+/* Announced only — a chip, not a row.
+
+   Seven of the twelve events are here, and as full-width rows they were 58% of
+   the section: seven identical bands whose only content was a sentence that
+   said nothing had been decided. A chip carries the same information a visitor
+   can act on — the name, the scope, and a way in — in a fifth of the height,
+   and the grid makes them read as one set rather than seven disappointments.
+   The blurb is on the event's own page, which is one tap away. */
+const AnnouncedChip = ({ event }) => {
   const body = (
     <>
-      <IconTile icon={event.icon} muted />
-      <span className="min-w-0 flex-1">
-        <span className="font-semibold text-mist-200">{event.name}</span>
-        <span className="ml-3 text-xs text-mist-500">{event.scope}</span>
-        <span className="mt-0.5 block truncate text-sm text-mist-500">
-          {event.blurb}
+      <IconTile icon={event.icon} muted small />
+      <span className="min-w-0">
+        <span className="block truncate text-sm font-semibold text-mist-200">
+          {event.name}
+        </span>
+        <span className="block truncate text-xs text-mist-400">
+          {event.scope}
         </span>
       </span>
     </>
   );
 
-  /* Linked only if the event actually has a page — an unlinked row is still
+  const shell =
+    'flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2.5';
+
+  /* Linked only if the event actually has a page — an unlinked chip is still
      valid for anything added to the data before its route exists. */
   return event.href ? (
     <Link
       href={event.href}
-      className="group flex items-center gap-4 border-t border-white/10 py-3 transition first:border-t-0 hover:bg-white/[0.03]"
+      className={`${shell} transition hover:border-white/20 hover:bg-white/[0.05]`}
     >
       {body}
-      <ArrowRightIcon className="h-4 w-4 shrink-0 text-mist-500 transition-transform group-hover:translate-x-0.5 group-hover:text-mist-300" />
     </Link>
   ) : (
-    <div className="flex items-center gap-4 border-t border-white/10 py-3 first:border-t-0">
-      {body}
-    </div>
+    <div className={shell}>{body}</div>
   );
 };
 
 const Tier = ({ label, note, children }) => (
-  <section className="mt-12 first:mt-0">
+  <section className="mt-10 first:mt-0">
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-white/10 pb-3">
       <h3 className="text-[11px] font-bold uppercase tracking-[0.22em] text-mist-300">
         {label}
       </h3>
-      {note && <p className="text-xs text-mist-500">{note}</p>}
+      {note && <p className="text-xs text-mist-400">{note}</p>}
     </div>
     <div>{children}</div>
   </section>
 );
 
 const Lineup = () => {
-  const grouped = { open: [], published: [], announced: [] };
-  EVENTS.forEach((event) => grouped[tierOf(event)].push(event));
+  /* Grouped in content.js, beside the lede that counts the same tiers. */
+  const grouped = EVENT_TIERS;
 
   return (
     <div>
       {grouped.open.length > 0 && (
-        <Tier label="Open now" note="Taking entries">
+        <Tier label="Open now">
           {grouped.open.map((event) => (
             <OpenRow key={event.id} event={event} detail={detailFor(event)} />
           ))}
@@ -212,10 +245,7 @@ const Lineup = () => {
       )}
 
       {grouped.published.length > 0 && (
-        <Tier
-          label="Published"
-          note="Format, rules and prizes are final — entries have not opened yet"
-        >
+        <Tier label="Published" note="Entries have not opened yet">
           {grouped.published.map((event) => (
             <PublishedRow key={event.id} event={event} detail={detailFor(event)} />
           ))}
@@ -223,10 +253,12 @@ const Lineup = () => {
       )}
 
       {grouped.announced.length > 0 && (
-        <Tier label="Announced" note="Details to follow">
-          {grouped.announced.map((event) => (
-            <AnnouncedRow key={event.id} event={event} />
-          ))}
+        <Tier label="Announced" note="Dated later">
+          <div className="mt-4 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+            {grouped.announced.map((event) => (
+              <AnnouncedChip key={event.id} event={event} />
+            ))}
+          </div>
         </Tier>
       )}
     </div>

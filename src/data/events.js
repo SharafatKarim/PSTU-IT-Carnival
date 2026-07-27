@@ -33,7 +33,7 @@ export const EVENT_DETAILS = [
     cover: '/events/iupc/cover.jpg',
 
     tournament: {
-      date: '13 August 2026',
+      date: '15 August 2026',
       time: '9:00 AM — 3:00 PM',
       venue: 'CSE–FBA Building, PSTU',
       entryFee: '৳3,000 per team',
@@ -47,8 +47,18 @@ export const EVENT_DETAILS = [
       deadline: '31 July 2026',
     },
 
-    /* No prize breakdown published for IUPC yet. Add a `prizes` array here
-       — [{ place, rank, amount?, perks: [] }] — and the section reappears. */
+    /* Non-monetary only. Prize money has not been announced; add an `amount`
+       to an entry when a figure is confirmed and TournamentInfo prints it.
+       The landing page reads this same array, so the two cannot disagree. */
+    prizes: [
+      {
+        place: 'Champion',
+        rank: 1,
+        perks: ['Winner trophy', 'Certificate of excellence'],
+      },
+      { place: '1st Runner-Up', rank: 2, perks: ['Certificate of merit'] },
+      { place: '2nd Runner-Up', rank: 3, perks: ['Certificate of merit'] },
+    ],
 
     rules: [
       {
@@ -58,7 +68,8 @@ export const EVENT_DETAILS = [
           'Each team must have exactly 3 members — no more, no fewer.',
           'Every team competes with one registered coach.',
           'Team names must be unique across all registrations.',
-          'Each member needs a distinct email address and Codeforces handle.',
+          'Each member needs a distinct email address and student ID.',
+          'The first member is the team leader — all correspondence goes to them.',
         ],
       },
       {
@@ -103,7 +114,7 @@ export const EVENT_DETAILS = [
       /* 'form' means this event owns /events/<slug>/register. */
       kind: 'form',
       cta: 'Start Pre-Registration',
-      note: 'Pre-registration is free · Instant registration ID',
+      note: 'Pre-registration is free · Instant registration ID · Event t-shirt for every participant',
       /* Rendered as a numbered "how it works" list on the event page. */
       process: [
         'Pre-register your team here. Nothing is paid at this stage.',
@@ -114,7 +125,8 @@ export const EVENT_DETAILS = [
         'Your team name — it must be unique, so pick a backup too',
         'Your varsity name',
         'Coach name, email and phone number',
-        'For each of the three members: name, email, phone, Codeforces handle and t-shirt size',
+        'For each of the three members: name, email, phone, student ID and t-shirt size',
+        'Which member is the team leader — they receive every email about your registration',
       ],
     },
 

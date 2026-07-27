@@ -16,7 +16,23 @@ const SUFFIX = EVENT.title;
 const build = (title, description) => ({
   title,
   description,
-  openGraph: { title, description, type: 'website' },
+  openGraph: {
+    title,
+    description,
+    type: 'website',
+    images: [
+      {
+        url: '/cover.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'PSTU IT Carnival 2026 Scrim Preview',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: ['/cover.jpg'],
+  },
 });
 
 /* A page whose data has been removed still needs a title — the route itself

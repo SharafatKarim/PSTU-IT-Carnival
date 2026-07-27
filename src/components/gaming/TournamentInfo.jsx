@@ -73,6 +73,15 @@ const TournamentInfo = ({ game }) => {
           <h3 className="mb-5 text-sm font-bold uppercase tracking-[0.18em] text-mist-300">
             Prize Breakdown
           </h3>
+          {/* Sibling pages show ৳30,000 pools. Without this line, a grid of
+              trophies and certificates reads as "this one pays nothing"
+              rather than "the figures are not out yet". */}
+          {!game.prizes.some((prize) => prize.amount) && (
+            <p className="mb-5 -mt-2 text-sm text-mist-400">
+              Prize money has not been announced yet. The awards below are
+              confirmed.
+            </p>
+          )}
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {game.prizes.map((prize) => {
               const s = rankStyles[prize.rank] || rankStyles[4];

@@ -64,6 +64,13 @@ services:
       NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}
       # Set to "true" only when a proxy you control sets X-Forwarded-For.
       TRUST_PROXY_HEADERS: ${TRUST_PROXY_HEADERS:-false}
+      # Gmail SMTP for the registration confirmation. Compose only injects the
+      # variables named here — a value sitting in .env that is not listed below
+      # never reaches the container, and src/lib/email.js then logs a warning
+      # and silently sends nothing. Left blank, that is exactly what happens,
+      # which is the intended off state.
+      EMAIL_USER: ${EMAIL_USER:-}
+      EMAIL_PASS: ${EMAIL_PASS:-}
     depends_on:
       mongo:
         condition: service_healthy

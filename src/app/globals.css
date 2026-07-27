@@ -128,6 +128,25 @@ body {
   color: #ffffff;
 }
 
+/* Keyboard focus. There was no rule here at all, which left the browser default
+   — a thin dark ring that is invisible against ink-950. :focus-visible rather
+   than :focus so a mouse click on a button does not leave a ring behind.
+
+   Two colours because the site has two kinds of surface: aqua reads on the dark
+   body, and the near-black is the only thing visible on the gold CTAs and the
+   bg-carnival panel. */
+:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.bg-gold-400:focus-visible,
+.bg-gold-300:focus-visible,
+.bg-carnival :focus-visible {
+  outline-color: #0c0820;
+}
+
 /* Several status dots pulse indefinitely; honour the OS preference. */
 @media (prefers-reduced-motion: reduce) {
   *,
