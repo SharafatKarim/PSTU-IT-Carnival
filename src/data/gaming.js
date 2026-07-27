@@ -208,6 +208,38 @@ const paymentSection = {
   ],
 };
 
+const chessPaymentSection = {
+  key: 'payment',
+  title: 'Payment',
+  subtitle:
+    'Send the entry fee first to the designated bKash Personal number, then enter the transaction ID below.',
+  payment: true,
+  fields: [
+    {
+      name: 'payment.method',
+      label: 'Payment Method',
+      type: 'select',
+      options: ['bKash'],
+      placeholder: 'Select bKash',
+      required: true,
+    },
+    {
+      name: 'payment.transactionId',
+      label: 'Transaction ID (TrxID)',
+      placeholder: 'e.g. 9F7A2B4C1D',
+      hint: 'The reference in the confirmation SMS.',
+      required: true,
+      autoComplete: 'off',
+      rules: {
+        pattern: {
+          value: /^[A-Za-z0-9]{6,25}$/,
+          message: 'Transaction ID is 6–25 letters and digits, no spaces',
+        },
+      },
+    },
+  ],
+};
+
 /* Ludo's payment section: the same two fields plus a screenshot.
 
    A separate object rather than an edit to `paymentSection`, because that one
@@ -932,13 +964,20 @@ export const GAMES = [
 
     stage: 'open',
     registrationOpen: true,
+    payment: {
+      number: '01521721630',
+      accountType: 'Personal',
+      methods: ['bKash'],
+      instructions:
+        'Send the entry fee to the bKash Personal number above, then enter your Transaction ID (TrxID) below.',
+    },
     registration: {
       kind: 'solo',
       entryType: 'solo',
       idPrefix: 'PSTU-CHS-2026',
       prep: [
         'A valid student ID for eligibility checks',
-        '৳100 sent via bKash or Nagad, and the transaction ID it gives you',
+        '৳100 sent via bKash, and the transaction ID it gives you',
       ],
       sections: [
         {
@@ -951,7 +990,7 @@ export const GAMES = [
             idRules: { maxLength: { value: 20, message: 'Student ID cannot exceed 20 characters' } },
           }),
         },
-        paymentSection,
+        chessPaymentSection,
         agreementSection,
       ],
     },

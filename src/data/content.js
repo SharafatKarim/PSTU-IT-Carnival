@@ -59,7 +59,7 @@ export const EVENTS = [
     icon: 'rocket',
     blurb:
       'Build a working product against the clock in a national-level innovation sprint for student teams.',
-    status: 'coming-soon',
+    status: 'live',
     slug: 'hackathon',
     kind: 'event',
     href: ROUTES.event('hackathon'),
@@ -147,7 +147,7 @@ export const EVENTS = [
     category: 'gaming',
     icon: 'crown',
     blurb: 'Classic strategy on 64 squares. Outthink your opponent, move by move.',
-    status: 'coming-soon',
+    status: 'open',
     slug: 'chess',
     kind: 'game',
     href: ROUTES.game('chess'),

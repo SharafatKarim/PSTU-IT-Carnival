@@ -189,7 +189,7 @@ const PayTo = ({ game, entryType, account, accent }) => {
             {account.number}
           </p>
           <p className="mt-0.5 text-[11px] text-mist-500">
-            Accepted: {PAYMENT_METHOD_LABEL}
+            Accepted: {account.methods ? account.methods.join(' · ') : PAYMENT_METHOD_LABEL}
           </p>
         </div>
       </div>
@@ -242,7 +242,7 @@ const GameRegistrationForm = ({ game }) => {
 
   /* A constant, not a lookup — see the note on GAMING_PAYMENT in
      src/data/gaming.js. This route touches no database at all. */
-  const account = GAMING_PAYMENT;
+  const account = game.payment || GAMING_PAYMENT;
 
   /* Rules are built from every section, not just the visible ones: a section
      that appears mid-fill must already have its rules ready. */
