@@ -46,7 +46,7 @@ export async function generateRegistrationId() {
   const counter = await Counter.findOneAndUpdate(
     { _id: COUNTER_KEY },
     { $inc: { seq: 1 } },
-    { new: true, upsert: true }
+    { returnDocument: 'after', upsert: true }
   );
 
   return `${PREFIX}-${String(counter.seq).padStart(4, '0')}`;

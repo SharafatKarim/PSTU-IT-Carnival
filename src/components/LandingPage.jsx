@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import Navbar from './landing/Navbar';
 import Faq from './landing/Faq';
