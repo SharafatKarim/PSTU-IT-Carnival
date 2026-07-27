@@ -25,7 +25,8 @@ Then open **http://localhost:5173**.
 
 ```bash
 pnpm install
-cp .env.example .env     # then set MONGO_URI
+ # then set MONGO_URI
+cp .env.example .env    
 pnpm dev
 ```
 
