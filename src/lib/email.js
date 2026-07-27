@@ -432,130 +432,111 @@ export async function sendDatathonConfirmationEmail(toEmail, teamName, registrat
 
   const htmlContent = `
     <!DOCTYPE html>
-    <html>
+    <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
     <head>
       <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="color-scheme" content="light dark">
+      <meta name="supported-color-schemes" content="light dark">
       <title>Datathon Registration Confirmed</title>
       <style>
-        body {
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          background-color: #0b061e;
-          color: #d1cbe5;
-          margin: 0;
-          padding: 20px;
-          -webkit-font-smoothing: antialiased;
+        :root {
+          color-scheme: light dark;
+          supported-color-schemes: light dark;
         }
-        .container {
-          max-width: 600px;
-          margin: 0 auto;
-          background-color: #150f30;
-          border: 1px solid #332663;
-          border-radius: 16px;
-          overflow: hidden;
-          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+        body, table, td, p, a, li {
+          -webkit-text-size-adjust: 100%;
+          -ms-text-size-adjust: 100%;
         }
-        .header {
-          background-color: #0b061e;
-          padding: 30px;
-          text-align: center;
-          border-bottom: 1px solid #23194c;
-        }
-        .header h1 {
-          color: #ffffff;
-          font-size: 24px;
-          margin: 5px 0 0 0;
-          letter-spacing: 1px;
-        }
-        .content {
-          padding: 35px 30px;
-          line-height: 1.6;
-        }
-        .content h2 {
-          color: #ffffff;
-          font-size: 20px;
-          margin-top: 0;
-        }
-        .highlight-box {
-          background: linear-gradient(135deg, #1b1340 0%, #291c60 100%);
-          border: 1px solid #4a3399;
-          border-radius: 12px;
-          padding: 20px;
-          margin: 25px 0;
-          text-align: center;
-        }
-        .reg-id-label {
-          font-size: 12px;
-          text-transform: uppercase;
-          letter-spacing: 2px;
-          color: #a692ff;
-          margin-bottom: 5px;
-          font-weight: bold;
-        }
-        .reg-id-val {
-          font-size: 28px;
-          font-weight: 800;
-          color: #ffd700;
-          letter-spacing: 1px;
-          font-family: monospace;
-          margin: 0;
-          text-shadow: 0 2px 10px rgba(255, 215, 0, 0.2);
-        }
-        .team-detail {
-          margin-top: 15px;
-          font-size: 14px;
-          color: #b0a5cf;
-        }
-        .footer {
-          background-color: #0b061e;
-          padding: 25px 30px;
-          text-align: center;
-          font-size: 12px;
-          color: #7b6d9e;
-          border-top: 1px solid #23194c;
-        }
-        .footer a {
-          color: #00ffff;
+        u + #body a {
+          color: inherit;
           text-decoration: none;
-          font-weight: 600;
         }
-        .footer a:hover {
-          text-decoration: underline;
+        @media only screen and (max-width: 600px) {
+          .main-card {
+            width: 100% !important;
+          }
+          .content-padding {
+            padding: 20px 15px !important;
+          }
+          .reg-id-val {
+            font-size: 22px !important;
+          }
         }
       </style>
     </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          <h1>PSTU IT Carnival 2026</h1>
-        </div>
-        <div class="content">
-          <h2>Datathon Registration Confirmed!</h2>
-          <p>Hi ${leaderName},</p>
-          <p>Your team <strong>${teamName}</strong> has been successfully registered for the <strong>PSTU Online Datathon 2026</strong>. We have verified your bKash payment transaction.</p>
-          
-          <div class="highlight-box">
-            <div class="reg-id-label">Registration ID</div>
-            <div class="reg-id-val">${registrationId}</div>
-            <div class="team-detail">Your registration is now fully confirmed. Please keep this ID safe for contest activities.</div>
-          </div>
+    <body id="body" style="margin: 0; padding: 0; background-color: #0b061e; color: #d1cbe5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-font-smoothing: antialiased;">
+      
+      <!-- Outer Wrapper Table -->
+      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #0b061e; table-layout: fixed; width: 100%;">
+        <tr>
+          <td align="center" style="padding: 20px 10px; background-color: #0b061e;">
+            
+            <!-- Main Content Container -->
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" class="main-card" style="max-width: 600px; background-color: #150f30; border: 1px solid #332663; border-radius: 16px; overflow: hidden; border-collapse: separate;">
+              
+              <!-- Header -->
+              <tr>
+                <td align="center" style="background-color: #0b061e; padding: 30px; border-bottom: 1px solid #23194c;">
+                  <h1 style="color: #ffffff !important; font-size: 24px; margin: 0; letter-spacing: 1px; font-weight: 700;">PSTU IT Carnival 2026</h1>
+                </td>
+              </tr>
 
-          <p>Contest details:</p>
-          <ul>
-            <li><strong>Contest Start Date</strong>: August 8, 2026</li>
-            <li><strong>Contest Platform</strong>: Online (Submission Form released on August 11, 2026)</li>
-            <li><strong>Submission Deadline</strong>: August 12, 2026 (11:59 PM)</li>
-          </ul>
+              <!-- Content -->
+              <tr>
+                <td class="content-padding" style="padding: 35px 30px; background-color: #150f30; color: #d1cbe5 !important; line-height: 1.6; font-size: 15px;">
+                  <h2 style="color: #ffffff !important; font-size: 20px; margin-top: 0; margin-bottom: 16px;">Datathon Registration Confirmed!</h2>
+                  
+                  <p style="color: #d1cbe5 !important; margin: 0 0 15px 0;">Hi <strong style="color: #ffffff !important;">${leaderName}</strong>,</p>
+                  
+                  <p style="color: #d1cbe5 !important; margin: 0 0 20px 0;">
+                    Your team <strong style="color: #ffffff !important;">${teamName}</strong> has been successfully registered for the <strong style="color: #ffffff !important;">PSTU Online Datathon 2026</strong>. We have verified your bKash payment transaction.
+                  </p>
 
-          <p><strong>Action Required:</strong> Please ensure both team members join the official Datathon WhatsApp communication group for real-time updates, support, and resource links: <a href="https://chat.whatsapp.com/ByP45c2kLqPBwZlohyaFSS" target="_blank" style="color: #00ffff; text-decoration: underline; font-weight: bold;">Join WhatsApp Group</a></p>
+                  <!-- Highlight Box -->
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: 25px 0;">
+                    <tr>
+                      <td align="center" style="background-color: #1b1340; border: 1px solid #4a3399; border-radius: 12px; padding: 20px;">
+                        <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #a692ff !important; font-weight: bold; margin-bottom: 5px;">Registration ID</div>
+                        <div class="reg-id-val" style="font-size: 28px; font-weight: 800; color: #ffd700 !important; letter-spacing: 1px; font-family: monospace; margin: 0;">${registrationId}</div>
+                        <div style="margin-top: 15px; font-size: 14px; color: #b0a5cf !important;">Your registration is now fully confirmed. Please keep this ID safe for contest activities.</div>
+                      </td>
+                    </tr>
+                  </table>
 
-          <p>If you have any questions or support inquiries, feel free to contact the coordinators.</p>
-          <p>Best regards,<br>Datathon Organizing Committee<br>PSTU IT Carnival 2026</p>
-        </div>
-        <div class="footer">
-          <p>Organized by Patuakhali Science and Technology University</p>
-          <p>Visit official website: <a href="https://itcarnival26.pstu.ac.bd" target="_blank">itcarnival26.pstu.ac.bd</a></p>
-        </div>
-      </div>
+                  <p style="color: #ffffff !important; font-weight: bold; margin: 20px 0 10px 0;">Contest details:</p>
+                  <ul style="margin: 0 0 20px 0; padding-left: 20px; color: #d1cbe5 !important;">
+                    <li style="margin-bottom: 8px;"><strong style="color: #ffffff !important;">Contest Start Date</strong>: August 8, 2026</li>
+                    <li style="margin-bottom: 8px;"><strong style="color: #ffffff !important;">Contest Platform</strong>: Online (Submission Form released on August 11, 2026)</li>
+                    <li style="margin-bottom: 8px;"><strong style="color: #ffffff !important;">Submission Deadline</strong>: August 12, 2026 (11:59 PM)</li>
+                  </ul>
+
+                  <p style="color: #d1cbe5 !important; margin: 0 0 15px 0;">If you have any questions or support inquiries, feel free to contact the coordinators.</p>
+                  
+                  <p style="color: #d1cbe5 !important; margin: 0;">
+                    Best regards,<br>
+                    <span style="color: #ffffff !important; font-weight: 600;">Datathon Organizing Committee</span><br>
+                    PSTU IT Carnival 2026
+                  </p>
+                </td>
+              </tr>
+
+              <!-- Footer -->
+              <tr>
+                <td align="center" style="background-color: #0b061e; padding: 25px 30px; font-size: 12px; color: #7b6d9e !important; border-top: 1px solid #23194c;">
+                  <p style="margin: 0 0 5px 0; color: #7b6d9e !important;">Organized by Patuakhali Science and Technology University</p>
+                  <p style="margin: 0; color: #7b6d9e !important;">
+                    Visit official website: 
+                    <a href="https://itcarnival26.pstu.ac.bd" target="_blank" style="color: #00ffff !important; text-decoration: none; font-weight: 600;">itcarnival26.pstu.ac.bd</a>
+                  </p>
+                </td>
+              </tr>
+
+            </table>
+          </td>
+        </tr>
+      </table>
+
     </body>
     </html>
   `;
