@@ -47,3 +47,9 @@ next-env.d.ts
 
 # database dumps (never commit registrant data)
 /backups/
+
+# Editor swap files. A Kate swap for .env.example was committed once; the
+# pattern matches the leading-dot form Kate actually writes.
+*.kate-swp
+.*.kate-swp
+*.swp
