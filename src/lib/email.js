@@ -486,6 +486,8 @@ export async function sendDatathonConfirmationEmail(toEmail, teamName, registrat
             <li><strong>Submission Deadline</strong>: August 12, 2026 (11:59 PM)</li>
           </ul>
 
+          <p><strong>Action Required:</strong> Please ensure both team members join the official Datathon WhatsApp communication group for real-time updates, support, and resource links: <a href="https://chat.whatsapp.com/ByP45c2kLqPBwZlohyaFSS" target="_blank" style="color: #00ffff; text-decoration: underline; font-weight: bold;">Join WhatsApp Group</a></p>
+
           <p>If you have any questions or support inquiries, feel free to contact the coordinators.</p>
           <p>Best regards,<br>Datathon Organizing Committee<br>PSTU IT Carnival 2026</p>
         </div>
