@@ -206,7 +206,7 @@ export async function POST(req, { params }) {
     }
 
     /* A transaction ID is one real transfer, so this is checked across every
-       tournament rather than within one — otherwise a single ৳60 payment could
+       tournament rather than within one — otherwise a single ৳100 payment could
        be quoted on a PUBG entry and a Free Fire entry both. The unique index in
        the model closes the race between two simultaneous submissions; this is
        what turns it into a message somebody can act on. */

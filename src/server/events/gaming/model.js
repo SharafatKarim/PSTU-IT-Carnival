@@ -170,7 +170,7 @@ registrationSchema.index({ game: 1, teamName: 1 });
 registrationSchema.index({ game: 1, 'contact.email': 1 });
 
 /* A transaction ID identifies one real transfer, so it is unique across every
-   tournament — not per game. Without this, one ৳60 payment could be quoted on
+   tournament — not per game. Without this, one ৳100 payment could be quoted on
    a PUBG entry and a Free Fire entry both.
 
    Unique at the database as well as checked in the route: the explicit check

@@ -155,7 +155,7 @@ const resolveLinks = (field, game) =>
     .filter((link) => link.href);
 
 /* The "send it here" panel above the payment fields. The amount is derived
-   from the entry type, so a squad is told ৳60 and an individual ৳15 rather
+   from the entry type, so a squad is told ৳100 and an individual ৳25 rather
    than both being shown a per-player figure to multiply themselves. */
 const PayTo = ({ game, entryType, account, accent }) => {
   const amount = feeFor(game, entryType);
