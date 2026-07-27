@@ -208,6 +208,38 @@ const paymentSection = {
   ],
 };
 
+const chessPaymentSection = {
+  key: 'payment',
+  title: 'Payment',
+  subtitle:
+    'Send the entry fee first to the designated bKash Personal number, then enter the transaction ID below.',
+  payment: true,
+  fields: [
+    {
+      name: 'payment.method',
+      label: 'Payment Method',
+      type: 'select',
+      options: ['bKash'],
+      placeholder: 'Select bKash',
+      required: true,
+    },
+    {
+      name: 'payment.transactionId',
+      label: 'Transaction ID (TrxID)',
+      placeholder: 'e.g. 9F7A2B4C1D',
+      hint: 'The reference in the confirmation SMS.',
+      required: true,
+      autoComplete: 'off',
+      rules: {
+        pattern: {
+          value: /^[A-Za-z0-9]{6,25}$/,
+          message: 'Transaction ID is 6–25 letters and digits, no spaces',
+        },
+      },
+    },
+  ],
+};
+
 /* Ludo's payment section: the same two fields plus a screenshot.
 
    A separate object rather than an edit to `paymentSection`, because that one
@@ -932,13 +964,20 @@ export const GAMES = [
 
     stage: 'open',
     registrationOpen: true,
+    payment: {
+      number: '01521721630',
+      accountType: 'Personal',
+      methods: ['bKash'],
+      instructions:
+        'Send the entry fee to the bKash Personal number above, then enter your Transaction ID (TrxID) below.',
+    },
     registration: {
       kind: 'solo',
       entryType: 'solo',
       idPrefix: 'PSTU-CHS-2026',
       prep: [
         'A valid student ID for eligibility checks',
-        '৳100 sent via bKash or Nagad, and the transaction ID it gives you',
+        '৳100 sent via bKash, and the transaction ID it gives you',
       ],
       sections: [
         {
@@ -951,7 +990,7 @@ export const GAMES = [
             idRules: { maxLength: { value: 20, message: 'Student ID cannot exceed 20 characters' } },
           }),
         },
-        paymentSection,
+        chessPaymentSection,
         agreementSection,
       ],
     },
@@ -1083,17 +1122,124 @@ export const GAMES = [
   },
   {
     slug: 'rubiks-cube',
-    name: "Rubik's Cube",
+    name: "Rubik's Cube Speedcubing",
     shortName: "Rubik's",
     family: 'board',
     icon: 'cube',
     accent: 'gold',
-    scope: 'Speed',
+    scope: 'Speed · Solo',
     mode: 'Solo',
     tagline: 'Race the clock to solve the cube.',
     blurb: 'Fastest fingers, sharpest mind.',
-    stage: 'announced',
+    heroNote: 'Individual participation — no team required.',
+
+    tournament: {
+      date: '14 August 2026',
+      time: '5:00 PM (Reporting: 4:30 PM)',
+      venue: 'Agriculture Conference Room',
+      entryFee: '৳100 per player',
+      entryShort: '৳100',
+      entryScope: 'per player',
+      feePerPlayer: 100,
+      prizePool: '৳2,200',
+      format: 'Best of Three Knockout Round',
+      teamSize: 'Solo (1 player)',
+      teamSizeShort: 'Solo',
+      slots: '32 players',
+      platform: 'On-site Speedcubing',
+      deadline: '5 August 2026',
+    },
+
+    prizes: [
+      { place: 'Champion', rank: 1, amount: '৳1,500', perks: ['Winner certificate', 'Gold medal'] },
+      { place: '1st Runner-Up', rank: 2, amount: '৳700', perks: ['Runner-up certificate'] },
+    ],
+
+    rules: [
+      {
+        title: 'Gameplay & Cube Scrambling',
+        icon: 'clock',
+        items: [
+          'Format: The tournament follows a "Best of Three" knockout format. Each player gets 3 attempts per round. The single fastest solving time among the 3 attempts will be recorded.',
+          'Scrambling: All cubes will be scrambled by official event marshals using a standard computer-generated random sequence right before the attempt.',
+          'Inspection Time: Players have a maximum of 15 seconds to inspect the cube. Touching or turning faces during inspection is strictly prohibited.',
+        ],
+      },
+      {
+        title: 'Strict Regulations & Infractions',
+        icon: 'alert',
+        items: [
+          'Timer Rules: Standard Stackmat timer or digital stopwatch will be used. Players must start and stop the timer with both hands flat on the mat. Incorrect use may result in a +2 seconds penalty.',
+          'DNF (Did Not Finish): If a cube pops (pieces come apart) during a solve, the player can attempt to fix it and continue within the time, or accept a DNF for that specific run.',
+          'Disputes: In case of any dispute or rule confusion, do not reset the timer. Raise your hand immediately to call the judge.',
+        ],
+      },
+      {
+        title: 'Etiquette & Fair Play',
+        icon: 'shield',
+        items: [
+          'Cube Integrity: Participants must bring their own standard 3x3x3 Rubik\'s Cube. The cube must be fully functional and cannot have any special markings, logos, or textures.',
+          'Electronic Devices: No smart devices, phones, or headphones are allowed while sitting at the solving station.',
+          'Silence: Absolute silence must be maintained in the Agriculture Conference Room to avoid distracting competing cubers.',
+        ],
+      },
+    ],
+
+    stage: 'open',
     registrationOpen: true,
+    payment: {
+      number: '01790876259',
+      accountType: 'Personal',
+      methods: ['bKash', 'Nagad'],
+      instructions:
+        'Send the 100 BDT entry fee via bKash or Nagad Personal Send Money to the number above, then enter the transaction ID below.',
+    },
+    registration: {
+      kind: 'solo',
+      entryType: 'solo',
+      idPrefix: 'PSTU-CUB-2026',
+      prep: [
+        'A valid student ID for eligibility checks',
+        '৳100 sent via bKash or Nagad, and the transaction ID it gives you',
+      ],
+      sections: [
+        {
+          key: 'player',
+          title: 'Player Information',
+          subtitle: 'This is how your name appears on the bracket and on your certificate.',
+          fields: contactFields({
+            idLabel: 'Student ID',
+            idPlaceholder: 'Your student ID',
+            idRules: { maxLength: { value: 20, message: 'Student ID cannot exceed 20 characters' } },
+          }),
+        },
+        paymentSection,
+        agreementSection,
+      ],
+    },
+
+    faqs: [
+      {
+        q: 'Do I need to bring my own cube?',
+        a: 'Yes. All participants must bring their own standard 3x3x3 Rubik\'s Cube.',
+      },
+      {
+        q: 'Can I use a magnetic cube?',
+        a: 'Yes, standard magnetic cubes are allowed, but no special markings, textures, or logos that could aid tile recognition are permitted.',
+      },
+      {
+        q: 'How many attempts do I get?',
+        a: 'You get 3 attempts per round, and your fastest single time among those 3 attempts counts as your score.',
+      },
+    ],
+    coordinators: [
+      {
+        name: 'MH Nazmul',
+        role: 'Event Coordinator · CSE Club, PSTU',
+        phone: '01790876259',
+        email: 'ug2102013@cse.pstu.ac.bd',
+      }
+    ],
   },
 ];
 

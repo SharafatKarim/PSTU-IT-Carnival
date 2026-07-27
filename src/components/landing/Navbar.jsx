@@ -10,7 +10,7 @@ const Logo = () => (
     <img
       src="/logo.png"
       alt="PSTU IT Carnival Logo"
-      className="h-9 w-auto object-contain"
+      className="h-19 w-auto object-contain"
     />
     <span className="text-sm font-bold leading-tight text-white">
       PSTU IT Carnival
