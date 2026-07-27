@@ -275,20 +275,21 @@ export const EVENT_DETAILS = [
     ],
 
     stage: 'published',
-    registrationOpen: false,
+    registrationOpen: true,
     registration: {
-      kind: 'none',
-      cta: 'Registration Closed',
-      note: 'Online registration opens soon',
+      kind: 'form',
+      cta: 'Start Registration',
+      note: 'Online registration is open · BDT 300 Entry Fee',
       process: [
-        'Registration remains open until 1 minute before the contest ends.',
-        'Ensure all team members are declared during registration to avoid disqualification.',
-        'Submit BDT 300 entry fee online.'
+        'Send BDT 300 to +8801921067682 (bKash personal) and save the Transaction ID.',
+        'Fill in the registration form with your team name and member details.',
+        'Submit your registration. Once the admin approves your transaction, you will receive a confirmation email.'
       ],
       checklist: [
-        'Team Name', 'Varsity name for all members',
-        'Verification document (e.g., student ID card)',
-        'For each member: name, email, phone, and t-shirt size'
+        'Team Name (unique, letters/numbers/underscores)',
+        'For each member: Name, Varsity Name, Student ID, Phone Number',
+        'Kaggle Email and Kaggle Username for contest participation',
+        'bKash Transaction ID of BDT 300'
       ],
     },
 

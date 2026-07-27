@@ -207,7 +207,9 @@ const Hero = ({ event }) => {
         <div
           className={`mt-8 grid gap-3 ${
             registrationOpen
-              ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
+              ? event.slug === 'iupc'
+                ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
+                : 'grid-cols-1 sm:grid-cols-2'
               : 'mx-auto w-full max-w-xs grid-cols-1'
           }`}
         >
@@ -217,15 +219,19 @@ const Hero = ({ event }) => {
                 href={ROUTES.eventRegister(event.slug)}
                 className="group inline-flex items-center justify-center gap-2 rounded-xl bg-gold-400 px-5 py-3.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
               >
-                Pre-Register
+                Register
                 <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
-              <Link href={ROUTES.eventTeams(event.slug)} className={SECONDARY_CTA}>
-                View Teams
-              </Link>
-              <Link href={ROUTES.eventSlots(event.slug)} className={SECONDARY_CTA}>
-                Slot Allocations
-              </Link>
+              {event.slug === 'iupc' && (
+                <>
+                  <Link href={ROUTES.eventTeams(event.slug)} className={SECONDARY_CTA}>
+                    View Teams
+                  </Link>
+                  <Link href={ROUTES.eventSlots(event.slug)} className={SECONDARY_CTA}>
+                    Slot Allocations
+                  </Link>
+                </>
+              )}
               <a href="#rules" className={SECONDARY_CTA}>
                 Read the Rules
               </a>
