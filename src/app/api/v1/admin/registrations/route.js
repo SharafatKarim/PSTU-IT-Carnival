@@ -4,6 +4,7 @@ import connectDB from '@/server/db';
 import IupcRegistration from '@/server/events/iupc/model';
 import DatathonRegistration from '@/server/events/datathon/model';
 import GamingRegistration from '@/server/events/gaming/model';
+import AdminLog from '@/server/admin/logModel';
 import { sendDatathonConfirmationEmail, sendGamingApprovalEmail } from '@/lib/email';
 import { getGame } from '@/data/gaming';
 
@@ -11,19 +12,19 @@ const allowedEmails = process.env.ADMIN_EMAILS
   ? process.env.ADMIN_EMAILS.split(',').map((email) => email.trim().toLowerCase())
   : [];
 
-async function verifyAdmin(req) {
+async function getAdminEmail() {
   const session = await getServerSession();
   const email = session?.user?.email?.toLowerCase();
-  if (!email || !allowedEmails.includes(email)) {
-    return false;
+  if (email && allowedEmails.includes(email)) {
+    return email;
   }
-  return true;
+  return null;
 }
 
 export async function GET(req) {
   try {
-    const isAdmin = await verifyAdmin(req);
-    if (!isAdmin) {
+    const adminEmail = await getAdminEmail();
+    if (!adminEmail) {
       return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
 
@@ -49,8 +50,8 @@ export async function GET(req) {
 
 export async function PATCH(req) {
   try {
-    const isAdmin = await verifyAdmin(req);
-    if (!isAdmin) {
+    const adminEmail = await getAdminEmail();
+    if (!adminEmail) {
       return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
 
@@ -125,6 +126,22 @@ export async function PATCH(req) {
       }
 
       const totalCount = approvedDatathon.length + approvedGaming.length;
+
+      // Log bulk approval
+      if (totalCount > 0) {
+        await AdminLog.create({
+          adminEmail,
+          action: 'bulk_approve_payments',
+          eventType: 'general',
+          details: {
+            approvedDatathonCount: approvedDatathon.length,
+            approvedGamingCount: approvedGaming.length,
+            approvedDatathonTeams: approvedDatathon,
+            approvedGamingTeams: approvedGaming,
+          },
+        });
+      }
+
       let msg = `Bulk approval completed. Approved ${totalCount} team(s)/player(s) (Datathon: ${approvedDatathon.length}, Gaming: ${approvedGaming.length}).`;
       if (failedEmails.length > 0) {
         msg += ` Email failed for: ${failedEmails.join(', ')}`;
@@ -153,6 +170,18 @@ export async function PATCH(req) {
 
       team.paid = true;
       await team.save();
+
+      // Log individual Datathon approval
+      await AdminLog.create({
+        adminEmail,
+        action: 'approve_payment',
+        eventType: 'datathon',
+        details: {
+          teamId: team._id,
+          teamName: team.teamName,
+          registrationId: team.registrationId,
+        },
+      });
 
       const leader = team.members.find((m) => m.isTeamLeader);
       if (leader && leader.kaggleEmail) {
@@ -187,6 +216,19 @@ export async function PATCH(req) {
       team.verifiedAt = new Date();
       await team.save();
 
+      // Log individual Gaming approval
+      await AdminLog.create({
+        adminEmail,
+        action: 'approve_payment',
+        eventType: 'gaming',
+        details: {
+          teamId: team._id,
+          teamName: team.teamName || 'Solo Entrant',
+          registrationId: team.registrationId,
+          game: team.game,
+        },
+      });
+
       const gameConf = getGame(team.game) || { name: team.game.toUpperCase() };
       try {
         await sendGamingApprovalEmail({
@@ -213,6 +255,19 @@ export async function PATCH(req) {
 
       team.paid = true;
       await team.save();
+
+      // Log individual IUPC payment toggle
+      await AdminLog.create({
+        adminEmail,
+        action: 'iupc_paid_toggle',
+        eventType: 'iupc',
+        details: {
+          teamId: team._id,
+          teamName: team.teamName,
+          registrationId: team.registrationId,
+        },
+      });
+
       return NextResponse.json({ success: true, message: 'IUPC team marked as paid' });
     }
 
