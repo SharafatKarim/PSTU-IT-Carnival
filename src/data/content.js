@@ -183,7 +183,7 @@ export const EVENTS = [
     category: 'gaming',
     icon: 'cube',
     blurb: 'Race the clock to solve the cube. Fastest fingers, sharpest mind.',
-    status: 'coming-soon',
+    status: 'open',
     slug: 'rubiks-cube',
     kind: 'game',
     href: ROUTES.game('rubiks-cube'),
