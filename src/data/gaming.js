@@ -813,17 +813,117 @@ export const GAMES = [
      ------------------------------------------------------------------------- */
   {
     slug: 'chess',
-    name: 'Chess',
+    name: 'Chess (Rapid)',
     shortName: 'Chess',
     family: 'board',
     icon: 'crown',
     accent: 'aqua',
-    scope: 'Board',
+    scope: 'Board · 1v1',
     mode: 'Solo',
     tagline: 'Classic strategy on 64 squares.',
     blurb: 'Outthink your opponent, move by move.',
-    stage: 'announced',
-    registrationOpen: false,
+    heroNote: 'Individual participation — no team required.',
+
+    tournament: {
+      date: '14 August 2026',
+      time: '4:00 PM (Reporting: 3:30 PM)',
+      venue: 'Agriculture Conference Room',
+      entryFee: '৳100 per player',
+      entryShort: '৳100',
+      entryScope: 'per player',
+      feePerPlayer: 100,
+      prizePool: '৳2,200',
+      format: 'Single Elimination Knockout Round',
+      teamSize: 'Solo (1 player)',
+      teamSizeShort: 'Solo',
+      slots: '32 players',
+      platform: 'On-site Board Game',
+      deadline: '5 August 2026',
+    },
+
+    prizes: [
+      { place: 'Champion', rank: 1, amount: '৳1,500', perks: ['Winner certificate', 'Gold medal'] },
+      { place: '1st Runner-Up', rank: 2, amount: '৳700', perks: ['Runner-up certificate'] },
+    ],
+
+    rules: [
+      {
+        title: 'Gameplay & Time Control',
+        icon: 'clock',
+        items: [
+          'Format: The tournament will follow a strict Single Knockout format. If you lose a match, you are eliminated.',
+          'Time Control: This is a Rapid Chess event. Each player will have a fixed time limit per game (10 minutes, subject to final adjustments by the arbiter at the venue).',
+          'No Scorekeeping Required: Players do not need to write down their moves on a scoresheet.',
+        ],
+      },
+      {
+        title: 'Strict Regulations & Infractions',
+        icon: 'alert',
+        items: [
+          'Illegal Moves: If a player completes an illegal move and presses the clock, the opponent will be awarded extra time. A second illegal move in the same game results in an immediate loss/forfeiture.',
+          'Clock Rules: If your time runs out (flag falls), you lose the game immediately, provided your opponent has enough pieces left to theoretically checkmate you.',
+          'Disputes: In case of any dispute or rule confusion during a game, pause the chess clock immediately and raise your hand to call the arbiter. Do not argue with your opponent.',
+        ],
+      },
+      {
+        title: 'Etiquette & Fair Play',
+        icon: 'shield',
+        items: [
+          'Electronic Devices: All mobile phones, smartwatches, and electronic devices must be turned off completely or put on silent mode and stored in your bag before the match starts. Having a ringing phone or using a device during play results in immediate disqualification.',
+          'Silence: Absolute silence must be maintained in the Agriculture Conference Room during play.',
+          'Draw Offers: Draw offers must be made verbally on your own turn, right after making your move and before pressing the clock.',
+        ],
+      },
+    ],
+
+    stage: 'open',
+    registrationOpen: true,
+    registration: {
+      kind: 'solo',
+      entryType: 'solo',
+      idPrefix: 'PSTU-CHS-2026',
+      prep: [
+        'A valid student ID for eligibility checks',
+        '৳100 sent via bKash or Nagad, and the transaction ID it gives you',
+      ],
+      sections: [
+        {
+          key: 'player',
+          title: 'Player Information',
+          subtitle: 'This is how your name appears on the bracket and on your certificate.',
+          fields: contactFields({
+            idLabel: 'Student ID',
+            idPlaceholder: 'e.g. 2102021',
+            idRules: { maxLength: { value: 20, message: 'Student ID cannot exceed 20 characters' } },
+          }),
+        },
+        paymentSection,
+        agreementSection,
+      ],
+    },
+
+    faqs: [
+      {
+        q: 'Do I need to bring my own chess board?',
+        a: 'No. Boards, pieces, and clocks will be provided at the Agriculture Conference Room by the organizing committee.',
+      },
+      {
+        q: 'What is the time control for each game?',
+        a: 'It is a Rapid Chess event. Each player has a fixed 10-minute time control per game.',
+      },
+      {
+        q: 'Is there a limit on participation slots?',
+        a: 'Yes, the tournament is capped at a maximum of 32 players on a first-come, first-served basis.',
+      },
+    ],
+    coordinators: [
+      {
+        name: 'Sadman Hafiz Shuvo',
+        role: 'IUPC Coordinator · CSE Club, PSTU',
+        phone: '01521721630',
+        email: 'ug2102021@cse.pstu.ac.bd',
+      }
+    ],
   },
   {
     slug: 'ludo',
