@@ -227,7 +227,7 @@ export const EVENT_DETAILS = [
         items: [
           'Private Leaderboard Score (90%): Evaluated against the hidden private test set.',
           'Hidden Metric: The exact evaluation metric will remain hidden/undisclosed from participants.',
-          'Code Quality & Markdown Documentation (10%): Evaluated based on code cleanliness, reproducibility, and clear explanations in Markdown cells.'
+          'Presentation(10%): Evaluated based on the clarity and effectiveness of the presentation.'
         ],
       },
       {
