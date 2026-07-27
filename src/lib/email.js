@@ -341,7 +341,7 @@ export async function sendGamingConfirmationEmail({
           <table class="facts">${facts}</table>
           <p>What happens next?</p>
           <ul>
-            <li>The committee checks your transaction ID against the wallet statement. Your entry shows as <strong>verified</strong> on the tournament's registered list once that is done.</li>
+            <li>Your entry is <strong>pending</strong> until the committee matches your transaction ID against the wallet statement. It shows as <strong>confirmed</strong> on the tournament's registered list once that is done.</li>
             <li>Registration closes on <strong>${esc(t.deadline)}</strong>. Details cannot be changed after that.</li>
             ${randomTeamNote}
             <li>Bring this ID and your student ID to the desk on match day.</li>

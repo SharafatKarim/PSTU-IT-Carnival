@@ -19,7 +19,7 @@ import GamingRegistration from './model';
 // ---------------------------------------------------------------------------
 
 const PUBLIC_FIELDS =
-  'registrationId game entryType teamName contact.name registrationStatus payment.verified players.name';
+  'registrationId game entryType teamName contact.name registrationStatus players.name';
 
 /* "PSTU-PUBG-2026-0007" -> 7. The serial people quote is the trailing counter,
    not the whole ID, so it is derived rather than stored twice. */
@@ -63,8 +63,12 @@ const toPublicEntry = (doc) => ({
   teamName: doc.entryType === 'team' ? doc.teamName : null,
   playerName: doc.contact?.name || '',
   playerCount: (doc.players || []).length,
-  status: doc.registrationStatus || 'paid',
-  paymentVerified: Boolean(doc.payment?.verified),
+  /* Rows written before the status vocabulary changed said 'pre-registered';
+     they mean the same thing as 'pending' and are shown that way. */
+  status:
+    doc.registrationStatus === 'pre-registered'
+      ? 'pending'
+      : doc.registrationStatus || 'pending',
 });
 
 export async function listGameRegistrations(

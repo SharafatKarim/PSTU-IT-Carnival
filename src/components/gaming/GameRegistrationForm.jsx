@@ -303,9 +303,11 @@ const GameRegistrationForm = ({ game }) => {
           {reference}
         </p>
         <p className="mx-auto mt-4 max-w-md text-sm text-emerald-200/80">
-          A confirmation has been emailed to you. Your payment is recorded and
-          will be checked against the wallet statement before match day — save
-          this ID and bring it with your student ID.
+          A confirmation has been emailed to you. Your entry is{' '}
+          <strong className="font-semibold text-emerald-200">pending</strong>{' '}
+          until the committee matches your transaction ID against the wallet
+          statement — it shows as confirmed on the registered list once that is
+          done. Save this ID and bring it with your student ID.
         </p>
 
         <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">

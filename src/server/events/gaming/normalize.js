@@ -58,7 +58,6 @@ export function normalizeGameRegistration(game, body, { receiverNumber } = {}) {
          destination; neither is taken from the request. */
       receiverNumber: receiverNumber || '',
       amount: feeFor(game, entryType),
-      verified: false,
     },
   };
 }

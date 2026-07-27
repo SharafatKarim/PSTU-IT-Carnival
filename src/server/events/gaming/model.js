@@ -107,15 +107,29 @@ const registrationSchema = new mongoose.Schema(
       default: [],
       index: true,
     },
-    /* The fee is paid before the form is submitted, so a row lands as 'paid'
-       rather than 'pre-registered'. That is a claim, not a confirmation —
-       `payment.verified` is what says the committee has actually found the
-       money. 'rejected' covers withdrawn entries and unmatched payments. */
+    /* Lifecycle, and the ONE flag the admin panel moves:
+     *
+     *   pending   default. The entrant has submitted a transaction ID, which
+     *             is a claim, not proof — anybody can type a plausible
+     *             reference. Nothing is confirmed until a human checks it.
+     *   paid      an admin matched the transaction ID against the wallet
+     *             statement. Set `verifiedAt` at the same time.
+     *   rejected  withdrawn, or the payment could not be found.
+     *
+     * This used to be 'paid' on write, with a second `payment.verified`
+     * boolean carrying the real answer. Two fields for one fact is how they
+     * end up disagreeing, so the boolean is gone and this is the whole truth.
+     *
+     * 'pre-registered' stays accepted only so rows written before this change
+     * can still be saved by the admin panel. Do not use it for new entries. */
     registrationStatus: {
       type: String,
-      enum: ['pre-registered', 'paid', 'rejected'],
-      default: 'paid',
+      enum: ['pending', 'paid', 'rejected', 'pre-registered'],
+      default: 'pending',
+      index: true,
     },
+    /* When an admin moved this to 'paid'. Absent while pending. */
+    verifiedAt: { type: Date },
     payment: {
       method: {
         type: String,
@@ -139,10 +153,6 @@ const registrationSchema = new mongoose.Schema(
       /* What was owed, computed server-side from the fee and the entry type —
          never taken from the request. */
       amount: { type: Number, min: 0 },
-      /* Anyone can type a plausible reference. This is the flag an admin sets
-         once the payment has been found in the wallet statement. */
-      verified: { type: Boolean, default: false },
-      verifiedAt: { type: Date },
     },
     registrationId: {
       type: String,

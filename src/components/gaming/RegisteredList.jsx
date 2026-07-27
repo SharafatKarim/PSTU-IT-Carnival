@@ -36,26 +36,34 @@ const UNALLOCATED = 'To be Allocated';
 const COLS_SQUAD = 'sm:grid-cols-[3rem_minmax(0,1.2fr)_minmax(0,1fr)_8rem]';
 const COLS_SOLO = 'sm:grid-cols-[3rem_minmax(0,1.4fr)_minmax(0,1fr)_8rem]';
 
-/* A row lands as 'paid' the moment a transaction ID is submitted — that is a
-   claim, not a confirmation. "Verified" is the committee having actually found
-   the payment in the wallet statement, so the two are shown differently. */
-const StatusPill = ({ status, verified }) => {
-  if (status === 'rejected') {
-    return (
-      <span className="inline-flex items-center whitespace-nowrap rounded-full border border-red-500/40 bg-red-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-red-300">
-        rejected
-      </span>
-    );
-  }
+/* One flag, one pill. A row lands as 'pending' — a submitted transaction ID is
+   a claim, not proof — and an admin moves it to 'paid' after matching it
+   against the wallet statement, or to 'rejected'. */
+const STATUS_PILL = {
+  pending: {
+    label: 'pending',
+    className: 'border-gold-400/40 bg-gold-400/10 text-gold-300',
+  },
+  paid: {
+    label: 'confirmed',
+    className: 'border-emerald-400/40 bg-emerald-400/10 text-emerald-300',
+    icon: true,
+  },
+  rejected: {
+    label: 'rejected',
+    className: 'border-red-500/40 bg-red-500/10 text-red-300',
+  },
+};
 
-  return verified ? (
-    <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-emerald-400/40 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-300">
-      <CheckIcon className="h-3 w-3" />
-      verified
-    </span>
-  ) : (
-    <span className="inline-flex items-center whitespace-nowrap rounded-full border border-gold-400/40 bg-gold-400/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-gold-300">
-      payment sent
+const StatusPill = ({ status }) => {
+  const pill = STATUS_PILL[status] || STATUS_PILL.pending;
+
+  return (
+    <span
+      className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${pill.className}`}
+    >
+      {pill.icon && <CheckIcon className="h-3 w-3" />}
+      {pill.label}
     </span>
   );
 };
@@ -78,7 +86,7 @@ const EntryRow = ({ entry, accent, solo, cols }) => {
         </span>
         {/* Status rides along the top line on mobile, own column on desktop. */}
         <span className="sm:hidden">
-          <StatusPill status={entry.status} verified={entry.paymentVerified} />
+          <StatusPill status={entry.status} />
         </span>
       </div>
 
@@ -111,7 +119,7 @@ const EntryRow = ({ entry, accent, solo, cols }) => {
       </div>
 
       <div className="hidden sm:block sm:justify-self-end">
-        <StatusPill status={entry.status} verified={entry.paymentVerified} />
+        <StatusPill status={entry.status} />
       </div>
     </li>
   );
@@ -339,9 +347,9 @@ const RegisteredList = ({ slug }) => {
 
           <p className="mt-5 text-xs leading-relaxed text-mist-500">
             Names and payment state only — phone numbers, emails, game IDs and
-            transaction references are never shown here. “Payment sent” means a
-            transaction ID was submitted; “verified” means the committee has
-            matched it against the wallet statement.
+            transaction references are never shown here. “Pending” means a
+            transaction ID was submitted and is waiting on the committee;
+            “confirmed” means it has been matched against the wallet statement.
           </p>
         </div>
       </main>

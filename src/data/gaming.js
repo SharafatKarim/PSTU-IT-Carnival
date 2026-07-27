@@ -390,7 +390,7 @@ export const GAMES = [
           'All participants must be legal residents of Bangladesh.',
           'Each player needs an eFootball account in good standing, and may enter only once.',
           'Register through this website. Late registration is at the organizers’ discretion.',
-          'Entry fee is ৳100 per player, collected on-site before your first match.',
+          'Entry fee is ৳100 per player, paid with the registration form — no cash is taken at the venue.',
           'Your user ID and the device you will play on must be provided before your round starts.',
         ],
       },
@@ -452,7 +452,7 @@ export const GAMES = [
         'Your eFootball / Konami user ID, exactly as it appears in game',
         'The device you will play on — the rules require it before your round starts',
         'A valid student ID for eligibility checks',
-        'The ৳100 entry fee — collected on-site',
+        '৳100 sent via bKash or Nagad, and the transaction ID it gives you',
       ],
       sections: [
         {
@@ -505,7 +505,7 @@ export const GAMES = [
       },
       {
         q: 'How and when do I pay the entry fee?',
-        a: 'On-site, at the registration desk, before your first match. It is ৳100 per player, and no payment is taken through this website.',
+        a: 'When you register. Send ৳100 per player to the number shown on the form using Send Money, then enter the transaction ID to complete your entry. Nothing is collected at the venue.',
       },
     ],
   },
@@ -576,7 +576,7 @@ export const GAMES = [
           'A squad is exactly 4 players. Enter as a full squad, or enter alone and be placed in a randomly formed one.',
           'Every player must be a currently enrolled PSTU student with a valid ID card, checked at the desk.',
           'A player may represent only one squad for the whole tournament.',
-          'Entry fee is ৳15 per player — ৳60 for a full squad — collected on-site before the first match.',
+          'Entry fee is ৳15 per player — ৳60 for a full squad — paid with the registration form, not at the venue.',
           'Team name and player game IDs are locked once registration closes on 5 August. Check them carefully.',
         ],
       },
@@ -621,7 +621,7 @@ export const GAMES = [
         'Either a full squad of four, or nothing — solo entrants are placed in a random squad',
         'Every player’s PUBG Mobile UID (the 6–15 digit number in your profile)',
         'A team leader who can receive room IDs and passwords on WhatsApp',
-        'The ৳15 per player entry fee — collected on-site',
+        '৳15 per player (৳60 a squad) sent via bKash or Nagad, and the transaction ID',
       ],
       sections: battleRoyaleSections({
         idLabel: 'PUBG Mobile UID',
@@ -637,7 +637,7 @@ export const GAMES = [
       },
       {
         q: 'What does it cost?',
-        a: '৳15 per player, so ৳60 for a full squad of four. It is collected on-site at the registration desk — no payment is taken through this website.',
+        a: '৳15 per player, so ৳60 for a full squad of four. You pay when you register: send it to the number shown on the form using Send Money, then enter the transaction ID. Nothing is collected at the venue.',
       },
       {
         q: 'Are emulators or triggers allowed?',
@@ -720,7 +720,7 @@ export const GAMES = [
           'A squad is exactly 4 players. Enter as a full squad, or enter alone and be placed in a randomly formed one.',
           'Every player must be a currently enrolled PSTU student with a valid ID card, checked at the desk.',
           'A player may represent only one squad for the whole tournament.',
-          'Entry fee is ৳15 per player — ৳60 for a full squad — collected on-site before the first match.',
+          'Entry fee is ৳15 per player — ৳60 for a full squad — paid with the registration form, not at the venue.',
           'Twenty-four squads are accepted, split into two groups of twelve. Team name and player game IDs are locked once registration closes on 5 August.',
         ],
       },
@@ -767,7 +767,7 @@ export const GAMES = [
         'Either a full squad of four, or nothing — solo entrants are placed in a random squad',
         'Every player’s Free Fire UID (the number under your in-game name)',
         'A team leader who can receive room IDs and passwords on WhatsApp',
-        'The ৳15 per player entry fee — collected on-site',
+        '৳15 per player (৳60 a squad) sent via bKash or Nagad, and the transaction ID',
       ],
       sections: battleRoyaleSections({
         idLabel: 'Free Fire UID',
@@ -791,7 +791,7 @@ export const GAMES = [
       },
       {
         q: 'What does it cost?',
-        a: '৳15 per player, so ৳60 for a full squad of four. It is collected on-site at the registration desk — no payment is taken through this website.',
+        a: '৳15 per player, so ৳60 for a full squad of four. You pay when you register: send it to the number shown on the form using Send Money, then enter the transaction ID. Nothing is collected at the venue.',
       },
       {
         q: 'Are emulators allowed?',
@@ -860,7 +860,7 @@ export const GAMING = {
   title: 'Six arenas. One Booyah.',
   intro:
     'The gaming wing of PSTU IT Carnival 2026 runs three esports tournaments — one solo, two squad-based — alongside three board and puzzle events. All three esports tournaments run on 13 August and entries are open now; the board events follow later.',
-  note: 'Entry fees are collected on-site at the registration desk. No payment is taken through this website.',
+  note: 'Entry fees are paid online while you register — send the amount via bKash or Nagad Send Money, then enter the transaction ID on the form. Your entry is confirmed once a coordinator verifies it.',
   /* Shown wherever a closed tournament would otherwise offer a form. */
   closedHeading: 'Registration opens soon',
   closedNote:
