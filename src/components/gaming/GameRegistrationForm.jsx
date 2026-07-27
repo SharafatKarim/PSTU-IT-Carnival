@@ -8,6 +8,7 @@ import SelectField from '@/components/SelectField';
 import SectionCard from '@/components/SectionCard';
 import TurnstileWidget, { isTurnstileConfigured } from '@/components/TurnstileWidget';
 import CheckboxField from './CheckboxField';
+import FileField from '@/components/FileField';
 import ChoiceField from './ChoiceField';
 import { CheckIcon, AlertIcon, TicketIcon } from '@/components/landing/Icons';
 import { submitGameRegistration } from '@/services/events/gaming';
@@ -171,8 +172,12 @@ const PayTo = ({ game, entryType, account, accent }) => {
             Amount to send
           </p>
           <p className={`mt-1 text-xl font-extrabold ${accent.text}`}>৳{amount}</p>
+          {/* Same fallback feeFor() uses — a game can publish its fee before
+              it publishes its date, so the per-player figure is not always on
+              the tournament block. */}
           <p className="mt-0.5 text-[11px] text-mist-500">
-            ৳{game.tournament.feePerPlayer} × {heads} player{heads === 1 ? '' : 's'}
+            ৳{game.tournament?.feePerPlayer ?? game.feePerPlayer} × {heads}{' '}
+            player{heads === 1 ? '' : 's'}
           </p>
         </div>
 
@@ -255,6 +260,19 @@ const GameRegistrationForm = ({ game }) => {
   const [submitError, setSubmitError] = useState(null);
   const [reference, setReference] = useState(null);
   const [token, setToken] = useState(null);
+  /* Held outside react-hook-form: the file that gets sent is the one
+     lib/downscale.js produced, not the one the input holds. */
+  const [screenshot, setScreenshot] = useState(null);
+
+  /* Whether this tournament asks for one at all, so a missing file is caught
+     before the upload rather than by the server. */
+  const screenshotField = useMemo(
+    () =>
+      allSections
+        .flatMap((section) => section.fields || [])
+        .find((field) => field.type === 'file'),
+    [allSections]
+  );
 
   const onToken = useCallback((value) => setToken(value), []);
 
@@ -264,15 +282,24 @@ const GameRegistrationForm = ({ game }) => {
       return;
     }
 
+    if (screenshotField?.required && !screenshot) {
+      setSubmitError(`${screenshotField.label} is required.`);
+      return;
+    }
+
     setLoading(true);
     setSubmitError(null);
     try {
-      const res = await submitGameRegistration(game, {
-        ...formValues,
-        /* eFootball never asks — its entry type is fixed in the data. */
-        entryType: game.registration.entryType || formValues.entryType,
-        turnstileToken: token,
-      });
+      const res = await submitGameRegistration(
+        game,
+        {
+          ...formValues,
+          /* eFootball never asks — its entry type is fixed in the data. */
+          entryType: game.registration.entryType || formValues.entryType,
+          turnstileToken: token,
+        },
+        screenshot
+      );
       setReference(res.referenceId);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
@@ -286,6 +313,7 @@ const GameRegistrationForm = ({ game }) => {
     setReference(null);
     setSubmitError(null);
     setToken(null);
+    setScreenshot(null);
     reset(buildDefaults(allSections));
   };
 
@@ -329,16 +357,31 @@ const GameRegistrationForm = ({ game }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+      {/* A tournament can take entries before its date is published — Ludo
+          does. The fee is always known (feeFor falls back to the game's own
+          feePerPlayer); the deadline is only mentioned when there is one, and
+          reading it unguarded crashed the build. */}
       <div
         className={`flex items-start gap-2.5 rounded-xl border px-4 py-3 text-sm text-mist-200 ${a.borderSoft} ${a.bgFaint}`}
       >
         <TicketIcon className={`mt-0.5 h-4 w-4 shrink-0 ${a.text}`} />
         <span>
           Entry fee is{' '}
-          <strong className="font-semibold text-white">{game.tournament.entryFee}</strong>.
-          Pay it before you submit — the Payment step below tells you where to
-          send it and asks for the transaction ID. Registration closes on{' '}
-          <strong className="font-semibold text-white">{game.tournament.deadline}</strong>.
+          <strong className="font-semibold text-white">
+            {game.tournament?.entryFee || `৳${feeFor(game, entryType)}`}
+          </strong>
+          . Pay it before you submit — the Payment step below tells you where to
+          send it.
+          {game.tournament?.deadline && (
+            <>
+              {' '}
+              Registration closes on{' '}
+              <strong className="font-semibold text-white">
+                {game.tournament?.deadline}
+              </strong>
+              .
+            </>
+          )}
         </span>
       </div>
 
@@ -416,6 +459,25 @@ const GameRegistrationForm = ({ game }) => {
                         required={field.required}
                         value={entryType}
                         accent={a}
+                      />
+                    </div>
+                  );
+                }
+
+                /* The screenshot never goes through react-hook-form: the file
+                   that gets submitted is the SHRUNK one, not the one picked,
+                   so it is held in its own state and appended to the multipart
+                   body by the submit handler. */
+                if (field.type === 'file') {
+                  return (
+                    <div key={field.name} className={span}>
+                      <FileField
+                        label={field.label}
+                        name={field.name}
+                        onChange={setScreenshot}
+                        error={error}
+                        required={field.required}
+                        hint={field.hint}
                       />
                     </div>
                   );

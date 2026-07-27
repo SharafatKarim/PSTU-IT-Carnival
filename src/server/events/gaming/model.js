@@ -31,9 +31,12 @@ const playerSchema = new mongoose.Schema(
       trim: true,
       maxlength: [100, 'Player name cannot exceed 100 characters'],
     },
+    /* Not required. An esport needs one; a board game played across a table
+       has no such thing, and demanding it made Ludo unregisterable. Which
+       tournaments ask is decided by their `sections` in data/gaming.js, and
+       the validator enforces it there. */
     gameId: {
       type: String,
-      required: [true, 'Game ID is required'],
       trim: true,
       maxlength: [40, 'Game ID cannot exceed 40 characters'],
     },
@@ -42,6 +45,18 @@ const playerSchema = new mongoose.Schema(
       type: String,
       trim: true,
       maxlength: [80, 'Device cannot exceed 80 characters'],
+    },
+    /* Board events identify an entrant by their university record instead of
+       an in-game handle. */
+    academicId: {
+      type: String,
+      trim: true,
+      maxlength: [40, 'Academic ID cannot exceed 40 characters'],
+    },
+    faculty: {
+      type: String,
+      trim: true,
+      maxlength: [100, 'Faculty cannot exceed 100 characters'],
     },
   },
   { _id: false }
@@ -123,13 +138,23 @@ const registrationSchema = new mongoose.Schema(
         trim: true,
       },
       /* Uppercased on the way in so a duplicate check cannot be defeated by
-         typing the same reference in lower case. */
+         typing the same reference in lower case.
+
+         No longer required at the schema: a tournament may accept a screenshot
+         instead. Whether one, the other or both are demanded is declared per
+         tournament in data/gaming.js and enforced by the validator. */
       transactionId: {
         type: String,
-        required: [true, 'Transaction ID is required'],
         trim: true,
         uppercase: true,
         maxlength: [25, 'Transaction ID cannot exceed 25 characters'],
+      },
+      /* Reference, not bytes — see src/server/payments/screenshot.js for why
+         the image lives in its own collection. */
+      screenshot: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'PaymentScreenshot',
+        default: null,
       },
       /* The receiving number as it stood when this was submitted. Copied
          rather than looked up later: the wallet can be changed from the admin
@@ -143,6 +168,14 @@ const registrationSchema = new mongoose.Schema(
          once the payment has been found in the wallet statement. */
       verified: { type: Boolean, default: false },
       verifiedAt: { type: Date },
+    },
+    /* Stored, not merely validated. These were checked at submit time and
+       then discarded, so nothing recorded that an entrant had accepted the
+       rules — the one fact you would want if it were ever disputed. */
+    agreements: {
+      rules: { type: Boolean, default: false },
+      contact: { type: Boolean, default: false },
+      infoCorrect: { type: Boolean, default: false },
     },
     registrationId: {
       type: String,

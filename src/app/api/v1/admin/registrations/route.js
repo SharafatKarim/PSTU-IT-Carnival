@@ -4,6 +4,9 @@ import connectDB from '@/server/db';
 import IupcRegistration from '@/server/events/iupc/model';
 import DatathonRegistration from '@/server/events/datathon/model';
 import { sendDatathonConfirmationEmail } from '@/lib/email';
+import ItQuizRegistration from '@/server/events/it-quiz/model';
+import GamingRegistration from '@/server/events/gaming/model';
+import { dropScreenshot } from '@/server/payments';
 
 const allowedEmails = process.env.ADMIN_EMAILS
   ? process.env.ADMIN_EMAILS.split(',').map((email) => email.trim().toLowerCase())
@@ -29,12 +32,19 @@ export async function GET(req) {
 
     const iupcTeams = await IupcRegistration.find({}).sort({ createdAt: -1 }).lean();
     const datathonTeams = await DatathonRegistration.find({}).sort({ createdAt: -1 }).lean();
+    const itQuiz = await ItQuizRegistration.find({}).sort({ createdAt: -1 }).lean();
+    const gaming = await GamingRegistration.find({}).sort({ createdAt: -1 }).lean();
 
+    /* Screenshot BYTES are never in these rows — only an ObjectId. The image
+       is fetched one at a time from /api/v1/admin/screenshots/<id>, so opening
+       the dashboard does not download every payment photo ever submitted. */
     return NextResponse.json({
       success: true,
       data: {
         iupc: iupcTeams,
         datathon: datathonTeams,
+        'it-quiz': itQuiz,
+        gaming,
       },
     });
   } catch (error) {
@@ -103,6 +113,40 @@ export async function PATCH(req) {
       team.paid = true;
       await team.save();
       return NextResponse.json({ success: true, message: 'IUPC team marked as paid' });
+    } else if (eventType === 'it-quiz') {
+      const entry = await ItQuizRegistration.findById(id);
+      if (!entry) {
+        return NextResponse.json({ success: false, message: 'Registration not found' }, { status: 404 });
+      }
+      if (entry.paid) {
+        return NextResponse.json({ success: false, message: 'Payment already approved' });
+      }
+
+      entry.paid = true;
+      /* The screenshot existed to prove this payment. It has now done that, so
+         it is deleted rather than kept — see src/server/payments/screenshot.js
+         for why students' financial documents are not retained. */
+      await dropScreenshot(entry.payment?.screenshot);
+      entry.payment.screenshot = null;
+      await entry.save();
+
+      return NextResponse.json({ success: true, message: 'Payment approved' });
+    } else if (eventType === 'gaming') {
+      const entry = await GamingRegistration.findById(id);
+      if (!entry) {
+        return NextResponse.json({ success: false, message: 'Registration not found' }, { status: 404 });
+      }
+      if (entry.payment?.verified) {
+        return NextResponse.json({ success: false, message: 'Payment already approved' });
+      }
+
+      entry.payment.verified = true;
+      entry.payment.verifiedAt = new Date();
+      await dropScreenshot(entry.payment?.screenshot);
+      entry.payment.screenshot = null;
+      await entry.save();
+
+      return NextResponse.json({ success: true, message: 'Payment approved' });
     }
 
     return NextResponse.json({ success: false, message: 'Unsupported event type' }, { status: 400 });

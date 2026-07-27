@@ -56,7 +56,7 @@ const checkUnique = (field, body, errors) => {
   }
 };
 
-export function validateGameRegistration(game, body) {
+export function validateGameRegistration(game, body, { hasScreenshot = false } = {}) {
   if (!Array.isArray(game?.registration?.sections)) {
     return [{ field: 'game', message: 'This game does not accept registrations' }];
   }
@@ -81,6 +81,27 @@ export function validateGameRegistration(game, body) {
         if (field.required && value !== true) {
           errors.push({ field: field.name, message: `${field.label} must be accepted` });
         }
+        return;
+      }
+
+      /* A file never travels inside the JSON payload — it arrives as a
+         separate multipart part and the route reports whether it survived
+         validation. Without this branch the loop reached the typeof check
+         below and rejected every upload with "must be text". */
+      if (field.type === 'file') {
+        if (field.required && !hasScreenshot) {
+          errors.push({ field: field.name, message: `${field.label} is required` });
+        }
+        return;
+      }
+
+      /* "Either this or that" — used by the payment pair, where a transaction
+         ID and a screenshot each satisfy the requirement on their own. */
+      if (field.requiredUnlessScreenshot && isBlank(value) && !hasScreenshot) {
+        errors.push({
+          field: field.name,
+          message: `${field.label} is required unless you attach a screenshot`,
+        });
         return;
       }
 

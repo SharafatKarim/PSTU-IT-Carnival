@@ -374,6 +374,42 @@ export const EVENT_DETAILS = [
     blurb:
         'A fast-paced buzzer quiz across computing, its history and the trivia in between.',
     stage: 'announced',
+    registrationOpen: false,
+
+    /* Still 'announced', and registrationOpen is false, because the date, the
+       rules and — the blocker — the number the ৳50 is sent to have not been
+       given to us. The form and its whole backend are built; set
+       registrationOpen: true, fill in entry.receiverNumber and move `stage` to
+       'open', and it is live in one edit.
+
+       Nothing here is invented. Every value is either the fee the owner stated
+       or the shape of the form they specified. */
+    entry: {
+      /* One entrant, not a team — the owner's field list has no team fields. */
+      kind: 'solo',
+      fee: 50,
+      feeLabel: '৳50 per participant',
+      /* PLACEHOLDER. The payment panel refuses to render while this is empty,
+         rather than showing a number nobody should send money to. */
+      receiverNumber: '',
+      methods: ['bKash', 'Nagad'],
+    },
+
+    registration: {
+      kind: 'form',
+      cta: 'Register for IT Quiz',
+      note: 'Individual entry · ৳50',
+      process: [
+        'Send ৳50 to the number published on this page and keep the confirmation.',
+        'Fill in your details, then either type the transaction ID or attach a screenshot of the payment.',
+        'Submit. You get a registration ID immediately, and a confirmation once the payment is checked.',
+      ],
+      checklist: [
+        'Your full name, WhatsApp number and university',
+        'Academic ID, faculty, semester and session',
+        'The ৳50 transaction ID, or a screenshot of the payment',
+      ],
+    },
   },
   {
     slug: 'project-showcase',

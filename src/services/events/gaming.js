@@ -8,6 +8,13 @@
 
 const baseURL = '/api/v1/events/gaming';
 
+const toFormData = (payload, file) => {
+  const form = new FormData();
+  form.append('payload', JSON.stringify(payload));
+  form.append('screenshot', file);
+  return form;
+};
+
 /* Public directory of who has entered. `signal` lets the caller abort a stale
    search when the user keeps typing. */
 export const fetchGameRegistrations = async (
@@ -31,14 +38,26 @@ export const fetchGameRegistrations = async (
   return data.data;
 };
 
-export const submitGameRegistration = async (game, payload) => {
+/* `file` is the payment screenshot, when the tournament asks for one.
+
+   It is sent as multipart with the SAME payload object in a `payload` part,
+   rather than flattening the fields into form entries. That matters: the
+   validator and the normaliser both read a nested object (players.0.name,
+   payment.method), and flattening would force both to be rewritten and the
+   Turnstile token to be plucked out of the body. This way the server parses
+   one part and everything downstream is unchanged. */
+export const submitGameRegistration = async (game, payload, file) => {
   let res;
   try {
-    res = await fetch(`${baseURL}/${game.slug}/registrations`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
+    const url = `${baseURL}/${game.slug}/registrations`;
+
+    res = file
+      ? await fetch(url, { method: 'POST', body: toFormData(payload, file) })
+      : await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
   } catch {
     throw new Error('Network error — please check your connection and try again.');
   }

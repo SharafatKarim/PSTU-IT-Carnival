@@ -5,6 +5,8 @@ import GamingRegistration from '@/server/events/gaming/model';
 import { validateGameRegistration } from '@/server/events/gaming/validation';
 import { normalizeGameRegistration } from '@/server/events/gaming/normalize';
 import { generateGameRegistrationId } from '@/server/events/gaming/ids';
+import { storeScreenshot, attachScreenshot, dropScreenshot } from '@/server/payments';
+import { MAX_SCREENSHOT_BYTES } from '@/lib/upload';
 import { listGameRegistrations } from '@/server/events/gaming/directory';
 import { checkWriteLimits, clientKey } from '@/server/rateLimit';
 import { verifyTurnstile } from '@/server/turnstile';
@@ -25,6 +27,9 @@ import { sendGamingConfirmationEmail } from '@/lib/email';
 /* A squad registration is ~1 KB. Anything far larger is not a real submission,
    so reject it before parsing rather than buffering it into memory. */
 const MAX_BODY_BYTES = 16 * 1024;
+/* Multipart carries an image, so it gets its own ceiling — the JSON path keeps
+   the tight one. */
+const MAX_MULTIPART_BYTES = MAX_SCREENSHOT_BYTES + 256 * 1024;
 
 /* Never hand a raw driver error to the client — connection failures quote the
    host, port and sometimes the credentials from MONGO_URI. Log it, return a
@@ -76,6 +81,22 @@ export async function GET(req, { params }) {
 }
 
 export async function POST(req, { params }) {
+  /* Declared outside the try so the catch can clean up: the screenshot is
+     stored before the registration row exists, and a failure after that point
+     would otherwise leave the image behind with nothing pointing at it. */
+  let screenshotFile = null;
+  let screenshotId = null;
+
+  /* Every rejection AFTER the image is stored has to drop it, or a spammer
+     retrying a duplicate transaction ID leaves one orphan per attempt.
+     purgeOrphans() would sweep them within the hour, but not leaking in the
+     first place is cheaper than tidying up. */
+  const rejected = async (response) => {
+    await dropScreenshot(screenshotId).catch(() => {});
+    screenshotId = null;
+    return response;
+  };
+
   try {
     /* Throttle before touching the database, so a flood costs us nothing. */
     const limit = checkWriteLimits(req, 'gaming:register');
@@ -109,22 +130,61 @@ export async function POST(req, { params }) {
       );
     }
 
+    /* Two ways in. Multipart when a tournament asks for a payment screenshot,
+       JSON otherwise. Both put the fields in the same nested object, so
+       everything downstream — validation, normalisation, the Turnstile check —
+       is identical either way. */
+    const isMultipart = (req.headers.get('content-type') || '').includes(
+      'multipart/form-data'
+    );
+
     const declared = Number(req.headers.get('content-length') || 0);
-    if (declared > MAX_BODY_BYTES) {
+    if (declared > (isMultipart ? MAX_MULTIPART_BYTES : MAX_BODY_BYTES)) {
       return NextResponse.json(
-        { success: false, message: 'Request body too large' },
+        {
+          success: false,
+          message: isMultipart
+            ? 'That screenshot is too large. The limit is 5 MB.'
+            : 'Request body too large',
+        },
         { status: 413 }
       );
     }
 
     let body;
-    try {
-      body = await req.json();
-    } catch {
-      return NextResponse.json(
-        { success: false, message: 'Invalid JSON body' },
-        { status: 400 }
-      );
+    if (isMultipart) {
+      let form;
+      try {
+        form = await req.formData();
+      } catch {
+        return NextResponse.json(
+          { success: false, message: 'Could not read the submitted form.' },
+          { status: 400 }
+        );
+      }
+
+      try {
+        body = JSON.parse(form.get('payload') || '{}');
+      } catch {
+        return NextResponse.json(
+          { success: false, message: 'Invalid form payload' },
+          { status: 400 }
+        );
+      }
+
+      const entry = form.get('screenshot');
+      /* An empty file field arrives as a string, not a File. */
+      screenshotFile =
+        entry && typeof entry.arrayBuffer === 'function' ? entry : null;
+    } else {
+      try {
+        body = await req.json();
+      } catch {
+        return NextResponse.json(
+          { success: false, message: 'Invalid JSON body' },
+          { status: 400 }
+        );
+      }
     }
 
     /* A JSON array passes typeof 'object' but has none of the fields below. */
@@ -144,16 +204,40 @@ export async function POST(req, { params }) {
       );
     }
 
+    await connectDB();
+
+    /* Stored before validation so the "transaction ID or screenshot" rule can
+       see whether a usable image actually arrived — and so an unreadable file
+       is reported against its own field rather than as a generic failure. */
+    if (screenshotFile) {
+      const stored = await storeScreenshot(screenshotFile, {
+        scope: `gaming:${game.slug}`,
+      });
+      if (!stored.ok) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: 'Validation failed',
+            errors: [{ field: 'payment.screenshot', message: stored.message }],
+          },
+          { status: 400 }
+        );
+      }
+      screenshotId = stored.id;
+    }
+
     // 1. Validation, against the game's own field config.
-    const validationErrors = validateGameRegistration(game, body);
+    const validationErrors = validateGameRegistration(game, body, {
+      hasScreenshot: Boolean(screenshotId),
+    });
     if (validationErrors.length > 0) {
+      await dropScreenshot(screenshotId);
+      screenshotId = null;
       return NextResponse.json(
         { success: false, message: 'Validation failed', errors: validationErrors },
         { status: 400 }
       );
     }
-
-    await connectDB();
 
     /* The wallet that was on screen when they paid, stamped onto the row so a
        payment stays reconcilable if the constant is ever changed and
@@ -162,6 +246,7 @@ export async function POST(req, { params }) {
     const doc = normalizeGameRegistration(game, body, {
       receiverNumber: GAMING_PAYMENT.number,
     });
+    doc.payment.screenshot = screenshotId;
 
     // 2. Duplicate checks — all scoped to this game. The same person may enter
     //    PUBG and Free Fire; they may not enter either one twice.
@@ -171,11 +256,11 @@ export async function POST(req, { params }) {
         teamName: doc.teamName,
       });
       if (existingTeam) {
-        return conflict(
+        return rejected(conflict(
           `A team called "${doc.teamName}" is already registered for ${game.name}`,
           'teamName',
           'Team name already taken — pick another'
-        );
+        ));
       }
     }
 
@@ -184,11 +269,11 @@ export async function POST(req, { params }) {
       'contact.email': doc.contact.email,
     });
     if (existingContact) {
-      return conflict(
+      return rejected(conflict(
         `This email is already registered for ${game.name}`,
         'players.0.email',
         `Already used for registration ${existingContact.registrationId}`
-      );
+      ));
     }
 
     const existingPlayer = await GamingRegistration.findOne({
@@ -199,11 +284,11 @@ export async function POST(req, { params }) {
       /* Naming the ID matters: on a squad form the captain needs to know which
          of their four players is the problem. */
       const clash = existingPlayer.gameIds.find((id) => doc.gameIds.includes(id));
-      return conflict(
+      return rejected(conflict(
         `A player is already registered for ${game.name}`,
         'players',
         `Game ID ${clash} is already entered on registration ${existingPlayer.registrationId}`
-      );
+      ));
     }
 
     /* A transaction ID is one real transfer, so this is checked across every
@@ -215,16 +300,20 @@ export async function POST(req, { params }) {
       'payment.transactionId': doc.payment.transactionId,
     });
     if (existingTxn) {
-      return conflict(
+      return rejected(conflict(
         'This transaction ID has already been used',
         'payment.transactionId',
         `Already recorded against registration ${existingTxn.registrationId}. Each payment covers one entry — send a separate payment and use its own transaction ID.`
-      );
+      ));
     }
 
     // 3. Generate ID & create.
     const registrationId = await generateGameRegistrationId(game);
     const created = await GamingRegistration.create({ ...doc, registrationId });
+
+    /* Claim the image now there is a row pointing at it. Anything still
+       unclaimed after an hour is an orphan — see purgeOrphans(). */
+    await attachScreenshot(screenshotId, created.registrationId);
 
     // 4. Confirmation email. Awaited so a serverless function is not frozen
     //    before the message leaves; a failure here must not undo the write.
@@ -252,6 +341,10 @@ export async function POST(req, { params }) {
       { status: 201 }
     );
   } catch (error) {
+    /* Best effort — the response matters more than the cleanup, and
+       purgeOrphans() sweeps anything this misses. */
+    await dropScreenshot(screenshotId).catch(() => {});
+
     if (error && error.code === 11000) {
       const field = Object.keys(error.keyValue || {})[0] || 'field';
       return conflict(`Duplicate value for ${field}`, field, `${field} must be unique`);

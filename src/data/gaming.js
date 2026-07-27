@@ -78,8 +78,13 @@ export const GAMING_PAYMENT = {
 export const playersRequired = (game, entryType) =>
   game?.registration?.kind === 'squad' && entryType === 'team' ? 4 : 1;
 
+/* The tournament block is the normal home for the fee, but a game can have a
+   published fee before it has a published date — Ludo does. Falling back to
+   the top-level value means the form and the stored `payment.amount` are right
+   in both cases, rather than silently recording ৳0. */
 export const feeFor = (game, entryType) =>
-  (game?.tournament?.feePerPlayer || 0) * playersRequired(game, entryType);
+  (game?.tournament?.feePerPlayer ?? game?.feePerPlayer ?? 0) *
+  playersRequired(game, entryType);
 
 /* ---------------------------------------------------------------------------
    Match format blocks.
@@ -199,6 +204,55 @@ const paymentSection = {
           message: 'Transaction ID is 6–25 letters and digits, no spaces',
         },
       },
+    },
+  ],
+};
+
+/* Ludo's payment section: the same two fields plus a screenshot.
+
+   A separate object rather than an edit to `paymentSection`, because that one
+   is shared by three tournaments already taking entries and changing what they
+   ask for mid-registration is not a UI decision to make quietly. */
+const paymentWithScreenshotSection = {
+  ...paymentSection,
+  subtitle:
+    'Send the entry fee first, then give us the transaction ID and a screenshot of the confirmation.',
+  fields: [
+    ...paymentSection.fields,
+    {
+      name: 'payment.screenshot',
+      label: 'Payment Screenshot',
+      type: 'file',
+      required: true,
+      full: true,
+      hint: 'The confirmation screen from your wallet app. JPG, PNG or WebP, up to 5 MB.',
+    },
+  ],
+};
+
+/* Ludo's confirmation wording is the owner's, and it differs from the one the
+   esports tournaments use. Written as its own section rather than changing
+   `agreementSection`, so nobody is retroactively held to a sentence they were
+   never shown. */
+const ludoAgreementSection = {
+  key: 'confirm',
+  title: 'Confirmation',
+  subtitle: 'Both are required.',
+  fields: [
+    {
+      name: 'agreeInfo',
+      label: 'I confirm that the information provided is correct.',
+      type: 'checkbox',
+      required: true,
+      full: true,
+    },
+    {
+      name: 'agreeRules',
+      label:
+        'I agree to follow all tournament rules and decisions made by the organizers.',
+      type: 'checkbox',
+      required: true,
+      full: true,
     },
   ],
 };
@@ -836,8 +890,96 @@ export const GAMES = [
     mode: 'Solo',
     tagline: 'Roll the dice and race home.',
     blurb: 'The ever-chaotic fan favourite.',
+
+    /* Still 'announced', and registrationOpen is false, because the date, the
+       rules and the prizes have not been given to us. The form and its whole
+       backend are built and reachable; flip `registrationOpen` to true and move
+       `stage` to 'open' and it is live.
+
+       No tournament block yet either — TournamentInfo would print an empty
+       date, and the fee is the only figure the owner has stated. `feePerPlayer`
+       lives here so feeFor() can compute it without a tournament block. */
     stage: 'announced',
     registrationOpen: false,
+    feePerPlayer: 100,
+
+    registration: {
+      /* One entrant per registration — the owner's field list has no team
+         fields, and the mode is Solo. */
+      kind: 'solo',
+      entryType: 'solo',
+      idPrefix: 'PSTU-LUDO-2026',
+      prep: [
+        'Your full name, WhatsApp number and email',
+        'Your academic ID and faculty',
+        'The ৳100 entry fee, and the transaction ID plus a screenshot of it',
+      ],
+      sections: [
+        {
+          key: 'player',
+          title: 'Personal Information',
+          subtitle:
+            'This is how your name appears on the bracket and on your certificate.',
+          /* Not contactFields() — that helper ends with a required in-game ID,
+             which a board game does not have. These are the owner's five
+             fields, in their order. */
+          fields: [
+            {
+              name: 'players.0.name',
+              label: 'Full Name',
+              placeholder: 'e.g. Rahim Uddin',
+              required: true,
+              autoComplete: 'name',
+              rules: {
+                maxLength: { value: 100, message: 'Name cannot exceed 100 characters' },
+              },
+            },
+            {
+              name: 'players.0.email',
+              label: 'Email Address',
+              type: 'email',
+              placeholder: 'you@example.com',
+              required: true,
+              autoComplete: 'email',
+              rules: EMAIL_RULES,
+            },
+            {
+              name: 'players.0.phone',
+              label: 'WhatsApp Number',
+              placeholder: '017XXXXXXXX or +88017XXXXXXXX',
+              hint: 'Match times are sent here — make sure WhatsApp is active on it.',
+              required: true,
+              autoComplete: 'tel',
+              rules: PHONE_RULES,
+            },
+            {
+              name: 'players.0.academicId',
+              label: 'Academic ID',
+              placeholder: 'Your student ID',
+              required: true,
+              unique: true,
+              rules: {
+                maxLength: {
+                  value: 40,
+                  message: 'Academic ID cannot exceed 40 characters',
+                },
+              },
+            },
+            {
+              name: 'players.0.faculty',
+              label: 'Faculty',
+              placeholder: 'e.g. Computer Science and Engineering',
+              required: true,
+              rules: {
+                maxLength: { value: 100, message: 'Faculty cannot exceed 100 characters' },
+              },
+            },
+          ],
+        },
+        paymentWithScreenshotSection,
+        ludoAgreementSection,
+      ],
+    },
   },
   {
     slug: 'rubiks-cube',
@@ -851,7 +993,7 @@ export const GAMES = [
     tagline: 'Race the clock to solve the cube.',
     blurb: 'Fastest fingers, sharpest mind.',
     stage: 'announced',
-    registrationOpen: false,
+    registrationOpen: true,
   },
 ];
 

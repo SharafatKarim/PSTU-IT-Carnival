@@ -65,7 +65,16 @@ export function eventRegisterMetadata(slug) {
   const event = getEventDetail(slug);
   if (!event) return missing('Registration');
 
+  /* An event can have a form before it has a date — the IT Quiz form is built
+     and waiting on a venue and a receiving number. Without this guard the
+     build crashes reading `teamSize` off undefined. */
   const t = event.tournament;
+  if (!t) {
+    return build(
+      `${event.name} Registration — ${SUFFIX}`,
+      `Register for ${event.fullName} at ${SUFFIX}. Date and venue to be announced.`
+    );
+  }
 
   return build(
     `${event.name} Pre-Registration — ${SUFFIX}`,
@@ -124,7 +133,15 @@ export function gameRegisterMetadata(slug) {
   const game = getGame(slug);
   if (!game) return missing('Registration');
 
+  /* Same guard as eventRegisterMetadata: Ludo has a form and a fee but no
+     published date, so there is no tournament block to read. */
   const t = game.tournament;
+  if (!t) {
+    return build(
+      `${game.name} Registration — ${SUFFIX}`,
+      `Register for the ${game.name} tournament at ${SUFFIX}. Date and format to be announced.`
+    );
+  }
 
   return build(
     `${game.name} Registration — ${SUFFIX}`,
