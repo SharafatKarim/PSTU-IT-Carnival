@@ -1025,22 +1025,88 @@ export const GAMES = [
     family: 'board',
     icon: 'dice',
     accent: 'magenta',
-    scope: 'Board',
+    scope: 'Board · 1v1',
     mode: 'Solo',
     tagline: 'Roll the dice and race home.',
     blurb: 'The ever-chaotic fan favourite.',
+    heroNote: 'Individual participation — no team required.',
 
-    /* Still 'announced', and registrationOpen is false, because the date, the
-       rules and the prizes have not been given to us. The form and its whole
-       backend are built and reachable; flip `registrationOpen` to true and move
-       `stage` to 'open' and it is live.
+    /* ---------------------------------------------------------------------
+       PROVISIONAL — five values here still need a yes from the committee.
 
-       No tournament block yet either — TournamentInfo would print an empty
-       date, and the fee is the only figure the owner has stated. `feePerPlayer`
-       lives here so feeFor() can compute it without a tournament block. */
-    stage: 'announced',
-    registrationOpen: false,
-    feePerPlayer: 100,
+       They gave us the ৳100 fee and the form fields, nothing else. Date, time,
+       venue, deadline and slots are set to match Chess, the other board event,
+       so the page is structurally right and the two boards agree with each
+       other. Change them here and every surface follows.
+       --------------------------------------------------------------------- */
+    tournament: {
+      date: '14 August 2026',
+      time: '2:00 PM (Reporting: 1:30 PM)',
+      venue: 'Agriculture Conference Room',
+      entryFee: '৳100 per player',
+      entryShort: '৳100',
+      entryScope: 'per player',
+      feePerPlayer: 100,
+      format: 'Single Elimination Knockout Round',
+      teamSize: 'Solo (1 player)',
+      teamSizeShort: 'Solo',
+      slots: '32 players',
+      platform: 'On-site Board Game',
+      deadline: '5 August 2026',
+    },
+
+    /* The datathon's pattern for a fee that is settled before the prize is. */
+    prizeNote: 'Prize will be announced very soon',
+    prizes: [
+      {
+        place: 'Champion',
+        rank: 1,
+        amount: 'To be announced',
+        perks: ['Winner certificate'],
+      },
+      {
+        place: '1st Runner-Up',
+        rank: 2,
+        amount: 'To be announced',
+        perks: ['Runner-up certificate'],
+      },
+    ],
+
+    rules: [
+      {
+        title: 'Format & Gameplay',
+        icon: 'dice',
+        items: [
+          'Single elimination knockout — lose a match and you are out.',
+          'Matches are played on the boards provided at the venue.',
+          'A player not at their board within five minutes of being called forfeits the match.',
+        ],
+      },
+      {
+        title: 'Fair Play',
+        icon: 'shield',
+        items: [
+          'Phones stay in your bag, on silent, for the duration of a match.',
+          'Pause and call the referee for any dispute — do not argue with your opponent.',
+          'The referee’s decision on a contested move is final.',
+        ],
+      },
+    ],
+
+    stage: 'open',
+    registrationOpen: true,
+
+    /* PROVISIONAL — the carnival's gaming-wing bKash, already published on
+       this site for PUBG, Free Fire and eFootball, so money sent there reaches
+       the committee. Chess uses its own coordinator's number instead; if Ludo
+       should have a separate one, this is the single line to change. */
+    payment: {
+      number: GAMING_PAYMENT.number,
+      accountType: GAMING_PAYMENT.accountType,
+      methods: PAYMENT_METHODS,
+      instructions:
+        'Send the entry fee to the number above, then enter the transaction ID and attach a screenshot of the confirmation.',
+    },
 
     registration: {
       /* One entrant per registration — the owner's field list has no team
@@ -1119,6 +1185,21 @@ export const GAMES = [
         ludoAgreementSection,
       ],
     },
+
+    faqs: [
+      {
+        q: 'Do I need to bring a board?',
+        a: 'No. Boards and dice are provided at the venue.',
+      },
+      {
+        q: 'Why do you ask for a screenshot as well as the transaction ID?',
+        a: 'It is checked against the wallet statement when your payment is verified, and deleted the moment that is done.',
+      },
+      {
+        q: 'Is there a limit on slots?',
+        a: 'Yes, 32 players on a first-come, first-served basis.',
+      },
+    ],
   },
   {
     slug: 'rubiks-cube',

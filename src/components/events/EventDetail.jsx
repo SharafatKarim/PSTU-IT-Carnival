@@ -386,6 +386,11 @@ const EventDetail = ({ slug }) => {
           </div>
         </Section>
 
+        {/* Skipped entirely when nobody has been named yet. This used to read
+            `event.coordinators.length` unguarded, which crashed the BUILD for
+            any event without the array — an empty contact section is bad, but
+            a page that cannot be generated is worse. */}
+        {event.coordinators?.length > 0 && (
         <Section
           id="contact"
           eyebrow="Coordinator Contact"
@@ -400,6 +405,7 @@ const EventDetail = ({ slug }) => {
             <CoordinatorContact game={event} />
           </div>
         </Section>
+        )}
       </main>
       <Footer />
     </div>

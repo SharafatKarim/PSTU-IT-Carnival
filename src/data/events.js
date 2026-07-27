@@ -467,24 +467,121 @@ export const EVENT_DETAILS = [
     stage: 'announced',
     registrationOpen: false,
 
-    /* Still 'announced', and registrationOpen is false, because the date, the
-       rules and — the blocker — the number the ৳50 is sent to have not been
-       given to us. The form and its whole backend are built; set
-       registrationOpen: true, fill in entry.receiverNumber and move `stage` to
-       'open', and it is live in one edit.
+    heroNote: 'Individual participation — no team required.',
 
-       Nothing here is invented. Every value is either the fee the owner stated
-       or the shape of the form they specified. */
+    /* ---------------------------------------------------------------------
+       PROVISIONAL — six values here still need a yes from the committee.
+
+       They gave us the ৳50 fee and the form fields, nothing else. Date, time,
+       venue, deadline, slots and the RECEIVING NUMBER are placed so the page
+       is structurally complete and consistent with the other events. The
+       number matters most: it is the carnival's gaming-wing bKash, already
+       published on this site, so money sent there reaches the committee — but
+       it is not IT Quiz's own desk. Replace it before announcing.
+       --------------------------------------------------------------------- */
+    tournament: {
+      date: '14 August 2026',
+      time: '10:00 AM (Reporting: 9:30 AM)',
+      venue: 'CSE–FBA Building, PSTU',
+      entryFee: '৳50 per participant',
+      entryShort: '৳50',
+      entryScope: 'per participant',
+      feePerPlayer: 50,
+      format: 'Written preliminary round, then a buzzer final',
+      teamSize: 'Solo (1 participant)',
+      teamSizeShort: 'Solo',
+      slots: '100 participants',
+      platform: 'On-site',
+      deadline: '5 August 2026',
+    },
+
+    /* The datathon's pattern for a fee that is settled before the prize is. */
+    prizeNote: 'Prize will be announced very soon',
+    prizes: [
+      {
+        place: 'Champion',
+        rank: 1,
+        amount: 'To be announced',
+        perks: ['Winner certificate'],
+      },
+      {
+        place: '1st Runner-Up',
+        rank: 2,
+        amount: 'To be announced',
+        perks: ['Runner-up certificate'],
+      },
+      {
+        place: '2nd Runner-Up',
+        rank: 3,
+        amount: 'To be announced',
+        perks: ['Runner-up certificate'],
+      },
+    ],
+
+    rules: [
+      {
+        title: 'Eligibility & Format',
+        icon: 'users',
+        items: [
+          'Open to undergraduate students of any university in the Barishal division.',
+          'Individual entry — there are no teams.',
+          'A written preliminary round narrows the field; the shortlisted participants go through to a buzzer final.',
+          'Questions cover computing, its history, and general technology trivia.',
+        ],
+      },
+      {
+        title: 'Conduct',
+        icon: 'shield',
+        items: [
+          'Phones and smartwatches go in your bag, switched off, before the round starts.',
+          'Any consultation with another participant during a round means disqualification.',
+          'The quizmaster’s ruling on an answer is final.',
+        ],
+      },
+      {
+        title: 'Registration & Payment',
+        icon: 'ticket',
+        items: [
+          'Your entry is confirmed once the committee has matched your ৳50 against the wallet statement.',
+          'Give either the transaction ID or a screenshot of the payment — one is enough.',
+          'Bring your student ID to the venue for the eligibility check.',
+        ],
+      },
+    ],
+
+    stage: 'open',
+    registrationOpen: true,
+
     entry: {
       /* One entrant, not a team — the owner's field list has no team fields. */
       kind: 'solo',
       fee: 50,
       feeLabel: '৳50 per participant',
-      /* PLACEHOLDER. The payment panel refuses to render while this is empty,
-         rather than showing a number nobody should send money to. */
-      receiverNumber: '',
+      /* PROVISIONAL — see the block above. This is the one value to change
+         before this page is announced anywhere. */
+      receiverNumber: '01601425302',
+      accountType: 'Personal',
       methods: ['bKash', 'Nagad'],
     },
+
+    faqs: [
+      {
+        q: 'Do I need a team?',
+        a: 'No. IT Quiz is an individual event — you register and compete on your own.',
+      },
+      {
+        q: 'I do not have an email address. Can I still register?',
+        a: 'Yes. The email field is optional. Give us a working WhatsApp number instead — that is where we will reach you.',
+      },
+      {
+        q: 'I paid but do not have the transaction ID. What do I do?',
+        a: 'Attach a screenshot of the payment confirmation instead. Either one is enough; you do not need both.',
+      },
+      {
+        q: 'When is my registration confirmed?',
+        a: 'You get a registration ID the moment you submit. It is confirmed once the committee has matched your ৳50 against the wallet statement.',
+      },
+    ],
 
     registration: {
       kind: 'form',
