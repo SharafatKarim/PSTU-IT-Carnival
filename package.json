@@ -10,8 +10,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "mongoose": "^9.8.0",
-    "next": "16.2.11",
+    "next": "16.2.12",
     "next-auth": "^4.24.15",
     "nodemailer": "^9.0.3",
     "react": "19.2.8",
@@ -21,7 +22,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "eslint": "^10.8.0",
-    "eslint-config-next": "16.2.11",
+    "eslint-config-next": "16.2.12",
     "tailwindcss": "^4"
   }
 }
