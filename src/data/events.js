@@ -479,9 +479,6 @@ export const EVENT_DETAILS = [
     tagline: 'Computing, history and trivia, on the buzzer.',
     blurb:
         'A fast-paced buzzer quiz across computing, its history and the trivia in between.',
-    stage: 'announced',
-    registrationOpen: false,
-
     heroNote: 'Individual participation — no team required.',
 
     /* ---------------------------------------------------------------------

@@ -59,7 +59,9 @@ export const EVENTS = [
     icon: 'rocket',
     blurb:
       'Build a working product against the clock in a national-level innovation sprint for student teams.',
-    status: 'live',
+    status: 'open',
+    cta: 'Pre-Register',
+    registerHref: ROUTES.eventRegister('hackathon'),
     slug: 'hackathon',
     kind: 'event',
     href: ROUTES.event('hackathon'),
@@ -100,9 +102,7 @@ export const EVENTS = [
     icon: 'shield',
     blurb:
       'A jeopardy-style security contest — web, forensics, reverse engineering and cryptography challenges solved against the clock.',
-    status: 'open',
-    cta: 'Pre-Register',
-    registerHref: ROUTES.eventRegister('hackathon'),
+    status: 'coming-soon',
     slug: 'ctf',
     kind: 'event',
     href: ROUTES.event('ctf'),
