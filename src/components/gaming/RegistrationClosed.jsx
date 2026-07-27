@@ -10,9 +10,9 @@ import { prepList } from './prep';
    Rendered on both the detail page and the registration route, so the
    coordinator link resolves against the detail page rather than assuming a
    #contact section exists on the current page. */
-const RegistrationClosed = ({ game }) => {
+const RegistrationClosed = ({ game, coordinators }) => {
   const a = accentOf(game.accent);
-  const lead = game.coordinators?.[0];
+  const lead = (coordinators?.length > 0 ? coordinators : game.coordinators)?.[0];
   const prep = prepList(game);
 
   return (

@@ -104,15 +104,29 @@ const CoordinatorCard = ({ coordinator, accent }) => {
   );
 };
 
-const CoordinatorContact = ({ game }) => {
+/* `coordinators` is passed in by the gaming pages, which read it from the
+   database so a number can be corrected without a redeploy. The tech event
+   pages still carry theirs in src/data/events.js, hence the fallback. */
+const CoordinatorContact = ({ game, coordinators }) => {
   const accent = accentOf(game.accent);
-  const coordinators = game.coordinators || [];
+  const people = coordinators?.length > 0 ? coordinators : game.coordinators || [];
+
+  if (people.length === 0) {
+    return (
+      <div className="rounded-2xl border border-ink-600 bg-ink-800/60 p-6 text-center shadow-card">
+        <p className="text-sm text-mist-300">
+          Coordinator contact details for this event are being updated. Reach the
+          CSE Club desk in the meantime.
+        </p>
+      </div>
+    );
+  }
 
   /* Cards stack rather than sitting side by side: a full-width card keeps the
      contact tiles in one row, and email addresses readable instead of clipped. */
   return (
     <div className="grid gap-5">
-      {coordinators.map((coordinator) => (
+      {people.map((coordinator) => (
         <CoordinatorCard
           key={coordinator.email + coordinator.phone}
           coordinator={coordinator}

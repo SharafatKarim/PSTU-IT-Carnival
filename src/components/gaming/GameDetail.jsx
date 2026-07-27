@@ -7,6 +7,7 @@ import Faq from '@/components/landing/Faq';
 import HeadlineStrip from '@/components/ui/HeadlineStrip';
 import TournamentInfo from './TournamentInfo';
 import RulesSection from './RulesSection';
+import FormatBoard from './FormatBoard';
 import CoordinatorContact from './CoordinatorContact';
 import RegistrationClosed from './RegistrationClosed';
 import { prepList } from './prep';
@@ -214,7 +215,7 @@ const RegisterCta = ({ game }) => {
               <p className="mt-2 text-sm leading-relaxed text-white/85">
                 {game.registration.kind === 'solo'
                   ? 'The form is short — your player details and a couple of confirmations.'
-                  : 'The form takes a few minutes — squad details, then each player in turn.'}
+                  : 'Short either way — say whether you have a full squad or are entering alone, then fill in what that needs.'}
               </p>
               <Link
                 href={ROUTES.gameRegister(game.slug)}
@@ -238,7 +239,10 @@ const RegisterCta = ({ game }) => {
   );
 };
 
-const GameDetail = ({ slug }) => {
+/* `coordinators` comes from the database via the route's server component —
+   see src/server/coordinators/. Falls back to whatever the data file carries
+   if that lookup returns nothing. */
+const GameDetail = ({ slug, coordinators }) => {
   const game = getGame(slug);
   if (!game) return null;
 
@@ -271,6 +275,9 @@ const GameDetail = ({ slug }) => {
           subtitle="Read these carefully — entering means your whole squad accepts them. Breaking a rule can cost points or the tournament."
           className="bg-ink-950/40"
         >
+          {/* Map rotation and the points table, where the game has them —
+              they read as a wall of numbers inside the rule cards. */}
+          <FormatBoard game={game} />
           <RulesSection game={game} />
         </Section>
 
@@ -291,7 +298,7 @@ const GameDetail = ({ slug }) => {
           {registrationOpen ? (
             <RegisterCta game={game} />
           ) : (
-            <RegistrationClosed game={game} />
+            <RegistrationClosed game={game} coordinators={coordinators} />
           )}
         </Section>
 
@@ -314,7 +321,7 @@ const GameDetail = ({ slug }) => {
           subtitle="Reach the people running this tournament directly — they answer fastest on WhatsApp."
         >
           <div className="mx-auto max-w-4xl">
-            <CoordinatorContact game={game} />
+            <CoordinatorContact game={game} coordinators={coordinators} />
           </div>
         </Section>
       </main>

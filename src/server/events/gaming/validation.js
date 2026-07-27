@@ -6,19 +6,33 @@
 // than restating the field list. Add a field to the data and both sides pick
 // it up — they cannot drift.
 //
+// Conditional sections are honoured through the same `when(values)` predicate
+// the form uses (see visibleSections in src/data/gaming.js), so an individual
+// entrant is never rejected for having no squad roster — and, just as
+// importantly, a squad entry cannot skip one by lying about its entry type,
+// because the predicate is re-evaluated here against what was actually sent.
+//
 // Unlike src/server/events/iupc/validation.js this is generic: it is driven by
 // the game config passed in, not by one tournament's hard-coded shape.
 // ---------------------------------------------------------------------------
 
-/* "players.2.uid" -> payload.players[2].uid */
+import { visibleSections } from '@/data/gaming';
+
+/* "players.2.gameId" -> payload.players[2].gameId */
 const readPath = (obj, path) =>
   path.split('.').reduce((acc, key) => (acc == null ? acc : acc[key]), obj);
 
 const isBlank = (value) =>
   value === undefined || value === null || String(value).trim().length === 0;
 
+/* A choice field's options are {value,label}; a select's are plain strings. */
+const allowedValues = (field) =>
+  (field.options || []).map((option) =>
+    typeof option === 'string' ? option : option.value
+  );
+
 /* Fields marked `unique` must not repeat across the rows of their group —
-   the same rule the form enforces client-side for IGNs and player UIDs. */
+   the same rule the form enforces client-side for player game IDs. */
 const checkUnique = (field, body, errors) => {
   const match = /^(.+)\.(\d+)\.(.+)$/.exec(field.name);
   if (!match) return;
@@ -43,8 +57,7 @@ const checkUnique = (field, body, errors) => {
 };
 
 export function validateGameRegistration(game, body) {
-  const sections = game?.registration?.sections;
-  if (!Array.isArray(sections)) {
+  if (!Array.isArray(game?.registration?.sections)) {
     return [{ field: 'game', message: 'This game does not accept registrations' }];
   }
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
@@ -53,8 +66,14 @@ export function validateGameRegistration(game, body) {
 
   const errors = [];
 
-  sections
-    .flatMap((section) => section.fields)
+  /* Which half of the form applies depends on the answers themselves, so the
+     entry type is resolved before anything else is checked. */
+  const values = {
+    entryType: game.registration.entryType || body.entryType,
+  };
+
+  visibleSections(game, values)
+    .flatMap((section) => section.fields || [])
     .forEach((field) => {
       const value = readPath(body, field.name);
 
@@ -85,16 +104,22 @@ export function validateGameRegistration(game, body) {
         errors.push({ field: field.name, message: max.message });
       }
 
+      const min = field.rules?.minLength;
+      if (min && trimmed.length < min.value) {
+        errors.push({ field: field.name, message: min.message });
+      }
+
       const pattern = field.rules?.pattern;
       if (pattern && !pattern.value.test(trimmed)) {
         errors.push({ field: field.name, message: pattern.message });
       }
 
-      if (field.type === 'select' && Array.isArray(field.options)) {
-        if (!field.options.includes(trimmed)) {
+      if (field.type === 'select' || field.type === 'choice') {
+        const allowed = allowedValues(field);
+        if (allowed.length > 0 && !allowed.includes(trimmed)) {
           errors.push({
             field: field.name,
-            message: `${field.label} must be one of: ${field.options.join(', ')}`,
+            message: `${field.label} must be one of: ${allowed.join(', ')}`,
           });
         }
       }

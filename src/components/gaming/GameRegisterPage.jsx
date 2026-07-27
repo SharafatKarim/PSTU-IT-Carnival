@@ -14,7 +14,7 @@ import { accentOf } from '@/lib/accents';
    off to this route rather than embedding the form. Entries that are not open
    yet still render — as the "what to prepare" panel — so a shared link never
    dead-ends. */
-const GameRegisterPage = ({ slug }) => {
+const GameRegisterPage = ({ slug, coordinators }) => {
   const game = getGame(slug);
   if (!game) return null;
 
@@ -56,14 +56,18 @@ const GameRegisterPage = ({ slug }) => {
             {open
               ? game.registration.kind === 'solo'
                 ? 'Fill in your player details below. Everything marked with * is required.'
-                : 'Fill in your squad details below. Everything marked with * is required — the substitute row is optional.'
+                : 'Tell us whether you have a full squad or are entering alone, then fill in the details below. Everything marked with * is required.'
               : 'Entries are not open yet. Here is what to get ready and who to ask.'}
           </p>
         </div>
       </header>
 
       <main className="mx-auto max-w-4xl px-4 py-12 sm:py-16">
-        {open ? <GameRegistrationForm game={game} /> : <RegistrationClosed game={game} />}
+        {open ? (
+          <GameRegistrationForm game={game} />
+        ) : (
+          <RegistrationClosed game={game} coordinators={coordinators} />
+        )}
       </main>
 
       <Footer />

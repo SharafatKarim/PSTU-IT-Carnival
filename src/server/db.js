@@ -28,6 +28,12 @@ async function connectDB() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
+      /* The driver's default is 30 seconds, which is far longer than any
+         caller here is willing to wait: an API route behind a proxy has
+         usually timed out by then, and `next build` prerenders pages that read
+         the database, so an unreachable server would add half a minute per
+         page. Fail fast and let the caller fall back. */
+      serverSelectionTimeoutMS: 8000,
     };
 
     cached.promise = mongoose.connect(MONGO_URI, opts).then((mongooseInstance) => {

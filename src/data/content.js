@@ -25,9 +25,14 @@ export const EVENT = {
   contactEmail: '',
 };
 
-// `status: 'open'` is the one featured event; 'live' events get a linked card;
-// everything else renders as a disabled 'coming-soon' card. Any event that is
-// not 'coming-soon' must carry an `href`.
+// `status: 'open'` means entries are being taken right now; 'live' events have
+// their rules published but no form yet and get a plain linked card; everything
+// else renders as a disabled 'coming-soon' card. Any event that is not
+// 'coming-soon' must carry an `href`.
+//
+// These must agree with `stage` in events.js / gaming.js — open ↔ 'open',
+// live ↔ 'published', coming-soon ↔ 'announced'. The drift guard at the bottom
+// of src/lib/routes.js warns in development when they do not.
 export const EVENTS = [
   {
     id: 'iupc',
@@ -118,7 +123,7 @@ export const EVENTS = [
     category: 'gaming',
     icon: 'gamepad',
     blurb: 'Squad up for the battle royale. Last team standing takes the crown.',
-    status: 'live',
+    status: 'open',
     slug: 'pubg-mobile',
     kind: 'game',
     href: ROUTES.game('pubg-mobile'),
@@ -130,7 +135,7 @@ export const EVENTS = [
     category: 'gaming',
     icon: 'flame',
     blurb: 'Fast, furious mobile battle royale. Drop in, gear up, survive.',
-    status: 'live',
+    status: 'open',
     slug: 'free-fire',
     kind: 'game',
     href: ROUTES.game('free-fire'),
@@ -166,7 +171,7 @@ export const EVENTS = [
     category: 'gaming',
     icon: 'ball',
     blurb: 'Virtual football glory — skill, tactics and last-minute winners.',
-    status: 'live',
+    status: 'open',
     slug: 'efootball',
     kind: 'game',
     href: ROUTES.game('efootball'),
@@ -296,7 +301,7 @@ export const TIMELINE = [
 export const FAQS = [
   {
     q: 'Which events are open for registration right now?',
-    a: 'Only IUPC (South Zone), and only for pre-registration. The datathon and the three esports tournaments have their formats, rules and prizes published, but entries have not opened yet. The rest of the line-up follows later.',
+    a: 'IUPC (South Zone) for pre-registration, and all three esports tournaments — eFootball, PUBG Mobile and Free Fire — which close on 5 August. The datathon has its format, rules and prizes published but entries have not opened yet, and the rest of the line-up follows later.',
   },
   {
     q: 'How many members can an IUPC team have?',
@@ -308,7 +313,7 @@ export const FAQS = [
   },
   {
     q: 'Is there a registration or participation fee?',
-    a: 'IUPC pre-registration is free. The ৳3,000 per-team entry fee applies at final registration, once confirmed slots are published university-wise. Gaming tournaments have their own entry fees, listed on each game page. No payment is ever collected through this website.',
+    a: 'IUPC pre-registration is free. The ৳3,000 per-team entry fee applies at final registration, once confirmed slots are published university-wise. The esports tournaments charge ৳15 per player for PUBG Mobile and Free Fire, and ৳100 per player for eFootball, all collected at the registration desk on match day. No payment is ever collected through this website.',
   },
   {
     q: 'How will I know my registration went through?',

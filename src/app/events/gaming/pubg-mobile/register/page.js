@@ -1,14 +1,20 @@
 import { notFound } from 'next/navigation';
 import GameRegisterPage from '@/components/gaming/GameRegisterPage';
 import { getGame } from '@/data/gaming';
+import { gameCoordinators } from '@/server/coordinators';
 import { gameRegisterMetadata } from '@/lib/metadata';
 
 const SLUG = 'pubg-mobile';
 
 export const metadata = gameRegisterMetadata(SLUG);
 
-export default function PubgMobileRegisterPage() {
+export const revalidate = 60;
+
+export default async function PubgMobileRegisterPage() {
   if (!getGame(SLUG)) notFound();
 
-  return <GameRegisterPage slug={SLUG} />;
+  /* Only rendered if entries are shut — the closed notice names a coordinator
+     to chase. Fetched either way so the two routes cannot show different
+     contacts. */
+  return <GameRegisterPage slug={SLUG} coordinators={await gameCoordinators(SLUG)} />;
 }

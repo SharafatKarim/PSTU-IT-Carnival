@@ -1,14 +1,17 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import FormField from '@/components/FormField';
 import SelectField from '@/components/SelectField';
 import SectionCard from '@/components/SectionCard';
+import TurnstileWidget, { isTurnstileConfigured } from '@/components/TurnstileWidget';
 import CheckboxField from './CheckboxField';
+import ChoiceField from './ChoiceField';
 import { CheckIcon, AlertIcon, TicketIcon } from '@/components/landing/Icons';
-import { submitGameRegistration, DEMO_MODE } from '@/services/events/gaming';
+import { submitGameRegistration } from '@/services/events/gaming';
+import { visibleSections } from '@/data/gaming';
 import { ROUTES } from '@/lib/routes';
 import { accentOf } from '@/lib/accents';
 
@@ -34,17 +37,29 @@ const setPath = (target, path, value) => {
   });
 };
 
+const emptyValue = (field) => {
+  if (field.defaultValue !== undefined) return field.defaultValue;
+  return field.type === 'checkbox' ? false : '';
+};
+
+/* Defaults for EVERY section, including the ones currently hidden — a section
+   that appears later still needs its fields seeded. */
 const buildDefaults = (sections) => {
   const defaults = {};
   sections.forEach((section) =>
-    section.fields.forEach((field) =>
-      setPath(defaults, field.name, field.type === 'checkbox' ? false : '')
+    (section.fields || []).forEach((field) =>
+      setPath(defaults, field.name, emptyValue(field))
     )
   );
   return defaults;
 };
 
-/* "players.2.uid" -> must not duplicate players[*].uid on any other row. */
+/* Titles may be a string or a function of the current answers, so one section
+   can serve both entry types. */
+const resolve = (value, values) =>
+  typeof value === 'function' ? value(values) : value;
+
+/* "players.2.gameId" -> must not duplicate players[*].gameId on any other row. */
 const uniqueValidator = (field, getValues) => {
   const match = /^(.+)\.(\d+)\.(.+)$/.exec(field.name);
   if (!match) return undefined;
@@ -76,10 +91,12 @@ const rulesFor = (field, getValues) => {
     rules.required =
       field.type === 'checkbox'
         ? 'You must accept this to continue'
-        : `${field.label} is required`;
+        : field.type === 'choice'
+          ? 'Please choose one'
+          : `${field.label} is required`;
   } else if (rules.pattern) {
     // An optional field left blank must stay valid, so its pattern only runs
-    // once something has actually been typed (the substitute row relies on this).
+    // once something has actually been typed.
     const { value: regex, message } = rules.pattern;
     delete rules.pattern;
     validators.optionalPattern = (value) => !value || regex.test(value) || message;
@@ -94,42 +111,91 @@ const rulesFor = (field, getValues) => {
   return rules;
 };
 
+/* --- pieces --------------------------------------------------------------- */
+
+/* A section may carry a notice instead of fields (the "we will form a random
+   squad for you" warning), or alongside them. */
+const Notice = ({ notice, accent }) => (
+  <div
+    className={`flex items-start gap-3 rounded-xl border p-4 ${accent.borderSoft} ${accent.bgFaint}`}
+  >
+    <AlertIcon className={`mt-0.5 h-5 w-5 shrink-0 ${accent.text}`} />
+    <div>
+      {notice.title && (
+        <p className="text-sm font-bold text-white">{notice.title}</p>
+      )}
+      <p className="mt-1 text-sm leading-relaxed text-mist-300">{notice.text}</p>
+    </div>
+  </div>
+);
+
 /* --- form ----------------------------------------------------------------- */
 
 const GameRegistrationForm = ({ game }) => {
   const a = accentOf(game.accent);
-  const { sections } = game.registration;
+  const allSections = game.registration.sections;
 
   const {
     register,
     handleSubmit,
     getValues,
+    control,
     reset,
     formState: { errors },
   } = useForm({
-    defaultValues: useMemo(() => buildDefaults(sections), [sections]),
+    defaultValues: useMemo(() => buildDefaults(allSections), [allSections]),
     mode: 'onTouched',
+    /* Fields belonging to a hidden section unregister when it unmounts, so an
+       individual entrant is neither validated against the squad roster nor
+       submits empty rows for it. Forms with no conditional sections never
+       unmount anything, so nothing changes for them. */
+    shouldUnregister: true,
   });
 
+  /* The only answer that changes the shape of the form. Watching this one
+     field rather than the whole form keeps typing from re-rendering every
+     section on every keystroke. */
+  const entryType = useWatch({ control, name: 'entryType' });
+  const values = useMemo(() => ({ entryType }), [entryType]);
+  const sections = useMemo(
+    () => visibleSections(game, values),
+    [game, values]
+  );
+
+  /* Rules are built from every section, not just the visible ones: a section
+     that appears mid-fill must already have its rules ready. */
   const registerField = useMemo(() => {
     const ruleMap = {};
-    sections.forEach((section) =>
-      section.fields.forEach((field) => {
+    allSections.forEach((section) =>
+      (section.fields || []).forEach((field) => {
         ruleMap[field.name] = rulesFor(field, getValues);
       })
     );
     return (name) => register(name, ruleMap[name]);
-  }, [sections, register, getValues]);
+  }, [allSections, register, getValues]);
 
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [reference, setReference] = useState(null);
+  const [token, setToken] = useState(null);
 
-  const onSubmit = async (values) => {
+  const onToken = useCallback((value) => setToken(value), []);
+
+  const onSubmit = async (formValues) => {
+    if (isTurnstileConfigured && !token) {
+      setSubmitError('Please complete the verification challenge before submitting.');
+      return;
+    }
+
     setLoading(true);
     setSubmitError(null);
     try {
-      const res = await submitGameRegistration(game, values);
+      const res = await submitGameRegistration(game, {
+        ...formValues,
+        /* eFootball never asks — its entry type is fixed in the data. */
+        entryType: game.registration.entryType || formValues.entryType,
+        turnstileToken: token,
+      });
       setReference(res.referenceId);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
@@ -142,7 +208,8 @@ const GameRegistrationForm = ({ game }) => {
   const startOver = () => {
     setReference(null);
     setSubmitError(null);
-    reset(buildDefaults(sections));
+    setToken(null);
+    reset(buildDefaults(allSections));
   };
 
   if (reference) {
@@ -154,25 +221,15 @@ const GameRegistrationForm = ({ game }) => {
         <h3 className="text-xl font-bold text-emerald-300">
           {game.name} registration submitted!
         </h3>
-        <p className="mt-2 text-sm text-emerald-200/80">Your reference number is</p>
+        <p className="mt-2 text-sm text-emerald-200/80">Your registration ID is</p>
         <p className="mt-3 inline-block rounded-md border border-white/10 bg-ink-900 px-4 py-2 font-mono text-lg font-bold text-white shadow">
           {reference}
         </p>
         <p className="mx-auto mt-4 max-w-md text-sm text-emerald-200/80">
-          Save this number. Bring it, your student ID and the entry fee
-          ({game.tournament.entryFee}) to the registration desk on match day.
+          A confirmation has been emailed to you. Save this ID and bring it,
+          your student ID and the entry fee ({game.tournament.entryFee}) to the
+          registration desk on match day.
         </p>
-
-        {/* Remove this block once a real backend is storing registrations. */}
-        {DEMO_MODE && (
-          <p className="mx-auto mt-5 flex max-w-md items-start gap-2 rounded-lg border border-gold-400/30 bg-gold-400/10 p-3 text-left text-xs text-gold-200">
-            <AlertIcon className="mt-0.5 h-4 w-4 shrink-0" />
-            <span>
-              Demo mode — this entry is not stored anywhere yet. Connect the
-              registration API before opening the form to real participants.
-            </span>
-          </p>
-        )}
 
         <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
           <button
@@ -200,7 +257,8 @@ const GameRegistrationForm = ({ game }) => {
       >
         <TicketIcon className={`mt-0.5 h-4 w-4 shrink-0 ${a.text}`} />
         <span>
-          Entry fee is <strong className="font-semibold text-white">{game.tournament.entryFee}</strong>,
+          Entry fee is{' '}
+          <strong className="font-semibold text-white">{game.tournament.entryFee}</strong>,
           collected on-site at the registration desk — no payment is taken through
           this website. Registration closes on{' '}
           <strong className="font-semibold text-white">{game.tournament.deadline}</strong>.
@@ -213,70 +271,115 @@ const GameRegistrationForm = ({ game }) => {
         </div>
       )}
 
-      {sections.map((section) => (
-        <SectionCard
-          key={section.key}
-          title={section.title}
-          subtitle={section.subtitle}
-        >
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {section.fields.map((field) => {
-              const error = at(errors, field.name);
-              const span = field.full || field.type === 'checkbox' ? 'md:col-span-2' : '';
+      {sections.map((section) => {
+        const fields = section.fields || [];
 
-              if (field.type === 'checkbox') {
+        /* Notice-only sections are a standalone banner — wrapping a single
+           warning in a titled card would give it more furniture than
+           content. */
+        if (fields.length === 0) {
+          return section.notice ? (
+            <Notice key={section.key} notice={section.notice} accent={a} />
+          ) : null;
+        }
+
+        return (
+          <SectionCard
+            key={section.key}
+            title={resolve(section.title, values)}
+            subtitle={resolve(section.subtitle, values)}
+          >
+            {section.notice && (
+              <div className="mb-5">
+                <Notice notice={section.notice} accent={a} />
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {fields.map((field) => {
+                const error = at(errors, field.name);
+                const span =
+                  field.full || field.type === 'checkbox' || field.type === 'choice'
+                    ? 'md:col-span-2'
+                    : '';
+
+                if (field.type === 'checkbox') {
+                  return (
+                    <div key={field.name} className={span}>
+                      <CheckboxField
+                        label={field.label}
+                        name={field.name}
+                        register={registerField}
+                        error={error}
+                        required={field.required}
+                      />
+                    </div>
+                  );
+                }
+
+                if (field.type === 'choice') {
+                  return (
+                    <div key={field.name} className={span}>
+                      <ChoiceField
+                        label={field.label}
+                        name={field.name}
+                        options={field.options}
+                        register={registerField}
+                        error={error}
+                        required={field.required}
+                        value={entryType}
+                        accent={a}
+                      />
+                    </div>
+                  );
+                }
+
+                if (field.type === 'select') {
+                  return (
+                    <div key={field.name} className={span}>
+                      <SelectField
+                        label={field.label}
+                        name={field.name}
+                        options={field.options}
+                        register={registerField}
+                        error={error}
+                        required={field.required}
+                        placeholder={field.placeholder}
+                      />
+                    </div>
+                  );
+                }
+
                 return (
                   <div key={field.name} className={span}>
-                    <CheckboxField
+                    <FormField
                       label={field.label}
                       name={field.name}
-                      register={registerField}
-                      error={error}
-                      required={field.required}
-                    />
-                  </div>
-                );
-              }
-
-              if (field.type === 'select') {
-                return (
-                  <div key={field.name} className={span}>
-                    <SelectField
-                      label={field.label}
-                      name={field.name}
-                      options={field.options}
-                      register={registerField}
-                      error={error}
-                      required={field.required}
+                      type={field.type || 'text'}
                       placeholder={field.placeholder}
+                      register={registerField}
+                      error={error}
+                      required={field.required}
+                      autoComplete={field.autoComplete}
+                      hint={field.hint}
                     />
                   </div>
                 );
-              }
+              })}
+            </div>
+          </SectionCard>
+        );
+      })}
 
-              return (
-                <div key={field.name} className={span}>
-                  <FormField
-                    label={field.label}
-                    name={field.name}
-                    type={field.type || 'text'}
-                    placeholder={field.placeholder}
-                    register={registerField}
-                    error={error}
-                    required={field.required}
-                    autoComplete={field.autoComplete}
-                    hint={field.hint}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </SectionCard>
-      ))}
+      {isTurnstileConfigured && (
+        <div className="rounded-2xl border border-ink-600 bg-ink-900/40 p-6 shadow-card sm:p-8">
+          <TurnstileWidget onToken={onToken} />
+        </div>
+      )}
 
       <div className="flex flex-col-reverse items-center gap-3 sm:flex-row sm:justify-between">
         <Link
-          href={ROUTES.gaming}
+          href={ROUTES.game(game.slug)}
           className="rounded-lg border border-ink-500 px-5 py-2.5 text-sm font-semibold text-mist-200 transition hover:bg-white/5"
         >
           Cancel
