@@ -21,31 +21,31 @@
 // ---------------------------------------------------------------------------
 
 // patterns.js imports nothing, so this stays clear of the routes.js cycle.
-import { BD_PHONE_RE, EMAIL_RE, PHONE_HINT } from '@/lib/patterns';
+import { BD_PHONE_RE, EMAIL_RE, PHONE_HINT } from "@/lib/patterns";
 
 const PHONE_RULES = {
   pattern: { value: BD_PHONE_RE, message: PHONE_HINT },
 };
 
 const EMAIL_RULES = {
-  pattern: { value: EMAIL_RE, message: 'Please enter a valid email address' },
+  pattern: { value: EMAIL_RE, message: "Please enter a valid email address" },
 };
 
 /* Both battle royales run on the same day, in the same room. */
-const GAMING_DAY = '13 August 2026';
-const GAMING_VENUE = 'Seminar Room, TSC (3rd Floor), PSTU';
-const GAMING_DEADLINE = '5 August 2026';
-const TIME_TBA = 'To be announced';
+const GAMING_DAY = "13 August 2026";
+const GAMING_VENUE = "Seminar Room, TSC (3rd Floor), PSTU";
+const GAMING_DEADLINE = "5 August 2026";
+const TIME_TBA = "To be announced";
 
 /* Used only when the coordinator lookup in src/server/coordinators/ comes back
    empty — a database hiccup must not leave a live registration page with no
    way to reach anybody. The stored rows are authoritative; edit those. */
 export const GAMING_DESK = [
   {
-    name: 'Gaming Fest Coordinator',
-    role: 'Gaming Fest · CSE Club, PSTU',
-    phone: '01670244069',
-    email: 'ug2102067@cse.pstu.ac.bd',
+    name: "Gaming Fest Coordinator",
+    role: "Gaming Fest · CSE Club, PSTU",
+    phone: "01670244069",
+    email: "ug2102067@cse.pstu.ac.bd",
   },
 ];
 
@@ -63,20 +63,20 @@ export const GAMING_DESK = [
    against, so the two can never disagree.
    --------------------------------------------------------------------------- */
 
-export const PAYMENT_METHODS = ['bKash', 'Nagad'];
+export const PAYMENT_METHODS = ["bKash", "Nagad"];
 
 export const GAMING_PAYMENT = {
-  number: '01601425302',
-  accountType: 'Personal',
+  number: "01601425302",
+  accountType: "Personal",
   instructions:
-    'Use “Send Money” (not Payment) from either wallet above, then enter the transaction ID it gives you.',
+    "Use “Send Money” (not Payment) from either wallet above, then enter the transaction ID it gives you.",
 };
 
 /* A squad pays for four; anyone else pays for one. Shared by the form (to show
    the amount due) and the server (to record what was owed) so the two figures
    are always the same number. */
 export const playersRequired = (game, entryType) =>
-  game?.registration?.kind === 'squad' && entryType === 'team' ? 4 : 1;
+  game?.registration?.kind === "squad" && entryType === "team" ? 4 : 1;
 
 /* The tournament block is the normal home for the fee, but a game can have a
    published fee before it has a published date — Ludo does. Falling back to
@@ -96,16 +96,16 @@ export const feeFor = (game, entryType) =>
 /* Both battle royales score identically. `firstLabel` is the only difference —
    PUBG calls it a chicken dinner, Free Fire calls it a Booyah. */
 const brPoints = (firstLabel) => ({
-  note: 'Placement points and kill points are added together, then summed across every match played.',
+  note: "Placement points and kill points are added together, then summed across every match played.",
   perKill: 1,
   rows: [
     { place: `${firstLabel} · 1st`, points: 10 },
-    { place: '2nd', points: 6 },
-    { place: '3rd', points: 5 },
-    { place: '4th', points: 4 },
-    { place: '5th', points: 3 },
-    { place: '6th', points: 2 },
-    { place: '7th and below', points: 1 },
+    { place: "2nd", points: 6 },
+    { place: "3rd", points: 5 },
+    { place: "4th", points: 4 },
+    { place: "5th", points: 3 },
+    { place: "6th", points: 2 },
+    { place: "7th and below", points: 1 },
   ],
 });
 
@@ -125,11 +125,11 @@ const brPoints = (firstLabel) => ({
    the database for solo entries, full squads and randomly-formed squads alike.
    --------------------------------------------------------------------------- */
 
-const isTeamEntry = (values) => values?.entryType === 'team';
-const isIndividualEntry = (values) => values?.entryType === 'individual';
+const isTeamEntry = (values) => values?.entryType === "team";
+const isIndividualEntry = (values) => values?.entryType === "individual";
 
 const UID_RULES = {
-  pattern: { value: /^\d{6,15}$/, message: 'Game ID must be 6–15 digits' },
+  pattern: { value: /^\d{6,15}$/, message: "Game ID must be 6–15 digits" },
 };
 
 /* Name, WhatsApp, email and game ID for players[0] — the leader of a squad,
@@ -137,33 +137,35 @@ const UID_RULES = {
    entry type does not throw away what has already been typed. */
 const contactFields = ({ idLabel, idPlaceholder, idRules }) => [
   {
-    name: 'players.0.name',
-    label: 'Full Name',
-    placeholder: 'e.g. Rahim Uddin',
+    name: "players.0.name",
+    label: "Full Name",
+    placeholder: "e.g. Rahim Uddin",
     required: true,
-    autoComplete: 'name',
-    rules: { maxLength: { value: 100, message: 'Name cannot exceed 100 characters' } },
+    autoComplete: "name",
+    rules: {
+      maxLength: { value: 100, message: "Name cannot exceed 100 characters" },
+    },
   },
   {
-    name: 'players.0.phone',
-    label: 'WhatsApp Number',
-    placeholder: '017XXXXXXXX or +88017XXXXXXXX',
-    hint: 'Room IDs and match times are sent here — make sure WhatsApp is active on it.',
+    name: "players.0.phone",
+    label: "WhatsApp Number",
+    placeholder: "017XXXXXXXX or +88017XXXXXXXX",
+    hint: "Room IDs and match times are sent here — make sure WhatsApp is active on it.",
     required: true,
-    autoComplete: 'tel',
+    autoComplete: "tel",
     rules: PHONE_RULES,
   },
   {
-    name: 'players.0.email',
-    label: 'Email',
-    type: 'email',
-    placeholder: 'you@example.com',
+    name: "players.0.email",
+    label: "Email",
+    type: "email",
+    placeholder: "you@example.com",
     required: true,
-    autoComplete: 'email',
+    autoComplete: "email",
     rules: EMAIL_RULES,
   },
   {
-    name: 'players.0.gameId',
+    name: "players.0.gameId",
     label: idLabel,
     placeholder: idPlaceholder,
     required: true,
@@ -177,31 +179,31 @@ const contactFields = ({ idLabel, idPlaceholder, idRules }) => [
    the "send it here" panel above these fields, using the receiving number
    loaded from the database. */
 const paymentSection = {
-  key: 'payment',
-  title: 'Payment',
+  key: "payment",
+  title: "Payment",
   subtitle:
-    'Send the entry fee first, then enter the transaction ID below. Your registration is confirmed once the committee matches the payment against it.',
+    "Send the entry fee first, then enter the transaction ID below. Your registration is confirmed once the committee matches the payment against it.",
   payment: true,
   fields: [
     {
-      name: 'payment.method',
-      label: 'Payment Method',
-      type: 'select',
+      name: "payment.method",
+      label: "Payment Method",
+      type: "select",
       options: PAYMENT_METHODS,
-      placeholder: 'Which service did you pay with?',
+      placeholder: "Which service did you pay with?",
       required: true,
     },
     {
-      name: 'payment.transactionId',
-      label: 'Transaction ID (TrxID)',
-      placeholder: 'e.g. 9F7A2B4C1D',
-      hint: 'The reference in the confirmation SMS. Each one can only be used for a single registration.',
+      name: "payment.transactionId",
+      label: "Transaction ID (TrxID)",
+      placeholder: "e.g. 9F7A2B4C1D",
+      hint: "The reference in the confirmation SMS. Each one can only be used for a single registration.",
       required: true,
-      autoComplete: 'off',
+      autoComplete: "off",
       rules: {
         pattern: {
           value: /^[A-Za-z0-9]{6,25}$/,
-          message: 'Transaction ID is 6–25 letters and digits, no spaces',
+          message: "Transaction ID is 6–25 letters and digits, no spaces",
         },
       },
     },
@@ -209,31 +211,31 @@ const paymentSection = {
 };
 
 const chessPaymentSection = {
-  key: 'payment',
-  title: 'Payment',
+  key: "payment",
+  title: "Payment",
   subtitle:
-    'Send the entry fee first to the designated bKash Personal number, then enter the transaction ID below.',
+    "Send the entry fee first to the designated bKash Personal number, then enter the transaction ID below.",
   payment: true,
   fields: [
     {
-      name: 'payment.method',
-      label: 'Payment Method',
-      type: 'select',
-      options: ['bKash'],
-      placeholder: 'Select bKash',
+      name: "payment.method",
+      label: "Payment Method",
+      type: "select",
+      options: ["bKash"],
+      placeholder: "Select bKash",
       required: true,
     },
     {
-      name: 'payment.transactionId',
-      label: 'Transaction ID (TrxID)',
-      placeholder: 'e.g. 9F7A2B4C1D',
-      hint: 'The reference in the confirmation SMS.',
+      name: "payment.transactionId",
+      label: "Transaction ID (TrxID)",
+      placeholder: "e.g. 9F7A2B4C1D",
+      hint: "The reference in the confirmation SMS.",
       required: true,
-      autoComplete: 'off',
+      autoComplete: "off",
       rules: {
         pattern: {
           value: /^[A-Za-z0-9]{6,25}$/,
-          message: 'Transaction ID is 6–25 letters and digits, no spaces',
+          message: "Transaction ID is 6–25 letters and digits, no spaces",
         },
       },
     },
@@ -248,16 +250,16 @@ const chessPaymentSection = {
 const paymentWithScreenshotSection = {
   ...paymentSection,
   subtitle:
-    'Send the entry fee first, then give us the transaction ID and a screenshot of the confirmation.',
+    "Send the entry fee first, then give us the transaction ID and a screenshot of the confirmation.",
   fields: [
     ...paymentSection.fields,
     {
-      name: 'payment.screenshot',
-      label: 'Payment Screenshot',
-      type: 'file',
+      name: "payment.screenshot",
+      label: "Payment Screenshot",
+      type: "file",
       required: true,
       full: true,
-      hint: 'The confirmation screen from your wallet app. JPG, PNG or WebP, up to 5 MB.',
+      hint: "The confirmation screen from your wallet app. JPG, PNG or WebP, up to 5 MB.",
     },
   ],
 };
@@ -267,22 +269,22 @@ const paymentWithScreenshotSection = {
    `agreementSection`, so nobody is retroactively held to a sentence they were
    never shown. */
 const ludoAgreementSection = {
-  key: 'confirm',
-  title: 'Confirmation',
-  subtitle: 'Both are required.',
+  key: "confirm",
+  title: "Confirmation",
+  subtitle: "Both are required.",
   fields: [
     {
-      name: 'agreeInfo',
-      label: 'I confirm that the information provided is correct.',
-      type: 'checkbox',
+      name: "agreeInfo",
+      label: "I confirm that the information provided is correct.",
+      type: "checkbox",
       required: true,
       full: true,
     },
     {
-      name: 'agreeRules',
+      name: "agreeRules",
       label:
-        'I agree to follow all tournament rules and decisions made by the organizers.',
-      type: 'checkbox',
+        "I agree to follow all tournament rules and decisions made by the organizers.",
+      type: "checkbox",
       required: true,
       full: true,
     },
@@ -299,26 +301,28 @@ const ludoAgreementSection = {
    building a real href here would close that cycle — GameRegistrationForm
    resolves it against the game being registered for. */
 const agreementSection = {
-  key: 'confirm',
-  title: 'Confirmation',
+  key: "confirm",
+  title: "Confirmation",
   subtitle:
-    'Both are required. The links open in a new tab, so nothing you have typed is lost.',
+    "Both are required. The links open in a new tab, so nothing you have typed is lost.",
   fields: [
     {
-      name: 'agreeRules',
-      label: 'I have read the Rules & Regulations and accept them on behalf of everyone registered here.',
-      type: 'checkbox',
+      name: "agreeRules",
+      label:
+        "I have read the Rules & Regulations and accept them on behalf of everyone registered here.",
+      type: "checkbox",
       required: true,
       full: true,
-      links: [{ text: 'Rules & Regulations', to: 'rules' }],
+      links: [{ text: "Rules & Regulations", to: "rules" }],
     },
     {
-      name: 'agreeContact',
-      label: 'I agree to be contacted by the organizing committee about this tournament.',
-      type: 'checkbox',
+      name: "agreeContact",
+      label:
+        "I agree to be contacted by the organizing committee about this tournament.",
+      type: "checkbox",
       required: true,
       full: true,
-      links: [{ text: 'organizing committee', to: 'contact' }],
+      links: [{ text: "organizing committee", to: "contact" }],
     },
   ],
 };
@@ -327,78 +331,90 @@ const agreementSection = {
    individual who gets placed in one. */
 const battleRoyaleSections = ({ idLabel, idPlaceholder, gameLabel }) => [
   {
-    key: 'entry',
-    title: 'How are you entering?',
+    key: "entry",
+    title: "How are you entering?",
     subtitle:
-      'Bring a full squad of four, or enter on your own — solo entrants are grouped into squads by the committee.',
+      "Bring a full squad of four, or enter on your own — solo entrants are grouped into squads by the committee.",
     fields: [
       {
-        name: 'entryType',
-        label: 'Entry Type',
-        type: 'choice',
+        name: "entryType",
+        label: "Entry Type",
+        type: "choice",
         required: true,
         full: true,
         /* Pre-selected rather than blank: most entrants arrive with a squad,
            and an unanswered question would leave the section below titled
            "Team Leader" before anyone has said there is a team. */
-        defaultValue: 'team',
+        defaultValue: "team",
         options: [
-          { value: 'team', label: 'Team', hint: 'You already have all four players' },
           {
-            value: 'individual',
-            label: 'Individual',
-            hint: 'A random squad is formed for you',
+            value: "team",
+            label: "Team",
+            hint: "You already have all four players",
+          },
+          {
+            value: "individual",
+            label: "Individual",
+            hint: "A random squad is formed for you",
           },
         ],
       },
     ],
   },
   {
-    key: 'solo-notice',
+    key: "solo-notice",
     when: isIndividualEntry,
     notice: {
-      title: 'A random squad will be formed for you',
+      title: "A random squad will be formed for you",
       text: `You are entering ${gameLabel} on your own. The committee groups solo entrants into squads of four and announces your teammates in the official group before the first match — you cannot choose who you are placed with. The entry fee is still per player.`,
     },
     fields: [],
   },
   {
-    key: 'team',
+    key: "team",
     when: isTeamEntry,
-    title: 'Team Information',
-    subtitle: 'Your squad name is what appears on the bracket and the scoreboard.',
+    title: "Team Information",
+    subtitle:
+      "Your squad name is what appears on the bracket and the scoreboard.",
     fields: [
       {
-        name: 'teamName',
-        label: 'Team Name',
-        placeholder: 'e.g. Coastal Raiders',
+        name: "teamName",
+        label: "Team Name",
+        placeholder: "e.g. Coastal Raiders",
         required: true,
-        autoComplete: 'off',
+        autoComplete: "off",
         rules: {
-          minLength: { value: 3, message: 'Team name must be at least 3 characters' },
-          maxLength: { value: 50, message: 'Team name cannot exceed 50 characters' },
+          minLength: {
+            value: 3,
+            message: "Team name must be at least 3 characters",
+          },
+          maxLength: {
+            value: 50,
+            message: "Team name cannot exceed 50 characters",
+          },
         },
       },
     ],
   },
   {
-    key: 'contact',
+    key: "contact",
     /* Titles take the current values so one section can serve both entry
        types — the fields are the same either way, only who they describe
        changes. */
-    title: (values) => (isIndividualEntry(values) ? 'Your Details' : 'Team Leader'),
+    title: (values) =>
+      isIndividualEntry(values) ? "Your Details" : "Team Leader",
     subtitle: (values) =>
       isIndividualEntry(values)
-        ? 'How we reach you about your squad, room IDs and match times.'
+        ? "How we reach you about your squad, room IDs and match times."
         : `Every ${gameLabel} announcement, room ID and password goes to this person.`,
     fields: contactFields({ idLabel, idPlaceholder, idRules: UID_RULES }),
   },
   {
-    key: 'roster',
+    key: "roster",
     when: isTeamEntry,
-    title: 'Squad Roster',
+    title: "Squad Roster",
     subtitle:
-      'Only the in-game ID is needed for players 2, 3 and 4 — the leader above is player 1.',
+      "Only the in-game ID is needed for players 2, 3 and 4 — the leader above is player 1.",
     fields: [1, 2, 3].map((i) => ({
       name: `players.${i}.gameId`,
       label: `Player ${i + 1} — ${idLabel}`,
@@ -417,153 +433,174 @@ export const GAMES = [
   // eFootball (PES) — solo 1v1 knockout
   // -------------------------------------------------------------------------
   {
-    slug: 'efootball',
-    name: 'eFootball',
-    shortName: 'eFootball',
-    family: 'esports',
-    icon: 'ball',
-    accent: 'aqua',
-    scope: 'Esports · 1v1',
-    mode: 'Solo',
-    tagline: 'Virtual football glory — skill, tactics and last-minute winners.',
+    slug: "efootball",
+    name: "eFootball",
+    shortName: "eFootball",
+    family: "esports",
+    icon: "ball",
+    accent: "aqua",
+    scope: "Esports · 1v1",
+    mode: "Solo",
+    tagline: "Virtual football glory — skill, tactics and last-minute winners.",
     blurb:
-      'Sixty-four players, one bracket, no second chances. Read the game, time your through-balls, and outplay the person across the table.',
-    heroNote: 'Individual entry — no team required.',
+      "Sixty-four players, one bracket, no second chances. Read the game, time your through-balls, and outplay the person across the table.",
+    heroNote: "Individual entry — no team required.",
 
     tournament: {
       date: GAMING_DAY,
       time: TIME_TBA,
       venue: GAMING_VENUE,
-      entryFee: '৳100 per player',
-      entryShort: '৳100',
-      entryScope: 'per player',
+      entryFee: "৳100 per player",
+      entryShort: "৳100",
+      entryScope: "per player",
       /* The number, for arithmetic — entryFee above is the sentence. */
       feePerPlayer: 100,
-      prizePool: '৳3,000',
-      format: 'Single-elimination knockout · 8-minute matches',
-      teamSize: 'Solo (1 player)',
-      teamSizeShort: 'Solo',
-      slots: '64 players',
-      platform: 'Mobile — bring your own device',
+      prizePool: "৳3,000",
+      format: "Single-elimination knockout · 8-minute matches",
+      teamSize: "Solo (1 player)",
+      teamSizeShort: "Solo",
+      slots: "64 players",
+      platform: "Mobile — bring your own device",
       deadline: GAMING_DEADLINE,
     },
 
     matchFormat: {
-      title: 'The bracket',
+      title: "The bracket",
       subtitle:
-        'Sixty-four entrants, six rounds, one loss and you are out. Match times are announced in advance.',
+        "Sixty-four entrants, six rounds, one loss and you are out. Match times are announced in advance.",
       stages: [
-        { label: 'Round of 64', value: '32 matches' },
-        { label: 'Round of 32', value: '16 matches' },
-        { label: 'Round of 16', value: '8 matches' },
-        { label: 'Quarter-finals', value: '4 matches' },
-        { label: 'Semi-finals', value: '2 matches' },
-        { label: 'Final', value: '1 match' },
+        { label: "Round of 64", value: "32 matches" },
+        { label: "Round of 32", value: "16 matches" },
+        { label: "Round of 16", value: "8 matches" },
+        { label: "Quarter-finals", value: "4 matches" },
+        { label: "Semi-finals", value: "2 matches" },
+        { label: "Final", value: "1 match" },
       ],
     },
 
     prizes: [
-      { place: 'Champion', rank: 1, amount: '৳2,000', perks: ['Winner trophy', 'Certificate of excellence'] },
-      { place: 'Runner-Up', rank: 2, amount: '৳1,000', perks: ['Certificate of merit'] },
+      {
+        place: "Champion",
+        rank: 1,
+        amount: "৳2,000",
+        perks: ["Winner trophy", "Certificate of excellence"],
+      },
+      {
+        place: "Runner-Up",
+        rank: 2,
+        amount: "৳1,000",
+        perks: ["Certificate of merit"],
+      },
     ],
 
     rules: [
       {
-        title: 'Eligibility & Registration',
-        icon: 'user',
+        title: "Eligibility & Registration",
+        icon: "user",
         items: [
-          'Open to PSTU students only — campus affiliation is verified at the registration desk.',
-          'All participants must be legal residents of Bangladesh.',
-          'Each player needs an eFootball account in good standing, and may enter only once.',
-          'Register through this website. Late registration is at the organizers’ discretion.',
-          'Entry fee is ৳100 per player, paid with the registration form — no cash is taken at the venue.',
-          'Your user ID and the device you will play on must be provided before your round starts.',
+          "Open to PSTU students only — campus affiliation is verified at the registration desk.",
+          "All participants must be legal residents of Bangladesh.",
+          "Each player needs an eFootball account in good standing, and may enter only once.",
+          "Register through this website. Late registration is at the organizers’ discretion.",
+          "Entry fee is ৳100 per player, paid with the registration form — no cash is taken at the venue.",
+          "Your user ID and the device you will play on must be provided before your round starts.",
         ],
       },
       {
-        title: 'Match Format',
-        icon: 'flag',
+        title: "Match Format",
+        icon: "flag",
         items: [
-          'Sixty-four players in a single-elimination bracket: RO64, RO32, RO16, quarter-finals, semi-finals, final.',
-          'Eight minutes per match.',
-          'A maximum of 8 special cards may be used in your squad — Double Booster, Single Booster, Iconic, Legendary, Epic, Big Time and Show Time all count toward the limit.',
-          'Game mode is Standard / Competitive, on the latest patch version.',
-          'Match times are announced in advance. Check in before your match — late check-in can mean a forfeit.',
+          "Sixty-four players in a single-elimination bracket: RO64, RO32, RO16, quarter-finals, semi-finals, final.",
+          "Eight minutes per match.",
+          "A maximum of 8 special cards may be used in your squad — Double Booster, Single Booster, Iconic, Legendary, Epic, Big Time and Show Time all count toward the limit.",
+          "Game mode is Standard / Competitive, on the latest patch version.",
+          "Match times are announced in advance. Check in before your match — late check-in can mean a forfeit.",
         ],
       },
       {
-        title: 'Technical Issues & Pauses',
-        icon: 'monitor',
+        title: "Technical Issues & Pauses",
+        icon: "monitor",
         items: [
-          'Each player may pause three times per match. Abusing pauses is sanctioned.',
-          'If the game lags or slows, record it, pause, then exit. The restart is played for the remaining game clock — 93 minutes minus the minutes already played.',
-          'Goals conceded during lag still count, as does a 1v1 with the keeper at the moment of a disconnect.',
-          'A red card followed by a disconnect gives the opponent a two-goal lead as a penalty.',
-          'An admin may restart a match where necessary.',
+          "Each player may pause three times per match. Abusing pauses is sanctioned.",
+          "If the game lags or slows, record it, pause, then exit. The restart is played for the remaining game clock — 93 minutes minus the minutes already played.",
+          "Goals conceded during lag still count, as does a 1v1 with the keeper at the moment of a disconnect.",
+          "A red card followed by a disconnect gives the opponent a two-goal lead as a penalty.",
+          "An admin may restart a match where necessary.",
         ],
       },
       {
-        title: 'Reporting & Disputes',
-        icon: 'alert',
+        title: "Reporting & Disputes",
+        icon: "alert",
         items: [
-          'The winning player submits a screen recording showing the result screen, room ID, user ID and device.',
-          'Protests must be raised within 2 minutes of the match ending, with screenshots, video and timestamps.',
-          'Late reports may be penalised. Appeals are accepted for 24 hours, and only serious, well-evidenced cases are reviewed.',
-          'The organizers’ decision on results, rules and sanctions is final.',
+          "The winning player submits a screen recording showing the result screen, room ID, user ID and device.",
+          "Protests must be raised within 2 minutes of the match ending, with screenshots, video and timestamps.",
+          "Late reports may be penalised. Appeals are accepted for 24 hours, and only serious, well-evidenced cases are reviewed.",
+          "The organizers’ decision on results, rules and sanctions is final.",
         ],
       },
       {
-        title: 'Fair Play & Conduct',
-        icon: 'shield',
+        title: "Fair Play & Conduct",
+        icon: "shield",
         items: [
-          'No hacks, scripts or exploits. No account sharing or impersonation.',
-          'No stream sniping or ghosting. No collusion, match-fixing or leaking of match information.',
-          'No toxicity or discrimination — sanctions run from a warning through match forfeiture to a ban.',
-          'Organizers may stream or broadcast any match. Players may not stream without permission.',
-          'Organizers are not liable for participant-side device or network failures. Participants accept that risk.',
+          "No hacks, scripts or exploits. No account sharing or impersonation.",
+          "No stream sniping or ghosting. No collusion, match-fixing or leaking of match information.",
+          "No toxicity or discrimination — sanctions run from a warning through match forfeiture to a ban.",
+          "Organizers may stream or broadcast any match. Players may not stream without permission.",
+          "Organizers are not liable for participant-side device or network failures. Participants accept that risk.",
         ],
       },
     ],
 
-    stage: 'open',
+    stage: "open",
     /* Flip to false to close entries without deleting the form. */
     registrationOpen: true,
     registration: {
-      kind: 'solo',
+      kind: "solo",
       /* No entry-type question — every eFootball entry is a solo one. The
          database still records it, so all three tournaments share a shape. */
-      entryType: 'solo',
-      idPrefix: 'PSTU-EFB-2026',
+      entryType: "solo",
+      idPrefix: "PSTU-EFB-2026",
       prep: [
-        'Your eFootball / Konami user ID, exactly as it appears in game',
-        'The device you will play on — the rules require it before your round starts',
-        'A valid student ID for eligibility checks',
-        '৳100 sent via bKash or Nagad, and the transaction ID it gives you',
+        "Your eFootball / Konami user ID, exactly as it appears in game",
+        "The device you will play on — the rules require it before your round starts",
+        "A valid student ID for eligibility checks",
+        "৳100 sent via bKash or Nagad, and the transaction ID it gives you",
       ],
       sections: [
         {
-          key: 'player',
-          title: 'Player Information',
-          subtitle: 'This is how your name appears on the bracket and on your certificate.',
+          key: "player",
+          title: "Player Information",
+          subtitle:
+            "This is how your name appears on the bracket and on your certificate.",
           fields: contactFields({
-            idLabel: 'eFootball / Konami User ID',
-            idPlaceholder: 'e.g. 1234-5678-9012',
-            idRules: { maxLength: { value: 40, message: 'ID cannot exceed 40 characters' } },
+            idLabel: "eFootball / Konami User ID",
+            idPlaceholder: "e.g. 1234-5678-9012",
+            idRules: {
+              maxLength: {
+                value: 40,
+                message: "ID cannot exceed 40 characters",
+              },
+            },
           }),
         },
         {
-          key: 'device',
-          title: 'Device',
+          key: "device",
+          title: "Device",
           subtitle:
-            'The rules require your user ID and your device before your round starts, so we collect it now rather than at the desk.',
+            "The rules require your user ID and your device before your round starts, so we collect it now rather than at the desk.",
           fields: [
             {
-              name: 'players.0.device',
-              label: 'Device you will play on',
-              placeholder: 'e.g. Redmi Note 12, iPhone 13',
+              name: "players.0.device",
+              label: "Device you will play on",
+              placeholder: "e.g. Redmi Note 12, iPhone 13",
               required: true,
               full: true,
-              rules: { maxLength: { value: 80, message: 'Cannot exceed 80 characters' } },
+              rules: {
+                maxLength: {
+                  value: 80,
+                  message: "Cannot exceed 80 characters",
+                },
+              },
             },
           ],
         },
@@ -574,24 +611,24 @@ export const GAMES = [
 
     faqs: [
       {
-        q: 'Do I need a team for eFootball?',
-        a: 'No. eFootball is a solo 1v1 knockout — you register as an individual and play your own bracket.',
+        q: "Do I need a team for eFootball?",
+        a: "No. eFootball is a solo 1v1 knockout — you register as an individual and play your own bracket.",
       },
       {
-        q: 'How many special cards can I use?',
-        a: 'Eight at most. Double Booster, Single Booster, Iconic, Legendary, Epic, Big Time and Show Time cards all count toward that limit.',
+        q: "How many special cards can I use?",
+        a: "Eight at most. Double Booster, Single Booster, Iconic, Legendary, Epic, Big Time and Show Time cards all count toward that limit.",
       },
       {
-        q: 'What happens if my game lags or I disconnect?',
-        a: 'Record it, pause, then exit — the restart is played for the remaining game clock, 93 minutes minus what was already played. Goals conceded during lag still count, and so does a 1v1 with the keeper at the moment you dropped.',
+        q: "What happens if my game lags or I disconnect?",
+        a: "Record it, pause, then exit — the restart is played for the remaining game clock, 93 minutes minus what was already played. Goals conceded during lag still count, and so does a 1v1 with the keeper at the moment you dropped.",
       },
       {
-        q: 'How do I report my result?',
-        a: 'The winner submits a screen recording showing the result screen, room ID, user ID and device. Disputes need that evidence, and must be raised within 2 minutes of the match ending.',
+        q: "How do I report my result?",
+        a: "The winner submits a screen recording showing the result screen, room ID, user ID and device. Disputes need that evidence, and must be raised within 2 minutes of the match ending.",
       },
       {
-        q: 'How and when do I pay the entry fee?',
-        a: 'When you register. Send ৳100 per player to the number shown on the form using Send Money, then enter the transaction ID to complete your entry. Nothing is collected at the venue.',
+        q: "How and when do I pay the entry fee?",
+        a: "When you register. Send ৳100 per player to the number shown on the form using Send Money, then enter the transaction ID to complete your entry. Nothing is collected at the venue.",
       },
     ],
   },
@@ -600,146 +637,152 @@ export const GAMES = [
   // PUBG Mobile — squad of 4, four matches
   // -------------------------------------------------------------------------
   {
-    slug: 'pubg-mobile',
-    name: 'PUBG Mobile',
-    shortName: 'PUBG',
-    family: 'esports',
-    icon: 'gamepad',
+    slug: "pubg-mobile",
+    name: "PUBG Mobile",
+    shortName: "PUBG",
+    family: "esports",
+    icon: "gamepad",
     /* Not gold: gold is reserved for actions site-wide, and PUBG's identity
        tile would otherwise be indistinguishable from a status pill. */
-    accent: 'grape',
-    scope: 'Esports · Squad',
-    mode: 'Squad of 4',
-    tagline: 'Squad up for the battle royale. Last team standing takes the crown.',
+    accent: "grape",
+    scope: "Esports · Squad",
+    mode: "Squad of 4",
+    tagline:
+      "Squad up for the battle royale. Last team standing takes the crown.",
     blurb:
-      'Four players, four matches, and a shrinking circle. Rotate smart, hold your compound, and survive to the final blue.',
-    heroNote: 'Enter as a squad of four, or on your own — we will place you in one.',
+      "Four players, four matches, and a shrinking circle. Rotate smart, hold your compound, and survive to the final blue.",
+    heroNote:
+      "Enter as a squad of four, or on your own — we will place you in one.",
 
     tournament: {
       date: GAMING_DAY,
-      time: '4:00 PM — 6:00 PM',
+      time: "4:00 PM — 6:00 PM",
       venue: GAMING_VENUE,
-      entryFee: '৳25 per player (৳100 per squad)',
-      entryShort: '৳25',
-      entryScope: 'per player',
+      entryFee: "৳25 per player (৳100 per squad)",
+      entryShort: "৳25",
+      entryScope: "per player",
       feePerPlayer: 25,
-      prizePool: '৳10,000+',
-      format: 'Battle Royale — 4 matches, points aggregated',
-      teamSize: '4 players',
-      teamSizeShort: 'Squad of 4',
-      slots: '25 squads',
-      platform: 'Mobile & tablet only',
+      prizePool: "৳10,000+",
+      format: "Battle Royale — 4 matches, points aggregated",
+      teamSize: "4 players",
+      teamSizeShort: "Squad of 4",
+      slots: "25 squads",
+      platform: "Mobile & tablet only",
       deadline: GAMING_DEADLINE,
     },
 
     matchFormat: {
-      title: 'Map rotation',
+      title: "Map rotation",
       subtitle:
-        'Four matches in one session. Every squad plays all four, and the standings are the sum of them.',
+        "Four matches in one session. Every squad plays all four, and the standings are the sum of them.",
       stages: [
-        { label: 'Match 1', value: 'Erangel' },
-        { label: 'Match 2', value: 'Erangel' },
-        { label: 'Match 3', value: 'Miramar' },
-        { label: 'Match 4', value: 'Rondo' },
+        { label: "Match 1", value: "Erangel" },
+        { label: "Match 2", value: "Erangel" },
+        { label: "Match 3", value: "Miramar" },
+        { label: "Match 4", value: "Rondo" },
       ],
-      points: brPoints('Chicken Dinner'),
+      points: brPoints("Chicken Dinner"),
     },
 
     /* The pool is announced; the split is not. TournamentInfo prints a line
        saying so rather than rendering three trophies that look like they pay
        nothing — add an `amount` to each entry when the figures are confirmed. */
     prizes: [
-      { place: 'Champion', rank: 1, perks: ['Winner trophy', 'Certificate of excellence'] },
-      { place: '1st Runner-Up', rank: 2, perks: ['Certificate of merit'] },
-      { place: '2nd Runner-Up', rank: 3, perks: ['Certificate of merit'] },
+      {
+        place: "Champion",
+        rank: 1,
+        perks: ["Winner trophy", "Certificate of excellence"],
+      },
+      { place: "1st Runner-Up", rank: 2, perks: ["Certificate of merit"] },
+      { place: "2nd Runner-Up", rank: 3, perks: ["Certificate of merit"] },
     ],
 
     rules: [
       {
-        title: 'Team & Eligibility',
-        icon: 'users',
+        title: "Team & Eligibility",
+        icon: "users",
         items: [
-          'A squad is exactly 4 players. Enter as a full squad, or enter alone and be placed in a randomly formed one.',
-          'Every player must be a currently enrolled PSTU student with a valid ID card, checked at the desk.',
-          'A player may represent only one squad for the whole tournament.',
-          'Entry fee is ৳25 per player — ৳100 for a full squad — paid with the registration form, not at the venue.',
-          'Team name and player game IDs are locked once registration closes on 5 August. Check them carefully.',
+          "A squad is exactly 4 players. Enter as a full squad, or enter alone and be placed in a randomly formed one.",
+          "Every player must be a currently enrolled PSTU student with a valid ID card, checked at the desk.",
+          "A player may represent only one squad for the whole tournament.",
+          "Entry fee is ৳25 per player — ৳100 for a full squad — paid with the registration form, not at the venue.",
+          "Team name and player game IDs are locked once registration closes on 5 August. Check them carefully.",
         ],
       },
       {
-        title: 'Match Format',
-        icon: 'flag',
+        title: "Match Format",
+        icon: "flag",
         items: [
-          'Four matches: Erangel twice, then Miramar, then Rondo.',
-          'Final standing = placement points + kill points, summed across all four matches.',
-          'Room ID and password are posted to the official group 10 minutes before each match.',
-          'Squads must be in the lobby 5 minutes before start time; late squads forfeit that match.',
+          "Four matches: Erangel twice, then Miramar, then Rondo.",
+          "Final standing = placement points + kill points, summed across all four matches.",
+          "Room ID and password are posted to the official group 10 minutes before each match.",
+          "Squads must be in the lobby 5 minutes before start time; late squads forfeit that match.",
         ],
       },
       {
-        title: 'Device & Fair Play',
-        icon: 'shield',
+        title: "Device & Fair Play",
+        icon: "shield",
         items: [
-          'Mobile phones and tablets only — emulators, physical triggers and gamepads are banned.',
-          'Any hack, mod APK or third-party tool permanently disqualifies the whole squad.',
-          'Teaming with other squads, or deliberately throwing a match, is prohibited.',
-          'Officials may ask for a screen recording of any match at any time.',
+          "Mobile phones and tablets only — emulators, physical triggers and gamepads are banned.",
+          "Any hack, mod APK or third-party tool permanently disqualifies the whole squad.",
+          "Teaming with other squads, or deliberately throwing a match, is prohibited.",
+          "Officials may ask for a screen recording of any match at any time.",
         ],
       },
       {
-        title: 'Conduct',
-        icon: 'alert',
+        title: "Conduct",
+        icon: "alert",
         items: [
-          'Abusive language or harassment in voice or text chat costs points, or the tournament.',
-          'Personal network or device failure is not grounds for a rematch — come prepared.',
-          'Bring your own charged device, headset and power bank.',
-          'The organizing committee has the final word on every dispute.',
+          "Abusive language or harassment in voice or text chat costs points, or the tournament.",
+          "Personal network or device failure is not grounds for a rematch — come prepared.",
+          "Bring your own charged device, headset and power bank.",
+          "The organizing committee has the final word on every dispute.",
         ],
       },
     ],
 
-    stage: 'open',
+    stage: "open",
     registrationOpen: true,
     registration: {
-      kind: 'squad',
-      idPrefix: 'PSTU-PUBG-2026',
+      kind: "squad",
+      idPrefix: "PSTU-PUBG-2026",
       prep: [
-        'Either a full squad of four, or nothing — solo entrants are placed in a random squad',
-        'Every player’s PUBG Mobile UID (the 6–15 digit number in your profile)',
-        'A team leader who can receive room IDs and passwords on WhatsApp',
-        '৳25 per player (৳100 a squad) sent via bKash or Nagad, and the transaction ID',
+        "Either a full squad of four, or nothing — solo entrants are placed in a random squad",
+        "Every player’s PUBG Mobile UID (the 6–15 digit number in your profile)",
+        "A team leader who can receive room IDs and passwords on WhatsApp",
+        "৳25 per player (৳100 a squad) sent via bKash or Nagad, and the transaction ID",
       ],
       sections: battleRoyaleSections({
-        idLabel: 'PUBG Mobile UID',
-        idPlaceholder: 'e.g. 5123456789',
-        gameLabel: 'PUBG Mobile',
+        idLabel: "PUBG Mobile UID",
+        idPlaceholder: "e.g. 5123456789",
+        gameLabel: "PUBG Mobile",
       }),
     },
 
     faqs: [
       {
-        q: 'I do not have a full squad. Can I still enter?',
+        q: "I do not have a full squad. Can I still enter?",
         a: 'Yes. Choose "Individual" on the registration form and the committee will place you in a squad with other solo entrants. Your teammates are announced in the official group before the first match — you cannot choose who you are grouped with.',
       },
       {
-        q: 'What does it cost?',
-        a: '৳25 per player, so ৳100 for a full squad of four. You pay when you register: send it to the number shown on the form using Send Money, then enter the transaction ID. Nothing is collected at the venue.',
+        q: "What does it cost?",
+        a: "৳25 per player, so ৳100 for a full squad of four. You pay when you register: send it to the number shown on the form using Send Money, then enter the transaction ID. Nothing is collected at the venue.",
       },
       {
-        q: 'Are emulators or triggers allowed?',
-        a: 'No. Mobile phones and tablets only. Emulators, physical triggers and gamepads are all banned, and using one disqualifies the entire squad.',
+        q: "Are emulators or triggers allowed?",
+        a: "No. Mobile phones and tablets only. Emulators, physical triggers and gamepads are all banned, and using one disqualifies the entire squad.",
       },
       {
-        q: 'How is the winner decided?',
-        a: 'Placement points and kill points are added up across all four matches — a chicken dinner is 10 points, second is 6, down to 1 point for seventh and below, plus 1 point per kill. The highest total wins; there is no single-elimination final.',
+        q: "How is the winner decided?",
+        a: "Placement points and kill points are added up across all four matches — a chicken dinner is 10 points, second is 6, down to 1 point for seventh and below, plus 1 point per kill. The highest total wins; there is no single-elimination final.",
       },
       {
-        q: 'Where do we get the room ID and password?',
-        a: 'They are posted in the official tournament group 10 minutes before each match. The WhatsApp number on this form is how we add you to that group.',
+        q: "Where do we get the room ID and password?",
+        a: "They are posted in the official tournament group 10 minutes before each match. The WhatsApp number on this form is how we add you to that group.",
       },
       {
-        q: 'What if a player disconnects mid-match?',
-        a: 'The match continues. Personal network or device problems are not grounds for a rematch, so bring a charged device and a stable connection.',
+        q: "What if a player disconnects mid-match?",
+        a: "The match continues. Personal network or device problems are not grounds for a rematch, so bring a charged device and a stable connection.",
       },
     ],
   },
@@ -748,144 +791,160 @@ export const GAMES = [
   // Free Fire — squad of 4, group stage into a final
   // -------------------------------------------------------------------------
   {
-    slug: 'free-fire',
-    name: 'Free Fire',
-    shortName: 'Free Fire',
-    family: 'esports',
-    icon: 'flame',
-    accent: 'magenta',
-    scope: 'Esports · Squad',
-    mode: 'Squad of 4',
-    tagline: 'Fast, furious mobile battle royale. Drop in, gear up, survive.',
+    slug: "free-fire",
+    name: "Free Fire",
+    shortName: "Free Fire",
+    family: "esports",
+    icon: "flame",
+    accent: "magenta",
+    scope: "Esports · Squad",
+    mode: "Squad of 4",
+    tagline: "Fast, furious mobile battle royale. Drop in, gear up, survive.",
     blurb:
-      'Twenty-four squads in two groups, one Bermuda match to survive, then three maps to decide it. No room to breathe.',
-    heroNote: 'Enter as a squad of four, or on your own — we will place you in one.',
+      "Twenty-four squads in two groups, one Bermuda match to survive, then three maps to decide it. No room to breathe.",
+    heroNote:
+      "Enter as a squad of four, or on your own — we will place you in one.",
 
     tournament: {
       date: GAMING_DAY,
       time: TIME_TBA,
       venue: GAMING_VENUE,
-      entryFee: '৳25 per player (৳100 per squad)',
-      entryShort: '৳25',
-      entryScope: 'per player',
+      entryFee: "৳25 per player (৳100 per squad)",
+      entryShort: "৳25",
+      entryScope: "per player",
       feePerPlayer: 25,
-      prizePool: '৳10,000',
-      format: 'Two groups of 12 · Top 6 from each reach the final',
-      teamSize: '4 players',
-      teamSizeShort: 'Squad of 4',
-      slots: '24 squads (2 groups of 12)',
-      platform: 'Mobile & tablet only',
+      prizePool: "৳10,000",
+      format: "Two groups of 12 · Top 6 from each reach the final",
+      teamSize: "4 players",
+      teamSizeShort: "Squad of 4",
+      slots: "24 squads (2 groups of 12)",
+      platform: "Mobile & tablet only",
       deadline: GAMING_DEADLINE,
     },
 
     matchFormat: {
-      title: 'Group stage into the final',
+      title: "Group stage into the final",
       subtitle:
-        'Twenty-four squads split into two groups of twelve. One Bermuda match decides who advances; the top six from each group play a three-map final.',
+        "Twenty-four squads split into two groups of twelve. One Bermuda match decides who advances; the top six from each group play a three-map final.",
       stages: [
-        { label: 'Group A', value: 'Bermuda' },
-        { label: 'Group B', value: 'Bermuda' },
-        { label: 'Final · Match 1', value: 'Purgatory' },
-        { label: 'Final · Match 2', value: 'Kalahari' },
-        { label: 'Final · Match 3', value: 'Nexterra' },
+        { label: "Group A", value: "Bermuda" },
+        { label: "Group B", value: "Bermuda" },
+        { label: "Final · Match 1", value: "Purgatory" },
+        { label: "Final · Match 2", value: "Kalahari" },
+        { label: "Final · Match 3", value: "Nexterra" },
       ],
-      points: brPoints('Booyah'),
+      points: brPoints("Booyah"),
     },
 
     prizes: [
-      { place: 'Champion', rank: 1, amount: '৳6,000', perks: ['Winner trophy', 'Certificate of excellence'] },
-      { place: 'Runner-Up', rank: 2, amount: '৳3,000', perks: ['Certificate of merit'] },
-      { place: 'MVP', rank: 4, amount: '৳1,000', perks: ['Most kills across the final'] },
+      {
+        place: "Champion",
+        rank: 1,
+        amount: "৳6,000",
+        perks: ["Winner trophy", "Certificate of excellence"],
+      },
+      {
+        place: "Runner-Up",
+        rank: 2,
+        amount: "৳3,000",
+        perks: ["Certificate of merit"],
+      },
+      {
+        place: "MVP",
+        rank: 4,
+        amount: "৳1,000",
+        perks: ["Most kills across the final"],
+      },
     ],
 
     rules: [
       {
-        title: 'Team & Eligibility',
-        icon: 'users',
+        title: "Team & Eligibility",
+        icon: "users",
         items: [
-          'A squad is exactly 4 players. Enter as a full squad, or enter alone and be placed in a randomly formed one.',
-          'Every player must be a currently enrolled PSTU student with a valid ID card, checked at the desk.',
-          'A player may represent only one squad for the whole tournament.',
-          'Entry fee is ৳25 per player — ৳100 for a full squad — paid with the registration form, not at the venue.',
-          'Twenty-four squads are accepted, split into two groups of twelve. Team name and player game IDs are locked once registration closes on 5 August.',
+          "A squad is exactly 4 players. Enter as a full squad, or enter alone and be placed in a randomly formed one.",
+          "Every player must be a currently enrolled PSTU student with a valid ID card, checked at the desk.",
+          "A player may represent only one squad for the whole tournament.",
+          "Entry fee is ৳25 per player — ৳100 for a full squad — paid with the registration form, not at the venue.",
+          "Twenty-four squads are accepted, split into two groups of twelve. Team name and player game IDs are locked once registration closes on 5 August.",
         ],
       },
       {
-        title: 'Match Format',
-        icon: 'flag',
+        title: "Match Format",
+        icon: "flag",
         items: [
-          'Group stage: two groups of 12 squads, one match each on Bermuda.',
-          'The top 6 squads from each group advance — twelve squads reach the final.',
-          'Final: three matches, on Purgatory, Kalahari and Nexterra.',
-          'The final starts from zero. Group points decide who qualifies, not the final standing.',
-          'Custom room ID and password are shared in the official group before each match.',
-          'Squads must join the lobby 5 minutes before start time; late squads forfeit that match.',
+          "Group stage: two groups of 12 squads, one match each on Bermuda.",
+          "The top 6 squads from each group advance — twelve squads reach the final.",
+          "Final: three matches, on Purgatory, Kalahari and Nexterra.",
+          "The final starts from zero. Group points decide who qualifies, not the final standing.",
+          "Custom room ID and password are shared in the official group before each match.",
+          "Squads must join the lobby 5 minutes before start time; late squads forfeit that match.",
         ],
       },
       {
-        title: 'Device & Fair Play',
-        icon: 'shield',
+        title: "Device & Fair Play",
+        icon: "shield",
         items: [
-          'Mobile phones and tablets only — emulators and external controllers are banned.',
-          'Hacks, mod APKs or any third-party tool permanently disqualify the entire squad.',
-          'Teaming with other squads, or deliberately throwing a match, is prohibited.',
-          'Officials may ask for a screen recording of any match at any time.',
+          "Mobile phones and tablets only — emulators and external controllers are banned.",
+          "Hacks, mod APKs or any third-party tool permanently disqualify the entire squad.",
+          "Teaming with other squads, or deliberately throwing a match, is prohibited.",
+          "Officials may ask for a screen recording of any match at any time.",
         ],
       },
       {
-        title: 'Conduct',
-        icon: 'alert',
+        title: "Conduct",
+        icon: "alert",
         items: [
-          'Abusive language or harassment in voice or text chat costs points, or the tournament.',
-          'Personal network or device failure is not grounds for a rematch — come prepared.',
-          'Bring your own charged device, headset and power bank.',
-          'The organizing committee has the final word on every dispute.',
+          "Abusive language or harassment in voice or text chat costs points, or the tournament.",
+          "Personal network or device failure is not grounds for a rematch — come prepared.",
+          "Bring your own charged device, headset and power bank.",
+          "The organizing committee has the final word on every dispute.",
         ],
       },
     ],
 
-    stage: 'open',
+    stage: "open",
     registrationOpen: true,
     registration: {
-      kind: 'squad',
-      idPrefix: 'PSTU-FF-2026',
+      kind: "squad",
+      idPrefix: "PSTU-FF-2026",
       prep: [
-        'Either a full squad of four, or nothing — solo entrants are placed in a random squad',
-        'Every player’s Free Fire UID (the number under your in-game name)',
-        'A team leader who can receive room IDs and passwords on WhatsApp',
-        '৳25 per player (৳100 a squad) sent via bKash or Nagad, and the transaction ID',
+        "Either a full squad of four, or nothing — solo entrants are placed in a random squad",
+        "Every player’s Free Fire UID (the number under your in-game name)",
+        "A team leader who can receive room IDs and passwords on WhatsApp",
+        "৳25 per player (৳100 a squad) sent via bKash or Nagad, and the transaction ID",
       ],
       sections: battleRoyaleSections({
-        idLabel: 'Free Fire UID',
-        idPlaceholder: 'e.g. 123456789',
-        gameLabel: 'Free Fire',
+        idLabel: "Free Fire UID",
+        idPlaceholder: "e.g. 123456789",
+        gameLabel: "Free Fire",
       }),
     },
 
     faqs: [
       {
-        q: 'I do not have a full squad. Can I still enter?',
+        q: "I do not have a full squad. Can I still enter?",
         a: 'Yes. Choose "Individual" on the registration form and the committee will place you in a squad with other solo entrants. Your teammates are announced in the official group before the first match.',
       },
       {
-        q: 'How do we qualify for the final?',
-        a: 'Twenty-four squads are split into two groups of twelve, and each group plays one match on Bermuda. The top six squads from each group advance, so twelve squads reach the three-map final.',
+        q: "How do we qualify for the final?",
+        a: "Twenty-four squads are split into two groups of twelve, and each group plays one match on Bermuda. The top six squads from each group advance, so twelve squads reach the three-map final.",
       },
       {
-        q: 'Do group-stage points carry into the final?',
-        a: 'No. The final starts from zero — the group match decides who qualifies, not where they finish.',
+        q: "Do group-stage points carry into the final?",
+        a: "No. The final starts from zero — the group match decides who qualifies, not where they finish.",
       },
       {
-        q: 'What does it cost?',
-        a: '৳25 per player, so ৳100 for a full squad of four. You pay when you register: send it to the number shown on the form using Send Money, then enter the transaction ID. Nothing is collected at the venue.',
+        q: "What does it cost?",
+        a: "৳25 per player, so ৳100 for a full squad of four. You pay when you register: send it to the number shown on the form using Send Money, then enter the transaction ID. Nothing is collected at the venue.",
       },
       {
-        q: 'Are emulators allowed?',
-        a: 'No. Mobile phones and tablets only. Emulators and external controllers are banned, and using one disqualifies the entire squad.',
+        q: "Are emulators allowed?",
+        a: "No. Mobile phones and tablets only. Emulators and external controllers are banned, and using one disqualifies the entire squad.",
       },
       {
-        q: 'Can a player be in two squads?',
-        a: 'No. Each player may represent only one squad, and game IDs are checked against every other registration for this tournament.',
+        q: "Can a player be in two squads?",
+        a: "No. Each player may represent only one squad, and game IDs are checked against every other registration for this tournament.",
       },
     ],
   },
@@ -898,96 +957,112 @@ export const GAMES = [
      a `tournament` block and the rest in the shape above to promote one.
      ------------------------------------------------------------------------- */
   {
-    slug: 'chess',
-    name: 'Chess (Rapid)',
-    shortName: 'Chess',
-    family: 'board',
-    icon: 'crown',
-    accent: 'aqua',
-    scope: 'Board · 1v1',
-    mode: 'Solo',
-    tagline: 'Classic strategy on 64 squares.',
-    blurb: 'Outthink your opponent, move by move.',
-    heroNote: 'Individual participation — no team required.',
+    slug: "chess",
+    name: "Chess (Rapid)",
+    shortName: "Chess",
+    family: "board",
+    icon: "crown",
+    accent: "aqua",
+    scope: "Board · 1v1",
+    mode: "Solo",
+    tagline: "Classic strategy on 64 squares.",
+    blurb: "Outthink your opponent, move by move.",
+    heroNote: "Individual participation — no team required.",
 
     tournament: {
-      date: '14 August 2026',
-      time: '4:00 PM (Reporting: 3:30 PM)',
-      venue: 'Agriculture Conference Room',
-      entryFee: '৳100 per player',
-      entryShort: '৳100',
-      entryScope: 'per player',
+      date: "14 August 2026",
+      time: "4:00 PM (Reporting: 3:30 PM)",
+      venue: "Agriculture Conference Room",
+      entryFee: "৳100 per player",
+      entryShort: "৳100",
+      entryScope: "per player",
       feePerPlayer: 100,
-      prizePool: '৳2,200',
-      format: 'Single Elimination Knockout Round',
-      teamSize: 'Solo (1 player)',
-      teamSizeShort: 'Solo',
-      slots: '32 players',
-      platform: 'On-site Board Game',
-      deadline: '5 August 2026',
+      prizePool: "৳2,200",
+      format: "Single Elimination Knockout Round",
+      teamSize: "Solo (1 player)",
+      teamSizeShort: "Solo",
+      slots: "32 players",
+      platform: "On-site Board Game",
+      deadline: "5 August 2026",
     },
 
     prizes: [
-      { place: 'Champion', rank: 1, amount: '৳1,500', perks: ['Winner certificate', 'Gold medal'] },
-      { place: '1st Runner-Up', rank: 2, amount: '৳700', perks: ['Runner-up certificate'] },
+      {
+        place: "Champion",
+        rank: 1,
+        amount: "৳1,500",
+        perks: ["Winner certificate", "Gold medal"],
+      },
+      {
+        place: "1st Runner-Up",
+        rank: 2,
+        amount: "৳700",
+        perks: ["Runner-up certificate"],
+      },
     ],
 
     rules: [
       {
-        title: 'Gameplay & Time Control',
-        icon: 'clock',
+        title: "Gameplay & Time Control",
+        icon: "clock",
         items: [
-          'Format: The tournament will follow a strict Single Knockout format. If you lose a match, you are eliminated.',
-          'Time Control: This is a Rapid Chess event. Each player will have a fixed time limit per game (10 minutes, subject to final adjustments by the arbiter at the venue).',
-          'No Scorekeeping Required: Players do not need to write down their moves on a scoresheet.',
+          "Format: The tournament will follow a strict Single Knockout format. If you lose a match, you are eliminated.",
+          "Time Control: This is a Rapid Chess event. Each player will have a fixed time limit per game (10 minutes, subject to final adjustments by the arbiter at the venue).",
+          "No Scorekeeping Required: Players do not need to write down their moves on a scoresheet.",
         ],
       },
       {
-        title: 'Strict Regulations & Infractions',
-        icon: 'alert',
+        title: "Strict Regulations & Infractions",
+        icon: "alert",
         items: [
-          'Illegal Moves: If a player completes an illegal move and presses the clock, the opponent will be awarded extra time. A second illegal move in the same game results in an immediate loss/forfeiture.',
-          'Clock Rules: If your time runs out (flag falls), you lose the game immediately, provided your opponent has enough pieces left to theoretically checkmate you.',
-          'Disputes: In case of any dispute or rule confusion during a game, pause the chess clock immediately and raise your hand to call the arbiter. Do not argue with your opponent.',
+          "Illegal Moves: If a player completes an illegal move and presses the clock, the opponent will be awarded extra time. A second illegal move in the same game results in an immediate loss/forfeiture.",
+          "Clock Rules: If your time runs out (flag falls), you lose the game immediately, provided your opponent has enough pieces left to theoretically checkmate you.",
+          "Disputes: In case of any dispute or rule confusion during a game, pause the chess clock immediately and raise your hand to call the arbiter. Do not argue with your opponent.",
         ],
       },
       {
-        title: 'Etiquette & Fair Play',
-        icon: 'shield',
+        title: "Etiquette & Fair Play",
+        icon: "shield",
         items: [
-          'Electronic Devices: All mobile phones, smartwatches, and electronic devices must be turned off completely or put on silent mode and stored in your bag before the match starts. Having a ringing phone or using a device during play results in immediate disqualification.',
-          'Silence: Absolute silence must be maintained in the Agriculture Conference Room during play.',
-          'Draw Offers: Draw offers must be made verbally on your own turn, right after making your move and before pressing the clock.',
+          "Electronic Devices: All mobile phones, smartwatches, and electronic devices must be turned off completely or put on silent mode and stored in your bag before the match starts. Having a ringing phone or using a device during play results in immediate disqualification.",
+          "Silence: Absolute silence must be maintained in the Agriculture Conference Room during play.",
+          "Draw Offers: Draw offers must be made verbally on your own turn, right after making your move and before pressing the clock.",
         ],
       },
     ],
 
-    stage: 'open',
+    stage: "open",
     registrationOpen: true,
     payment: {
-      number: '01521721630',
-      accountType: 'Personal',
-      methods: ['bKash'],
+      number: "01824090676",
+      accountType: "Personal",
+      methods: ["bKash"],
       instructions:
-        'Send the entry fee to the bKash Personal number above, then enter your Transaction ID (TrxID) below.',
+        "Send the entry fee to the bKash Personal number above, then enter your Transaction ID (TrxID) below.",
     },
     registration: {
-      kind: 'solo',
-      entryType: 'solo',
-      idPrefix: 'PSTU-CHS-2026',
+      kind: "solo",
+      entryType: "solo",
+      idPrefix: "PSTU-CHS-2026",
       prep: [
-        'A valid student ID for eligibility checks',
-        '৳100 sent via bKash, and the transaction ID it gives you',
+        "A valid student ID for eligibility checks",
+        "৳100 sent via bKash, and the transaction ID it gives you",
       ],
       sections: [
         {
-          key: 'player',
-          title: 'Player Information',
-          subtitle: 'This is how your name appears on the bracket and on your certificate.',
+          key: "player",
+          title: "Player Information",
+          subtitle:
+            "This is how your name appears on the bracket and on your certificate.",
           fields: contactFields({
-            idLabel: 'Student ID',
-            idPlaceholder: 'e.g. 2102021',
-            idRules: { maxLength: { value: 20, message: 'Student ID cannot exceed 20 characters' } },
+            idLabel: "Student ID",
+            idPlaceholder: "e.g. 2102021",
+            idRules: {
+              maxLength: {
+                value: 20,
+                message: "Student ID cannot exceed 20 characters",
+              },
+            },
           }),
         },
         chessPaymentSection,
@@ -997,25 +1072,25 @@ export const GAMES = [
 
     faqs: [
       {
-        q: 'Do I need to bring my own chess board?',
-        a: 'No. Boards, pieces, and clocks will be provided at the Agriculture Conference Room by the organizing committee.',
+        q: "Do I need to bring my own chess board?",
+        a: "No. Boards, pieces, and clocks will be provided at the Agriculture Conference Room by the organizing committee.",
       },
       {
-        q: 'What is the time control for each game?',
-        a: 'It is a Rapid Chess event. Each player has a fixed 10-minute time control per game.',
+        q: "What is the time control for each game?",
+        a: "It is a Rapid Chess event. Each player has a fixed 10-minute time control per game.",
       },
       {
-        q: 'Is there a limit on participation slots?',
-        a: 'Yes, the tournament is capped at a maximum of 32 players on a first-come, first-served basis.',
+        q: "Is there a limit on participation slots?",
+        a: "Yes, the tournament is capped at a maximum of 32 players on a first-come, first-served basis.",
       },
     ],
     coordinators: [
       {
-        name: 'Sadman Hafiz Shuvo',
-        role: 'IUPC Coordinator · CSE Club, PSTU',
-        phone: '01521721630',
-        email: 'ug2102021@cse.pstu.ac.bd',
-      }
+        name: "Sadman Hafiz Shuvo",
+        role: "IUPC Coordinator · CSE Club, PSTU",
+        phone: "01521721630",
+        email: "ug2102021@cse.pstu.ac.bd",
+      },
     ],
   },
   {
@@ -1111,72 +1186,78 @@ export const GAMES = [
     registration: {
       /* One entrant per registration — the owner's field list has no team
          fields, and the mode is Solo. */
-      kind: 'solo',
-      entryType: 'solo',
-      idPrefix: 'PSTU-LUDO-2026',
+      kind: "solo",
+      entryType: "solo",
+      idPrefix: "PSTU-LUDO-2026",
       prep: [
-        'Your full name, WhatsApp number and email',
-        'Your academic ID and faculty',
-        'The ৳100 entry fee, and the transaction ID plus a screenshot of it',
+        "Your full name, WhatsApp number and email",
+        "Your academic ID and faculty",
+        "The ৳100 entry fee, and the transaction ID plus a screenshot of it",
       ],
       sections: [
         {
-          key: 'player',
-          title: 'Personal Information',
+          key: "player",
+          title: "Personal Information",
           subtitle:
-            'This is how your name appears on the bracket and on your certificate.',
+            "This is how your name appears on the bracket and on your certificate.",
           /* Not contactFields() — that helper ends with a required in-game ID,
              which a board game does not have. These are the owner's five
              fields, in their order. */
           fields: [
             {
-              name: 'players.0.name',
-              label: 'Full Name',
-              placeholder: 'e.g. Rahim Uddin',
+              name: "players.0.name",
+              label: "Full Name",
+              placeholder: "e.g. Rahim Uddin",
               required: true,
-              autoComplete: 'name',
+              autoComplete: "name",
               rules: {
-                maxLength: { value: 100, message: 'Name cannot exceed 100 characters' },
+                maxLength: {
+                  value: 100,
+                  message: "Name cannot exceed 100 characters",
+                },
               },
             },
             {
-              name: 'players.0.email',
-              label: 'Email Address',
-              type: 'email',
-              placeholder: 'you@example.com',
+              name: "players.0.email",
+              label: "Email Address",
+              type: "email",
+              placeholder: "you@example.com",
               required: true,
-              autoComplete: 'email',
+              autoComplete: "email",
               rules: EMAIL_RULES,
             },
             {
-              name: 'players.0.phone',
-              label: 'WhatsApp Number',
-              placeholder: '017XXXXXXXX or +88017XXXXXXXX',
-              hint: 'Match times are sent here — make sure WhatsApp is active on it.',
+              name: "players.0.phone",
+              label: "WhatsApp Number",
+              placeholder: "017XXXXXXXX or +88017XXXXXXXX",
+              hint: "Match times are sent here — make sure WhatsApp is active on it.",
               required: true,
-              autoComplete: 'tel',
+              autoComplete: "tel",
               rules: PHONE_RULES,
             },
             {
-              name: 'players.0.academicId',
-              label: 'Academic ID',
-              placeholder: 'Your student ID',
+              name: "players.0.academicId",
+              label: "Academic ID",
+              placeholder: "Your student ID",
               required: true,
               unique: true,
               rules: {
                 maxLength: {
                   value: 40,
-                  message: 'Academic ID cannot exceed 40 characters',
+                  message: "Academic ID cannot exceed 40 characters",
                 },
               },
             },
             {
-              name: 'players.0.faculty',
-              label: 'Faculty',
-              placeholder: 'e.g. Computer Science and Engineering',
+              name: "players.0.faculty",
+              label: "Faculty",
+              placeholder: "e.g. Computer Science and Engineering",
               required: true,
               rules: {
-                maxLength: { value: 100, message: 'Faculty cannot exceed 100 characters' },
+                maxLength: {
+                  value: 100,
+                  message: "Faculty cannot exceed 100 characters",
+                },
               },
             },
           ],
@@ -1205,93 +1286,109 @@ export const GAMES = [
     slug: 'rubiks-cube',
     name: "Rubik's Cube Speedcubing",
     shortName: "Rubik's",
-    family: 'board',
-    icon: 'cube',
-    accent: 'gold',
-    scope: 'Speed · Solo',
-    mode: 'Solo',
-    tagline: 'Race the clock to solve the cube.',
-    blurb: 'Fastest fingers, sharpest mind.',
-    heroNote: 'Individual participation — no team required.',
+    family: "board",
+    icon: "cube",
+    accent: "gold",
+    scope: "Speed · Solo",
+    mode: "Solo",
+    tagline: "Race the clock to solve the cube.",
+    blurb: "Fastest fingers, sharpest mind.",
+    heroNote: "Individual participation — no team required.",
 
     tournament: {
-      date: '14 August 2026',
-      time: '5:00 PM (Reporting: 4:30 PM)',
-      venue: 'Agriculture Conference Room',
-      entryFee: '৳100 per player',
-      entryShort: '৳100',
-      entryScope: 'per player',
+      date: "14 August 2026",
+      time: "5:00 PM (Reporting: 4:30 PM)",
+      venue: "Agriculture Conference Room",
+      entryFee: "৳100 per player",
+      entryShort: "৳100",
+      entryScope: "per player",
       feePerPlayer: 100,
-      prizePool: '৳2,200',
-      format: 'Best of Three Knockout Round',
-      teamSize: 'Solo (1 player)',
-      teamSizeShort: 'Solo',
-      slots: '32 players',
-      platform: 'On-site Speedcubing',
-      deadline: '5 August 2026',
+      prizePool: "৳2,200",
+      format: "Best of Three Knockout Round",
+      teamSize: "Solo (1 player)",
+      teamSizeShort: "Solo",
+      slots: "32 players",
+      platform: "On-site Speedcubing",
+      deadline: "5 August 2026",
     },
 
     prizes: [
-      { place: 'Champion', rank: 1, amount: '৳1,500', perks: ['Winner certificate', 'Gold medal'] },
-      { place: '1st Runner-Up', rank: 2, amount: '৳700', perks: ['Runner-up certificate'] },
+      {
+        place: "Champion",
+        rank: 1,
+        amount: "৳1,500",
+        perks: ["Winner certificate", "Gold medal"],
+      },
+      {
+        place: "1st Runner-Up",
+        rank: 2,
+        amount: "৳700",
+        perks: ["Runner-up certificate"],
+      },
     ],
 
     rules: [
       {
-        title: 'Gameplay & Cube Scrambling',
-        icon: 'clock',
+        title: "Gameplay & Cube Scrambling",
+        icon: "clock",
         items: [
           'Format: The tournament follows a "Best of Three" knockout format. Each player gets 3 attempts per round. The single fastest solving time among the 3 attempts will be recorded.',
-          'Scrambling: All cubes will be scrambled by official event marshals using a standard computer-generated random sequence right before the attempt.',
-          'Inspection Time: Players have a maximum of 15 seconds to inspect the cube. Touching or turning faces during inspection is strictly prohibited.',
+          "Scrambling: All cubes will be scrambled by official event marshals using a standard computer-generated random sequence right before the attempt.",
+          "Inspection Time: Players have a maximum of 15 seconds to inspect the cube. Touching or turning faces during inspection is strictly prohibited.",
         ],
       },
       {
-        title: 'Strict Regulations & Infractions',
-        icon: 'alert',
+        title: "Strict Regulations & Infractions",
+        icon: "alert",
         items: [
-          'Timer Rules: Standard Stackmat timer or digital stopwatch will be used. Players must start and stop the timer with both hands flat on the mat. Incorrect use may result in a +2 seconds penalty.',
-          'DNF (Did Not Finish): If a cube pops (pieces come apart) during a solve, the player can attempt to fix it and continue within the time, or accept a DNF for that specific run.',
-          'Disputes: In case of any dispute or rule confusion, do not reset the timer. Raise your hand immediately to call the judge.',
+          "Timer Rules: Standard Stackmat timer or digital stopwatch will be used. Players must start and stop the timer with both hands flat on the mat. Incorrect use may result in a +2 seconds penalty.",
+          "DNF (Did Not Finish): If a cube pops (pieces come apart) during a solve, the player can attempt to fix it and continue within the time, or accept a DNF for that specific run.",
+          "Disputes: In case of any dispute or rule confusion, do not reset the timer. Raise your hand immediately to call the judge.",
         ],
       },
       {
-        title: 'Etiquette & Fair Play',
-        icon: 'shield',
+        title: "Etiquette & Fair Play",
+        icon: "shield",
         items: [
-          'Cube Integrity: Participants must bring their own standard 3x3x3 Rubik\'s Cube. The cube must be fully functional and cannot have any special markings, logos, or textures.',
-          'Electronic Devices: No smart devices, phones, or headphones are allowed while sitting at the solving station.',
-          'Silence: Absolute silence must be maintained in the Agriculture Conference Room to avoid distracting competing cubers.',
+          "Cube Integrity: Participants must bring their own standard 3x3x3 Rubik's Cube. The cube must be fully functional and cannot have any special markings, logos, or textures.",
+          "Electronic Devices: No smart devices, phones, or headphones are allowed while sitting at the solving station.",
+          "Silence: Absolute silence must be maintained in the Agriculture Conference Room to avoid distracting competing cubers.",
         ],
       },
     ],
 
-    stage: 'open',
+    stage: "open",
     registrationOpen: true,
     payment: {
-      number: '01790876259',
-      accountType: 'Personal',
-      methods: ['bKash', 'Nagad'],
+      number: "01790876259",
+      accountType: "Personal",
+      methods: ["bKash", "Nagad"],
       instructions:
-        'Send the 100 BDT entry fee via bKash or Nagad Personal Send Money to the number above, then enter the transaction ID below.',
+        "Send the 100 BDT entry fee via bKash or Nagad Personal Send Money to the number above, then enter the transaction ID below.",
     },
     registration: {
-      kind: 'solo',
-      entryType: 'solo',
-      idPrefix: 'PSTU-CUB-2026',
+      kind: "solo",
+      entryType: "solo",
+      idPrefix: "PSTU-CUB-2026",
       prep: [
-        'A valid student ID for eligibility checks',
-        '৳100 sent via bKash or Nagad, and the transaction ID it gives you',
+        "A valid student ID for eligibility checks",
+        "৳100 sent via bKash or Nagad, and the transaction ID it gives you",
       ],
       sections: [
         {
-          key: 'player',
-          title: 'Player Information',
-          subtitle: 'This is how your name appears on the bracket and on your certificate.',
+          key: "player",
+          title: "Player Information",
+          subtitle:
+            "This is how your name appears on the bracket and on your certificate.",
           fields: contactFields({
-            idLabel: 'Student ID',
-            idPlaceholder: 'Your student ID',
-            idRules: { maxLength: { value: 20, message: 'Student ID cannot exceed 20 characters' } },
+            idLabel: "Student ID",
+            idPlaceholder: "Your student ID",
+            idRules: {
+              maxLength: {
+                value: 20,
+                message: "Student ID cannot exceed 20 characters",
+              },
+            },
           }),
         },
         paymentSection,
@@ -1301,39 +1398,39 @@ export const GAMES = [
 
     faqs: [
       {
-        q: 'Do I need to bring my own cube?',
-        a: 'Yes. All participants must bring their own standard 3x3x3 Rubik\'s Cube.',
+        q: "Do I need to bring my own cube?",
+        a: "Yes. All participants must bring their own standard 3x3x3 Rubik's Cube.",
       },
       {
-        q: 'Can I use a magnetic cube?',
-        a: 'Yes, standard magnetic cubes are allowed, but no special markings, textures, or logos that could aid tile recognition are permitted.',
+        q: "Can I use a magnetic cube?",
+        a: "Yes, standard magnetic cubes are allowed, but no special markings, textures, or logos that could aid tile recognition are permitted.",
       },
       {
-        q: 'How many attempts do I get?',
-        a: 'You get 3 attempts per round, and your fastest single time among those 3 attempts counts as your score.',
+        q: "How many attempts do I get?",
+        a: "You get 3 attempts per round, and your fastest single time among those 3 attempts counts as your score.",
       },
     ],
     coordinators: [
       {
-        name: 'MH Nazmul',
-        role: 'Event Coordinator · CSE Club, PSTU',
-        phone: '01790876259',
-        email: 'ug2102013@cse.pstu.ac.bd',
-      }
+        name: "MH Nazmul",
+        role: "Event Coordinator · CSE Club, PSTU",
+        phone: "01790876259",
+        email: "ug2102013@cse.pstu.ac.bd",
+      },
     ],
   },
 ];
 
 export const GAMING = {
-  eyebrow: 'Gaming Fest',
-  title: 'Six arenas. One Booyah.',
+  eyebrow: "Gaming Fest",
+  title: "Six arenas. One Booyah.",
   intro:
-    'The gaming wing of PSTU IT Carnival 2026 runs three esports tournaments — one solo, two squad-based — alongside three board and puzzle events. All three esports tournaments run on 13 August and entries are open now; the board events follow later.',
-  note: 'Entry fees are paid online while you register — send the amount via bKash or Nagad Send Money, then enter the transaction ID on the form. Your entry is confirmed once a coordinator verifies it.',
+    "The gaming wing of PSTU IT Carnival 2026 runs three esports tournaments — one solo, two squad-based — alongside three board and puzzle events. All three esports tournaments run on 13 August and entries are open now; the board events follow later.",
+  note: "Entry fees are paid online while you register — send the amount via bKash or Nagad Send Money, then enter the transaction ID on the form. Your entry is confirmed once a coordinator verifies it.",
   /* Shown wherever a closed tournament would otherwise offer a form. */
-  closedHeading: 'Registration opens soon',
+  closedHeading: "Registration opens soon",
   closedNote:
-    'Entries are not open for this tournament yet. The format, rules and prize breakdown on this page are final, so you can get ready now — the form goes live here once entries open.',
+    "Entries are not open for this tournament yet. The format, rules and prize breakdown on this page are final, so you can get ready now — the form goes live here once entries open.",
 };
 
 /* Registration is per-tournament, so one game can open before the others. */
@@ -1353,7 +1450,8 @@ export const GAME_SLUGS = GAMES.map((g) => g.slug);
    in. Values may be partially filled — `when` must tolerate undefined. */
 export const visibleSections = (game, values) =>
   (game?.registration?.sections || []).filter(
-    (section) => typeof section.when !== 'function' || section.when(values || {})
+    (section) =>
+      typeof section.when !== "function" || section.when(values || {}),
   );
 
 /* Entry type as stored: the answer for a game that asks, the fixed value for
