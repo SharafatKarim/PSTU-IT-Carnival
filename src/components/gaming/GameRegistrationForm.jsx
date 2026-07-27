@@ -137,6 +137,23 @@ const Notice = ({ notice, accent }) => (
 
 const PAYMENT_METHOD_LABEL = PAYMENT_METHODS.join(' · ');
 
+/* Where a checkbox label's `to` token points. Resolved here rather than in
+   src/data/gaming.js because routes.js imports that file — building hrefs
+   there would close the cycle.
+
+   Both targets are sections of the game's own detail page, which is where the
+   rules and the coordinators actually live. Nothing links to a terms or
+   privacy route, because the site does not have one. */
+const LABEL_LINKS = {
+  rules: (game) => `${ROUTES.game(game.slug)}#rules`,
+  contact: (game) => `${ROUTES.game(game.slug)}#contact`,
+};
+
+const resolveLinks = (field, game) =>
+  field.links
+    ?.map(({ text, to }) => ({ text, href: LABEL_LINKS[to]?.(game) }))
+    .filter((link) => link.href);
+
 /* The "send it here" panel above the payment fields. The amount is derived
    from the entry type, so a squad is told ৳60 and an individual ৳15 rather
    than both being shown a per-player figure to multiply themselves. */
@@ -381,6 +398,7 @@ const GameRegistrationForm = ({ game }) => {
                         register={registerField}
                         error={error}
                         required={field.required}
+                        links={resolveLinks(field, game)}
                       />
                     </div>
                   );

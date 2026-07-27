@@ -203,9 +203,20 @@ const paymentSection = {
   ],
 };
 
+/* `links` turns named substrings of a checkbox label into hyperlinks — asking
+   someone to confirm they have read the rules while giving them no way to
+   reach the rules is not a real confirmation.
+
+   The label itself stays a plain string: the server validator quotes it back
+   in error messages ("... must be accepted"), so it cannot hold markup. `to`
+   is a token rather than a URL because routes.js imports this file, and
+   building a real href here would close that cycle — GameRegistrationForm
+   resolves it against the game being registered for. */
 const agreementSection = {
   key: 'confirm',
   title: 'Confirmation',
+  subtitle:
+    'Both are required. The links open in a new tab, so nothing you have typed is lost.',
   fields: [
     {
       name: 'agreeRules',
@@ -213,6 +224,7 @@ const agreementSection = {
       type: 'checkbox',
       required: true,
       full: true,
+      links: [{ text: 'Rules & Regulations', to: 'rules' }],
     },
     {
       name: 'agreeContact',
@@ -220,6 +232,7 @@ const agreementSection = {
       type: 'checkbox',
       required: true,
       full: true,
+      links: [{ text: 'organizing committee', to: 'contact' }],
     },
   ],
 };
