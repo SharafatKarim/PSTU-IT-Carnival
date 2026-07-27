@@ -84,7 +84,6 @@ export function normalizeGameRegistration(game, body, { receiverNumber } = {}) {
       /* Set by the route once the image is stored; null when the tournament
          does not ask for one. */
       screenshot: null,
-      verified: false,
     },
 
     /* Stored, not just validated. These were checked and then thrown away, so

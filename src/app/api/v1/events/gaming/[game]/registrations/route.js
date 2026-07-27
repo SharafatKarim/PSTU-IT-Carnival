@@ -10,7 +10,6 @@ import { MAX_SCREENSHOT_BYTES } from '@/lib/upload';
 import { listGameRegistrations } from '@/server/events/gaming/directory';
 import { checkWriteLimits, clientKey } from '@/server/rateLimit';
 import { verifyTurnstile } from '@/server/turnstile';
-import { sendGamingConfirmationEmail } from '@/lib/email';
 
 // ---------------------------------------------------------------------------
 // Gaming registration intake.
@@ -292,7 +291,7 @@ export async function POST(req, { params }) {
     }
 
     /* A transaction ID is one real transfer, so this is checked across every
-       tournament rather than within one — otherwise a single ৳60 payment could
+       tournament rather than within one — otherwise a single ৳100 payment could
        be quoted on a PUBG entry and a Free Fire entry both. The unique index in
        the model closes the race between two simultaneous submissions; this is
        what turns it into a message somebody can act on. */
@@ -315,22 +314,15 @@ export async function POST(req, { params }) {
        unclaimed after an hour is an orphan — see purgeOrphans(). */
     await attachScreenshot(screenshotId, created.registrationId);
 
-    // 4. Confirmation email. Awaited so a serverless function is not frozen
-    //    before the message leaves; a failure here must not undo the write.
-    try {
-      await sendGamingConfirmationEmail({
-        to: created.contact.email,
-        name: created.contact.name,
-        game,
-        entryType: created.entryType,
-        teamName: created.teamName,
-        playerCount: created.players.length,
-        registrationId: created.registrationId,
-        payment: created.payment,
-      });
-    } catch (emailError) {
-      console.error('[email] Failed to send gaming confirmation:', emailError);
-    }
+    /* 4. No email on registration.
+       A gaming entry lands as 'pending' and means nothing until a coordinator
+       has matched the transaction ID against the wallet statement, so mailing
+       here would confirm something unverified and spend quota doing it. The
+       one message that goes out is the payment approval, sent when an admin
+       moves the status to 'paid' — see sendGamingPaymentApprovedEmail in
+       src/app/api/v1/admin/registrations/route.js.
+       The registration ID is on screen the moment this returns, so nothing is
+       lost by staying quiet here. */
 
     return NextResponse.json(
       {

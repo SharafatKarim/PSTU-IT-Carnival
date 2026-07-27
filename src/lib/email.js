@@ -341,7 +341,7 @@ export async function sendGamingConfirmationEmail({
           <table class="facts">${facts}</table>
           <p>What happens next?</p>
           <ul>
-            <li>The committee checks your transaction ID against the wallet statement. Your entry shows as <strong>verified</strong> on the tournament's registered list once that is done.</li>
+            <li>Your entry is <strong>pending</strong> until the committee matches your transaction ID against the wallet statement. It shows as <strong>confirmed</strong> on the tournament's registered list once that is done.</li>
             <li>Registration closes on <strong>${esc(t.deadline)}</strong>. Details cannot be changed after that.</li>
             ${randomTeamNote}
             <li>Bring this ID and your student ID to the desk on match day.</li>
@@ -354,6 +354,66 @@ export async function sendGamingConfirmationEmail({
   await send({
     to,
     subject: `${game.name} Registration Confirmed — ${registrationId}`,
+    html,
+  });
+}
+
+/**
+ * Sent when an admin moves a gaming registration from pending to paid.
+ *
+ * Deliberately NOT sendGamingConfirmationEmail: that one tells the entrant
+ * "your entry is pending until the committee matches your transaction ID",
+ * which is precisely what has just stopped being true. Reusing it here would
+ * tell an approved squad they are still waiting.
+ *
+ * @param {object}  args
+ * @param {string}  args.to             Contact email on the registration
+ * @param {string}  args.name           Contact name
+ * @param {object}  args.game           Game config from src/data/gaming.js
+ * @param {string}  [args.teamName]     Squad name, absent for solo entries
+ * @param {string}  args.registrationId
+ */
+export async function sendGamingPaymentApprovedEmail({
+  to,
+  name,
+  game,
+  teamName,
+  registrationId,
+}) {
+  const t = game.tournament;
+  const who = teamName ? `your squad <strong>${esc(teamName)}</strong>` : 'your entry';
+
+  const when = [
+    t?.date && `<li>Tournament day: <strong>${esc(t.date)}</strong>${t.time ? `, ${esc(t.time)}` : ''}.</li>`,
+    t?.venue && `<li>Venue: <strong>${esc(t.venue)}</strong>.</li>`,
+  ]
+    .filter(Boolean)
+    .join('');
+
+  const html = shell({
+    title: `${game.name} Payment Confirmed`,
+    heading: 'Payment Confirmed!',
+    idLabel: 'Registration ID',
+    id: registrationId,
+    idNote: 'Bring this with you — it is how we identify you on the day.',
+    body: `
+          <p>Hi ${esc(name)},</p>
+          <p>Your payment has been verified and ${who} is now fully confirmed for the <strong>${esc(game.name)}</strong> tournament at ${BRAND}. Nothing further is needed from you.</p>
+
+          <p>What happens next?</p>
+          <ul>
+            ${when}
+            <li>Your entry now shows as <strong>confirmed</strong> on the tournament's registered list.</li>
+            <li>Room IDs, passwords and match times are shared with the contact on this registration before the first match.</li>
+          </ul>
+
+          <p>If anything above is wrong, reply to this email or contact the coordinators listed on the tournament page.</p>
+          <p>Best regards,<br>Gaming Fest Organizing Committee<br>${BRAND}</p>`,
+  });
+
+  await send({
+    to,
+    subject: `${game.name} Payment Confirmed — ${registrationId}`,
     html,
   });
 }
@@ -515,3 +575,42 @@ export async function sendDatathonConfirmationEmail(toEmail, teamName, registrat
     throw error;
   }
 }
+
+/**
+ * Sends a payment verification / approval email for a gaming tournament registration.
+ * 
+ * @param {object} opts
+ * @param {string} opts.to             recipient email address
+ * @param {string} opts.name           recipient contact's name
+ * @param {string} opts.gameName       the display name of the game (e.g. PUBG Mobile)
+ * @param {string} opts.registrationId generated unique registration ID
+ * @param {string} [opts.teamName]     squad name, team entries only
+ */
+export async function sendGamingApprovalEmail({ to, name, gameName, registrationId, teamName }) {
+  const html = shell({
+    title: `${gameName} Payment Verified`,
+    heading: 'Payment Approved!',
+    idLabel: 'Registration ID',
+    id: registrationId,
+    idNote: 'Keep this ID safe — you will need it at the desk on match day.',
+    body: `
+          <p>Hi ${esc(name)},</p>
+          <p>We have successfully verified your payment for the <strong>${esc(gameName)}</strong> tournament at ${BRAND}.</p>
+          ${teamName ? `<p>Your squad <strong>${esc(teamName)}</strong> has been successfully approved.</p>` : ''}
+          <p>Your registration status is now officially updated to <strong>Confirmed (Paid)</strong>.</p>
+          <p>What happens next?</p>
+          <ul>
+            <li>You and your teammates will be added to the official WhatsApp match coordination group using the phone numbers provided.</li>
+            <li>Bring your Registration ID and student ID card to the desk on match day.</li>
+          </ul>
+          <p>If you have any questions or require support, contact the event coordinators.</p>
+          <p>Best regards,<br>Gaming Fest Organizing Committee<br>${BRAND}</p>`,
+  });
+
+  await send({
+    to,
+    subject: `Payment Approved — ${gameName} — ${registrationId}`,
+    html,
+  });
+}
+

@@ -156,7 +156,7 @@ const resolveLinks = (field, game) =>
     .filter((link) => link.href);
 
 /* The "send it here" panel above the payment fields. The amount is derived
-   from the entry type, so a squad is told ৳60 and an individual ৳15 rather
+   from the entry type, so a squad is told ৳100 and an individual ৳25 rather
    than both being shown a per-player figure to multiply themselves. */
 const PayTo = ({ game, entryType, account, accent }) => {
   const amount = feeFor(game, entryType);
@@ -331,9 +331,11 @@ const GameRegistrationForm = ({ game }) => {
           {reference}
         </p>
         <p className="mx-auto mt-4 max-w-md text-sm text-emerald-200/80">
-          A confirmation has been emailed to you. Your payment is recorded and
-          will be checked against the wallet statement before match day — save
-          this ID and bring it with your student ID.
+          A confirmation has been emailed to you. Your entry is{' '}
+          <strong className="font-semibold text-emerald-200">pending</strong>{' '}
+          until the committee matches your transaction ID against the wallet
+          statement — it shows as confirmed on the registered list once that is
+          done. Save this ID and bring it with your student ID.
         </p>
 
         <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
