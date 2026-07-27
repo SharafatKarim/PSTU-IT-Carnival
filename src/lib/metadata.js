@@ -106,6 +106,20 @@ export function gameMetadata(slug) {
   );
 }
 
+export function gameDirectoryMetadata(slug) {
+  const game = getGame(slug);
+  if (!game) return missing('Registrations');
+
+  const solo = game.registration?.kind === 'solo';
+
+  return build(
+    `${game.name} ${solo ? 'Registered Players' : 'Registered Squads'} — ${SUFFIX}`,
+    solo
+      ? `Everyone registered for the ${game.name} tournament at ${SUFFIX}. Search by player name, serial or registration ID.`
+      : `Every squad registered for the ${game.name} tournament at ${SUFFIX}. Search by squad, player, serial or registration ID.`
+  );
+}
+
 export function gameRegisterMetadata(slug) {
   const game = getGame(slug);
   if (!game) return missing('Registration');

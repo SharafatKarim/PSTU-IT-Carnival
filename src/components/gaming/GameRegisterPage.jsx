@@ -14,7 +14,7 @@ import { accentOf } from '@/lib/accents';
    off to this route rather than embedding the form. Entries that are not open
    yet still render — as the "what to prepare" panel — so a shared link never
    dead-ends. */
-const GameRegisterPage = ({ slug, coordinators }) => {
+const GameRegisterPage = ({ slug, coordinators, paymentAccount }) => {
   const game = getGame(slug);
   if (!game) return null;
 
@@ -64,7 +64,7 @@ const GameRegisterPage = ({ slug, coordinators }) => {
 
       <main className="mx-auto max-w-4xl px-4 py-12 sm:py-16">
         {open ? (
-          <GameRegistrationForm game={game} />
+          <GameRegistrationForm game={game} paymentAccount={paymentAccount} />
         ) : (
           <RegistrationClosed game={game} coordinators={coordinators} />
         )}

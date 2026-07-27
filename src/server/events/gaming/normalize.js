@@ -9,6 +9,8 @@
 // a string. Its job is trimming, ordering and flattening — not checking.
 // ---------------------------------------------------------------------------
 
+import { feeFor } from '@/data/gaming';
+
 const text = (value) => (typeof value === 'string' ? value.trim() : '');
 
 /* The form submits a sparse array when a squad row was never rendered — an
@@ -17,7 +19,7 @@ const text = (value) => (typeof value === 'string' ? value.trim() : '');
 const realRows = (players) =>
   (Array.isArray(players) ? players : []).filter((row) => text(row?.gameId));
 
-export function normalizeGameRegistration(game, body) {
+export function normalizeGameRegistration(game, body, { receiverNumber } = {}) {
   const rows = realRows(body.players);
 
   /* eFootball fixes its entry type in the data and never asks; the battle
@@ -47,5 +49,16 @@ export function normalizeGameRegistration(game, body) {
     },
     players,
     gameIds: players.map((player) => player.gameId.toLowerCase()),
+    payment: {
+      method: text(body.payment?.method),
+      /* Uppercased here as well as in the schema, so the route's duplicate
+         check compares the same string the database will store. */
+      transactionId: text(body.payment?.transactionId).toUpperCase(),
+      /* Both computed server-side. An entrant can claim any amount and any
+         destination; neither is taken from the request. */
+      receiverNumber: receiverNumber || '',
+      amount: feeFor(game, entryType),
+      verified: false,
+    },
   };
 }

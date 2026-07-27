@@ -76,6 +76,11 @@ export const ROUTES = {
   game: (slug) => `${GAMING_BASE}/${slug}`,
   /* Each game's form is its own page, matching how IUPC works. */
   gameRegister: (slug) => `${GAMING_BASE}/${slug}/register`,
+  /* Public directory of who has entered. Squad tournaments list squads, a 1v1
+     tournament lists players — see gameDirectory() below, which picks the
+     right one so no caller has to know which kind a game is. */
+  gameTeams: (slug) => `${GAMING_BASE}/${slug}/teams`,
+  gamePlayers: (slug) => `${GAMING_BASE}/${slug}/players`,
   iupc: FORM_EVENT ? `${EVENTS_BASE}/${FORM_EVENT.slug}` : `${EVENTS_BASE}/iupc`,
   /* Site-wide "Register" CTA — resolves to /events/iupc/register today. */
   register: FORM_EVENT ? `${EVENTS_BASE}/${FORM_EVENT.slug}/register` : '/',
@@ -85,6 +90,27 @@ export const ROUTES = {
 export const REGISTRABLE_EVENTS = EVENT_DETAILS.filter(
   (e) => e.registration?.kind === 'form'
 );
+
+/* A 1v1 tournament has no squads to list, so its directory is /players; the
+   battle royales list squads at /teams. Resolved from the game's own config so
+   a caller only needs the slug.
+
+   Only tournaments taking entries have one — an announced game has nothing to
+   show, and a link to an empty table reads as a bug. */
+export const hasGameDirectory = (slug) => {
+  const game = GAMES.find((g) => g.slug === slug);
+  return Boolean(game?.registrationOpen && game.registration);
+};
+
+export const gameDirectoryLabel = (slug) =>
+  GAMES.find((g) => g.slug === slug)?.registration?.kind === 'solo'
+    ? 'Registered Players'
+    : 'Registered Squads';
+
+export const gameDirectory = (slug) =>
+  GAMES.find((g) => g.slug === slug)?.registration?.kind === 'solo'
+    ? ROUTES.gamePlayers(slug)
+    : ROUTES.gameTeams(slug);
 
 /* Sections of the landing page, in the order they appear. The nav and the
    in-page anchors are both generated from this.
@@ -216,6 +242,19 @@ export const gameRegisterNav = (slug) => [
   { label: 'Home', href: ROUTES.home },
   { label: 'Game Details', href: ROUTES.game(slug) },
   { label: 'All Games', href: ROUTES.gaming },
+  ...(hasGameDirectory(slug)
+    ? [{ label: gameDirectoryLabel(slug), href: gameDirectory(slug) }]
+    : []),
+];
+
+/* Nav for a game's public directory. No "Register" entry — the gold CTA in the
+   header already resolves there, and listing it twice made the two read as
+   different destinations. */
+export const gameDirectoryNav = (slug) => [
+  { label: 'Home', href: ROUTES.home },
+  { label: 'Game Details', href: ROUTES.game(slug) },
+  { label: 'Rules', href: `${ROUTES.game(slug)}#rules` },
+  { label: 'All Games', href: ROUTES.gaming },
 ];
 
 /* Every crawlable page. Consumed by src/app/sitemap.js. */
@@ -243,7 +282,10 @@ export const siteUrls = () => [
       { path: ROUTES.game(slug), priority: game?.stage === 'announced' ? 0.5 : 0.8 },
       /* A closed form is a thin "opens soon" page — not worth indexing. */
       ...(game?.registrationOpen
-        ? [{ path: ROUTES.gameRegister(slug), priority: 0.7 }]
+        ? [
+            { path: ROUTES.gameRegister(slug), priority: 0.7 },
+            { path: gameDirectory(slug), priority: 0.6 },
+          ]
         : []),
     ];
   }),

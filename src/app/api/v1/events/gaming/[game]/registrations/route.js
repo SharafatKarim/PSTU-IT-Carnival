@@ -5,6 +5,8 @@ import GamingRegistration from '@/server/events/gaming/model';
 import { validateGameRegistration } from '@/server/events/gaming/validation';
 import { normalizeGameRegistration } from '@/server/events/gaming/normalize';
 import { generateGameRegistrationId } from '@/server/events/gaming/ids';
+import { listGameRegistrations } from '@/server/events/gaming/directory';
+import { gamePaymentAccount } from '@/server/payments';
 import { checkWriteLimits, clientKey } from '@/server/rateLimit';
 import { verifyTurnstile } from '@/server/turnstile';
 import { sendGamingConfirmationEmail } from '@/lib/email';
@@ -41,6 +43,38 @@ const conflict = (message, field, detail) =>
     { success: false, message, errors: [{ field, message: detail || message }] },
     { status: 409 }
   );
+
+/* Public directory of who has registered. Returns an allow-listed projection
+   only — read the PRIVACY note in src/server/events/gaming/directory.js before
+   widening it. */
+export async function GET(req, { params }) {
+  try {
+    const { game: slug } = await params;
+    const game = getGame(slug);
+
+    if (!game) {
+      return NextResponse.json(
+        { success: false, message: `Unknown game "${slug}"` },
+        { status: 404 }
+      );
+    }
+
+    await connectDB();
+
+    const { searchParams } = new URL(req.url);
+    /* Long search strings cost a collection scan and buy nothing. */
+    const search = (searchParams.get('search') || '').slice(0, 100);
+    const page = Math.max(1, Number(searchParams.get('page')) || 1);
+    /* Capped so the endpoint cannot be used to pull the whole table at once. */
+    const limit = Math.min(100, Math.max(1, Number(searchParams.get('limit')) || 25));
+
+    const data = await listGameRegistrations(game.slug, { search, page, limit });
+
+    return NextResponse.json({ success: true, data });
+  } catch (error) {
+    return serverError('GET', error);
+  }
+}
 
 export async function POST(req, { params }) {
   try {
@@ -122,7 +156,12 @@ export async function POST(req, { params }) {
 
     await connectDB();
 
-    const doc = normalizeGameRegistration(game, body);
+    /* The wallet that was on screen when they paid, recorded on the row so the
+       payment stays reconcilable after an admin changes the number. */
+    const account = await gamePaymentAccount(game.slug);
+    const doc = normalizeGameRegistration(game, body, {
+      receiverNumber: account.number,
+    });
 
     // 2. Duplicate checks — all scoped to this game. The same person may enter
     //    PUBG and Free Fire; they may not enter either one twice.
@@ -167,6 +206,22 @@ export async function POST(req, { params }) {
       );
     }
 
+    /* A transaction ID is one real transfer, so this is checked across every
+       tournament rather than within one — otherwise a single ৳60 payment could
+       be quoted on a PUBG entry and a Free Fire entry both. The unique index in
+       the model closes the race between two simultaneous submissions; this is
+       what turns it into a message somebody can act on. */
+    const existingTxn = await GamingRegistration.findOne({
+      'payment.transactionId': doc.payment.transactionId,
+    });
+    if (existingTxn) {
+      return conflict(
+        'This transaction ID has already been used',
+        'payment.transactionId',
+        `Already recorded against registration ${existingTxn.registrationId}. Each payment covers one entry — send a separate payment and use its own transaction ID.`
+      );
+    }
+
     // 3. Generate ID & create.
     const registrationId = await generateGameRegistrationId(game);
     const created = await GamingRegistration.create({ ...doc, registrationId });
@@ -182,6 +237,7 @@ export async function POST(req, { params }) {
         teamName: created.teamName,
         playerCount: created.players.length,
         registrationId: created.registrationId,
+        payment: created.payment,
       });
     } catch (emailError) {
       console.error('[email] Failed to send gaming confirmation:', emailError);

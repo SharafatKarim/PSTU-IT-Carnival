@@ -5,10 +5,14 @@
 // venue, entry fees, prize money, slot counts, rules, FAQs and the registration
 // form itself. The UI reads it all from here, so no component needs touching.
 //
-// Coordinator contacts are the one exception — they live in the database, not
-// here, so a phone number can be corrected without a redeploy. See
-// src/server/coordinators/ and scripts/seed-coordinators.sh. GAMING_DESK below
-// is only the fallback for when that lookup returns nothing.
+// Two things are the exception — they live in the database, not here, so they
+// can be corrected without a redeploy:
+//
+//   coordinator contacts   src/server/coordinators/
+//   the payment number     src/server/payments/
+//
+// Both are seeded with scripts/seed-db.sh. GAMING_DESK and GAMING_PAYMENT
+// below are only the fallbacks for when those lookups return nothing.
 //
 // >>> STILL UNCONFIRMED <<<
 //   · Free Fire and eFootball start times (date and venue are set)
@@ -45,6 +49,37 @@ export const GAMING_DESK = [
     email: 'ug2102067@cse.pstu.ac.bd',
   },
 ];
+
+/* ---------------------------------------------------------------------------
+   Payment.
+
+   The number entrants send the fee to lives in the database (see
+   src/server/payments/) so it can be changed from an admin panel without a
+   redeploy. GAMING_PAYMENT below is the fallback for when that lookup fails —
+   a registration page that cannot say where to send money is useless.
+
+   The METHOD LIST, by contrast, stays here. It is the select field's options
+   and the server validates against it, so moving it into the database would
+   mean an admin could add a method the validator then rejects.
+   --------------------------------------------------------------------------- */
+
+export const PAYMENT_METHODS = ['bKash', 'Nagad', 'Rocket'];
+
+export const GAMING_PAYMENT = {
+  number: '01790876257',
+  accountType: 'Personal',
+  instructions:
+    'Use “Send Money” (not Payment) from any of the accepted wallets above, then enter the transaction ID it gives you.',
+};
+
+/* A squad pays for four; anyone else pays for one. Shared by the form (to show
+   the amount due) and the server (to record what was owed) so the two figures
+   are always the same number. */
+export const playersRequired = (game, entryType) =>
+  game?.registration?.kind === 'squad' && entryType === 'team' ? 4 : 1;
+
+export const feeFor = (game, entryType) =>
+  (game?.tournament?.feePerPlayer || 0) * playersRequired(game, entryType);
 
 /* ---------------------------------------------------------------------------
    Match format blocks.
@@ -131,6 +166,42 @@ const contactFields = ({ idLabel, idPlaceholder, idRules }) => [
     rules: idRules,
   },
 ];
+
+/* The fee is paid before the form is submitted, not at the desk — the
+   transaction ID is what proves it. `payment: true` tells the form to render
+   the "send it here" panel above these fields, using the receiving number
+   loaded from the database. */
+const paymentSection = {
+  key: 'payment',
+  title: 'Payment',
+  subtitle:
+    'Send the entry fee first, then enter the transaction ID below. Your registration is confirmed once the committee matches the payment against it.',
+  payment: true,
+  fields: [
+    {
+      name: 'payment.method',
+      label: 'Payment Method',
+      type: 'select',
+      options: PAYMENT_METHODS,
+      placeholder: 'Which service did you pay with?',
+      required: true,
+    },
+    {
+      name: 'payment.transactionId',
+      label: 'Transaction ID (TrxID)',
+      placeholder: 'e.g. 9F7A2B4C1D',
+      hint: 'The reference in the confirmation SMS. Each one can only be used for a single registration.',
+      required: true,
+      autoComplete: 'off',
+      rules: {
+        pattern: {
+          value: /^[A-Za-z0-9]{6,25}$/,
+          message: 'Transaction ID is 6–25 letters and digits, no spaces',
+        },
+      },
+    },
+  ],
+};
 
 const agreementSection = {
   key: 'confirm',
@@ -238,6 +309,7 @@ const battleRoyaleSections = ({ idLabel, idPlaceholder, gameLabel }) => [
       rules: UID_RULES,
     })),
   },
+  paymentSection,
   agreementSection,
 ];
 
@@ -266,6 +338,8 @@ export const GAMES = [
       entryFee: '৳100 per player',
       entryShort: '৳100',
       entryScope: 'per player',
+      /* The number, for arithmetic — entryFee above is the sentence. */
+      feePerPlayer: 100,
       prizePool: '৳3,000',
       format: 'Single-elimination knockout · 8-minute matches',
       teamSize: 'Solo (1 player)',
@@ -394,6 +468,7 @@ export const GAMES = [
             },
           ],
         },
+        paymentSection,
         agreementSection,
       ],
     },
@@ -448,6 +523,7 @@ export const GAMES = [
       entryFee: '৳15 per player (৳60 per squad)',
       entryShort: '৳15',
       entryScope: 'per player',
+      feePerPlayer: 15,
       prizePool: '৳10,000+',
       format: 'Battle Royale — 4 matches, points aggregated',
       teamSize: '4 players',
@@ -593,6 +669,7 @@ export const GAMES = [
       entryFee: '৳15 per player (৳60 per squad)',
       entryShort: '৳15',
       entryScope: 'per player',
+      feePerPlayer: 15,
       prizePool: '৳10,000',
       format: 'Two groups of 12 · Top 6 from each reach the final',
       teamSize: '4 players',

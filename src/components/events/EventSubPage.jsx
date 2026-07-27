@@ -26,7 +26,11 @@ const EventSubPage = ({ event, slug, nav, eyebrow, title, intro, tabs, children 
         ctaLabel="Pre-Register"
       />
 
-      <header className="relative overflow-hidden">
+      {/* shrink-0 is load-bearing: this is a flex child with overflow-hidden,
+          and flex-shrink defaults to 1, so once the page's natural content
+          passes 100vh the header silently clips its last line instead of the
+          page growing. */}
+      <header className="relative shrink-0 overflow-hidden">
         <div className="absolute inset-0 bg-hero opacity-70" />
         <div className="absolute inset-0 bg-grid bg-[size:44px_44px] opacity-40" />
         <div className={`absolute -right-24 -top-20 h-64 w-64 rounded-full blur-3xl ${a.blob}`} />

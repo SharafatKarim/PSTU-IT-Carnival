@@ -107,12 +107,42 @@ const registrationSchema = new mongoose.Schema(
       default: [],
       index: true,
     },
-    /* Lifecycle mirrors IUPC: rows land as 'pre-registered' and move to 'paid'
-       when the entry fee is collected at the desk on match day. */
+    /* The fee is paid before the form is submitted, so a row lands as 'paid'
+       rather than 'pre-registered'. That is a claim, not a confirmation —
+       `payment.verified` is what says the committee has actually found the
+       money. 'rejected' covers withdrawn entries and unmatched payments. */
     registrationStatus: {
       type: String,
       enum: ['pre-registered', 'paid', 'rejected'],
-      default: 'pre-registered',
+      default: 'paid',
+    },
+    payment: {
+      method: {
+        type: String,
+        required: [true, 'Payment method is required'],
+        trim: true,
+      },
+      /* Uppercased on the way in so a duplicate check cannot be defeated by
+         typing the same reference in lower case. */
+      transactionId: {
+        type: String,
+        required: [true, 'Transaction ID is required'],
+        trim: true,
+        uppercase: true,
+        maxlength: [25, 'Transaction ID cannot exceed 25 characters'],
+      },
+      /* The receiving number as it stood when this was submitted. Copied
+         rather than looked up later: the wallet can be changed from the admin
+         panel, and a payment must stay reconcilable against the number that
+         was actually on screen. */
+      receiverNumber: { type: String, trim: true },
+      /* What was owed, computed server-side from the fee and the entry type —
+         never taken from the request. */
+      amount: { type: Number, min: 0 },
+      /* Anyone can type a plausible reference. This is the flag an admin sets
+         once the payment has been found in the wallet statement. */
+      verified: { type: Boolean, default: false },
+      verifiedAt: { type: Date },
     },
     registrationId: {
       type: String,
@@ -128,6 +158,22 @@ const registrationSchema = new mongoose.Schema(
    the route; this index is what makes it cheap. */
 registrationSchema.index({ game: 1, teamName: 1 });
 registrationSchema.index({ game: 1, 'contact.email': 1 });
+
+/* A transaction ID identifies one real transfer, so it is unique across every
+   tournament — not per game. Without this, one ৳60 payment could be quoted on
+   a PUBG entry and a Free Fire entry both.
+
+   Unique at the database as well as checked in the route: the explicit check
+   gives a readable message, this closes the race between two submissions
+   quoting the same reference at once. Sparse so historical rows without a
+   payment do not collide on null. */
+registrationSchema.index(
+  { 'payment.transactionId': 1 },
+  {
+    unique: true,
+    partialFilterExpression: { 'payment.transactionId': { $type: 'string' } },
+  }
+);
 
 export default mongoose.models.GamingRegistration ||
   mongoose.model('GamingRegistration', registrationSchema, 'gaming_registrations');

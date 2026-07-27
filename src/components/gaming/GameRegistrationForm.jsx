@@ -11,7 +11,13 @@ import CheckboxField from './CheckboxField';
 import ChoiceField from './ChoiceField';
 import { CheckIcon, AlertIcon, TicketIcon } from '@/components/landing/Icons';
 import { submitGameRegistration } from '@/services/events/gaming';
-import { visibleSections } from '@/data/gaming';
+import {
+  visibleSections,
+  feeFor,
+  playersRequired,
+  PAYMENT_METHODS,
+  GAMING_PAYMENT,
+} from '@/data/gaming';
 import { ROUTES } from '@/lib/routes';
 import { accentOf } from '@/lib/accents';
 
@@ -129,9 +135,55 @@ const Notice = ({ notice, accent }) => (
   </div>
 );
 
+const PAYMENT_METHOD_LABEL = PAYMENT_METHODS.join(' · ');
+
+/* The "send it here" panel above the payment fields. The amount is derived
+   from the entry type, so a squad is told ৳60 and an individual ৳15 rather
+   than both being shown a per-player figure to multiply themselves. */
+const PayTo = ({ game, entryType, account, accent }) => {
+  const amount = feeFor(game, entryType);
+  const heads = playersRequired(game, entryType);
+
+  return (
+    <div
+      className={`mb-6 overflow-hidden rounded-xl border ${accent.borderSoft} ${accent.bgFaint}`}
+    >
+      <div className="grid gap-px bg-white/5 sm:grid-cols-3">
+        <div className="bg-ink-900/60 px-4 py-3.5">
+          <p className="text-[11px] font-bold uppercase tracking-wide text-mist-500">
+            Amount to send
+          </p>
+          <p className={`mt-1 text-xl font-extrabold ${accent.text}`}>৳{amount}</p>
+          <p className="mt-0.5 text-[11px] text-mist-500">
+            ৳{game.tournament.feePerPlayer} × {heads} player{heads === 1 ? '' : 's'}
+          </p>
+        </div>
+
+        <div className="bg-ink-900/60 px-4 py-3.5 sm:col-span-2">
+          <p className="text-[11px] font-bold uppercase tracking-wide text-mist-500">
+            Send to {account.accountType ? `(${account.accountType})` : ''}
+          </p>
+          <p className="mt-1 select-all font-mono text-xl font-extrabold text-white">
+            {account.number}
+          </p>
+          <p className="mt-0.5 text-[11px] text-mist-500">
+            Accepted: {PAYMENT_METHOD_LABEL}
+          </p>
+        </div>
+      </div>
+
+      {account.instructions && (
+        <p className="border-t border-white/5 px-4 py-3 text-xs leading-relaxed text-mist-300">
+          {account.instructions}
+        </p>
+      )}
+    </div>
+  );
+};
+
 /* --- form ----------------------------------------------------------------- */
 
-const GameRegistrationForm = ({ game }) => {
+const GameRegistrationForm = ({ game, paymentAccount }) => {
   const a = accentOf(game.accent);
   const allSections = game.registration.sections;
 
@@ -161,6 +213,15 @@ const GameRegistrationForm = ({ game }) => {
     () => visibleSections(game, values),
     [game, values]
   );
+
+  /* eFootball fixes its entry type in the data and never asks; the amount due
+     still has to be worked out from something. */
+  const resolvedEntryType = game.registration.entryType || entryType;
+
+  /* Read from the database by the page's server component. The constant is the
+     fallback for a database that was unreachable at render time — a form that
+     cannot say where to send the fee cannot be completed. */
+  const account = paymentAccount || GAMING_PAYMENT;
 
   /* Rules are built from every section, not just the visible ones: a section
      that appears mid-fill must already have its rules ready. */
@@ -226,9 +287,9 @@ const GameRegistrationForm = ({ game }) => {
           {reference}
         </p>
         <p className="mx-auto mt-4 max-w-md text-sm text-emerald-200/80">
-          A confirmation has been emailed to you. Save this ID and bring it,
-          your student ID and the entry fee ({game.tournament.entryFee}) to the
-          registration desk on match day.
+          A confirmation has been emailed to you. Your payment is recorded and
+          will be checked against the wallet statement before match day — save
+          this ID and bring it with your student ID.
         </p>
 
         <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
@@ -258,9 +319,9 @@ const GameRegistrationForm = ({ game }) => {
         <TicketIcon className={`mt-0.5 h-4 w-4 shrink-0 ${a.text}`} />
         <span>
           Entry fee is{' '}
-          <strong className="font-semibold text-white">{game.tournament.entryFee}</strong>,
-          collected on-site at the registration desk — no payment is taken through
-          this website. Registration closes on{' '}
+          <strong className="font-semibold text-white">{game.tournament.entryFee}</strong>.
+          Pay it before you submit — the Payment step below tells you where to
+          send it and asks for the transaction ID. Registration closes on{' '}
           <strong className="font-semibold text-white">{game.tournament.deadline}</strong>.
         </span>
       </div>
@@ -293,6 +354,15 @@ const GameRegistrationForm = ({ game }) => {
               <div className="mb-5">
                 <Notice notice={section.notice} accent={a} />
               </div>
+            )}
+
+            {section.payment && (
+              <PayTo
+                game={game}
+                entryType={resolvedEntryType}
+                account={account}
+                accent={a}
+              />
             )}
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

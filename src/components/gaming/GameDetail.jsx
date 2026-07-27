@@ -21,7 +21,13 @@ import {
   CheckIcon,
 } from '@/components/landing/Icons';
 import { getGame, isGameRegistrationOpen } from '@/data/gaming';
-import { ROUTES, gameDetailNav } from '@/lib/routes';
+import {
+  ROUTES,
+  gameDetailNav,
+  gameDirectory,
+  gameDirectoryLabel,
+  hasGameDirectory,
+} from '@/lib/routes';
 import { accentOf } from '@/lib/accents';
 
 const Section = ({ id, eyebrow, title, subtitle, children, className = '' }) => (
@@ -163,6 +169,14 @@ const Hero = ({ game, registrationOpen }) => {
           >
             {registrationOpen ? 'Read the Rules' : 'When does it open?'}
           </a>
+          {hasGameDirectory(game.slug) && (
+            <Link
+              href={gameDirectory(game.slug)}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-grape-400/40 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur transition hover:border-grape-400/70 hover:bg-white/10"
+            >
+              {gameDirectoryLabel(game.slug)}
+            </Link>
+          )}
         </div>
 
         <p className="mt-5 text-xs text-mist-400">{game.heroNote}</p>

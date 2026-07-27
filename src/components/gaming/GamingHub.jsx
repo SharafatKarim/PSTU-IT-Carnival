@@ -5,18 +5,36 @@ import Navbar from '@/components/landing/Navbar';
 import Footer from '@/components/landing/Footer';
 import GameCard from './GameCard';
 import { ArrowLeftIcon, AlertIcon, GamepadIcon } from '@/components/landing/Icons';
-import { GAMES, GAMING } from '@/data/gaming';
+import { GAMES, GAMING, isGameRegistrationOpen } from '@/data/gaming';
 import { EVENT } from '@/data/content';
 import { ROUTES, gamingNav } from '@/lib/routes';
 
+/* Derived rather than hand-written: this heading still read "entries have not
+   opened yet" after all three tournaments had opened, because the sentence
+   lived here while the fact lived in gaming.js. Now it cannot say that unless
+   it is true. */
+const esportsNote = (games) => {
+  const open = games.filter(isGameRegistrationOpen);
+  if (open.length === 0) {
+    return 'Format, rules and prizes published — entries have not opened yet';
+  }
+
+  /* Only worth printing when every open tournament agrees on the date;
+     otherwise the deadline belongs on the individual cards. */
+  const deadlines = [
+    ...new Set(open.map((game) => game.tournament?.deadline).filter(Boolean)),
+  ];
+  const closes = deadlines.length === 1 ? ` — registration closes ${deadlines[0]}` : '';
+
+  return open.length === games.length
+    ? `Entries are open${closes}`
+    : `Entries open for ${open.length} of ${games.length}${closes}`;
+};
+
 /* Order matters: the tournaments with published rules and prizes come first. */
 const FAMILIES = [
-  {
-    key: 'esports',
-    label: 'Esports',
-    note: 'Format, rules and prizes published — entries have not opened yet',
-  },
-  { key: 'board', label: 'Board & Puzzle', note: 'Details to follow' },
+  { key: 'esports', label: 'Esports', note: esportsNote },
+  { key: 'board', label: 'Board & Puzzle', note: () => 'Details to follow' },
 ];
 
 const GamingHub = () => (
@@ -96,7 +114,7 @@ const GamingHub = () => (
                   <h2 className="text-[11px] font-bold uppercase tracking-[0.22em] text-mist-300">
                     {family.label}
                   </h2>
-                  <p className="text-xs text-mist-500">{family.note}</p>
+                  <p className="text-xs text-mist-500">{family.note(games)}</p>
                 </div>
 
                 <div className="mt-6 grid gap-6 lg:grid-cols-3">

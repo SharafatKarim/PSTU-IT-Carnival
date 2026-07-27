@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # ---------------------------------------------------------------------------
-# Seed / update the coordinator contacts the event pages read.
+# Seed / update the settings the site reads from the database — coordinator
+# contacts and the payment receiving number.
 #
-#   ./scripts/seed-coordinators.sh            # show what is stored today
-#   ./scripts/seed-coordinators.sh --apply    # write scripts/seed-coordinators.mjs
+#   ./scripts/seed-db.sh            # show what is stored today
+#   ./scripts/seed-db.sh --apply    # write the lists in seed-db.mjs
 #
-# Edit the CONTACTS list in scripts/seed-coordinators.mjs first, then --apply.
+# Edit the CONTACTS / PAYMENT_ACCOUNTS lists in scripts/seed-db.mjs first.
 #
 # Runs in the BUILDER image for the same reason scripts/test-email.sh does: the
 # runtime image is the standalone build, where mongoose has been bundled into a
@@ -40,5 +41,5 @@ docker build --target builder -t "$IMAGE" . >/dev/null
 docker run --rm \
   --network "$NETWORK" \
   -e "MONGO_URI=$MONGO_URI" \
-  -v "$PWD/scripts/seed-coordinators.mjs:/app/seed-coordinators.mjs:ro" \
-  "$IMAGE" node /app/seed-coordinators.mjs "$@"
+  -v "$PWD/scripts/seed-db.mjs:/app/seed-db.mjs:ro" \
+  "$IMAGE" node /app/seed-db.mjs "$@"

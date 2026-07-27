@@ -16,7 +16,7 @@ import mongoose from 'mongoose';
 //   'iupc' | 'datathon' | ...                    reserved; those pages still
 //                                                read src/data/events.js today
 //
-// Seed or edit with scripts/seed-coordinators.mjs, or directly:
+// Seed or edit with scripts/seed-db.sh, or directly:
 //
 //   db.coordinators.updateOne(
 //     { scope: 'gaming' },

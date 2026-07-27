@@ -281,6 +281,7 @@ export async function sendIupcConfirmationEmail(toEmail, teamName, registrationI
  * @param {string} [opts.teamName]     squad name, team entries only
  * @param {number} opts.playerCount    how many players are on this entry
  * @param {string} opts.registrationId generated unique registration ID
+ * @param {object} [opts.payment]      what was submitted on the payment step
  */
 export async function sendGamingConfirmationEmail({
   to,
@@ -290,6 +291,7 @@ export async function sendGamingConfirmationEmail({
   teamName,
   playerCount,
   registrationId,
+  payment,
 }) {
   const t = game.tournament;
 
@@ -307,13 +309,20 @@ export async function sendGamingConfirmationEmail({
       ? `<li>You entered on your own, so the committee will place you in a squad with other solo entrants. Your teammates are announced in the official group before the first match.</li>`
       : '';
 
+  /* The payment lines are the receipt half of this mail — the entrant has just
+     sent money to a number they were shown once, and this is the only durable
+     record they get of what they paid and against which reference. */
   const facts = [
     ['Tournament', game.name],
     ['Date', t.date],
     ['Time', t.time],
     ['Venue', t.venue],
-    ['Entry fee', t.entryFee],
+    payment?.amount != null && ['Amount paid', `৳${payment.amount}`],
+    payment?.method && ['Paid with', payment.method],
+    payment?.transactionId && ['Transaction ID', payment.transactionId],
+    payment?.receiverNumber && ['Sent to', payment.receiverNumber],
   ]
+    .filter(Boolean)
     .map(
       ([label, value]) =>
         `<tr><td class="label">${esc(label)}</td><td class="value">${esc(value)}</td></tr>`
@@ -332,9 +341,10 @@ export async function sendGamingConfirmationEmail({
           <table class="facts">${facts}</table>
           <p>What happens next?</p>
           <ul>
+            <li>The committee checks your transaction ID against the wallet statement. Your entry shows as <strong>verified</strong> on the tournament's registered list once that is done.</li>
             <li>Registration closes on <strong>${esc(t.deadline)}</strong>. Details cannot be changed after that.</li>
             ${randomTeamNote}
-            <li>Bring this ID, your student ID and the entry fee (${esc(t.entryFee)}) to the registration desk on match day. No payment is taken through the website.</li>
+            <li>Bring this ID and your student ID to the desk on match day.</li>
             <li>Room IDs, passwords and match times are announced in the official tournament group — we use the WhatsApp number from your form to add you.</li>
           </ul>
           <p>If anything above is wrong, reply to this email or contact the coordinators listed on the tournament page.</p>
