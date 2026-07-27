@@ -6,6 +6,7 @@ import { generateRegistrationId } from '@/server/events/iupc/ids';
 import { listTeams } from '@/server/events/iupc/teams';
 import { checkWriteLimits, clientKey } from '@/server/rateLimit';
 import { verifyTurnstile } from '@/server/turnstile';
+import { sendIupcConfirmationEmail } from '@/lib/email';
 
 /* A registration is ~1 KB. Anything far larger is not a real submission, so
    reject it before parsing rather than buffering it into memory. */
@@ -204,6 +205,17 @@ export async function POST(req) {
       members: membersWithLeader,
       registrationId,
     });
+
+    // Send confirmation email asynchronously (do not block the user's registration screen)
+    try {
+      const leader = members[0];
+      if (leader && leader.email) {
+        sendIupcConfirmationEmail(leader.email, teamName, created.registrationId, leader.name)
+          .catch(err => console.error('[email] Async confirmation email failed:', err));
+      }
+    } catch (emailError) {
+      console.error('[email] Failed to initiate confirmation email:', emailError);
+    }
 
     return NextResponse.json(
       {
