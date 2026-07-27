@@ -206,15 +206,14 @@ export async function POST(req) {
       registrationId,
     });
 
-    // Send confirmation email asynchronously (do not block the user's registration screen)
+    // Send confirmation email (awaiting it prevents Vercel from freezing the serverless function prematurely)
     try {
       const leader = members[0];
       if (leader && leader.email) {
-        sendIupcConfirmationEmail(leader.email, teamName, created.registrationId, leader.name)
-          .catch(err => console.error('[email] Async confirmation email failed:', err));
+        await sendIupcConfirmationEmail(leader.email, teamName, created.registrationId, leader.name);
       }
     } catch (emailError) {
-      console.error('[email] Failed to initiate confirmation email:', emailError);
+      console.error('[email] Failed to send confirmation email:', emailError);
     }
 
     return NextResponse.json(
