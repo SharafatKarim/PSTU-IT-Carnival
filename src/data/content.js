@@ -100,7 +100,9 @@ export const EVENTS = [
     icon: 'shield',
     blurb:
       'A jeopardy-style security contest — web, forensics, reverse engineering and cryptography challenges solved against the clock.',
-    status: 'coming-soon',
+    status: 'open',
+    cta: 'Pre-Register',
+    registerHref: ROUTES.eventRegister('hackathon'),
     slug: 'ctf',
     kind: 'event',
     href: ROUTES.event('ctf'),

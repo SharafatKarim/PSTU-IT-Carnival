@@ -5,6 +5,7 @@ import IupcRegistration from '@/server/events/iupc/model';
 import DatathonRegistration from '@/server/events/datathon/model';
 import GamingRegistration from '@/server/events/gaming/model';
 import ItQuizRegistration from '@/server/events/it-quiz/model';
+import HackathonRegistration from '@/server/events/hackathon/model';
 import AdminLog from '@/server/admin/logModel';
 import { sendDatathonConfirmationEmail, sendGamingApprovalEmail } from '@/lib/email';
 import { getGame } from '@/data/gaming';
@@ -35,6 +36,7 @@ export async function GET(req) {
     const iupcTeams = await IupcRegistration.find({}).sort({ createdAt: -1 }).lean();
     const datathonTeams = await DatathonRegistration.find({}).sort({ createdAt: -1 }).lean();
     const itQuiz = await ItQuizRegistration.find({}).sort({ createdAt: -1 }).lean();
+    const hackathon = await HackathonRegistration.find({}).sort({ createdAt: -1 }).lean();
     const gamingTeams = await GamingRegistration.find({}).sort({ createdAt: -1 }).lean();
 
     /* Screenshot BYTES are never in these rows — only an ObjectId. The image
@@ -46,6 +48,7 @@ export async function GET(req) {
         iupc: iupcTeams,
         datathon: datathonTeams,
         'it-quiz': itQuiz,
+        hackathon,
         gaming: gamingTeams,
       },
     });

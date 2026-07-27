@@ -360,77 +360,92 @@ export const EVENT_DETAILS = [
     tagline: '🚀 The Only National-Level Event of PSTU IT Carnival 2026',
     blurb:
         'Challenge yourself by solving real-world industry problems, collaborate with talented innovators, and compete for exciting prizes.',
-    stage: 'published',
-    registrationOpen: false,
+    stage: 'open',
+    registrationOpen: true,
+
+    /* Phase 1 costs nothing, so this form takes no payment details at all —
+       no transaction ID, no screenshot. The ৳2,000 applies at final
+       registration, which opens for the shortlisted teams in August and is a
+       separate flow. */
+    entry: {
+      kind: 'team',
+      fee: 0,
+      feeLabel: 'Free to pre-register · ৳2,000 per team at final registration',
+      minMembers: 1,
+      maxMembers: 2,
+    },
+
     registration: {
-      kind: 'none',
-      cta: 'Registration Coming Soon',
-      note: 'Registration is FREE for all teams (Phase 1)',
+      kind: 'form',
+      cta: 'Pre-Register Your Team',
+      note: 'Pre-registration is free · 1 or 2 members · closes 4 August 2026',
       process: [
-        'Registration is completely FREE for all participating teams in Phase 1.',
-        'Assemble a team of exactly 2 members.',
-        'After registration closes, teams will receive an industry-inspired problem statement (Frontend, Backend, AI/ML, IoT, Cyber Security, Mobile App, or other software engineering domains).',
-        'Top 50 teams from the selection round will move to the On-Site Grand Finale (Fee: BDT 2,000 per team).'
+        'Pre-register your team here between 29 July and 4 August. It costs nothing.',
+        'Two emails follow with the problem statement. Build your solution and submit it as a presentation or abstract.',
+        'Shortlisted teams get a selection email, then final registration runs 9–11 August with the ৳2,000 team fee.',
+        'The on-site finale is 15 August at the TSC Conference Hall.',
       ],
       checklist: [
-        'Team Name',
-        'Two team members with names, universities, emails, and phone numbers',
-        'Domain preference (e.g. AI/ML, IoT, Web, Mobile App)'
-      ]
+        'Your team name',
+        'For each member: full name, email, WhatsApp number, university, department and t-shirt size',
+        'A photo of each member — it goes on their badge and certificate',
+        'A second member is optional; a team of one is allowed',
+      ],
     },
     tournament: {
       date: '15 August 2026',
-      time: '8:00 AM — 5:00 PM (Grand Finale)',
-      venue: 'Conference Room, TSC Building, Patuakhali Science and Technology University (PSTU)',
-      entryFee: 'Phase 1: Free | Phase 3 (Selected Top 50): ৳2,000 per team',
-      entryShort: 'Phase 1: Free',
-      entryScope: 'per team',
-      prizePool: '৳60,000+',
-      format: '3 Phases: Open Registration (Free) → Selection Round → On-site Grand Finale (Top 50 teams, BDT 2,000/team fee)',
-      teamSize: '2 members',
-      teamSizeShort: '2 members',
-      slots: 'Top 50 teams for Grand Finale',
-      platform: 'On-site Development & Solution Building',
-      deadline: 'To be announced',
+      time: '9:00 AM — 5:00 PM (questions emailed at 8:00 AM)',
+      venue: 'TSC Conference Hall, PSTU',
+      entryFee: 'Free to pre-register · ৳2,000 per team at final registration',
+      entryShort: 'Free',
+      entryScope: 'to pre-register',
+      prizePool: '৳60,000',
+      format: 'Onsite 6-hour competition',
+      teamSize: '1 or 2 members',
+      teamSizeShort: '1–2 members',
+      slots: '40 teams',
+      platform: 'On-site development and solution building',
+      deadline: '4 August 2026',
     },
     rules: [
       {
-        title: 'Phase 1: Open Registration',
+        title: 'Phase 1: Free pre-registration',
         icon: 'users',
         items: [
-          'Registration is FREE for all teams.',
-          'Each team must consist of exactly 2 members.',
-          'After registration closes, participating teams will receive an industry-inspired problem statement (covering domains like Frontend, Backend, AI/ML, IoT, Cyber Security, Mobile App, etc.).',
-          'Teams must develop and submit their solution within the specified submission period.'
+          'Pre-registration runs 29 July to 4 August 2026 and is free.',
+          'A team is one or two members. Entering alone is allowed.',
+          'Two emails follow with an industry-inspired problem statement, covering domains such as Frontend, Backend, AI/ML, IoT, Cyber Security and Mobile App development.',
+          'Teams submit their solution as a presentation or abstract within the stated window.',
         ]
       },
       {
         title: 'Phase 2: Selection Round & Criteria',
         icon: 'trophy',
         items: [
-          'All submitted projects will be evaluated by an expert judging panel.',
-          'Evaluation Criteria: Innovation & Creativity, Technical Implementation, Scalability, User Experience, and Problem-Solving Approach.',
-          'The Top 50 teams will be selected for the On-Site Grand Finale.'
+          'All submitted projects are evaluated by an expert judging panel.',
+          'Criteria: innovation and creativity, technical implementation, scalability, user experience, and problem-solving approach.',
+          'Shortlisted teams receive a selection email. Final paid registration then runs 9 to 11 August 2026 at ৳2,000 per team.',
+          '40 team slots at the finale.',
         ]
       },
       {
         title: 'Phase 3: On-Site Grand Finale Schedule',
         icon: 'clock',
         items: [
-          'Grand Finale Date: 15 August 2026. Venue: Conference Room, TSC Building, PSTU.',
-          'Registration Fee: BDT 2,000 per Team (applicable only to the selected Top 50 teams).',
-          '8:00 AM - Industry-level Final Problem Statement Released in the Participant Group.',
-          '8:45 AM - All Selected Teams Must Be Present at the Conference Room.',
-          '9:00 AM – 3:00 PM - Hackathon Development & Solution Building.',
-          '11:00 AM - Mid Evaluation Round (Judges will visit each team\'s booth for progress evaluation).',
-          '3:00 PM – 5:00 PM - Final Project Demonstration & Evaluation by the Jury.'
+          '15 August 2026, TSC Conference Hall, PSTU.',
+          '৳2,000 per team, paid at final registration by the shortlisted teams only.',
+          '8:00 AM — the final problem statement is emailed to every selected team.',
+          '8:45 AM — all teams must be present in the hall.',
+          '9:00 AM to 3:00 PM — development and solution building.',
+          '11:00 AM — mid evaluation; judges visit each booth.',
+          '3:00 PM to 5:00 PM — final demonstration and jury evaluation.',
         ]
       },
       {
         title: 'Prizes & Rewards',
         icon: 'gift',
         items: [
-          'Grand Prize Pool of BDT 60,000+.',
+          'Prize pool of ৳60,000.',
           'Cash Prizes for the winners.',
           'Exclusive Gifts and Certificates for participants.',
           'Recognition & Networking Opportunities with developers and industry leaders.'
@@ -440,11 +455,11 @@ export const EVENT_DETAILS = [
     faqs: [
       {
         q: 'Is physical presence required for Phase 1?',
-        a: 'No. Phase 1 (Registration and initial solution submission) is fully online. Physical presence at PSTU is only required for the selected Top 50 teams that qualify for the On-site Grand Finale on August 15, 2026.'
+        a: 'No. Pre-registration and the first submission are fully online. You only need to be at PSTU if your team is shortlisted for the on-site finale on 15 August 2026.'
       },
       {
-        q: 'What is the team size requirement?',
-        a: 'Each team must consist of exactly 2 members. Solo participation or teams of other sizes are not allowed.'
+        q: 'What is the team size?',
+        a: 'One or two members. A second member is optional — entering alone is allowed, and a team can never be larger than two.'
       },
       {
         q: 'What fields/domains will the problem statements cover?',

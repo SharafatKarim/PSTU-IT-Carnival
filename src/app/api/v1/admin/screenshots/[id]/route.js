@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import mongoose from 'mongoose';
 import connectDB from '@/server/db';
 import { PaymentScreenshot } from '@/server/payments/screenshot';
+import { ParticipantPhoto } from '@/server/uploads/photo';
 
 // ---------------------------------------------------------------------------
 // The only way to see a payment screenshot.
@@ -45,8 +46,14 @@ export async function GET(req, { params }) {
 
     await connectDB();
 
-    /* `data` is select:false on the schema, so it has to be asked for. */
-    const shot = await PaymentScreenshot.findById(id).select('+data').lean();
+    /* `data` is select:false on both schemas, so it has to be asked for.
+
+       One route serves both collections. The id is a unique ObjectId, so
+       looking in the second only when the first misses is unambiguous — and it
+       means the admin UI needs one URL shape rather than two. */
+    const shot =
+      (await PaymentScreenshot.findById(id).select('+data').lean()) ||
+      (await ParticipantPhoto.findById(id).select('+data').lean());
     if (!shot) {
       return NextResponse.json(
         { success: false, message: 'Not found' },

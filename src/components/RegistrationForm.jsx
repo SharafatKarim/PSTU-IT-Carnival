@@ -17,8 +17,9 @@ import { ROUTES, registerNav } from '@/lib/routes';
 import { getEventDetail } from '@/data/events';
 import { searchUniversities } from '@/data/universities';
 import { BD_PHONE_RE, EMAIL_RE, PHONE_HINT } from '@/lib/patterns';
+import { TSHIRT_SIZES } from '@/lib/sizes';
 
-const T_SHIRT_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
+
 
 const STEPS = [
   { key: 'team', label: 'Team & Coach' },
@@ -123,7 +124,7 @@ function memberPhoneRule(i) {
 function tshirtSizeRule(i) {
   return {
     required: `${memberLabel(i)} t-shirt size is required`,
-    validate: (v) => T_SHIRT_SIZES.includes(v) || 'Select a valid t-shirt size',
+    validate: (v) => TSHIRT_SIZES.includes(v) || 'Select a valid t-shirt size',
   };
 }
 

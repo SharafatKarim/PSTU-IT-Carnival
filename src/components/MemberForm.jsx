@@ -1,8 +1,9 @@
 import FormField from './FormField';
 import SelectField from './SelectField';
 import { PHONE_HINT } from '@/lib/patterns';
+import { TSHIRT_SIZES } from '@/lib/sizes';
 
-const TSHIRT_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
+
 
 /* The first member is the team leader — the one address the committee writes
    to. Saying so on the form matters: whoever fills in row one is who receives

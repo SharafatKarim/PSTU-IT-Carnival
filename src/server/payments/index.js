@@ -1,5 +1,5 @@
 import { PaymentScreenshot } from './screenshot';
-import { readScreenshot } from './image';
+import { readImageUpload } from './image';
 
 // ---------------------------------------------------------------------------
 // The two operations a registration flow needs from the screenshot store.
@@ -19,7 +19,7 @@ import { readScreenshot } from './image';
  *                  | { ok: false, message: string }>}
  */
 export async function storeScreenshot(file, { scope }) {
-  const read = await readScreenshot(file);
+  const read = await readImageUpload(file);
   if (!read.ok) return read;
 
   const doc = await PaymentScreenshot.create({

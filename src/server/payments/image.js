@@ -51,13 +51,13 @@ const isHeic = (bytes) =>
   );
 
 /**
- * Validate an uploaded screenshot.
+ * Validate an uploaded image — a payment screenshot or a participant photo.
  *
  * @param {File|null} file  the entry from FormData
  * @returns {Promise<{ ok: true, buffer: Buffer, contentType: string, bytes: number }
  *                  | { ok: false, message: string }>}
  */
-export async function readScreenshot(file) {
+export async function readImageUpload(file) {
   if (!file || typeof file.arrayBuffer !== 'function') {
     return { ok: false, message: 'No file was received.' };
   }
