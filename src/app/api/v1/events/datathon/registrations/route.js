@@ -5,6 +5,7 @@ import { validateRegistration } from '@/server/events/datathon/validation';
 import { generateRegistrationId } from '@/server/events/datathon/ids';
 import { checkWriteLimits, clientKey } from '@/server/rateLimit';
 import { verifyTurnstile } from '@/server/turnstile';
+import { listTeams } from '@/server/events/datathon/teams';
 
 const MAX_BODY_BYTES = 16 * 1024;
 
@@ -15,6 +16,23 @@ const serverError = (context, error) => {
     { status: 500 }
   );
 };
+
+export async function GET(req) {
+  try {
+    await connectDB();
+
+    const { searchParams } = new URL(req.url);
+    const search = searchParams.get('search') || '';
+    const page = Math.max(1, Number(searchParams.get('page')) || 1);
+    const limit = Math.min(100, Math.max(1, Number(searchParams.get('limit')) || 20));
+
+    const data = await listTeams({ search: search.slice(0, 100), page, limit });
+
+    return NextResponse.json({ success: true, data });
+  } catch (error) {
+    return serverError('GET', error);
+  }
+}
 
 export async function POST(req) {
   try {
