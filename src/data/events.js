@@ -466,7 +466,20 @@ export const EVENT_DETAILS = [
         a: 'Problem statements will cover real-world software engineering domains, including but not limited to: Frontend, Backend, AI/ML, IoT, Cyber Security, and Mobile App Development.'
       }
     ],
-    coordinators: []
+    coordinators: [
+      {
+        name: 'Meheraj',
+        role: 'Event Coordinator · CSE Club, PSTU',
+        phone: '01825809073',
+        email: 'ug2102057@cse.pstu.ac.bd',
+      },
+      {
+        name: 'Tanmoy Kumar Das',
+        role: 'Event Coordinator · CSE Club, PSTU',
+        phone: '01782847103',
+        email: 'ug2102079@cse.pstu.ac.bd',
+      },
+    ]
   },
   {
     slug: 'it-quiz',
