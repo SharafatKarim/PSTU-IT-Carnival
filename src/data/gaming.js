@@ -242,28 +242,6 @@ const chessPaymentSection = {
   ],
 };
 
-/* Ludo's payment section: the same two fields plus a screenshot.
-
-   A separate object rather than an edit to `paymentSection`, because that one
-   is shared by three tournaments already taking entries and changing what they
-   ask for mid-registration is not a UI decision to make quietly. */
-const paymentWithScreenshotSection = {
-  ...paymentSection,
-  subtitle:
-    "Send the entry fee first, then give us the transaction ID and a screenshot of the confirmation.",
-  fields: [
-    ...paymentSection.fields,
-    {
-      name: "payment.screenshot",
-      label: "Payment Screenshot",
-      type: "file",
-      required: true,
-      full: true,
-      hint: "The confirmation screen from your wallet app. JPG, PNG or WebP, up to 5 MB.",
-    },
-  ],
-};
-
 /* Ludo's confirmation wording is the owner's, and it differs from the one the
    esports tournaments use. Written as its own section rather than changing
    `agreementSection`, so nobody is retroactively held to a sentence they were
@@ -1262,7 +1240,7 @@ export const GAMES = [
             },
           ],
         },
-        paymentWithScreenshotSection,
+        paymentSection,
         ludoAgreementSection,
       ],
     },
@@ -1271,10 +1249,6 @@ export const GAMES = [
       {
         q: 'Do I need to bring a board?',
         a: 'No. Boards and dice are provided at the venue.',
-      },
-      {
-        q: 'Why do you ask for a screenshot as well as the transaction ID?',
-        a: 'It is checked against the wallet statement when your payment is verified, and deleted the moment that is done.',
       },
       {
         q: 'Is there a limit on slots?',
