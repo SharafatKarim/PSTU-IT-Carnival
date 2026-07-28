@@ -14,6 +14,13 @@ const volunteerSchema = new mongoose.Schema(
       trim: true,
       maxlength: [40, 'Student ID cannot exceed 40 characters'],
     },
+    email: {
+      type: String,
+      required: [true, 'Email is required'],
+      trim: true,
+      lowercase: true,
+      maxlength: [120, 'Email cannot exceed 120 characters'],
+    },
     phone: {
       type: String,
       required: [true, 'Phone number is required'],

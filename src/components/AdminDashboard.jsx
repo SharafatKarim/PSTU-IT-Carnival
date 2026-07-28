@@ -428,7 +428,7 @@ export default function AdminDashboard({ user }) {
                       <th className="px-6 py-4">Reg ID</th>
                       <th className="px-6 py-4">Name</th>
                       <th className="px-6 py-4">Student ID</th>
-                      <th className="px-6 py-4">Phone</th>
+                      <th className="px-6 py-4">Email / Phone</th>
                       <th className="px-6 py-4">T-Shirt Size</th>
                       <th className="px-6 py-4">Selected Events</th>
                     </tr>
@@ -446,7 +446,10 @@ export default function AdminDashboard({ user }) {
                           <td className="px-6 py-4 font-mono text-xs text-gold-400 font-bold">{v.registrationId}</td>
                           <td className="px-6 py-4 font-bold text-white">{v.fullName}</td>
                           <td className="px-6 py-4 text-mist-300 font-mono text-xs">{v.studentId}</td>
-                          <td className="px-6 py-4 text-mist-300">{v.phone}</td>
+                          <td className="px-6 py-4 text-xs text-mist-300">
+                            <div className="text-white font-medium">{v.email || 'N/A'}</div>
+                            <div className="text-mist-400">{v.phone}</div>
+                          </td>
                           <td className="px-6 py-4 text-xs font-semibold text-mist-300">
                             {v.tShirtSize || 'M'}
                           </td>

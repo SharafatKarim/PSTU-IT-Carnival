@@ -15,7 +15,16 @@ export async function POST(req) {
       return fail('Invalid JSON body');
     }
 
-    const { fullName, studentId, phone, events, department, tShirtSize, preferredRole } = body || {};
+    const { fullName, studentId, email, phone, events, tShirtSize } = body || {};
+
+    const cleanEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+    if (!cleanEmail || !cleanEmail.endsWith('@cse.pstu.ac.bd')) {
+      return fail(
+        'We only allow PSTU CSE students as volunteer.',
+        [{ field: 'email', message: 'We only allow PSTU CSE students as volunteer.' }],
+        400
+      );
+    }
 
     const errors = [];
     if (!fullName || typeof fullName !== 'string' || !fullName.trim()) {
@@ -39,12 +48,15 @@ export async function POST(req) {
 
     const cleanStudentId = studentId.trim();
     const existing = await VolunteerRegistration.findOne({
-      studentId: new RegExp(`^${cleanStudentId}$`, 'i'),
+      $or: [
+        { studentId: new RegExp(`^${cleanStudentId}$`, 'i') },
+        { email: cleanEmail },
+      ],
     }).lean();
 
     if (existing) {
       return fail(
-        'This Student ID is already registered as a volunteer.',
+        'You have already registered as a volunteer.',
         [{ field: 'studentId', message: 'Already registered' }],
         409
       );
@@ -56,11 +68,10 @@ export async function POST(req) {
     const doc = await VolunteerRegistration.create({
       fullName: fullName.trim(),
       studentId: cleanStudentId,
+      email: cleanEmail,
       phone: phone.trim(),
       events: events.map((e) => String(e).trim()),
-      department: department ? String(department).trim() : '',
       tShirtSize: tShirtSize ? String(tShirtSize).trim() : '',
-      preferredRole: preferredRole ? String(preferredRole).trim() : '',
       registrationId,
       status: 'pending',
     });

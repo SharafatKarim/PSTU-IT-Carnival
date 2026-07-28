@@ -13,6 +13,7 @@ export default function VolunteerRegistrationPageContent() {
   const [formData, setFormData] = useState({
     fullName: '',
     studentId: '',
+    email: '',
     phone: '',
     tShirtSize: 'M',
     events: [],
@@ -52,6 +53,10 @@ export default function VolunteerRegistrationPageContent() {
     }
     if (!formData.studentId.trim()) {
       setError('Please enter your Student ID.');
+      return;
+    }
+    if (!formData.email.trim() || !formData.email.trim().toLowerCase().endsWith('@cse.pstu.ac.bd')) {
+      setError('We only allow PSTU CSE students as volunteer.');
       return;
     }
     if (!formData.phone.trim()) {
@@ -161,8 +166,7 @@ export default function VolunteerRegistrationPageContent() {
                     required
                     value={formData.fullName}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                    placeholder="Enter your full name"
-                    className="w-full rounded-xl border border-white/10 bg-ink-950/70 px-4 py-3 text-sm text-white placeholder-mist-400 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400"
+                    className="w-full rounded-xl border border-white/10 bg-ink-950/70 px-4 py-3 text-sm text-white focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400"
                   />
                 </div>
 
@@ -175,10 +179,25 @@ export default function VolunteerRegistrationPageContent() {
                     required
                     value={formData.studentId}
                     onChange={(e) => setFormData({ ...formData, studentId: e.target.value })}
-                    placeholder="Enter your Student ID"
-                    className="w-full rounded-xl border border-white/10 bg-ink-950/70 px-4 py-3 text-sm text-white placeholder-mist-400 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400"
+                    className="w-full rounded-xl border border-white/10 bg-ink-950/70 px-4 py-3 text-sm text-white focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-mist-300 mb-2">
+                  Email Address (Edu Mail) <span className="text-gold-400">*</span>
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full rounded-xl border border-white/10 bg-ink-950/70 px-4 py-3 text-sm text-white focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400"
+                />
+                <p className="mt-1.5 text-xs text-mist-400">
+                  Please insert your official PSTU CSE student edu mail (e.g. studentId@cse.pstu.ac.bd).
+                </p>
               </div>
 
               <div className="grid gap-6 sm:grid-cols-2">
@@ -191,8 +210,7 @@ export default function VolunteerRegistrationPageContent() {
                     required
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="01XXXXXXXXX"
-                    className="w-full rounded-xl border border-white/10 bg-ink-950/70 px-4 py-3 text-sm text-white placeholder-mist-400 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400"
+                    className="w-full rounded-xl border border-white/10 bg-ink-950/70 px-4 py-3 text-sm text-white focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400"
                   />
                 </div>
 
