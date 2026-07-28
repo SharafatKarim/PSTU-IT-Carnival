@@ -175,7 +175,7 @@ export const EVENT_DETAILS = [
     shortName: 'Datathon',
     /*icon: 'chart',*/
     accent: 'magenta',
-    scope: 'National',
+    scope: 'South Zone',
     mode: 'Solo or Team of 2',
     tagline:
         'Specially tailored for beginners in Data Science and Machine Learning.',
