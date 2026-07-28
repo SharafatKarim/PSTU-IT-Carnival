@@ -22,8 +22,8 @@ const EventsIndex = () => (
     <Navbar
       links={eventsIndexNav}
       homeHref={ROUTES.home}
-      ctaHref={ROUTES.register}
-      ctaLabel="IUPC Register"
+      ctaHref={ROUTES.volunteer}
+      ctaLabel="Register as Volunteer"
     />
 
     <main>

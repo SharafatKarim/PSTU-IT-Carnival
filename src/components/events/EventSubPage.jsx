@@ -22,8 +22,8 @@ const EventSubPage = ({ event, slug, nav, eyebrow, title, intro, tabs, children 
       <Navbar
         links={nav}
         homeHref={ROUTES.home}
-        ctaHref={ROUTES.eventRegister(slug)}
-        ctaLabel="Pre-Register"
+        ctaHref={ROUTES.volunteer}
+        ctaLabel="Register as Volunteer"
       />
 
       {/* shrink-0 is load-bearing: this is a flex child with overflow-hidden,

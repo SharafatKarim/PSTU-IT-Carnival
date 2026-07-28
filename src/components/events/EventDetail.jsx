@@ -337,8 +337,8 @@ const EventDetail = ({ slug }) => {
       <Navbar
         links={eventDetailNav}
         homeHref={ROUTES.home}
-        ctaHref={registrationOpen ? ROUTES.eventRegister(event.slug) : '#contact'}
-        ctaLabel={registrationOpen ? 'Pre-Register' : 'Contact Support'}
+        ctaHref={registrationOpen ? ROUTES.volunteer : '#contact'}
+        ctaLabel={registrationOpen ? 'Register as Volunteer' : 'Contact Support'}
       />
       <main>
         <Hero event={event} />

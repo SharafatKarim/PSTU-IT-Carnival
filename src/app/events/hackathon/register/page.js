@@ -64,8 +64,8 @@ export default function HackathonRegisterPage() {
       <Navbar
         links={homeNav}
         homeHref={ROUTES.home}
-        ctaHref={ROUTES.register}
-        ctaLabel="IUPC Register"
+        ctaHref={ROUTES.volunteer}
+        ctaLabel="Register as Volunteer"
       />
       <main className="flex-1">
         {event.registrationOpen ? (

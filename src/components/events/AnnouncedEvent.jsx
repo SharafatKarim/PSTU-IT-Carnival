@@ -59,8 +59,8 @@ const AnnouncedEvent = ({ slug, kind = 'event' }) => {
           { label: 'Gaming', href: ROUTES.gaming },
         ]}
         homeHref={ROUTES.home}
-        ctaHref={ROUTES.register}
-        ctaLabel="IUPC Register"
+        ctaHref={ROUTES.volunteer}
+        ctaLabel="Register as Volunteer"
       />
 
       <main className="flex-1">
