@@ -1,5 +1,5 @@
 allowBuilds:
-  sharp: true
-  unrs-resolver: true
-minimumReleaseAgeExclude:
-  - react-hook-form@7.83.0
+  sharp: set this to true or false
+  unrs-resolver: set this to true or false
+overrides:
+  postcss: ">=8.5.18"
