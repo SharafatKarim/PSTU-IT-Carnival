@@ -8,23 +8,12 @@ const ALL_EVENTS = EVENTS.map((e) => e.name);
 
 const T_SHIRT_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
 
-const VOLUNTEER_ROLES = [
-  'General Volunteer',
-  'Stage & Venue Management',
-  'Tech & Judging Support',
-  'Registration Desk',
-  'Logistics & Hospitality',
-  'Media & Photography',
-];
-
 export default function VolunteerModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
     fullName: '',
     studentId: '',
     phone: '',
-    department: '',
     tShirtSize: 'M',
-    preferredRole: 'General Volunteer',
     events: [],
   });
 
@@ -231,21 +220,6 @@ export default function VolunteerModal({ isOpen, onClose }) {
 
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-mist-300 mb-1.5">
-                    Department / Faculty
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.department}
-                    onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                    placeholder="e.g. CSE, EEE"
-                    className="w-full rounded-xl border border-white/10 bg-ink-950/70 px-4 py-2.5 text-sm text-white placeholder-mist-400 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400"
-                  />
-                </div>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-mist-300 mb-1.5">
                     T-Shirt Size
                   </label>
                   <select
@@ -256,23 +230,6 @@ export default function VolunteerModal({ isOpen, onClose }) {
                     {T_SHIRT_SIZES.map((size) => (
                       <option key={size} value={size} className="bg-ink-900 text-white">
                         Size: {size}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-mist-300 mb-1.5">
-                    Preferred Role
-                  </label>
-                  <select
-                    value={formData.preferredRole}
-                    onChange={(e) => setFormData({ ...formData, preferredRole: e.target.value })}
-                    className="w-full rounded-xl border border-white/10 bg-ink-950/70 px-4 py-2.5 text-sm text-white focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400"
-                  >
-                    {VOLUNTEER_ROLES.map((role) => (
-                      <option key={role} value={role} className="bg-ink-900 text-white">
-                        {role}
                       </option>
                     ))}
                   </select>
