@@ -73,9 +73,12 @@ const registrationSchema = new mongoose.Schema(
 
     payment: {
       method: { type: String, trim: true, maxlength: 40 },
-      /* Optional on purpose — see the header. */
-      transactionId: { type: String, trim: true, maxlength: 25 },
-      /* Reference, not bytes. src/server/payments/screenshot.js explains why. */
+      transactionId: {
+        type: String,
+        required: [true, 'Transaction ID is required'],
+        trim: true,
+        maxlength: 25,
+      },
       screenshot: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'PaymentScreenshot',
@@ -99,16 +102,9 @@ const registrationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-/* Partial, not plain: only documents that actually carry a transaction ID are
-   indexed, so screenshot-only entries never collide with each other. */
 registrationSchema.index(
   { 'payment.transactionId': 1 },
-  {
-    unique: true,
-    partialFilterExpression: {
-      'payment.transactionId': { $type: 'string' },
-    },
-  }
+  { unique: true }
 );
 
 export default mongoose.models.ItQuizRegistration ||

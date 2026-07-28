@@ -506,40 +506,50 @@ export const EVENT_DETAILS = [
        --------------------------------------------------------------------- */
     tournament: {
       date: '14 August 2026',
-      time: '10:00 AM (Reporting: 9:30 AM)',
-      venue: 'CSE–FBA Building, PSTU',
+      time: '10:00 AM',
+      venue: 'TSC Conference Room',
       entryFee: '৳50 per participant',
       entryShort: '৳50',
       entryScope: 'per participant',
       feePerPlayer: 50,
-      format: 'Written preliminary round, then a buzzer final',
-      teamSize: 'Solo (1 participant)',
-      teamSizeShort: 'Solo',
+      format: 'Onsite (Written preliminary round, then a buzzer final)',
+      teamSize: 'Individual (Solo)',
+      teamSizeShort: 'Individual',
       slots: '100 participants',
       platform: 'On-site',
-      deadline: '5 August 2026',
+      deadline: '13 August 2026, 12:00 AM',
     },
 
-    /* The datathon's pattern for a fee that is settled before the prize is. */
-    prizeNote: 'Prize will be announced very soon',
     prizes: [
       {
         place: 'Champion',
         rank: 1,
-        amount: 'To be announced',
-        perks: ['Winner certificate'],
+        amount: '৳2,500',
+        perks: ['Certificate of merit'],
       },
       {
         place: '1st Runner-Up',
         rank: 2,
-        amount: 'To be announced',
-        perks: ['Runner-up certificate'],
+        amount: '৳2,000',
+        perks: ['Certificate of merit'],
       },
       {
         place: '2nd Runner-Up',
         rank: 3,
-        amount: 'To be announced',
-        perks: ['Runner-up certificate'],
+        amount: '৳1,500',
+        perks: ['Certificate of merit'],
+      },
+      {
+        place: '3rd Runner-Up',
+        rank: 4,
+        amount: '৳1,000',
+        perks: ['Certificate of merit'],
+      },
+      {
+        place: '4th Runner-Up',
+        rank: 5,
+        amount: '৳500',
+        perks: ['Certificate of merit'],
       },
     ],
 
@@ -567,8 +577,8 @@ export const EVENT_DETAILS = [
         title: 'Registration & Payment',
         icon: 'ticket',
         items: [
-          'Your entry is confirmed once the committee has matched your ৳50 against the wallet statement.',
-          'Give either the transaction ID or a screenshot of the payment — one is enough.',
+          'Send 50 BDT to 01753132369 via bKash Personal.',
+          'Keep your transaction ID and fill in the online registration form.',
           'Bring your student ID to the venue for the eligibility check.',
         ],
       },
@@ -578,15 +588,12 @@ export const EVENT_DETAILS = [
     registrationOpen: true,
 
     entry: {
-      /* One entrant, not a team — the owner's field list has no team fields. */
       kind: 'solo',
       fee: 50,
       feeLabel: '৳50 per participant',
-      /* PROVISIONAL — see the block above. This is the one value to change
-         before this page is announced anywhere. */
-      receiverNumber: '01601425302',
+      receiverNumber: '01753132369',
       accountType: 'Personal',
-      methods: ['bKash', 'Nagad'],
+      methods: ['bKash'],
     },
 
     faqs: [
@@ -599,10 +606,6 @@ export const EVENT_DETAILS = [
         a: 'Yes. The email field is optional. Give us a working WhatsApp number instead — that is where we will reach you.',
       },
       {
-        q: 'I paid but do not have the transaction ID. What do I do?',
-        a: 'Attach a screenshot of the payment confirmation instead. Either one is enough; you do not need both.',
-      },
-      {
         q: 'When is my registration confirmed?',
         a: 'You get a registration ID the moment you submit. It is confirmed once the committee has matched your ৳50 against the wallet statement.',
       },
@@ -613,16 +616,36 @@ export const EVENT_DETAILS = [
       cta: 'Register for IT Quiz',
       note: 'Individual entry · ৳50',
       process: [
-        'Send ৳50 to the number published on this page and keep the confirmation.',
-        'Fill in your details, then either type the transaction ID or attach a screenshot of the payment.',
+        'Send ৳50 to 01753132369 via bKash Personal and keep the confirmation.',
+        'Fill in your details and enter the transaction ID.',
         'Submit. You get a registration ID immediately, and a confirmation once the payment is checked.',
       ],
       checklist: [
         'Your full name, WhatsApp number and university',
         'Academic ID, faculty, semester and session',
-        'The ৳50 transaction ID, or a screenshot of the payment',
+        'The ৳50 transaction ID',
       ],
     },
+    coordinators: [
+      {
+        name: 'Sakib Hasan',
+        role: 'IT Quiz Coordinator · CSE Club, PSTU',
+        phone: '01575660665',
+        email: 'ug2102052@cse.pstu.ac.bd',
+      },
+      {
+        name: 'Ariful Islam',
+        role: 'IT Quiz Coordinator · CSE Club, PSTU',
+        phone: '01823139965',
+        email: 'ug2102032@cse.pstu.ac.bd',
+      },
+      {
+        name: 'Abdul Kaiyum',
+        role: 'IT Quiz Coordinator · CSE Club, PSTU',
+        phone: '01753132369',
+        email: 'ug2102059@cse.pstu.ac.bd',
+      },
+    ],
   },
   {
     slug: 'project-showcase',

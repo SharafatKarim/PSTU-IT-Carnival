@@ -23,13 +23,7 @@ const TRANSACTION_RE = /^[A-Za-z0-9]{6,25}$/;
 
 const text = (value) => (typeof value === 'string' ? value.trim() : '');
 
-/**
- * @param {object} body                the submitted fields
- * @param {object} [opts]
- * @param {boolean} [opts.hasScreenshot]  whether a valid image arrived with it
- * @returns {{field: string, message: string}[]}
- */
-export function validateRegistration(body, { hasScreenshot = false } = {}) {
+export function validateRegistration(body) {
   const errors = [];
   const b = body || {};
 
@@ -61,9 +55,6 @@ export function validateRegistration(body, { hasScreenshot = false } = {}) {
     });
   }
 
-  /* Optional by the owner's spec — blank is valid. Only checked if typed, so
-     someone without an email is not blocked, and someone who mistypes one is
-     still told. */
   const email = text(b.email);
   if (email.length > 0) {
     if (!EMAIL_RE.test(email)) {
@@ -73,15 +64,13 @@ export function validateRegistration(body, { hasScreenshot = false } = {}) {
     }
   }
 
-  /* "Transaction ID OR Payment Screenshot" — either proves the ৳50 arrived,
-     so exactly one is enough and neither is not. */
   const transactionId = text(b.transactionId);
-  if (transactionId.length === 0 && !hasScreenshot) {
+  if (transactionId.length === 0) {
     errors.push({
       field: 'transactionId',
-      message: 'Enter the transaction ID, or attach a screenshot of the payment',
+      message: 'Transaction ID is required',
     });
-  } else if (transactionId.length > 0 && !TRANSACTION_RE.test(transactionId)) {
+  } else if (!TRANSACTION_RE.test(transactionId)) {
     errors.push({
       field: 'transactionId',
       message: 'Transaction ID should be 6–25 letters and numbers',
@@ -107,13 +96,8 @@ export function validateRegistration(body, { hasScreenshot = false } = {}) {
 
 /**
  * The submitted body as the model wants it.
- *
- * `transactionId` is left UNDEFINED when blank rather than set to ''. The
- * partial unique index in model.js covers documents where the field is a
- * string, so an empty string would collide with the next screenshot-only entry
- * and show a duplicate-key error to someone who did nothing wrong.
  */
-export function normalizeRegistration(body, { screenshotId = null } = {}) {
+export function normalizeRegistration(body) {
   const b = body || {};
   const transactionId = text(b.transactionId);
   const email = text(b.email);
@@ -129,8 +113,7 @@ export function normalizeRegistration(body, { screenshotId = null } = {}) {
     session: text(b.session),
     payment: {
       method: text(b.paymentMethod) || undefined,
-      ...(transactionId ? { transactionId } : {}),
-      screenshot: screenshotId,
+      transactionId,
       amount: 50,
       receiverNumber: text(b.receiverNumber) || undefined,
     },

@@ -4,7 +4,6 @@ import { useCallback, useState } from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import FormField from './FormField';
-import FileField from './FileField';
 import AutocompleteField from './AutocompleteField';
 import SectionCard from './SectionCard';
 import CheckboxField from './gaming/CheckboxField';
@@ -14,21 +13,6 @@ import { ROUTES } from '@/lib/routes';
 import { getEventDetail } from '@/data/events';
 import { searchUniversities } from '@/data/universities';
 import { BD_PHONE_RE, EMAIL_RE, PHONE_HINT } from '@/lib/patterns';
-
-// ---------------------------------------------------------------------------
-// IT Quiz registration — one person, three sections, exactly as specified.
-//
-// Two things here are different from every other form on the site.
-//
-// 1. Email is OPTIONAL. Someone without one is contacted on WhatsApp, which is
-//    why that field is required and this is not. The validation only runs when
-//    something has been typed, so a blank box submits cleanly.
-//
-// 2. Payment is "transaction ID OR screenshot". Neither field can be marked
-//    required on its own; the pair is checked together, on both sides. The
-//    screenshot is shrunk in the browser before it is sent — see
-//    lib/downscale.js — because the audience is on mobile data.
-// ---------------------------------------------------------------------------
 
 const ENDPOINT = '/api/v1/events/it-quiz/registrations';
 
@@ -41,7 +25,6 @@ export default function ItQuizRegistrationForm() {
   const [serverError, setServerError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
   const [captchaToken, setCaptchaToken] = useState(null);
-  const [screenshot, setScreenshot] = useState(null);
 
   const {
     register,
@@ -67,20 +50,10 @@ export default function ItQuizRegistrationForm() {
   });
 
   const universityName = watch('universityName');
-  const transactionId = watch('transactionId');
 
   const onCaptchaToken = useCallback((token) => setCaptchaToken(token), []);
 
   const onSubmit = async (data) => {
-    /* Checked here as well as on the server so someone who filled in neither
-       is told before a 3 MB upload, not after it. */
-    if (!data.transactionId.trim() && !screenshot) {
-      setServerError(
-        'Enter the transaction ID, or attach a screenshot of the payment.'
-      );
-      return;
-    }
-
     setStep('submitting');
     setServerError('');
     setFieldErrors({});
@@ -92,21 +65,11 @@ export default function ItQuizRegistrationForm() {
     };
 
     try {
-      /* Multipart only when there is a file. Without one this stays a plain
-         JSON post, which keeps the small-body path and its tighter size cap. */
-      let res;
-      if (screenshot) {
-        const form = new FormData();
-        form.append('payload', JSON.stringify(payload));
-        form.append('screenshot', screenshot);
-        res = await fetch(ENDPOINT, { method: 'POST', body: form });
-      } else {
-        res = await fetch(ENDPOINT, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-      }
+      const res = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
       const result = await res.json();
       if (res.ok && result.success) {
@@ -136,8 +99,6 @@ export default function ItQuizRegistrationForm() {
   if (step === 'success') {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 sm:py-24">
-        {/* Emerald, not gold. Gold on this site means "this is a button" — the
-            datathon success panel breaks that rule and this one does not. */}
         <div className="rounded-2xl border border-emerald-400/30 bg-ink-900/70 p-8 text-center shadow-card">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-400/10 text-emerald-300">
             <CheckIcon className="h-6 w-6" />
@@ -244,8 +205,6 @@ export default function ItQuizRegistrationForm() {
               error={errorFor('whatsapp')}
             />
 
-            {/* Suggestions, not a closed list — a student from an unlisted
-                university can still type their own. */}
             <AutocompleteField
               label="University Name"
               name="universityName"
@@ -268,8 +227,6 @@ export default function ItQuizRegistrationForm() {
               error={errorFor('academicId')}
             />
 
-            {/* Free text by the owner's decision — no faculty, semester or
-                session list was given, so none is invented. */}
             <FormField
               label="Faculty"
               name="faculty"
@@ -309,38 +266,23 @@ export default function ItQuizRegistrationForm() {
               <strong className="text-white tabular-nums">
                 {entry.receiverNumber}
               </strong>
-              , then give us either the transaction ID or a screenshot.
+              , then enter your transaction ID.
             </p>
           ) : (
-            /* The number has not been published. Saying so is the only honest
-               option — a form that asks for a transaction ID without telling
-               anyone where to send the money is worse than one that waits. */
             <p className="mb-4 flex items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm leading-relaxed text-mist-300">
               <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-mist-400" />
               <span>The payment number has not been published yet.</span>
             </p>
           )}
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4">
             <FormField
               label="Transaction ID"
               name="transactionId"
+              required
               placeholder="e.g. 9F2K7XQ1LM"
-              hint="Either this or a screenshot — you do not need both."
-              register={register}
+              register={(n) => register(n, { required: 'Transaction ID is required' })}
               error={errorFor('transactionId')}
-            />
-
-            <FileField
-              label="Payment Screenshot"
-              name="screenshot"
-              onChange={setScreenshot}
-              error={fieldErrors.screenshot}
-              hint={
-                transactionId?.trim()
-                  ? 'Optional — you have given a transaction ID.'
-                  : 'Required unless you enter a transaction ID above.'
-              }
             />
           </div>
         </SectionCard>
