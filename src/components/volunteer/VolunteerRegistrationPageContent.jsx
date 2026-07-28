@@ -196,7 +196,7 @@ export default function VolunteerRegistrationPageContent() {
                   className="w-full rounded-xl border border-white/10 bg-ink-950/70 px-4 py-3 text-sm text-white focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400"
                 />
                 <p className="mt-1.5 text-xs text-mist-400">
-                  Please insert your official PSTU CSE student edu mail (e.g. studentId@cse.pstu.ac.bd).
+                  Please insert your edu mail.
                 </p>
               </div>
 
