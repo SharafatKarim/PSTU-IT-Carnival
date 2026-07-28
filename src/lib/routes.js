@@ -84,6 +84,8 @@ export const ROUTES = {
   iupc: FORM_EVENT ? `${EVENTS_BASE}/${FORM_EVENT.slug}` : `${EVENTS_BASE}/iupc`,
   /* Site-wide "Register" CTA — resolves to /events/iupc/register today. */
   register: FORM_EVENT ? `${EVENTS_BASE}/${FORM_EVENT.slug}/register` : '/',
+  /* Dedicated volunteer registration route */
+  volunteer: '/volunteer',
 };
 
 /* Events whose form is built as a route. */

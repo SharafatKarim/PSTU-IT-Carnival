@@ -121,7 +121,7 @@ export default function AdminDashboard({ user }) {
           </div>
         )}
 
-        <div className="mb-6 flex border-b border-white/10">
+        <div className="mb-6 flex flex-wrap border-b border-white/10">
           <button
             onClick={() => setActiveTab('datathon')}
             className={`px-6 py-3 text-sm font-bold border-b-2 transition ${
@@ -130,7 +130,7 @@ export default function AdminDashboard({ user }) {
                 : 'border-transparent text-mist-400 hover:text-white'
             }`}
           >
-            Datathon Registrations ({data.datathon.length})
+            Datathon ({data.datathon?.length || 0})
           </button>
           <button
             onClick={() => setActiveTab('iupc')}
@@ -140,7 +140,7 @@ export default function AdminDashboard({ user }) {
                 : 'border-transparent text-mist-400 hover:text-white'
             }`}
           >
-            IUPC Pre-Registrations ({data.iupc.length})
+            IUPC Pre-Reg ({data.iupc?.length || 0})
           </button>
           <button
             onClick={() => setActiveTab('gaming')}
@@ -150,7 +150,17 @@ export default function AdminDashboard({ user }) {
                 : 'border-transparent text-mist-400 hover:text-white'
             }`}
           >
-            Gaming Registrations ({data.gaming?.length || 0})
+            Gaming ({data.gaming?.length || 0})
+          </button>
+          <button
+            onClick={() => setActiveTab('volunteer')}
+            className={`px-6 py-3 text-sm font-bold border-b-2 transition ${
+              activeTab === 'volunteer'
+                ? 'border-purple-500 text-white'
+                : 'border-transparent text-mist-400 hover:text-white'
+            }`}
+          >
+            Volunteers ({data.volunteer?.length || 0})
           </button>
         </div>
 
@@ -389,6 +399,53 @@ export default function AdminDashboard({ user }) {
                                     CF: <span className="text-gold-300">{m.codeforcesHandle || 'N/A'}</span> · {m.phone}
                                   </div>
                                 </div>
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            {activeTab === 'volunteer' && (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-white/10 bg-ink-950/40 text-xs font-bold uppercase tracking-wider text-mist-400">
+                      <th className="px-6 py-4">Reg ID</th>
+                      <th className="px-6 py-4">Name</th>
+                      <th className="px-6 py-4">Student ID</th>
+                      <th className="px-6 py-4">Phone</th>
+                      <th className="px-6 py-4">Dept / Size / Role</th>
+                      <th className="px-6 py-4">Selected Events</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5 text-sm">
+                    {!data.volunteer || data.volunteer.length === 0 ? (
+                      <tr>
+                        <td colSpan="6" className="px-6 py-10 text-center text-mist-400">
+                          No volunteer registrations found.
+                        </td>
+                      </tr>
+                    ) : (
+                      data.volunteer.map((v) => (
+                        <tr key={v._id} className="hover:bg-white/[0.02] transition">
+                          <td className="px-6 py-4 font-mono text-xs text-gold-400 font-bold">{v.registrationId}</td>
+                          <td className="px-6 py-4 font-bold text-white">{v.fullName}</td>
+                          <td className="px-6 py-4 text-mist-300 font-mono text-xs">{v.studentId}</td>
+                          <td className="px-6 py-4 text-mist-300">{v.phone}</td>
+                          <td className="px-6 py-4 text-xs text-mist-300">
+                            <div><span className="text-mist-400">Dept:</span> {v.department || 'N/A'}</div>
+                            <div><span className="text-mist-400">T-Shirt:</span> {v.tShirtSize || 'N/A'}</div>
+                            <div><span className="text-mist-400">Role:</span> {v.preferredRole || 'General'}</div>
+                          </td>
+                          <td className="px-6 py-4 text-xs">
+                            <div className="flex flex-wrap gap-1 max-w-xs">
+                              {v.events?.map((evt) => (
+                                <span key={evt} className="rounded bg-white/10 px-2 py-0.5 text-[11px] text-aqua-300">
+                                  {evt}
+                                </span>
                               ))}
                             </div>
                           </td>

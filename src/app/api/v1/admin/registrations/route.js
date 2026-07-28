@@ -6,6 +6,7 @@ import DatathonRegistration from '@/server/events/datathon/model';
 import GamingRegistration from '@/server/events/gaming/model';
 import ItQuizRegistration from '@/server/events/it-quiz/model';
 import HackathonRegistration from '@/server/events/hackathon/model';
+import VolunteerRegistration from '@/server/volunteer/model';
 import AdminLog from '@/server/admin/logModel';
 import { sendDatathonConfirmationEmail, sendGamingApprovalEmail } from '@/lib/email';
 import { getGame } from '@/data/gaming';
@@ -38,6 +39,7 @@ export async function GET(req) {
     const itQuiz = await ItQuizRegistration.find({}).sort({ createdAt: -1 }).lean();
     const hackathon = await HackathonRegistration.find({}).sort({ createdAt: -1 }).lean();
     const gamingTeams = await GamingRegistration.find({}).sort({ createdAt: -1 }).lean();
+    const volunteers = await VolunteerRegistration.find({}).sort({ createdAt: -1 }).lean();
 
     /* Screenshot BYTES are never in these rows — only an ObjectId. The image
        is fetched one at a time from /api/v1/admin/screenshots/<id>, so opening
@@ -50,6 +52,7 @@ export async function GET(req) {
         'it-quiz': itQuiz,
         hackathon,
         gaming: gamingTeams,
+        volunteer: volunteers,
       },
     });
   } catch (error) {
