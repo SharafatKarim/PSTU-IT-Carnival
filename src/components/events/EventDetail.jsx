@@ -195,7 +195,9 @@ const Hero = ({ event }) => {
             registrationOpen
               ? event.slug === 'iupc'
                 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
-                : 'grid-cols-1 sm:grid-cols-2'
+                : event.slug === 'hackathon'
+                  ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+                  : 'grid-cols-1 sm:grid-cols-2'
               : 'mx-auto w-full max-w-xs grid-cols-1'
           }`}
         >
@@ -217,6 +219,11 @@ const Hero = ({ event }) => {
                     Slot Allocations
                   </Link>
                 </>
+              )}
+              {event.slug === 'hackathon' && (
+                <Link href={ROUTES.eventTeams(event.slug)} className={SECONDARY_CTA}>
+                  View Teams
+                </Link>
               )}
               <a href="#rules" className={SECONDARY_CTA}>
                 Read the Rules

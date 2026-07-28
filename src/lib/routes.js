@@ -223,12 +223,17 @@ export const registerNav = [
 
 /* Nav for an event's directory pages. Each links to its sibling so the two
    are reachable from one another without going back to the event page. */
-export const eventTeamsNav = (slug) => [
-  { label: 'Home', href: ROUTES.home },
-  { label: 'Event Details', href: ROUTES.event(slug) },
-  { label: 'Slot Allocations', href: ROUTES.eventSlots(slug) },
-  { label: 'All Events', href: ROUTES.events },
-];
+export const eventTeamsNav = (slug) => {
+  const nav = [
+    { label: 'Home', href: ROUTES.home },
+    { label: 'Event Details', href: ROUTES.event(slug) },
+  ];
+  if (slug === 'iupc') {
+    nav.push({ label: 'Slot Allocations', href: ROUTES.eventSlots(slug) });
+  }
+  nav.push({ label: 'All Events', href: ROUTES.events });
+  return nav;
+};
 
 export const eventSlotsNav = (slug) => [
   { label: 'Home', href: ROUTES.home },

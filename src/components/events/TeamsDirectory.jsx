@@ -91,6 +91,7 @@ const TeamsDirectory = ({ slug = 'iupc' }) => {
     setError(null);
     try {
       const data = await fetchTeams(
+        slug,
         { search: term, page: pageNum, limit: PAGE_SIZE },
         controller.signal
       );
@@ -102,7 +103,7 @@ const TeamsDirectory = ({ slug = 'iupc' }) => {
     } finally {
       if (!controller.signal.aborted) setLoading(false);
     }
-  }, []);
+  }, [slug]);
 
   /* Debounced so typing a team name is one request, not one per keystroke. */
   useEffect(() => {

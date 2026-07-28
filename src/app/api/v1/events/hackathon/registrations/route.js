@@ -12,6 +12,7 @@ import { verifyTurnstile } from '@/server/turnstile';
 import { storePhoto, attachPhotos, dropPhotos } from '@/server/uploads/photo';
 import { MAX_SCREENSHOT_BYTES } from '@/lib/upload';
 import { getEventDetail } from '@/data/events';
+import { listTeams } from '@/server/events/hackathon/teams';
 
 // ---------------------------------------------------------------------------
 // Hackathon pre-registration.
@@ -39,6 +40,23 @@ const serverError = (context, error) => {
 
 const fail = (message, errors, status = 400) =>
   NextResponse.json({ success: false, message, ...(errors && { errors }) }, { status });
+
+export async function GET(req) {
+  try {
+    await connectDB();
+
+    const { searchParams } = new URL(req.url);
+    const search = searchParams.get('search') || '';
+    const page = Math.max(1, Number(searchParams.get('page')) || 1);
+    const limit = Math.min(100, Math.max(1, Number(searchParams.get('limit')) || 20));
+
+    const data = await listTeams({ search: search.slice(0, 100), page, limit });
+
+    return NextResponse.json({ success: true, data });
+  } catch (error) {
+    return serverError('GET', error);
+  }
+}
 
 export async function POST(req) {
   /* Held outside the try so the catch can clean up: photos are stored before
