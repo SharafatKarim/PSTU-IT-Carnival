@@ -178,7 +178,7 @@ export const EVENT_DETAILS =
         /*icon: 'chart',*/
         accent: 'magenta',
         scope:
-            'South Zone(Highly Interested Peopole Can Join Outside Of South Zone)',
+            'South Zone(Highly Interested Peopole Outside Of South Zone May Also Join)',
         mode: 'Solo or Team of 2',
         tagline:
             'Specially tailored for beginners in Data Science and Machine Learning.',
