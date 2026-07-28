@@ -276,7 +276,7 @@ export const EVENT_DETAILS = [
       },
     ],
 
-    stage: 'published',
+    stage: 'open',
     registrationOpen: true,
     registration: {
       kind: 'form',
