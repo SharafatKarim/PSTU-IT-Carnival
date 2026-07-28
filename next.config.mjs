@@ -49,6 +49,9 @@ const SECURITY_HEADERS = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
+  turbopack: {
+    root: process.cwd(),
+  },
 
   /* Next echoes its version in a response header by default; there is no
      reason to tell a scanner which release to look up. */
