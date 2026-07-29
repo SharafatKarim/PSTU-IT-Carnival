@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { MenuIcon, CloseIcon } from './Icons';
 import { landingNav, ROUTES, isRouteHref } from '@/lib/routes';
 import VolunteerModal from '@/components/volunteer/VolunteerModal';
+import { VOLUNTEER } from '@/data/content';
 
 const Logo = () => (
   <div className="flex items-center gap-2.5">
@@ -103,6 +104,14 @@ const Navbar = ({
   const ctaClasses =
     'rounded-lg bg-gold-400 px-4 py-2 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300';
 
+  /* Mirrors the precedence in handleCtaClick: a caller-supplied onCtaClick wins,
+     so a CTA that only borrows the volunteer href still renders. */
+  const isVolunteerCta =
+    !onCtaClick && (ctaLabel === 'Register as Volunteer' || ctaHref === ROUTES.volunteer);
+  /* Nothing should advertise an intake that is shut — the button is dropped
+     rather than left to open a "sorry, closed" dialog. */
+  const showCta = !(isVolunteerCta && !VOLUNTEER.registrationOpen);
+
   const handleCtaClick = (e, onDone) => {
     if (onDone) onDone();
     if (onCtaClick) {
@@ -162,7 +171,9 @@ const Navbar = ({
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="hidden sm:inline-block">{renderCta('inline-block')}</span>
+            {showCta && (
+              <span className="hidden sm:inline-block">{renderCta('inline-block')}</span>
+            )}
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
@@ -202,7 +213,7 @@ const Navbar = ({
                   </NavLink>
                 );
               })}
-              {renderCta('mt-2 block text-center', close)}
+              {showCta && renderCta('mt-2 block text-center', close)}
             </div>
           </div>
         )}

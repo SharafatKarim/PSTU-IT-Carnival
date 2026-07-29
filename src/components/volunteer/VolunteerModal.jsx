@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { CloseIcon, CheckIcon, AlertIcon } from '@/components/landing/Icons';
-import { EVENTS } from '@/data/content';
+import { EVENTS, VOLUNTEER } from '@/data/content';
+import VolunteerClosed from './VolunteerClosed';
 
 const ALL_EVENTS = EVENTS.map((e) => e.name);
 
@@ -36,6 +37,25 @@ export default function VolunteerModal({ isOpen, onClose }) {
   }, [isOpen]);
 
   if (!isOpen) return null;
+
+  /* The navbar drops its volunteer CTA once the intake is shut, so this branch
+     is the fallback: a stale tab or a caller that opens the modal directly
+     gets the notice instead of a form the API would reject anyway. */
+  if (!VOLUNTEER.registrationOpen) {
+    return (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-950/80 backdrop-blur-md overflow-y-auto animate-fade-in"
+        onClick={onClose}
+      >
+        <div
+          className="relative my-8 w-full max-w-lg"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <VolunteerClosed onDismiss={onClose} />
+        </div>
+      </div>
+    );
+  }
 
   const handleToggleEvent = (eventName) => {
     setFormData((prev) => {

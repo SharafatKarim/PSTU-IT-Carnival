@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { CheckIcon, AlertIcon, ArrowRightIcon } from '@/components/landing/Icons';
-import { EVENTS } from '@/data/content';
+import { EVENTS, VOLUNTEER } from '@/data/content';
 import { ROUTES } from '@/lib/routes';
+import VolunteerClosed from './VolunteerClosed';
 
 const ALL_EVENTS = EVENTS.map((e) => e.name);
 const T_SHIRT_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
@@ -22,6 +23,17 @@ export default function VolunteerRegistrationPageContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successData, setSuccessData] = useState(null);
+
+  /* Everything past this point is the intake form, and there is no intake.
+     Sits below the hooks so the hook order is identical whether the carnival
+     is taking volunteers or not. */
+  if (!VOLUNTEER.registrationOpen) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-12 sm:py-16">
+        <VolunteerClosed />
+      </div>
+    );
+  }
 
   const handleToggleEvent = (eventName) => {
     setFormData((prev) => {

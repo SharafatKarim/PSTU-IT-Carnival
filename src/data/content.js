@@ -25,6 +25,18 @@ export const EVENT = {
   contactEmail: '',
 };
 
+/* Volunteer sign-ups sit outside the EVENTS list — own route, own form, own
+   model — so they need their own switch. Flipping registrationOpen shuts the
+   navbar CTA, the modal, the /volunteer page and the POST API together. The
+   API check is the one that actually enforces it; the rest is just not
+   offering a form nobody can submit. */
+export const VOLUNTEER = {
+  registrationOpen: false,
+  closedHeading: 'Volunteer registration is closed',
+  closedNote:
+    'We have taken all the volunteer applications we need for PSTU IT Carnival 2026 — thank you to everyone who signed up. If you already registered, keep your registration ID safe; the organizing team will reach you before the carnival.',
+};
+
 // `status: 'open'` means entries are being taken right now; 'live' events have
 // their rules published but no form yet and get a plain linked card; everything
 // else renders as a disabled 'coming-soon' card. Any event that is not

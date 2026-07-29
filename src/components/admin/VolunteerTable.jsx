@@ -23,6 +23,27 @@ const eventsOf = (volunteer) =>
     .map((e) => String(e).trim())
     .filter(Boolean);
 
+/* Every list — filtered or whole — is ordered by student ID so the serials mean
+   something and a volunteer keeps the same place between two prints.
+   Ordered numerically, not lexically: as text '9' would land after '2102015'.
+   Compared digit-count first rather than via Number() so a mistyped 20-digit
+   entry cannot lose precision, with leading zeros dropped so that shortcut
+   holds. IDs carrying no digits sink to the end, and the registration ID
+   breaks ties to keep the order total and stable. */
+const sortKeyOf = (studentId) =>
+  String(studentId || '').replace(/\D/g, '').replace(/^0+/, '');
+
+const compareById = (a, b) => {
+  const keyA = sortKeyOf(a.studentId);
+  const keyB = sortKeyOf(b.studentId);
+  if (keyA !== keyB) {
+    if (!keyA || !keyB) return keyA ? -1 : 1;
+    if (keyA.length !== keyB.length) return keyA.length - keyB.length;
+    return keyA < keyB ? -1 : 1;
+  }
+  return String(a.registrationId || '').localeCompare(String(b.registrationId || ''));
+};
+
 const esc = (value) =>
   String(value ?? '')
     .replace(/&/g, '&amp;')
@@ -83,16 +104,22 @@ export default function VolunteerTable({ volunteers }) {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return rows.filter((v) => {
-      if (session !== 'all' && (sessionOf(v.studentId) || 'unknown') !== session) return false;
-      if (event !== 'all' && !eventsOf(v).includes(event)) return false;
-      if (size !== 'all' && sizeOf(v) !== size) return false;
-      if (!q) return true;
-      return [v.fullName, v.studentId, v.registrationId, v.email, v.phone].some((field) =>
-        String(field || '').toLowerCase().includes(q)
-      );
-    });
+    return rows
+      .filter((v) => {
+        if (session !== 'all' && (sessionOf(v.studentId) || 'unknown') !== session) return false;
+        if (event !== 'all' && !eventsOf(v).includes(event)) return false;
+        if (size !== 'all' && sizeOf(v) !== size) return false;
+        if (!q) return true;
+        return [v.fullName, v.studentId, v.registrationId, v.email, v.phone].some((field) =>
+          String(field || '').toLowerCase().includes(q)
+        );
+      })
+      .sort(compareById);
   }, [rows, query, session, event, size]);
+
+  /* Sorted here too — "Print All" bypasses the filters, and an unsorted sheet
+     next to a sorted one would be hard to read against each other. */
+  const allSorted = useMemo(() => [...rows].sort(compareById), [rows]);
 
   const filtersActive =
     query.trim() !== '' || session !== 'all' || event !== 'all' || size !== 'all';
@@ -247,7 +274,7 @@ export default function VolunteerTable({ volunteers }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search name, student ID, reg ID, email or phone…"
-            className="min-w-[240px] flex-1 rounded-lg border border-ink-500 bg-ink-950/60 px-3 py-2 text-xs text-white placeholder-mist-500 outline-none focus:border-grape-400 focus:ring-1 focus:ring-grape-400/30 transition"
+            className="min-w-60 flex-1 rounded-lg border border-ink-500 bg-ink-950/60 px-3 py-2 text-xs text-white placeholder-mist-500 outline-none focus:border-grape-400 focus:ring-1 focus:ring-grape-400/30 transition"
           />
 
           <select value={session} onChange={(e) => setSession(e.target.value)} className={selectClass}>
@@ -304,7 +331,7 @@ export default function VolunteerTable({ volunteers }) {
             </button>
             {filtersActive && (
               <button
-                onClick={() => printList(rows, 'No filters — complete list')}
+                onClick={() => printList(allSorted, 'No filters — complete list')}
                 disabled={rows.length === 0}
                 className="px-4 py-2 text-xs font-bold rounded-lg border border-grape-400/40 bg-white/5 text-white hover:bg-white/10 transition disabled:opacity-40"
               >
@@ -340,7 +367,7 @@ export default function VolunteerTable({ volunteers }) {
               </tr>
             ) : (
               filtered.map((v, i) => (
-                <tr key={v._id} className="hover:bg-white/[0.02] transition">
+                <tr key={v._id} className="hover:bg-white/2 transition">
                   <td className="px-4 py-4 text-xs font-bold text-mist-400 tabular-nums">{i + 1}</td>
                   <td className="px-6 py-4 font-mono text-xs text-gold-400 font-bold">{v.registrationId}</td>
                   <td className="px-6 py-4 font-bold text-white">{v.fullName}</td>

@@ -2,12 +2,21 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/server/db';
 import VolunteerRegistration from '@/server/volunteer/model';
 import { nextSequence, formatSequence } from '@/server/counters';
+import { VOLUNTEER } from '@/data/content';
 
 const fail = (message, errors = null, status = 400) =>
   NextResponse.json({ success: false, message, ...(errors && { errors }) }, { status });
 
 export async function POST(req) {
   try {
+    /* The forms are hidden when registration closes, but the endpoint is what
+       enforces it — a saved page or a direct POST would otherwise still get a
+       registration ID after the intake was shut. Checked before the body is
+       read so a closed intake costs nothing to reject. */
+    if (!VOLUNTEER.registrationOpen) {
+      return fail('Volunteer registration is closed.', null, 403);
+    }
+
     let body;
     try {
       body = await req.json();
