@@ -417,6 +417,10 @@ export const GAMES = [
     family: "esports",
     icon: "ball",
     accent: "aqua",
+    association: {
+      text: "In association with PSTU Esports Club",
+      logo: "/events/gaming/pstu esports club.png",
+    },
     scope: "Esports · 1v1",
     mode: "Solo",
     tagline: "Virtual football glory — skill, tactics and last-minute winners.",
@@ -623,6 +627,10 @@ export const GAMES = [
     /* Not gold: gold is reserved for actions site-wide, and PUBG's identity
        tile would otherwise be indistinguishable from a status pill. */
     accent: "grape",
+    association: {
+      text: "In association with PSTU Esports Club",
+      logo: "/events/gaming/pstu esports club.png",
+    },
     scope: "Esports · Squad",
     mode: "Squad of 4",
     tagline:
@@ -775,6 +783,10 @@ export const GAMES = [
     family: "esports",
     icon: "flame",
     accent: "magenta",
+    association: {
+      text: "In association with PSTU Esports Club",
+      logo: "/events/gaming/pstu esports club.png",
+    },
     scope: "Esports · Squad",
     mode: "Squad of 4",
     tagline: "Fast, furious mobile battle royale. Drop in, gear up, survive.",

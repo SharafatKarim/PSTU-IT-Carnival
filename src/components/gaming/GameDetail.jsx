@@ -338,6 +338,26 @@ const GameDetail = ({ slug, coordinators }) => {
             <CoordinatorContact game={game} coordinators={coordinators} />
           </div>
         </Section>
+
+        {game.association && (
+          <Section
+            id="association"
+            className="bg-ink-950/20 border-t border-white/5 py-12 sm:py-16"
+          >
+            <div className="mx-auto max-w-xl text-center">
+              <div className="mx-auto flex h-46 w-46 items-center justify-center rounded-2xl border border-white/10 p-3 shadow-card">
+                <img
+                  src={game.association.logo}
+                  alt="Esports Club Logo"
+                  className="h-42 w-42 object-contain"
+                />
+              </div>
+              <p className="mt-4 text-sm font-semibold tracking-wide text-mist-300">
+                {game.association.text}
+              </p>
+            </div>
+          </Section>
+        )}
       </main>
       <Footer />
     </div>
