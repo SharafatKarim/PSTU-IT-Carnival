@@ -262,14 +262,6 @@ export default function VolunteerModal({ isOpen, onClose }) {
                   <div className="flex items-center gap-2 text-xs">
                     <button
                       type="button"
-                      onClick={handleSelectAllEvents}
-                      className="text-aqua-300 hover:underline"
-                    >
-                      Select All
-                    </button>
-                    <span className="text-mist-400">•</span>
-                    <button
-                      type="button"
                       onClick={handleClearEvents}
                       className="text-mist-400 hover:text-white hover:underline"
                     >

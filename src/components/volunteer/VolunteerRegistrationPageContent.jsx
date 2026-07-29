@@ -240,14 +240,6 @@ export default function VolunteerRegistrationPageContent() {
                   <div className="flex items-center gap-3 text-xs">
                     <button
                       type="button"
-                      onClick={handleSelectAllEvents}
-                      className="text-aqua-300 font-medium hover:underline"
-                    >
-                      Select All
-                    </button>
-                    <span className="text-mist-400">•</span>
-                    <button
-                      type="button"
                       onClick={handleClearEvents}
                       className="text-mist-400 hover:text-white font-medium hover:underline"
                     >
