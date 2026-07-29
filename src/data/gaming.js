@@ -646,7 +646,7 @@ export const GAMES = [
       teamSizeShort: "Squad of 4",
       slots: "25 squads",
       platform: "Mobile & tablet only",
-      deadline: GAMING_DEADLINE,
+      deadline: "14 August 2026",
     },
 
     matchFormat: {
