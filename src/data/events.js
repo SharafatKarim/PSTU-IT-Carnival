@@ -360,6 +360,7 @@ export const EVENT_DETAILS =
         shortName: 'Hackathon',
         icon: 'rocket',
         accent: 'magenta',
+        cover: '/events/hackathon/cover.jpg',
         scope: 'National',
         tagline: '🚀 The Only National-Level Event of PSTU IT Carnival 2026',
         blurb:
