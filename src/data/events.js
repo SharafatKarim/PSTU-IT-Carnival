@@ -384,9 +384,9 @@ export const EVENT_DETAILS =
           kind: 'form',
           cta: 'Pre-Register Your Team',
           note:
-              'Pre-registration is free · 1 or 2 members · closes 4 August 2026',
+              'Pre-registration is free · 1 or 2 members · closes 2 August 2026',
           process: [
-            'Pre-register your team here between 29 July and 4 August. It costs nothing.',
+            'Pre-register your team here between 29 July and 2 August. It costs nothing.',
             'Two emails follow with the problem statement. Build your solution and submit it as a presentation or abstract.',
             'Shortlisted teams get a selection email, then final registration runs 9–11 August with the ৳2,000 team fee.',
             'The on-site finale is 15 August at the TSC Conference Hall.',
@@ -406,20 +406,20 @@ export const EVENT_DETAILS =
               'Free to pre-register · ৳2,000 per team at final registration',
           entryShort: 'Free',
           entryScope: 'to pre-register',
-          prizePool: '৳60,000',
+          prizePool: '৳80,000',
           format: 'Onsite 6-hour competition',
           teamSize: '1 or 2 members',
           teamSizeShort: '1–2 members',
           slots: '50 teams',
           platform: 'On-site development and solution building',
-          deadline: '4 August 2026',
+          deadline: '2 August 2026',
         },
         rules: [
           {
             title: 'Phase 1: Free pre-registration',
             icon: 'users',
             items: [
-              'Pre-registration runs 29 July to 4 August 2026 and is free.',
+              'Pre-registration runs 29 July to 2 August 2026 and is free.',
               'A team is one or two members. Entering alone is allowed.',
               'Two emails follow with an industry-inspired problem statement, covering domains such as Frontend, Backend, AI/ML, IoT, Cyber Security and Mobile App development.',
               'Teams submit their solution as a presentation or abstract within the stated window.',
