@@ -12,7 +12,7 @@ const SLUG = 'it-quiz';
 export const metadata = {
   title: 'IT Quiz Registration — PSTU IT Carnival 2026',
   description:
-    'Register for the IT Quiz at PSTU IT Carnival 2026. Individual entry, ৳50.',
+    'Register for the IT Quiz at PSTU IT Carnival 2026. Individual entry, ৳100.',
 };
 
 /* The route exists before entries open so it can say WHY it is shut. A 404
@@ -34,7 +34,7 @@ const NotOpenYet = ({ event }) => (
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-mist-300">
             The form is ready. It opens once the committee publishes the date
-            and the number the ৳{event.entry?.fee ?? 50} is sent to.
+            and the number the ৳{event.entry?.fee ?? 100} is sent to.
           </p>
         </div>
       </div>

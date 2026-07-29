@@ -500,26 +500,14 @@ export const EVENT_DETAILS =
             'A fast-paced buzzer quiz across computing, its history and the trivia in between.',
         heroNote: 'Individual participation — no team required.',
 
-        /* ---------------------------------------------------------------------
-           PROVISIONAL — six values here still need a yes from the committee.
-
-           They gave us the ৳50 fee and the form fields, nothing else. Date,
-           time, venue, deadline, slots and the RECEIVING NUMBER are placed so
-           the page is structurally complete and consistent with the other
-           events. The number matters most: it is the carnival's gaming-wing
-           bKash, already published on this site, so money sent there reaches
-           the committee — but it is not IT Quiz's own desk. Replace it before
-           announcing.
-           ---------------------------------------------------------------------
-         */
         tournament: {
           date: '14 August 2026',
           time: '10:00 AM',
           venue: 'TSC Conference Room',
-          entryFee: '৳50 per participant',
-          entryShort: '৳50',
+          entryFee: '৳100 per participant',
+          entryShort: '৳100',
           entryScope: 'per participant',
-          feePerPlayer: 50,
+          feePerPlayer: 100,
           format: 'Onsite (Written preliminary round, then a buzzer final)',
           teamSize: 'Individual (Solo)',
           teamSizeShort: 'Individual',
@@ -585,7 +573,7 @@ export const EVENT_DETAILS =
             title: 'Registration & Payment',
             icon: 'ticket',
             items: [
-              'Send 50 BDT to 01753132369 via bKash Personal.',
+              'Send 100 BDT to 01753132369 via bKash Personal.',
               'Keep your transaction ID and fill in the online registration form.',
               'Bring your student ID to the venue for the eligibility check.',
             ],
@@ -597,8 +585,8 @@ export const EVENT_DETAILS =
 
         entry: {
           kind: 'solo',
-          fee: 50,
-          feeLabel: '৳50 per participant',
+          fee: 100,
+          feeLabel: '৳100 per participant',
           receiverNumber: '01753132369',
           accountType: 'Personal',
           methods: ['bKash'],
@@ -615,23 +603,23 @@ export const EVENT_DETAILS =
           },
           {
             q: 'When is my registration confirmed?',
-            a: 'You get a registration ID the moment you submit. It is confirmed once the committee has matched your ৳50 against the wallet statement.',
+            a: 'You get a registration ID the moment you submit. It is confirmed once the committee has matched your ৳100 against the wallet statement.',
           },
         ],
 
         registration: {
           kind: 'form',
           cta: 'Register for IT Quiz',
-          note: 'Individual entry · ৳50',
+          note: 'Individual entry · ৳100',
           process: [
-            'Send ৳50 to 01753132369 via bKash Personal and keep the confirmation.',
+            'Send ৳100 to 01753132369 via bKash Personal and keep the confirmation.',
             'Fill in your details and enter the transaction ID.',
             'Submit. You get a registration ID immediately, and a confirmation once the payment is checked.',
           ],
           checklist: [
             'Your full name, WhatsApp number and university',
             'Academic ID, faculty, semester and session',
-            'The ৳50 transaction ID',
+            'The ৳100 transaction ID',
           ],
         },
         coordinators: [

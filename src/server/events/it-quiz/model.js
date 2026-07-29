@@ -84,7 +84,7 @@ const registrationSchema = new mongoose.Schema(
         ref: 'PaymentScreenshot',
         default: null,
       },
-      amount: { type: Number, default: 50 },
+      amount: { type: Number, default: 100 },
       receiverNumber: { type: String, trim: true },
     },
 

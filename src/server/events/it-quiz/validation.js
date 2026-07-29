@@ -114,7 +114,7 @@ export function normalizeRegistration(body) {
     payment: {
       method: text(b.paymentMethod) || undefined,
       transactionId,
-      amount: 50,
+      amount: 100,
       receiverNumber: text(b.receiverNumber) || undefined,
     },
     agreements: {
