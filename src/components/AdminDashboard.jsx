@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Navbar from './landing/Navbar';
 import Footer from './landing/Footer';
 import { AlertIcon, CheckIcon } from './landing/Icons';
+import VolunteerTable from './admin/VolunteerTable';
 
 export default function AdminDashboard({ user }) {
   const [activeTab, setActiveTab] = useState('datathon'); // 'datathon' | 'iupc' | 'gaming' | 'it-quiz'
@@ -420,55 +421,7 @@ export default function AdminDashboard({ user }) {
               </div>
             )}
 
-            {activeTab === 'volunteer' && (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="border-b border-white/10 bg-ink-950/40 text-xs font-bold uppercase tracking-wider text-mist-400">
-                      <th className="px-6 py-4">Reg ID</th>
-                      <th className="px-6 py-4">Name</th>
-                      <th className="px-6 py-4">Student ID</th>
-                      <th className="px-6 py-4">Email / Phone</th>
-                      <th className="px-6 py-4">T-Shirt Size</th>
-                      <th className="px-6 py-4">Selected Events</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/5 text-sm">
-                    {!data.volunteer || data.volunteer.length === 0 ? (
-                      <tr>
-                        <td colSpan="6" className="px-6 py-10 text-center text-mist-400">
-                          No volunteer registrations found.
-                        </td>
-                      </tr>
-                    ) : (
-                      data.volunteer.map((v) => (
-                        <tr key={v._id} className="hover:bg-white/[0.02] transition">
-                          <td className="px-6 py-4 font-mono text-xs text-gold-400 font-bold">{v.registrationId}</td>
-                          <td className="px-6 py-4 font-bold text-white">{v.fullName}</td>
-                          <td className="px-6 py-4 text-mist-300 font-mono text-xs">{v.studentId}</td>
-                          <td className="px-6 py-4 text-xs text-mist-300">
-                            <div className="text-white font-medium">{v.email || 'N/A'}</div>
-                            <div className="text-mist-400">{v.phone}</div>
-                          </td>
-                          <td className="px-6 py-4 text-xs font-semibold text-mist-300">
-                            {v.tShirtSize || 'M'}
-                          </td>
-                          <td className="px-6 py-4 text-xs">
-                            <div className="flex flex-wrap gap-1 max-w-xs">
-                              {v.events?.map((evt) => (
-                                <span key={evt} className="rounded bg-white/10 px-2 py-0.5 text-[11px] text-aqua-300">
-                                  {evt}
-                                </span>
-                              ))}
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            {activeTab === 'volunteer' && <VolunteerTable volunteers={data.volunteer} />}
 
             {activeTab === 'it-quiz' && (
               <div className="overflow-x-auto">
