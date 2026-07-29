@@ -1,7 +1,8 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { EVENTS } from '@/data/content';
+import printTable from './printTable';
 
 const CANONICAL_EVENTS = EVENTS.map((e) => e.name);
 const T_SHIRT_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
@@ -44,12 +45,19 @@ const compareById = (a, b) => {
   return String(a.registrationId || '').localeCompare(String(b.registrationId || ''));
 };
 
-const esc = (value) =>
-  String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+/* Mirrors the on-screen columns; printTable adds the serial and does the
+   escaping. Email and events wrap because they are the only fields long enough
+   to need it. */
+const PRINT_COLUMNS = [
+  { header: 'Reg ID', cls: 'mono', value: (v) => v.registrationId },
+  { header: 'Name', cls: 'name', value: (v) => v.fullName },
+  { header: 'Student ID', cls: 'mono', value: (v) => v.studentId },
+  { header: 'Session', cls: 'num', value: (v) => sessionOf(v.studentId) },
+  { header: 'Size', cls: 'num', value: (v) => sizeOf(v) },
+  { header: 'Phone', value: (v) => v.phone },
+  { header: 'Email', cls: 'wrap', value: (v) => v.email },
+  { header: 'Selected Events', cls: 'wrap', value: (v) => eventsOf(v).join(', ') },
+];
 
 const selectClass =
   'rounded-lg border border-ink-500 bg-ink-950/60 px-3 py-2 text-xs font-medium text-white outline-none focus:border-grape-400 focus:ring-1 focus:ring-grape-400/30 transition';
@@ -61,8 +69,6 @@ export default function VolunteerTable({ volunteers }) {
   const [session, setSession] = useState('all');
   const [event, setEvent] = useState('all');
   const [size, setSize] = useState('all');
-
-  const frameRef = useRef(null);
 
   const sessionOptions = useMemo(() => {
     const counts = new Map();
@@ -140,130 +146,13 @@ export default function VolunteerTable({ volunteers }) {
     return parts.length ? parts.join('  ·  ') : 'No filters — complete list';
   };
 
-  /* Rendered into an off-screen iframe and handed to the browser's own print
-     dialog, where "Save as PDF" is the standard destination. That keeps the
-     export dependency-free instead of shipping a PDF library to every admin. */
-  const buildPrintDocument = (list, summary) => {
-    const generatedAt = new Date().toLocaleString('en-GB', {
-      dateStyle: 'medium',
-      timeStyle: 'short',
+  const printList = (list, summary) =>
+    printTable({
+      title: 'Volunteer List',
+      summary,
+      columns: PRINT_COLUMNS,
+      rows: list,
     });
-
-    const body = list.length
-      ? list
-          .map(
-            (v, i) => `<tr>
-              <td class="num">${i + 1}</td>
-              <td class="mono">${esc(v.registrationId)}</td>
-              <td class="name">${esc(v.fullName)}</td>
-              <td class="mono">${esc(v.studentId)}</td>
-              <td class="num">${esc(sessionOf(v.studentId) || '—')}</td>
-              <td class="num">${esc(sizeOf(v))}</td>
-              <td>${esc(v.phone)}</td>
-              <td class="wrap">${esc(v.email || '—')}</td>
-              <td class="wrap">${esc(eventsOf(v).join(', ') || '—')}</td>
-            </tr>`
-          )
-          .join('')
-      : '<tr><td colspan="9" class="empty">No volunteers match the current filters.</td></tr>';
-
-    return `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<title>Volunteer List — PSTU IT Carnival 2026</title>
-<style>
-  @page { size: A4 landscape; margin: 11mm; }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    color: #111;
-    font-size: 10px;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  header { border-bottom: 2px solid #111; padding-bottom: 8px; margin-bottom: 10px; }
-  h1 { margin: 0; font-size: 16px; letter-spacing: -0.01em; }
-  .sub { margin: 3px 0 0; font-size: 10px; color: #444; }
-  .meta {
-    margin-top: 6px; display: flex; justify-content: space-between;
-    gap: 16px; font-size: 9.5px; color: #333;
-  }
-  .meta strong { color: #111; }
-  table { width: 100%; border-collapse: collapse; }
-  thead { display: table-header-group; }
-  tr { page-break-inside: avoid; }
-  th, td { border: 1px solid #8a8a8a; padding: 4px 5px; text-align: left; vertical-align: top; }
-  th {
-    background: #ececec; font-size: 8.5px; text-transform: uppercase;
-    letter-spacing: 0.05em; white-space: nowrap;
-  }
-  td.num { text-align: center; white-space: nowrap; }
-  td.mono { font-family: "SFMono-Regular", Consolas, monospace; font-size: 9px; white-space: nowrap; }
-  td.name { font-weight: 600; }
-  td.wrap { word-break: break-word; }
-  td.empty { text-align: center; padding: 18px; color: #666; }
-  tbody tr:nth-child(even) { background: #f7f7f7; }
-  footer { margin-top: 10px; font-size: 8.5px; color: #666; text-align: right; }
-</style>
-</head>
-<body>
-  <header>
-    <h1>PSTU IT Carnival 2026 — Volunteer List</h1>
-    <p class="sub">${esc(summary)}</p>
-    <div class="meta">
-      <span>Total volunteers: <strong>${list.length}</strong></span>
-      <span>Generated: <strong>${esc(generatedAt)}</strong></span>
-    </div>
-  </header>
-  <table>
-    <thead>
-      <tr>
-        <th style="width:26px">#</th>
-        <th>Reg ID</th>
-        <th>Name</th>
-        <th>Student ID</th>
-        <th>Session</th>
-        <th>Size</th>
-        <th>Phone</th>
-        <th>Email</th>
-        <th>Selected Events</th>
-      </tr>
-    </thead>
-    <tbody>${body}</tbody>
-  </table>
-  <footer>PSTU IT Carnival 2026 · Volunteer Management</footer>
-</body>
-</html>`;
-  };
-
-  const printList = (list, summary) => {
-    if (frameRef.current) {
-      frameRef.current.remove();
-      frameRef.current = null;
-    }
-
-    const frame = document.createElement('iframe');
-    frame.setAttribute('aria-hidden', 'true');
-    frame.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
-    frame.srcdoc = buildPrintDocument(list, summary);
-    frame.onload = () => {
-      const win = frame.contentWindow;
-      if (!win) return;
-      /* Dropped only once the dialog closes — tearing the iframe down while it
-         is still open cancels the print job in Chrome. */
-      win.onafterprint = () => {
-        if (frameRef.current === frame) frameRef.current = null;
-        frame.remove();
-      };
-      win.focus();
-      win.print();
-    };
-
-    frameRef.current = frame;
-    document.body.appendChild(frame);
-  };
 
   return (
     <div>

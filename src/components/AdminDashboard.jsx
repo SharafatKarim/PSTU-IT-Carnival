@@ -5,6 +5,8 @@ import Navbar from './landing/Navbar';
 import Footer from './landing/Footer';
 import { AlertIcon, CheckIcon } from './landing/Icons';
 import VolunteerTable from './admin/VolunteerTable';
+import printTable from './admin/printTable';
+import { REGISTRATION_PRINT } from './admin/registrationPrint';
 
 export default function AdminDashboard({ user }) {
   const [activeTab, setActiveTab] = useState('datathon'); // 'datathon' | 'iupc' | 'gaming' | 'it-quiz'
@@ -94,6 +96,19 @@ export default function AdminDashboard({ user }) {
       setBulkLoading(false);
     }
   };
+
+  /* The volunteer tab prints itself — it has filters, so it decides what a
+     printed list means. Every other tab prints the whole section. */
+  const printConfig = REGISTRATION_PRINT[activeTab];
+  const activeList = data[activeTab] || [];
+
+  const handlePrint = () =>
+    printTable({
+      title: printConfig.title,
+      summary: printConfig.summary(activeList),
+      columns: printConfig.columns,
+      rows: activeList,
+    });
 
   return (
     <div className="min-h-screen bg-ink-950 text-white flex flex-col">
@@ -206,6 +221,25 @@ export default function AdminDashboard({ user }) {
           </div>
         ) : (
           <div className="bg-ink-900/60 border border-ink-600 rounded-2xl overflow-hidden shadow-card">
+            {printConfig && (
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-ink-950/30 p-4">
+                <p className="text-xs text-mist-400">
+                  <span className="font-bold text-white">{activeList.length}</span>{' '}
+                  {activeList.length === 1 ? printConfig.noun.one : printConfig.noun.many}
+                  {activeList.length > 0 && (
+                    <span className="text-mist-500"> · {printConfig.summary(activeList)}</span>
+                  )}
+                </p>
+                <button
+                  onClick={handlePrint}
+                  disabled={activeList.length === 0}
+                  className="px-4 py-2 text-xs font-bold rounded-lg bg-grape-600 hover:bg-grape-500 text-white transition disabled:opacity-40 disabled:hover:bg-grape-600"
+                >
+                  Print / Save PDF ({activeList.length})
+                </button>
+              </div>
+            )}
+
             {activeTab === 'datathon' && (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
