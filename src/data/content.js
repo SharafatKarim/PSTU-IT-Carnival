@@ -69,7 +69,7 @@ export const EVENTS = [
   {
     id: 'datathon',
     name: 'Datathon',
-    scope: 'All Students',
+    scope: 'National',
     category: 'tech',
     icon: 'chart',
     blurb:

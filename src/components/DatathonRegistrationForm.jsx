@@ -4,13 +4,11 @@ import { useCallback, useState } from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import FormField from './FormField';
-import AutocompleteField from './AutocompleteField';
 import SectionCard from './SectionCard';
 import TurnstileWidget, { isTurnstileConfigured } from './TurnstileWidget';
 import { CheckIcon, CalendarIcon, AlertIcon, ArrowRightIcon } from './landing/Icons';
 import { ROUTES } from '@/lib/routes';
 import { getEventDetail } from '@/data/events';
-import { searchUniversities } from '@/data/universities';
 import { BD_PHONE_RE, EMAIL_RE, PHONE_HINT } from '@/lib/patterns';
 
 export default function DatathonRegistrationForm() {
@@ -162,16 +160,13 @@ export default function DatathonRegistrationForm() {
               register={register}
               error={errors.members?.[0]?.name}
             />
-            <AutocompleteField
+            <FormField
               label="University Name"
               name="members.0.universityName"
-              placeholder="Start typing..."
+              placeholder="Enter your university"
               required
               register={register}
               error={errors.members?.[0]?.universityName}
-              search={searchUniversities}
-              onSelect={(opt) => setValue('members.0.universityName', opt.name)}
-              value={member1?.universityName}
             />
             <FormField
               label="Student/University ID"
@@ -232,16 +227,13 @@ export default function DatathonRegistrationForm() {
                 register={register}
                 error={errors.members?.[1]?.name}
               />
-              <AutocompleteField
+              <FormField
                 label="University Name"
                 name="members.1.universityName"
-                placeholder="Start typing..."
-                required
+                placeholder="Enter university name"
+                required={hasSecondMember}
                 register={register}
                 error={errors.members?.[1]?.universityName}
-                search={searchUniversities}
-                onSelect={(opt) => setValue('members.1.universityName', opt.name)}
-                value={member2?.universityName}
               />
               <FormField
                 label="Student/University ID"
