@@ -15,6 +15,7 @@ import { submitGameRegistration } from '@/services/events/gaming';
 import {
   visibleSections,
   feeFor,
+  isFreeEntry,
   playersRequired,
   PAYMENT_METHODS,
   GAMING_PAYMENT,
@@ -368,12 +369,22 @@ const GameRegistrationForm = ({ game }) => {
       >
         <TicketIcon className={`mt-0.5 h-4 w-4 shrink-0 ${a.text}`} />
         <span>
-          Entry fee is{' '}
-          <strong className="font-semibold text-white">
-            {game.tournament?.entryFee || `৳${feeFor(game, entryType)}`}
-          </strong>
-          . Pay it before you submit — the Payment step below tells you where to
-          send it.
+          {isFreeEntry(game) ? (
+            <>
+              Entry is{' '}
+              <strong className="font-semibold text-white">free</strong> — there
+              is nothing to pay and no Payment step on this form.
+            </>
+          ) : (
+            <>
+              Entry fee is{' '}
+              <strong className="font-semibold text-white">
+                {game.tournament?.entryFee || `৳${feeFor(game, entryType)}`}
+              </strong>
+              . Pay it before you submit — the Payment step below tells you where
+              to send it.
+            </>
+          )}
           {game.tournament?.deadline && (
             <>
               {' '}

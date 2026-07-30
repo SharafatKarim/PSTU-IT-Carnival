@@ -331,7 +331,7 @@ export const FAQS = [
   },
   {
     q: 'Is there a registration or participation fee?',
-    a: 'It depends on the event. IUPC pre-registration is free — the ৳3,000 per-team entry fee applies at final registration, once confirmed slots are published university-wise. The esports tournaments are paid when you register: ৳25 per player for PUBG Mobile and Free Fire (৳100 for a full squad of four), ৳100 per player for eFootball, sent by bKash or Nagad Send Money, with the transaction ID entered on the form. The Datathon works the same way at BDT 300 per team. Nothing is collected in cash at the venue.',
+    a: 'It depends on the event. IUPC pre-registration is free — the ৳3,000 per-team entry fee applies at final registration, once confirmed slots are published university-wise. PUBG Mobile is free to enter. The other esports tournaments are paid when you register: ৳25 per player for Free Fire (৳100 for a full squad of four) and ৳100 per player for eFootball, sent by bKash or Nagad Send Money, with the transaction ID entered on the form. The Datathon works the same way at BDT 300 per team. Nothing is collected in cash at the venue.',
   },
   {
     q: 'How will I know my registration went through?',

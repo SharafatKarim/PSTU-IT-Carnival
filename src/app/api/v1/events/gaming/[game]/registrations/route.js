@@ -294,16 +294,24 @@ export async function POST(req, { params }) {
        tournament rather than within one — otherwise a single ৳100 payment could
        be quoted on a PUBG entry and a Free Fire entry both. The unique index in
        the model closes the race between two simultaneous submissions; this is
-       what turns it into a message somebody can act on. */
-    const existingTxn = await GamingRegistration.findOne({
-      'payment.transactionId': doc.payment.transactionId,
-    });
-    if (existingTxn) {
-      return rejected(conflict(
-        'This transaction ID has already been used',
-        'payment.transactionId',
-        `Already recorded against registration ${existingTxn.registrationId}. Each payment covers one entry — send a separate payment and use its own transaction ID.`
-      ));
+       what turns it into a message somebody can act on.
+
+       Only when there IS one. A free tournament sends no transaction ID, and
+       normalize() leaves the field undefined — which Mongoose strips out of a
+       filter, collapsing this to findOne({}) and matching the first row in the
+       collection. Every free entry after the very first would then be turned
+       away as a duplicate payment it never claimed. */
+    if (doc.payment.transactionId) {
+      const existingTxn = await GamingRegistration.findOne({
+        'payment.transactionId': doc.payment.transactionId,
+      });
+      if (existingTxn) {
+        return rejected(conflict(
+          'This transaction ID has already been used',
+          'payment.transactionId',
+          `Already recorded against registration ${existingTxn.registrationId}. Each payment covers one entry — send a separate payment and use its own transaction ID.`
+        ));
+      }
     }
 
     // 3. Generate ID & create.

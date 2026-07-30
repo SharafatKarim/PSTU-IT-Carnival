@@ -67,7 +67,10 @@ export function normalizeGameRegistration(game, body, { receiverNumber } = {}) {
       .map((player) => player.gameId?.toLowerCase())
       .filter(Boolean),
     payment: {
-      method: text(body.payment?.method),
+      /* Undefined rather than '' when absent, same reasoning as transactionId
+         below: a free tournament asks for no method, and an empty string would
+         record a payment choice nobody made. */
+      method: text(body.payment?.method) || undefined,
       /* Uppercased here as well as in the schema, so the route's duplicate
          check compares the same string the database will store.
 

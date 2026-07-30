@@ -11,6 +11,7 @@ import FormatBoard from './FormatBoard';
 import CoordinatorContact from './CoordinatorContact';
 import RegistrationClosed from './RegistrationClosed';
 import { prepList } from './prep';
+import { isFreeEntry } from '@/data/gaming';
 import {
   ICON_MAP,
   ArrowLeftIcon,
@@ -239,8 +240,10 @@ const RegisterCta = ({ game }) => {
                 <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
               <p className="mt-4 text-xs text-white/70">
-                Entry fee {t.entryFee}, paid with the form via bKash or Nagad
-                Send Money — have the transaction ID ready.
+                {isFreeEntry(game)
+                  ? 'Entry is free — there is nothing to pay and no transaction ID to enter.'
+                  : `Entry fee ${t.entryFee}, paid with the form via bKash or Nagad
+                     Send Money — have the transaction ID ready.`}
               </p>
               <p className="mt-1 text-xs text-white/70">
                 Registration closes {t.deadline} · {t.slots}

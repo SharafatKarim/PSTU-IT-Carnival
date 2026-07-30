@@ -446,9 +446,18 @@ export default function AdminDashboard({ user }) {
                             <div className="text-[10px] text-mist-500 capitalize">{team.entryType}</div>
                           </td>
                           <td className="px-6 py-4">
-                            <div className="font-mono text-xs text-mist-300">{team.payment?.transactionId || 'N/A'}</div>
-                            <div className="text-[10px] text-mist-500">Recv: {team.payment?.receiverNumber || 'N/A'}</div>
-                            <div className="text-xs text-aqua-400">৳{team.payment?.amount || 0}</div>
+                            {/* A free tournament has nothing to reconcile —
+                                showing ৳0 next to a blank transaction ID reads
+                                like an unpaid fee rather than no fee. */}
+                            {team.payment?.amount === 0 ? (
+                              <div className="text-xs font-semibold text-aqua-400">Free entry</div>
+                            ) : (
+                              <>
+                                <div className="font-mono text-xs text-mist-300">{team.payment?.transactionId || 'N/A'}</div>
+                                <div className="text-[10px] text-mist-500">Recv: {team.payment?.receiverNumber || 'N/A'}</div>
+                                <div className="text-xs text-aqua-400">৳{team.payment?.amount || 0}</div>
+                              </>
+                            )}
                           </td>
                           <td className="px-6 py-4 text-xs text-mist-300">
                             <div>{team.contact?.name}</div>

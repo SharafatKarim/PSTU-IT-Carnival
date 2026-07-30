@@ -86,6 +86,13 @@ export const feeFor = (game, entryType) =>
   (game?.tournament?.feePerPlayer ?? game?.feePerPlayer ?? 0) *
   playersRequired(game, entryType);
 
+/* A tournament with no per-player fee takes no payment at all: its form drops
+   the Payment section, the pages stop promising a bKash transfer, and the
+   server stops demanding a method. Derived from the fee rather than carried as
+   a separate flag, so a fee of 0 and "free" can never disagree. */
+export const isFreeEntry = (game) =>
+  (game?.tournament?.feePerPlayer ?? game?.feePerPlayer ?? 0) <= 0;
+
 /* ---------------------------------------------------------------------------
    Match format blocks.
 
@@ -306,8 +313,17 @@ const agreementSection = {
 };
 
 /* PUBG Mobile and Free Fire: squads of four, entered as a full team or as an
-   individual who gets placed in one. */
-const battleRoyaleSections = ({ idLabel, idPlaceholder, gameLabel }) => [
+   individual who gets placed in one.
+
+   `free` drops the Payment section for a tournament that charges nothing. Both
+   battle royales share this builder, so the flag is the only way to make one of
+   them free without dragging the other along. */
+const battleRoyaleSections = ({
+  idLabel,
+  idPlaceholder,
+  gameLabel,
+  free = false,
+}) => [
   {
     key: "entry",
     title: "How are you entering?",
@@ -344,7 +360,9 @@ const battleRoyaleSections = ({ idLabel, idPlaceholder, gameLabel }) => [
     when: isIndividualEntry,
     notice: {
       title: "A random squad will be formed for you",
-      text: `You are entering ${gameLabel} on your own. The committee groups solo entrants into squads of four and announces your teammates in the official group before the first match — you cannot choose who you are placed with. The entry fee is still per player.`,
+      text: `You are entering ${gameLabel} on your own. The committee groups solo entrants into squads of four and announces your teammates in the official group before the first match — you cannot choose who you are placed with.${
+        free ? '' : ' The entry fee is still per player.'
+      }`,
     },
     fields: [],
   },
@@ -402,7 +420,7 @@ const battleRoyaleSections = ({ idLabel, idPlaceholder, gameLabel }) => [
       rules: UID_RULES,
     })),
   },
-  paymentSection,
+  ...(free ? [] : [paymentSection]),
   agreementSection,
 ];
 
@@ -644,10 +662,12 @@ export const GAMES = [
       date: GAMING_DAY,
       time: "4:00 PM — 6:00 PM",
       venue: GAMING_VENUE,
-      entryFee: "৳25 per player (৳100 per squad)",
-      entryShort: "৳25",
-      entryScope: "per player",
-      feePerPlayer: 25,
+      /* Free from 30 July 2026. feePerPlayer 0 is what isFreeEntry() reads, and
+         it drives the form, the server and every fee line on the site — the two
+         strings below are only what those lines print. */
+      entryFee: "Free entry",
+      entryShort: "Free",
+      feePerPlayer: 0,
       prizePool: "৳10,000+",
       format: "Battle Royale — 4 matches, points aggregated",
       teamSize: "4 players",
@@ -691,7 +711,7 @@ export const GAMES = [
           "A squad is exactly 4 players. Enter as a full squad, or enter alone and be placed in a randomly formed one.",
           "Every player must be a currently enrolled PSTU student with a valid ID card, checked at the desk.",
           "A player may represent only one squad for the whole tournament.",
-          "Entry fee is ৳25 per player — ৳100 for a full squad — paid with the registration form, not at the venue.",
+          "Entry is free — there is no fee to pay, on the form or at the venue.",
           "Team name and player game IDs are locked once registration closes on 5 August. Check them carefully.",
         ],
       },
@@ -736,12 +756,13 @@ export const GAMES = [
         "Either a full squad of four, or nothing — solo entrants are placed in a random squad",
         "Every player’s PUBG Mobile UID (the 6–15 digit number in your profile)",
         "A team leader who can receive room IDs and passwords on WhatsApp",
-        "৳25 per player (৳100 a squad) sent via bKash or Nagad, and the transaction ID",
+        "A valid PSTU student ID for each player, checked at the desk",
       ],
       sections: battleRoyaleSections({
         idLabel: "PUBG Mobile UID",
         idPlaceholder: "e.g. 5123456789",
         gameLabel: "PUBG Mobile",
+        free: true,
       }),
     },
 
@@ -752,7 +773,7 @@ export const GAMES = [
       },
       {
         q: "What does it cost?",
-        a: "৳25 per player, so ৳100 for a full squad of four. You pay when you register: send it to the number shown on the form using Send Money, then enter the transaction ID. Nothing is collected at the venue.",
+        a: "Nothing. PUBG Mobile is free to enter — there is no fee on the form and nothing is collected at the venue. Just fill in your squad, submit, and you are in.",
       },
       {
         q: "Are emulators or triggers allowed?",

@@ -105,12 +105,17 @@ export const REGISTRATION_PRINT = {
       {
         header: 'Payment',
         cls: 'wrap',
+        /* A free tournament (PUBG from 30 July 2026) has no method, no
+           transaction ID and an amount of 0 — printing "BDT 0" reads like an
+           unpaid fee rather than no fee. */
         value: (t) =>
-          lines([
-            t.payment?.transactionId,
-            t.payment?.receiverNumber && `Recv: ${t.payment.receiverNumber}`,
-            t.payment?.amount != null && `BDT ${t.payment.amount}`,
-          ]),
+          t.payment?.amount === 0
+            ? 'Free entry'
+            : lines([
+                t.payment?.transactionId,
+                t.payment?.receiverNumber && `Recv: ${t.payment.receiverNumber}`,
+                t.payment?.amount != null && `BDT ${t.payment.amount}`,
+              ]),
       },
       {
         header: 'Contact',

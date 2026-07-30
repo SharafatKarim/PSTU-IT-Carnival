@@ -148,7 +148,18 @@ const registrationSchema = new mongoose.Schema(
     payment: {
       method: {
         type: String,
-        required: [true, 'Payment method is required'],
+        /* Demanded only where there is something to pay. A free tournament has
+           no Payment section in its config, so the form never asks and the
+           validator never checks — an unconditional `required` here would
+           reject those entries at save time with a message about a step the
+           entrant was never shown. `amount` is computed server-side from the
+           fee, so this cannot be talked out of by a crafted request. */
+        required: [
+          function () {
+            return Number(this.payment?.amount) > 0;
+          },
+          'Payment method is required',
+        ],
         trim: true,
       },
       /* Uppercased on the way in so a duplicate check cannot be defeated by
