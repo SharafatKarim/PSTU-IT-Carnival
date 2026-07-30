@@ -16,6 +16,13 @@ const allowedEmails = process.env.ADMIN_EMAILS
   ? process.env.ADMIN_EMAILS.split(',').map((email) => email.trim().toLowerCase())
   : [];
 
+/* An entry that owed nothing when it was submitted. `amount` is written
+   server-side from the tournament's fee, so this is the record of what was
+   actually due — not a guess from the current config. Legacy rows saved before
+   `amount` existed read as undefined and are treated as paid entries, which is
+   what they were. */
+const isFreeGamingEntry = (team) => team?.payment?.amount === 0;
+
 async function getAdminEmail() {
   const session = await getServerSession();
   const email = session?.user?.email?.toLowerCase();
@@ -115,6 +122,17 @@ export async function PATCH(req) {
 
       // Bulk approve Gaming
       for (const team of pendingGaming) {
+        /* A free tournament's entries owe nothing and carry no transaction ID,
+           so an SMS sweep has nothing it could match them against and must
+           never confirm one — PUBG is approved by hand. Skipped explicitly
+           rather than left to fall through the transaction-ID test below, so
+           the intent survives the next edit to this loop.
+
+           Keyed on the amount STORED with the entry, not on today's fee: if
+           PUBG ever charges again, entries taken while it was free still owe
+           nothing and must stay out of the sweep. */
+        if (isFreeGamingEntry(team)) continue;
+
         if (team.payment?.transactionId && text.toLowerCase().includes(team.payment.transactionId.toLowerCase())) {
           team.registrationStatus = 'paid';
           team.verifiedAt = new Date();
@@ -221,8 +239,16 @@ export async function PATCH(req) {
         return NextResponse.json({ success: false, message: 'Team not found' }, { status: 404 });
       }
 
+      /* Free entries take the same manual path as paid ones — an admin still
+         confirms each by hand — but nothing about them was a payment, so the
+         wording of the log, the email and the response all switch. */
+      const free = isFreeGamingEntry(team);
+
       if (team.registrationStatus === 'paid') {
-        return NextResponse.json({ success: false, message: 'Payment already approved' });
+        return NextResponse.json({
+          success: false,
+          message: free ? 'Registration already confirmed' : 'Payment already approved',
+        });
       }
 
       team.registrationStatus = 'paid';
@@ -244,6 +270,9 @@ export async function PATCH(req) {
           teamName: team.teamName || 'Solo Entrant',
           registrationId: team.registrationId,
           game: team.game,
+          /* The action enum stays 'approve_payment' for every gaming row; this
+             is what tells the audit trail no money was involved. */
+          free,
         },
       });
 
@@ -255,16 +284,24 @@ export async function PATCH(req) {
           gameName: gameConf.name,
           registrationId: team.registrationId,
           teamName: team.teamName,
+          free,
         });
       } catch (mailError) {
         console.error('[admin/approve-gaming] Email send failure:', mailError);
         return NextResponse.json({
           success: true,
-          message: 'Payment approved, but confirmation email failed to send.',
+          message: free
+            ? 'Registration confirmed, but the confirmation email failed to send.'
+            : 'Payment approved, but confirmation email failed to send.',
         });
       }
 
-      return NextResponse.json({ success: true, message: 'Gaming payment approved and confirmation email sent' });
+      return NextResponse.json({
+        success: true,
+        message: free
+          ? 'Registration confirmed and confirmation email sent'
+          : 'Gaming payment approved and confirmation email sent',
+      });
     } else if (eventType === 'iupc') {
       const team = await IupcRegistration.findById(id);
       if (!team) {

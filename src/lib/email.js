@@ -567,18 +567,37 @@ export async function sendDatathonConfirmationEmail(toEmail, teamName, registrat
  * @param {string} opts.registrationId generated unique registration ID
  * @param {string} [opts.teamName]     squad name, team entries only
  */
-export async function sendGamingApprovalEmail({ to, name, gameName, registrationId, teamName }) {
+/* Sent when an admin confirms a gaming entry by hand.
+ *
+ * `free` switches every mention of money out of it. A free tournament (PUBG
+ * from 30 July 2026) is still confirmed one entry at a time by a human, but
+ * telling that entrant we "verified your payment" would describe a transfer
+ * they were never asked to make. */
+export async function sendGamingApprovalEmail({
+  to,
+  name,
+  gameName,
+  registrationId,
+  teamName,
+  free = false,
+}) {
   const html = shell({
-    title: `${gameName} Payment Verified`,
-    heading: 'Payment Approved!',
+    title: free ? `${gameName} Registration Confirmed` : `${gameName} Payment Verified`,
+    heading: free ? 'Registration Confirmed!' : 'Payment Approved!',
     idLabel: 'Registration ID',
     id: registrationId,
     idNote: 'Keep this ID safe — you will need it at the desk on match day.',
     body: `
           <p>Hi ${esc(name)},</p>
-          <p>We have successfully verified your payment for the <strong>${esc(gameName)}</strong> tournament at ${BRAND}.</p>
+          ${
+            free
+              ? `<p>Your entry to the <strong>${esc(gameName)}</strong> tournament at ${BRAND} has been checked and confirmed by the organizing committee.</p>
+          ${teamName ? `<p>Your squad <strong>${esc(teamName)}</strong> is in.</p>` : ''}
+          <p>${esc(gameName)} is free to enter, so there is nothing to pay — your place is secured and your registration status is now <strong>Confirmed</strong>.</p>`
+              : `<p>We have successfully verified your payment for the <strong>${esc(gameName)}</strong> tournament at ${BRAND}.</p>
           ${teamName ? `<p>Your squad <strong>${esc(teamName)}</strong> has been successfully approved.</p>` : ''}
-          <p>Your registration status is now officially updated to <strong>Confirmed (Paid)</strong>.</p>
+          <p>Your registration status is now officially updated to <strong>Confirmed (Paid)</strong>.</p>`
+          }
           <p>What happens next?</p>
           <ul>
             <li>You and your teammates will be added to the official WhatsApp match coordination group using the phone numbers provided.</li>
@@ -590,7 +609,9 @@ export async function sendGamingApprovalEmail({ to, name, gameName, registration
 
   await send({
     to,
-    subject: `Payment Approved — ${gameName} — ${registrationId}`,
+    subject: free
+      ? `Registration Confirmed — ${gameName} — ${registrationId}`
+      : `Payment Approved — ${gameName} — ${registrationId}`,
     html,
   });
 }

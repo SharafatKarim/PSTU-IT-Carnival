@@ -482,7 +482,10 @@ export default function AdminDashboard({ user }) {
                             {team.registrationStatus === 'paid' ? (
                               <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-1 text-xs font-bold text-green-400 border border-green-500/20">
                                 <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-                                Verified
+                                {/* Nothing was verified on a free entry — a
+                                    human confirmed it, which is a different
+                                    claim to make in an audit. */}
+                                {team.payment?.amount === 0 ? 'Confirmed' : 'Verified'}
                               </span>
                             ) : (
                               <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-400 border border-amber-500/20">
@@ -498,7 +501,15 @@ export default function AdminDashboard({ user }) {
                                 disabled={actionLoading !== null}
                                 className="px-3 py-1.5 text-xs font-bold rounded-lg bg-gold-400 text-ink-950 hover:bg-gold-300 transition disabled:opacity-50"
                               >
-                                {actionLoading === team._id ? 'Approving...' : 'Approve'}
+                                {/* No payment to approve on a free entry —
+                                    the admin is confirming a place. */}
+                                {actionLoading === team._id
+                                  ? team.payment?.amount === 0
+                                    ? 'Confirming...'
+                                    : 'Approving...'
+                                  : team.payment?.amount === 0
+                                    ? 'Confirm'
+                                    : 'Approve'}
                               </button>
                             )}
                           </td>
