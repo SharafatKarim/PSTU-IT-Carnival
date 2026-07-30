@@ -453,7 +453,7 @@ export const EVENT_DETAILS =
             title: 'Prizes & Rewards',
             icon: 'gift',
             items: [
-              'Prize pool of ৳60,000.', 'Cash Prizes for the winners.',
+              'Prize pool of ৳80,000.', 'Cash Prizes for the winners.',
               'Exclusive Gifts and Certificates for participants.',
               'Recognition & Networking Opportunities with developers and industry leaders.'
             ]

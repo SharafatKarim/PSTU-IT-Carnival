@@ -516,6 +516,7 @@ export const GAMES = [
           "Sixty-four players in a single-elimination bracket: RO64, RO32, RO16, quarter-finals, semi-finals, final.",
           "Eight minutes per match.",
           "A maximum of 8 special cards may be used in your squad — Double Booster, Single Booster, Iconic, Legendary, Epic, Big Time and Show Time all count toward the limit.",
+          "More than 3000 Team Strength will not be allowed.",
           "Game mode is Standard / Competitive, on the latest patch version.",
           "Match times are announced in advance. Check in before your match — late check-in can mean a forfeit.",
         ],
