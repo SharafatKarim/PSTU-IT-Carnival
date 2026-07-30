@@ -31,8 +31,11 @@ const EMAIL_RULES = {
   pattern: { value: EMAIL_RE, message: "Please enter a valid email address" },
 };
 
-/* Both battle royales run on the same day, in the same room. */
+/* eFootball and Free Fire share a day and a room. PUBG Mobile moved to the 14th
+   on 30 July 2026 and so carries its own date — GAMING_DAY is no longer "the
+   gaming day", it is the day the other two run. */
 const GAMING_DAY = "13 August 2026";
+const PUBG_DAY = "14 August 2026";
 const GAMING_VENUE = "Seminar Room, TSC (3rd Floor), PSTU";
 const GAMING_DEADLINE = "5 August 2026";
 const TIME_TBA = "To be announced";
@@ -659,7 +662,7 @@ export const GAMES = [
       "Enter as a squad of four, or on your own — we will place you in one.",
 
     tournament: {
-      date: GAMING_DAY,
+      date: PUBG_DAY,
       time: "4:00 PM — 6:00 PM",
       venue: GAMING_VENUE,
       /* Free from 30 July 2026. feePerPlayer 0 is what isFreeEntry() reads, and
@@ -1432,7 +1435,7 @@ export const GAMING = {
   eyebrow: "Gaming Fest",
   title: "Six arenas. One Booyah.",
   intro:
-    "The gaming wing of PSTU IT Carnival 2026 runs three esports tournaments — one solo, two squad-based — alongside three board and puzzle events. All three esports tournaments run on 13 August and entries are open now; the board events follow later.",
+    "The gaming wing of PSTU IT Carnival 2026 runs three esports tournaments — one solo, two squad-based — alongside three board and puzzle events. eFootball and Free Fire run on 13 August, PUBG Mobile on 14 August, and entries are open now; the board events follow later.",
   note: "Entry fees are paid online while you register — send the amount via bKash or Nagad Send Money, then enter the transaction ID on the form. Your entry is confirmed once a coordinator verifies it.",
   /* Shown wherever a closed tournament would otherwise offer a form. */
   closedHeading: "Registration opens soon",
