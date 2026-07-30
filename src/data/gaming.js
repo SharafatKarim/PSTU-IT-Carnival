@@ -69,7 +69,7 @@ export const GAMING_DESK = [
 export const PAYMENT_METHODS = ["bKash", "Nagad"];
 
 export const GAMING_PAYMENT = {
-  number: "01601425302",
+  number: "+8801670244069",
   accountType: "Personal",
   instructions:
     "Use “Send Money” (not Payment) from either wallet above, then enter the transaction ID it gives you.",
