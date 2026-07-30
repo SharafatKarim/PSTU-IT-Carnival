@@ -616,3 +616,40 @@ export async function sendGamingApprovalEmail({
   });
 }
 
+/**
+ * Sends a confirmation email to the Project Showcasing team leader upon payment approval.
+ * 
+ * @param {string} toEmail - Leader's email address
+ * @param {string} teamName - Name of the registered team
+ * @param {string} registrationId - Generated unique registration ID
+ * @param {string} leaderName - Name of the team leader
+ */
+export async function sendProjectShowcaseConfirmationEmail(toEmail, teamName, registrationId, leaderName) {
+  const html = shell({
+    title: 'Project Showcasing Registration Confirmed',
+    heading: 'Payment Confirmed!',
+    idLabel: 'Registration ID',
+    id: registrationId,
+    idNote: 'Keep this ID safe — it identifies your project team on the event day.',
+    body: `
+          <p>Hi ${esc(leaderName)},</p>
+          <p>Your team <strong>${esc(teamName)}</strong> has been successfully registered for the <strong>Project Showcasing</strong> event at ${BRAND}. We have verified your payment.</p>
+          <p>What happens next?</p>
+          <ul>
+            <li>The exhibition and judging will take place on <strong>13 August 2026</strong> starting from <strong>2:00 PM onwards</strong>.</li>
+            <li>Venue: <strong>PME Lab</strong>.</li>
+            <li>Make sure to arrive early with your functional hardware setup, laptops, required cables, and extension cords.</li>
+            <li>Offline presence of at least one team member is mandatory.</li>
+          </ul>
+          <p>If you have any questions, reply to this email or contact the event coordinators.</p>
+          <p>Best regards,<br>Project Showcasing Committee<br>${BRAND}</p>`,
+  });
+
+  await send({
+    to: toEmail,
+    subject: `Project Showcasing Confirmed — ${registrationId}`,
+    html,
+  });
+}
+
+

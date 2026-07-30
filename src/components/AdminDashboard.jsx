@@ -10,8 +10,8 @@ import { REGISTRATION_PRINT } from './admin/registrationPrint';
 import { SECTION_FILTERS } from './admin/sectionFilters';
 
 export default function AdminDashboard({ user }) {
-  const [activeTab, setActiveTab] = useState('datathon'); // 'datathon' | 'iupc' | 'gaming' | 'it-quiz'
-  const [data, setData] = useState({ iupc: [], datathon: [], gaming: [], 'it-quiz': [] });
+  const [activeTab, setActiveTab] = useState('datathon'); // 'datathon' | 'iupc' | 'gaming' | 'it-quiz' | 'volunteer' | 'project-showcase'
+  const [data, setData] = useState({ iupc: [], datathon: [], gaming: [], 'it-quiz': [], volunteer: [], 'project-showcase': [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [actionLoading, setActionLoading] = useState(null); // stores team._id being approved
@@ -242,6 +242,16 @@ export default function AdminDashboard({ user }) {
             }`}
           >
             IT Quiz ({data['it-quiz']?.length || 0})
+          </button>
+          <button
+            onClick={() => setActiveTab('project-showcase')}
+            className={`px-6 py-3 text-sm font-bold border-b-2 transition ${
+              activeTab === 'project-showcase'
+                ? 'border-magenta-500 text-white'
+                : 'border-transparent text-mist-400 hover:text-white'
+            }`}
+          >
+            Project Showcasing ({data['project-showcase']?.length || 0})
           </button>
         </div>
 
@@ -637,6 +647,81 @@ export default function AdminDashboard({ user }) {
                                 className="px-3 py-1.5 text-xs font-bold rounded-lg bg-gold-400 text-ink-950 hover:bg-gold-300 transition disabled:opacity-50"
                               >
                                 {actionLoading === entry._id ? 'Approving...' : 'Approve'}
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {activeTab === 'project-showcase' && (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-white/10 bg-ink-950/40 text-xs font-bold uppercase tracking-wider text-mist-400">
+                      <th className="px-6 py-4">Team Name</th>
+                      <th className="px-6 py-4">Reg ID</th>
+                      <th className="px-6 py-4">Transaction ID</th>
+                      <th className="px-6 py-4">Members</th>
+                      <th className="px-6 py-4">Status</th>
+                      <th className="px-6 py-4">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5 text-sm">
+                    {!data['project-showcase'] || data['project-showcase'].length === 0 ? (
+                      <tr>
+                        <td colSpan="6" className="px-6 py-10 text-center text-mist-400">
+                          No Project Showcasing registrations found.
+                        </td>
+                      </tr>
+                    ) : (
+                      data['project-showcase'].map((team) => (
+                        <tr key={team._id} className="hover:bg-white/[0.02] transition">
+                          <td className="px-6 py-4 font-bold text-white">{team.teamName}</td>
+                          <td className="px-6 py-4 font-mono text-xs text-mist-300">{team.registrationId}</td>
+                          <td className="px-6 py-4 font-mono text-xs text-mist-300">{team.transactionId}</td>
+                          <td className="px-6 py-4">
+                            <div className="space-y-2">
+                              {(team.members || []).map((m, idx) => (
+                                <div key={idx} className="text-xs">
+                                  <span className="font-semibold text-white">
+                                    {m.name} {m.isTeamLeader && <span className="text-[10px] text-magenta-300 border border-magenta-300/30 px-1 rounded">Leader</span>}
+                                  </span>
+                                  <div className="text-mist-400">
+                                    {m.universityName} · ID: {m.universityId}
+                                  </div>
+                                  <div className="text-mist-400">
+                                    Phone: {m.phone} · Email: {m.email}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            {team.paid ? (
+                              <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-1 text-xs font-bold text-green-400 border border-green-500/20">
+                                <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                                Verified
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-400 border border-amber-500/20">
+                                <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+                                Pending
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4">
+                            {!team.paid && (
+                              <button
+                                onClick={() => handleApprovePayment(team._id, 'project-showcase')}
+                                disabled={actionLoading !== null}
+                                className="px-3 py-1.5 text-xs font-bold rounded-lg bg-gold-400 text-ink-950 hover:bg-gold-300 transition disabled:opacity-50"
+                              >
+                                {actionLoading === team._id ? 'Approving...' : 'Approve'}
                               </button>
                             )}
                           </td>

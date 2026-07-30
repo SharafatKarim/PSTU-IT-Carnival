@@ -651,11 +651,155 @@ export const EVENT_DETAILS =
         shortName: 'Showcase',
         icon: 'monitor',
         accent: 'aqua',
-        scope: 'All Students',
-        tagline: 'Put your best build in front of judges.',
+        scope: 'South Zone',
+        tagline: 'Step into the spotlight and showcase your engineering prowess!',
         blurb:
-            'Present your best software or hardware project to judges and the wider community.',
-        stage: 'announced',
+            "Whether it's an intelligent IoT system, an automated microcontroller-based circuit using Arduino or Raspberry Pi, or any innovative hardware prototype, this is your platform to bring your ideas to life.",
+        stage: 'open',
+        registrationOpen: true,
+
+        tournament: {
+          date: '13 August 2026',
+          time: '2:00 PM onwards',
+          venue: 'PME Lab',
+          entryFee: 'Single: ৳100 · Duo: ৳200 · Trio: ৳300',
+          entryShort: '৳100–300',
+          entryScope: 'per team',
+          feePerPlayer: 100,
+          format: 'On-site Exhibition & Judging',
+          teamSize: '1–3 members',
+          teamSizeShort: '1–3 members',
+          slots: 'Unlimited',
+          platform: 'Hardware-based projects',
+          deadline: '12 August 2026',
+        },
+
+        prizes: [
+          {
+            place: 'Champion',
+            rank: 1,
+            amount: 'Winner trophy',
+            perks: ['Certificate of excellence'],
+          },
+          {
+            place: '1st Runner-Up',
+            rank: 2,
+            amount: 'Certificate of merit',
+            perks: [],
+          },
+          {
+            place: '2nd Runner-Up',
+            rank: 3,
+            amount: 'Certificate of merit',
+            perks: [],
+          },
+        ],
+
+        rules: [
+          {
+            title: 'Project Eligibility',
+            icon: 'shield',
+            items: [
+              'Only hardware-based projects are permitted, including IoT solutions, microcontroller implementations (Arduino, ESP32, etc.), single-board computers (Raspberry Pi), and custom electronic circuits.',
+              'Softwares and 3D models can be built around the project but software-only projects will not be accepted.',
+              'Offline presence is mandatory — at least one of the team members must present their project.',
+              'AI generated codes are allowed as long as you understand what you are doing.',
+            ],
+          },
+          {
+            title: 'Conduct & Presentation',
+            icon: 'users',
+            items: [
+              'Teams must bring their functional hardware project, laptops, required cables, and their own power strips or extension cords.',
+              'Basic power supply outlets will be available at the PME Lab.',
+              'Teams should be ready to present their logic, hardware connections, and explain the codebase if requested by the judges.',
+            ],
+          },
+        ],
+
+        entry: {
+          kind: 'team',
+          fee: 100,
+          feeLabel: '৳100 (Single) / ৳200 (Duo) / ৳300 (Trio)',
+          receiverNumber: '+8801953546089',
+          accountType: 'Personal',
+          methods: ['bKash'],
+        },
+
+        faqs: [
+          {
+            q: 'Who is eligible to participate in the Project Showcasing event?',
+            a: 'The event is open to participants within the South zone. Teams can consist of 1 to 3 members.',
+          },
+          {
+            q: 'What kind of projects are allowed?',
+            a: 'We welcome all kinds of hardware-based projects, including IoT systems, microcontroller-based setups (such as Arduino and ESP32), single-board computer projects (such as Raspberry Pi), and custom electronic circuits. Software-only projects are not eligible.',
+          },
+          {
+            q: 'How much is the registration fee?',
+            a: 'The entry fee depends on your team size: Single: 100 BDT, Duo: 200 BDT, Trio: 300 BDT.',
+          },
+          {
+            q: 'What is the deadline for registration?',
+            a: 'The last date to register for the event is August 12, 2026.',
+          },
+          {
+            q: 'What do we need to bring on the event day?',
+            a: 'Teams must bring their functional hardware project, laptops, required cables, and their own power strips or extension cords. Basic power supply outlets will be available at the PME Lab.',
+          },
+          {
+            q: 'When and where is the event taking place?',
+            a: 'The event will be held on August 13, 2026, starting from 2:00 PM onwards at the PME Lab. Participants are expected to arrive early to set up their projects.',
+          },
+          {
+            q: 'Is offline presence mandatory?',
+            a: 'Yes, at least one of the team members must present their project.',
+          },
+          {
+            q: 'Are AI generated codes allowed?',
+            a: "We are fine with AI as long as you understand what you're doing.",
+          },
+          {
+            q: 'Do I have to explain codebase?',
+            a: "Not necessarily, it's up to you. But it's recommended to understand the logic behind the proposed system.",
+          },
+        ],
+
+        registration: {
+          kind: 'form',
+          cta: 'Register for Project Showcasing',
+          note: 'Team of 1–3 members · ৳100 / ৳200 / ৳300',
+          process: [
+            'Send the fee (৳100 for Single, ৳200 for Duo, ৳300 for Trio) to +8801953546089 via bKash Personal.',
+            'Fill in your team and member details.',
+            'Submit. You get a registration ID immediately, and a confirmation once the payment is checked.',
+          ],
+          checklist: [
+            'Your team name and transaction ID',
+            'Full name, email, phone, university, and student ID for each member (up to 3 members)',
+          ],
+        },
+
+        coordinators: [
+          {
+            name: 'Maynul',
+            role: 'Coordinator · CSE Club, PSTU',
+            phone: '+8801853677643',
+            email: 'maynul18@cse.pstu.ac.bd',
+          },
+          {
+            name: 'Sharafat Karim',
+            role: 'Coordinator · CSE Club, PSTU',
+            phone: '+8801953546089',
+            email: 'ug2102024@cse.pstu.ac.bd',
+          },
+          {
+            name: 'Mahir',
+            role: 'Coordinator · CSE Club, PSTU',
+            phone: '+8801768363022',
+            email: 'ug2102040@cse.pstu.ac.bd',
+          },
+        ],
       },
       {
         slug: 'ctf',

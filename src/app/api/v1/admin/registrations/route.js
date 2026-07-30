@@ -7,8 +7,9 @@ import GamingRegistration from '@/server/events/gaming/model';
 import ItQuizRegistration from '@/server/events/it-quiz/model';
 import HackathonRegistration from '@/server/events/hackathon/model';
 import VolunteerRegistration from '@/server/volunteer/model';
+import ProjectShowcaseRegistration from '@/server/events/project-showcase/model';
 import AdminLog from '@/server/admin/logModel';
-import { sendDatathonConfirmationEmail, sendGamingApprovalEmail } from '@/lib/email';
+import { sendDatathonConfirmationEmail, sendGamingApprovalEmail, sendProjectShowcaseConfirmationEmail } from '@/lib/email';
 import { getGame } from '@/data/gaming';
 import { dropScreenshot } from '@/server/payments';
 
@@ -47,6 +48,7 @@ export async function GET(req) {
     const hackathon = await HackathonRegistration.find({}).sort({ createdAt: -1 }).lean();
     const gamingTeams = await GamingRegistration.find({}).sort({ createdAt: -1 }).lean();
     const volunteers = await VolunteerRegistration.find({}).sort({ createdAt: -1 }).lean();
+    const projectShowcase = await ProjectShowcaseRegistration.find({}).sort({ createdAt: -1 }).lean();
 
     /* Screenshot BYTES are never in these rows — only an ObjectId. The image
        is fetched one at a time from /api/v1/admin/screenshots/<id>, so opening
@@ -60,6 +62,7 @@ export async function GET(req) {
         hackathon,
         gaming: gamingTeams,
         volunteer: volunteers,
+        'project-showcase': projectShowcase,
       },
     });
   } catch (error) {
@@ -351,6 +354,44 @@ export async function PATCH(req) {
         details: {
           teamId: entry._id,
           teamName: entry.fullName,
+          registrationId: entry.registrationId,
+        },
+      });
+
+      return NextResponse.json({ success: true, message: 'Payment approved' });
+    } else if (eventType === 'project-showcase') {
+      const entry = await ProjectShowcaseRegistration.findById(id);
+      if (!entry) {
+        return NextResponse.json({ success: false, message: 'Registration not found' }, { status: 404 });
+      }
+      if (entry.paid) {
+        return NextResponse.json({ success: false, message: 'Payment already approved' });
+      }
+
+      entry.paid = true;
+      await entry.save();
+
+      try {
+        const leader = entry.members.find((m) => m.isTeamLeader) || entry.members[0];
+        if (leader && leader.email) {
+          await sendProjectShowcaseConfirmationEmail(
+            leader.email,
+            entry.teamName,
+            entry.registrationId,
+            leader.name
+          );
+        }
+      } catch (err) {
+        console.error('[admin/registrations/PATCH] Project Showcase email error:', err);
+      }
+
+      await AdminLog.create({
+        adminEmail,
+        action: 'approve_payment',
+        eventType: 'project-showcase',
+        details: {
+          teamId: entry._id,
+          teamName: entry.teamName,
           registrationId: entry.registrationId,
         },
       });

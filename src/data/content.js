@@ -122,12 +122,14 @@ export const EVENTS = [
   {
     id: 'project-showcase',
     name: 'Project Showcasing',
-    scope: 'All Students',
+    scope: 'South Zone',
     category: 'tech',
     icon: 'monitor',
     blurb:
-      'Present your best software or hardware project to judges and the wider community.',
-    status: 'coming-soon',
+      "Whether it's an intelligent IoT system, an automated microcontroller-based circuit using Arduino or Raspberry Pi, or any innovative hardware prototype, this is your platform to bring your ideas to life.",
+    status: 'open',
+    cta: 'Register',
+    registerHref: ROUTES.eventRegister('project-showcase'),
     slug: 'project-showcase',
     kind: 'event',
     href: ROUTES.event('project-showcase'),

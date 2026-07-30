@@ -280,7 +280,7 @@ export const siteUrls = () => [
   ...REGISTRABLE_EVENTS.flatMap((event) => [
     { path: ROUTES.eventRegister(event.slug), priority: 0.9 },
     { path: ROUTES.eventTeams(event.slug), priority: 0.6 },
-    { path: ROUTES.eventSlots(event.slug), priority: 0.6 },
+    ...(event.slug === 'iupc' ? [{ path: ROUTES.eventSlots(event.slug), priority: 0.6 }] : []),
   ]),
   { path: ROUTES.gaming, priority: 0.9 },
   ...GAME_PAGE_SLUGS.flatMap((slug) => {
