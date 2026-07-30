@@ -77,16 +77,13 @@ export const REGISTRATION_PRINT = {
       {
         header: 'Members',
         cls: 'wrap',
+        /* Codeforces handles were dropped from this column — the printed sheet
+           tracks the screen, and the handle is not what an organiser needs when
+           looking a team up on paper. */
         value: (t) =>
           lines(
             (t.members || []).map((m, i) =>
-              lines([
-                memberLabel(m, i, m.isTeamLeader),
-                `    ${join([
-                  m.codeforcesHandle && `CF: ${m.codeforcesHandle}`,
-                  m.phone,
-                ])}`,
-              ])
+              lines([memberLabel(m, i, m.isTeamLeader), `    ${join([m.phone])}`])
             )
           ),
       },

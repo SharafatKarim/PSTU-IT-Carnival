@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Navbar from './landing/Navbar';
 import Footer from './landing/Footer';
 import { AlertIcon, CheckIcon } from './landing/Icons';
 import VolunteerTable from './admin/VolunteerTable';
 import printTable from './admin/printTable';
 import { REGISTRATION_PRINT } from './admin/registrationPrint';
+import { SECTION_FILTERS } from './admin/sectionFilters';
 
 export default function AdminDashboard({ user }) {
   const [activeTab, setActiveTab] = useState('datathon'); // 'datathon' | 'iupc' | 'gaming' | 'it-quiz'
@@ -16,6 +17,7 @@ export default function AdminDashboard({ user }) {
   const [actionLoading, setActionLoading] = useState(null); // stores team._id being approved
   const [bulkText, setBulkText] = useState('');
   const [bulkLoading, setBulkLoading] = useState(false);
+  const [filterSelections, setFilterSelections] = useState({}); // tab -> selected filter key
 
   const fetchData = async () => {
     setLoading(true);
@@ -97,17 +99,70 @@ export default function AdminDashboard({ user }) {
     }
   };
 
-  /* The volunteer tab prints itself — it has filters, so it decides what a
-     printed list means. Every other tab prints the whole section. */
+  /* The volunteer tab owns its own toolbar — it has several filters and a
+     search box. Everything below drives the other four. */
   const printConfig = REGISTRATION_PRINT[activeTab];
-  const activeList = data[activeTab] || [];
+  const filterDef = SECTION_FILTERS[activeTab];
+  const activeList = useMemo(() => data[activeTab] || [], [data, activeTab]);
 
-  const handlePrint = () =>
+  /* Selections are kept per tab so switching away and back does not silently
+     reset what an admin was looking at. '' is a real key (the missing-value
+     bucket), so the default is resolved with ?? rather than ||. */
+  const selectedFilter = filterSelections[activeTab] ?? 'all';
+  const filterActive = Boolean(filterDef) && selectedFilter !== 'all';
+
+  const filterOptions = useMemo(() => {
+    if (!filterDef) return [];
+    const buckets = new Map();
+    for (const row of activeList) {
+      const key = filterDef.keyOf(row);
+      const bucket = buckets.get(key);
+      if (bucket) {
+        bucket.count += 1;
+      } else {
+        buckets.set(key, {
+          value: key,
+          count: 1,
+          label: key ? filterDef.labelFor(key, row) : filterDef.unknownLabel,
+        });
+      }
+    }
+    return [...buckets.values()].sort((a, b) => {
+      if (!a.value || !b.value) return a.value ? -1 : 1;
+      return a.label.localeCompare(b.label);
+    });
+  }, [activeList, filterDef]);
+
+  const visibleList = useMemo(() => {
+    if (!filterDef || selectedFilter === 'all') return activeList;
+    return activeList.filter((row) => filterDef.keyOf(row) === selectedFilter);
+  }, [activeList, filterDef, selectedFilter]);
+
+  const nounFor = (count) =>
+    count === 1 ? printConfig?.noun.one : printConfig?.noun.many;
+
+  /* A filter hiding every row is a different situation from an empty section,
+     and saying which one it is stops an admin thinking data went missing. */
+  const emptyMessage = (whenSectionEmpty) =>
+    activeList.length > 0 && filterActive
+      ? `No ${printConfig.noun.many} match the current filter.`
+      : whenSectionEmpty;
+
+  /* Printed sheets say which slice they are, so a filtered stack cannot be
+     mistaken for the whole section later. */
+  const printSummary = (list, includeFilter) => {
+    const base = printConfig.summary(list);
+    if (!includeFilter || !filterActive) return base;
+    const chosen = filterOptions.find((option) => option.value === selectedFilter);
+    return `${filterDef.summaryLabel}: ${chosen?.label || selectedFilter}  ·  ${base}`;
+  };
+
+  const handlePrint = (list, includeFilter) =>
     printTable({
       title: printConfig.title,
-      summary: printConfig.summary(activeList),
+      summary: printSummary(list, includeFilter),
       columns: printConfig.columns,
-      rows: activeList,
+      rows: list,
     });
 
   return (
@@ -223,20 +278,63 @@ export default function AdminDashboard({ user }) {
           <div className="bg-ink-900/60 border border-ink-600 rounded-2xl overflow-hidden shadow-card">
             {printConfig && (
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-ink-950/30 p-4">
-                <p className="text-xs text-mist-400">
-                  <span className="font-bold text-white">{activeList.length}</span>{' '}
-                  {activeList.length === 1 ? printConfig.noun.one : printConfig.noun.many}
-                  {activeList.length > 0 && (
-                    <span className="text-mist-500"> · {printConfig.summary(activeList)}</span>
+                <div className="flex flex-wrap items-center gap-2.5">
+                  {filterDef && filterOptions.length > 0 && (
+                    <select
+                      value={selectedFilter}
+                      onChange={(e) =>
+                        setFilterSelections((prev) => ({ ...prev, [activeTab]: e.target.value }))
+                      }
+                      className="rounded-lg border border-ink-500 bg-ink-950/60 px-3 py-2 text-xs font-medium text-white outline-none focus:border-grape-400 focus:ring-1 focus:ring-grape-400/30 transition"
+                    >
+                      <option value="all" className="bg-ink-900">
+                        {filterDef.allLabel} ({activeList.length})
+                      </option>
+                      {filterOptions.map((option) => (
+                        <option key={option.value} value={option.value} className="bg-ink-900">
+                          {option.label} ({option.count})
+                        </option>
+                      ))}
+                    </select>
                   )}
-                </p>
-                <button
-                  onClick={handlePrint}
-                  disabled={activeList.length === 0}
-                  className="px-4 py-2 text-xs font-bold rounded-lg bg-grape-600 hover:bg-grape-500 text-white transition disabled:opacity-40 disabled:hover:bg-grape-600"
-                >
-                  Print / Save PDF ({activeList.length})
-                </button>
+
+                  <p className="text-xs text-mist-400">
+                    {filterActive ? (
+                      <>
+                        Showing <span className="font-bold text-white">{visibleList.length}</span> of{' '}
+                        <span className="font-bold text-white">{activeList.length}</span>{' '}
+                        {nounFor(activeList.length)}
+                      </>
+                    ) : (
+                      <>
+                        <span className="font-bold text-white">{activeList.length}</span>{' '}
+                        {nounFor(activeList.length)}
+                      </>
+                    )}
+                    {visibleList.length > 0 && (
+                      <span className="text-mist-500"> · {printConfig.summary(visibleList)}</span>
+                    )}
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={() => handlePrint(visibleList, true)}
+                    disabled={visibleList.length === 0}
+                    className="px-4 py-2 text-xs font-bold rounded-lg bg-grape-600 hover:bg-grape-500 text-white transition disabled:opacity-40 disabled:hover:bg-grape-600"
+                  >
+                    Print / Save PDF ({visibleList.length})
+                  </button>
+                  {filterActive && (
+                    <button
+                      onClick={() => handlePrint(activeList, false)}
+                      disabled={activeList.length === 0}
+                      className="px-4 py-2 text-xs font-bold rounded-lg border border-grape-400/40 bg-white/5 text-white hover:bg-white/10 transition disabled:opacity-40"
+                    >
+                      Print All ({activeList.length})
+                    </button>
+                  )}
+                </div>
               </div>
             )}
 
@@ -254,14 +352,14 @@ export default function AdminDashboard({ user }) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5 text-sm">
-                    {data.datathon.length === 0 ? (
+                    {visibleList.length === 0 ? (
                       <tr>
                         <td colSpan="6" className="px-6 py-10 text-center text-mist-400">
-                          No Datathon registrations found.
+                          {emptyMessage('No Datathon registrations found.')}
                         </td>
                       </tr>
                     ) : (
-                      data.datathon.map((team) => (
+                      visibleList.map((team) => (
                         <tr key={team._id} className="hover:bg-white/[0.02] transition">
                           <td className="px-6 py-4 font-bold text-white">{team.teamName}</td>
                           <td className="px-6 py-4 font-mono text-xs text-mist-300">{team.registrationId}</td>
@@ -330,14 +428,14 @@ export default function AdminDashboard({ user }) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5 text-sm">
-                    {data.gaming?.length === 0 ? (
+                    {visibleList.length === 0 ? (
                       <tr>
                         <td colSpan="7" className="px-6 py-10 text-center text-mist-400">
-                          No Gaming registrations found.
+                          {emptyMessage('No Gaming registrations found.')}
                         </td>
                       </tr>
                     ) : (
-                      data.gaming.map((team) => (
+                      visibleList.map((team) => (
                         <tr key={team._id} className="hover:bg-white/[0.02] transition">
                           <td className="px-6 py-4 font-bold text-white uppercase tracking-wider text-xs">
                             <span className="bg-white/5 px-2 py-1 rounded border border-white/10">{team.game}</span>
@@ -416,14 +514,14 @@ export default function AdminDashboard({ user }) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5 text-sm">
-                    {data.iupc.length === 0 ? (
+                    {visibleList.length === 0 ? (
                       <tr>
                         <td colSpan="5" className="px-6 py-10 text-center text-mist-400">
-                          No IUPC registrations found.
+                          {emptyMessage('No IUPC registrations found.')}
                         </td>
                       </tr>
                     ) : (
-                      data.iupc.map((team) => (
+                      visibleList.map((team) => (
                         <tr key={team._id} className="hover:bg-white/[0.02] transition">
                           <td className="px-6 py-4 font-bold text-white">{team.teamName}</td>
                           <td className="px-6 py-4 font-mono text-xs text-mist-300">{team.registrationId}</td>
@@ -440,9 +538,7 @@ export default function AdminDashboard({ user }) {
                                   <span className="font-semibold text-white">
                                     {m.name} {m.isTeamLeader && <span className="text-[10px] text-aqua-300 border border-aqua-300/30 px-1 rounded">Leader</span>}
                                   </span>
-                                  <div className="text-mist-400">
-                                    CF: <span className="text-gold-300">{m.codeforcesHandle || 'N/A'}</span> · {m.phone}
-                                  </div>
+                                  <div className="text-mist-400">{m.phone}</div>
                                 </div>
                               ))}
                             </div>
@@ -471,14 +567,14 @@ export default function AdminDashboard({ user }) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5 text-sm">
-                    {!data['it-quiz'] || data['it-quiz'].length === 0 ? (
+                    {visibleList.length === 0 ? (
                       <tr>
                         <td colSpan="6" className="px-6 py-10 text-center text-mist-400">
-                          No IT Quiz registrations found.
+                          {emptyMessage('No IT Quiz registrations found.')}
                         </td>
                       </tr>
                     ) : (
-                      data['it-quiz'].map((entry) => (
+                      visibleList.map((entry) => (
                         <tr key={entry._id} className="hover:bg-white/[0.02] transition">
                           <td className="px-6 py-4">
                             <div className="font-bold text-white">{entry.fullName}</div>
