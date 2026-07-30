@@ -237,6 +237,18 @@ both sides pick it up.
 The image is multi-stage: pnpm installs and builds, and the runtime stage runs
 Node 24 without pnpm. `next.config.mjs` sets `output: 'standalone'`.
 
+**Node 22.13 is the floor, and `engines.node` in `package.json` is what enforces
+it off-Docker.** pnpm 11 loads `node:sqlite`, which Node 20 does not have, so on
+an older Node it dies before installing a single package. The Dockerfile pins
+`node:24-alpine`, but a platform that provisions its own runtime — Vercel — has
+only `engines` to read. Do not drop that field; a build host defaulting to Node
+20 fails every deploy at the install step.
+
+**One lockfile only: `pnpm-lock.yaml`.** `package-lock.json` is gitignored. When
+both were committed the package manager became ambiguous, Vercel chose npm, and
+a dependency bump that regenerated only the pnpm lockfile made `npm ci` fail its
+sync check. Running npm locally is fine — just never commit what it writes.
+
 **`next start` does not work with a standalone build.** Run the bundled server,
 and copy the static assets next to it:
 
