@@ -53,3 +53,11 @@ next-env.d.ts
 *.kate-swp
 .*.kate-swp
 *.swp
+
+# pnpm-lock.yaml is THE lockfile — the Dockerfile installs with pnpm and
+# package.json pins packageManager to it. A committed package-lock.json made
+# the package manager ambiguous: Vercel picked npm, and because dependency
+# bumps only ever regenerated the pnpm lockfile, `npm ci` then failed the
+# package.json/package-lock.json sync check and three deploys in a row died.
+# Running npm locally is fine; the file it writes must not be committed.
+package-lock.json
