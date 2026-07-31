@@ -433,7 +433,7 @@ export const EVENT_DETAILS =
               'All submitted projects are evaluated by an expert judging panel.',
               'Criteria: innovation and creativity, technical implementation, scalability, user experience, and problem-solving approach.',
               'Shortlisted teams receive a selection email. Final paid registration then runs 9 to 11 August 2026 at ৳2,000 per team.',
-              '40 team slots at the finale.',
+              '50 team slots at the finale.',
             ]
           },
           {
