@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { getEventDetail } from '@/data/events';
 
 // ---------------------------------------------------------------------------
 // Registration confirmation mail.
@@ -15,6 +16,12 @@ import nodemailer from 'nodemailer';
 
 const SITE = 'itcarnival26.pstu.ac.bd';
 const BRAND = 'PSTU IT Carnival 2026';
+
+/* Read from the data rather than written here. The date was spelled out in the
+   IUPC confirmation email, so extending the deadline meant remembering that
+   this file existed — and an email that contradicts the site is worse than one
+   that omits the date. */
+const IUPC_DEADLINE = getEventDetail('iupc')?.tournament?.deadline || '';
 
 /**
  * Creates and returns the nodemailer SMTP transporter configured for Gmail.
@@ -251,7 +258,7 @@ export async function sendIupcConfirmationEmail(toEmail, teamName, registrationI
           <p>Your team <strong>${esc(teamName)}</strong> has been successfully pre-registered for the <strong>Inter-University Programming Contest (IUPC)</strong> at Patuakhali Science and Technology University.</p>
           <p>What happens next?</p>
           <ul>
-            <li>Pre-registration closes on <strong>31 July 2026</strong>.</li>
+            <li>Pre-registration closes on <strong>${esc(IUPC_DEADLINE)}</strong>.</li>
             <li>Confirmed university-wise slot allocations will be published on our web portal shortly after pre-registration closes.</li>
             <li>Teams on the confirmed slots list can proceed with the final registration step and pay the entry fee of ৳3,000 per team.</li>
           </ul>

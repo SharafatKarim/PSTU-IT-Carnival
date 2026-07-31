@@ -45,7 +45,11 @@ export const EVENT_DETAILS =
           teamSizeShort: '3 + coach',
           slots: '45 teams',
           platform: 'Onsite — workstations provided',
-          deadline: '31 July 2026',
+          /* Extended from 31 July. Every countdown, timeline stop and
+             "entries close" line on the site reads this one value, so they all
+             move with it — only the meta description in layout.js and the
+             confirmation email spell the date out separately. */
+          deadline: '2 August 2026',
         },
 
         /* Non-monetary only. Prize money has not been announced; add an
