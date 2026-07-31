@@ -417,34 +417,35 @@ export const EVENT_DETAILS =
         },
         rules: [
           {
-            title: 'Phase 1: Free pre-registration',
+            title: 'Phase 1: Free pre-registration & Preliminary Round',
             icon: 'users',
             items: [
               'Pre-registration runs 29 July to 2 August 2026 and is free.',
               'A team is one or two members. Entering alone is allowed.',
-              'Two emails follow with an industry-inspired problem statement, covering domains such as Frontend, Backend, AI/ML, IoT, Cyber Security and Mobile App development.',
-              'Teams submit their solution as a presentation or abstract within the stated window.',
+              'The preliminary round will be conducted online after the registration deadline.',
+              'Participating teams will receive an industry-inspired problem statement covering domains such as AI/ML, Web Development, Mobile Applications, Backend Development, IoT, Cyber Security, or other software engineering fields.',
+              'Teams will have a specified submission period to develop and submit their solutions, which will be evaluated by our judging panel.',
             ]
           },
           {
-            title: 'Phase 2: Selection Round & Criteria',
+            title: 'Phase 2: Selection & Theme',
             icon: 'trophy',
             items: [
-              'All submitted projects are evaluated by an expert judging panel.',
-              'Criteria: innovation and creativity, technical implementation, scalability, user experience, and problem-solving approach.',
+              'This is an industry-driven software engineering hackathon. Instead of focusing on a single theme, teams work on real-world problem statements inspired by industry needs.',
+              'All submitted projects are evaluated by an expert judging panel based on innovation, technical implementation, scalability, user experience, and problem-solving.',
               'Shortlisted teams receive a selection email. Final paid registration then runs 9 to 11 August 2026 at ৳2,000 per team.',
-              '50 team slots at the finale.',
+              'Exactly 50 finalist teams will be selected for the grand finale.',
             ]
           },
           {
-            title: 'Phase 3: On-Site Grand Finale Schedule',
+            title: 'Phase 3: On-Site Grand Finale',
             icon: 'clock',
             items: [
               '15 August 2026, TSC Conference Hall, PSTU.',
+              'The final on-site round will feature a new industry-level problem statement that teams must solve within the allocated time (9:00 AM to 3:00 PM).',
               '৳2,000 per team, paid at final registration by the shortlisted teams only.',
               '8:00 AM — the final problem statement is emailed to every selected team.',
               '8:45 AM — all teams must be present in the hall.',
-              '9:00 AM to 3:00 PM — development and solution building.',
               '11:00 AM — mid evaluation; judges visit each booth.',
               '3:00 PM to 5:00 PM — final demonstration and jury evaluation.',
             ]
