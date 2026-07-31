@@ -262,8 +262,6 @@ node .next/standalone/server.js
 The Dockerfile already does this — the note is for running a production build
 by hand. Skipping the copy serves every page with no CSS.
 
----
-
 ## Notes
 
 - No admin dashboard and no payment integration. No money is collected through
