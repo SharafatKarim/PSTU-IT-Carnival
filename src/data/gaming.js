@@ -897,6 +897,16 @@ export const GAMES = [
         ],
       },
       {
+        title: "Official Esports Settings",
+        icon: "monitor",
+        items: [
+          "No gun skin allowed.",
+          "Character skill allowed.",
+          "Revival all allowed.",
+          "High tier loot zone disabled.",
+        ],
+      },
+      {
         title: "Device & Fair Play",
         icon: "shield",
         items: [
