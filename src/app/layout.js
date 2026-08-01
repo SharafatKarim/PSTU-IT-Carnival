@@ -37,7 +37,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} h-full antialiased`}>
       <body suppressHydrationWarning className="min-h-full flex flex-col">
         {children}
         <Analytics />
