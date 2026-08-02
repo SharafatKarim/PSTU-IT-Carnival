@@ -519,7 +519,7 @@ export const EVENT_DETAILS =
           teamSizeShort: 'Individual',
           slots: '100 participants',
           platform: 'On-site',
-          deadline: '13 August 2026, 12:00 AM',
+          deadline: '10 August 2026',
         },
 
         prizes: [
