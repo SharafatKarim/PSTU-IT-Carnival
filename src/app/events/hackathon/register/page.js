@@ -25,7 +25,7 @@ const NotOpenYet = ({ event }) => (
             {event.name} pre-registration is not open
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-mist-300">
-            It runs 29 July to 4 August 2026, and it is free.
+            It runs 29 July to 7 PM, 2 August 2026, and it is free.
           </p>
         </div>
       </div>
