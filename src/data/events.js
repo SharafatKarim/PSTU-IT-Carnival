@@ -656,6 +656,7 @@ export const EVENT_DETAILS =
         shortName: 'Showcase',
         icon: 'monitor',
         accent: 'aqua',
+        cover: '/events/project_showcasing/cover.webp',
         scope: 'South Zone',
         tagline: 'Step into the spotlight and showcase your engineering prowess!',
         blurb:
