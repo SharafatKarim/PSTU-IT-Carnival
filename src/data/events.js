@@ -389,9 +389,9 @@ export const EVENT_DETAILS =
           kind: 'form',
           cta: 'Pre-Register Your Team',
           note:
-              'Pre-registration is free · 1 or 2 members · closes 2 August 2026',
+              'Pre-registration is free · 1 or 2 members · closes 2 August (7:00 PM)',
           process: [
-            'Pre-register your team here between 29 July and 2 August. It costs nothing.',
+            'Pre-register your team here before 2 August 7:00 PM. It costs nothing.',
             'Two emails follow with the problem statement. Build your solution and submit it as a presentation or abstract.',
             'Shortlisted teams get a selection email, then final registration runs 9–11 August with the ৳2,000 team fee.',
             'The on-site finale is 15 August at the TSC Conference Hall.',
@@ -417,7 +417,7 @@ export const EVENT_DETAILS =
           teamSizeShort: '1–2 members',
           slots: '50 teams',
           platform: 'On-site development and solution building',
-          deadline: '2 August 2026',
+          deadline: '2 August 2026, 7:00 PM',
         },
         rules: [
           {
