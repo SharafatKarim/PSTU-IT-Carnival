@@ -370,7 +370,7 @@ export const EVENT_DETAILS =
         blurb:
             'Challenge yourself by solving real-world industry problems, collaborate with talented innovators, and compete for exciting prizes.',
         stage: 'open',
-        registrationOpen: true,
+        registrationOpen: false,
 
         /* Phase 1 costs nothing, so this form takes no payment details at all —
            no transaction ID, no screenshot. The ৳2,000 applies at final
