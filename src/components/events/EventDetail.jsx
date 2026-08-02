@@ -163,6 +163,11 @@ const Hero = ({ event }) => {
               <span className={`h-1.5 w-1.5 animate-pulse-glow rounded-full ${a.dot}`} />
               Pre-Registration Open
             </span>
+          ) : event.stage === 'open' ? (
+            <span className="inline-flex items-center gap-2 rounded-full border border-red-500/40 bg-red-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-red-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
+              Registration Closed
+            </span>
           ) : (
             <span className="inline-flex items-center gap-2 rounded-full border border-gold-400/40 bg-gold-400/10 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-gold-300">
               <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-gold-400" />
@@ -220,6 +225,23 @@ const Hero = ({ event }) => {
                   </Link>
                 </>
               )}
+              {(event.slug === 'hackathon' || event.slug === 'datathon' || event.slug === 'project-showcase') && (
+                <Link href={ROUTES.eventTeams(event.slug)} className={SECONDARY_CTA}>
+                  View Teams
+                </Link>
+              )}
+              <a href="#rules" className={SECONDARY_CTA}>
+                Read the Rules
+              </a>
+            </>
+          ) : event.stage === 'open' ? (
+            <>
+              <button
+                disabled
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white/5 border border-white/10 px-5 py-3.5 text-sm font-bold text-mist-400 cursor-not-allowed"
+              >
+                Registration Closed
+              </button>
               {(event.slug === 'hackathon' || event.slug === 'datathon' || event.slug === 'project-showcase') && (
                 <Link href={ROUTES.eventTeams(event.slug)} className={SECONDARY_CTA}>
                   View Teams
@@ -370,6 +392,14 @@ const EventDetail = ({ slug }) => {
         >
           {registrationOpen ? (
             <RegisterCta event={event} />
+          ) : event.stage === 'open' ? (
+            <div className="mx-auto max-w-2xl text-center rounded-2xl border border-red-500/20 bg-red-950/10 p-8 shadow-card">
+              <p className="text-sm font-semibold uppercase tracking-widest text-red-400">Registration Closed</p>
+              <h3 className="mt-3 text-lg font-bold text-white">Pre-registration has closed</h3>
+              <p className="mt-2 text-sm leading-relaxed text-mist-300">
+                Pre-registration for {event.name} is now closed. The final shortlist of teams will be published soon.
+              </p>
+            </div>
           ) : (
             <div className="mx-auto max-w-2xl text-center rounded-2xl border border-ink-600 bg-ink-800/40 p-8 shadow-card">
               <p className="text-sm font-semibold uppercase tracking-widest text-gold-400">Registration Opens Later</p>
