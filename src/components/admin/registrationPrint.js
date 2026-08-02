@@ -182,4 +182,60 @@ export const REGISTRATION_PRINT = {
       { header: 'Status', cls: 'num', value: (e) => (e.paid ? 'Verified' : 'Pending') },
     ],
   },
+
+  'project-showcase': {
+    title: 'Project Showcasing Registrations',
+    noun: { one: 'team', many: 'teams' },
+    summary: (list) => paidSummary(list, (t) => t.paid),
+    columns: [
+      { header: 'Team Name', cls: 'name', value: (t) => t.teamName },
+      { header: 'Reg ID', cls: 'mono', value: (t) => t.registrationId },
+      { header: 'Transaction ID', cls: 'mono', value: (t) => t.transactionId },
+      {
+        header: 'Members',
+        cls: 'wrap',
+        value: (t) =>
+          lines(
+            (t.members || []).map((m, i) =>
+              lines([
+                memberLabel(m, i, m.isTeamLeader),
+                `    ${join([m.universityName, m.universityId && `ID: ${m.universityId}`])}`,
+                `    ${join([m.email, m.phone])}`,
+              ])
+            )
+          ),
+      },
+      { header: 'Status', cls: 'num', value: (t) => (t.paid ? 'Approved' : 'Pending') },
+    ],
+  },
+
+  hackathon: {
+    title: 'Hackathon Pre-Registrations',
+    noun: { one: 'team', many: 'teams' },
+    summary: (list) => {
+      const varsities = new Set(
+        list.flatMap((t) => (t.members || []).map((m) => String(m.universityName || '').trim().toLowerCase())).filter(Boolean)
+      ).size;
+      return `${varsities} ${varsities === 1 ? 'university' : 'universities'} represented`;
+    },
+    columns: [
+      { header: 'Team Name', cls: 'name', value: (t) => t.teamName },
+      { header: 'Reg ID', cls: 'mono', value: (t) => t.registrationId },
+      {
+        header: 'Members',
+        cls: 'wrap',
+        value: (t) =>
+          lines(
+            (t.members || []).map((m, i) =>
+              lines([
+                `${i + 1}. ${m.fullName || 'Unnamed'}${m.isTeamLeader ? ' (Leader)' : ''}`,
+                `    ${join([m.universityName, m.department && `Dept: ${m.department}`, `T-Shirt: ${m.tshirtSize}`])}`,
+                `    ${join([m.email, m.whatsapp])}`,
+              ])
+            )
+          ),
+      },
+      { header: 'Shortlisted', cls: 'num', value: (t) => (t.shortlisted ? 'Yes' : 'No') },
+    ],
+  },
 };

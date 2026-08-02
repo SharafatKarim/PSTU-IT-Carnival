@@ -11,7 +11,7 @@ import { SECTION_FILTERS } from './admin/sectionFilters';
 
 export default function AdminDashboard({ user }) {
   const [activeTab, setActiveTab] = useState('datathon'); // 'datathon' | 'iupc' | 'gaming' | 'it-quiz' | 'volunteer' | 'project-showcase'
-  const [data, setData] = useState({ iupc: [], datathon: [], gaming: [], 'it-quiz': [], volunteer: [], 'project-showcase': [] });
+  const [data, setData] = useState({ iupc: [], datathon: [], gaming: [], 'it-quiz': [], volunteer: [], 'project-showcase': [], hackathon: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [actionLoading, setActionLoading] = useState(null); // stores team._id being approved
@@ -253,6 +253,16 @@ export default function AdminDashboard({ user }) {
           >
             Project Showcasing ({data['project-showcase']?.length || 0})
           </button>
+          <button
+            onClick={() => setActiveTab('hackathon')}
+            className={`px-6 py-3 text-sm font-bold border-b-2 transition ${
+              activeTab === 'hackathon'
+                ? 'border-magenta-500 text-white'
+                : 'border-transparent text-mist-400 hover:text-white'
+            }`}
+          >
+            Hackathon ({data.hackathon?.length || 0})
+          </button>
         </div>
 
         {(activeTab === 'datathon' || activeTab === 'gaming') && !loading && (
@@ -328,6 +338,29 @@ export default function AdminDashboard({ user }) {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
+                  {activeTab === 'hackathon' && (
+                    <button
+                      onClick={() => {
+                        const emails = activeList.flatMap((team) => (team.members || []).map((m) => m.email)).filter(Boolean);
+                        if (emails.length === 0) {
+                          alert('No emails to export!');
+                          return;
+                        }
+                        const blob = new Blob([emails.join('\n')], { type: 'text/plain;charset=utf-8' });
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = 'hackathon_emails.txt';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(url);
+                      }}
+                      className="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition"
+                    >
+                      Export Emails
+                    </button>
+                  )}
                   <button
                     onClick={() => handlePrint(visibleList, true)}
                     disabled={visibleList.length === 0}
@@ -723,6 +756,67 @@ export default function AdminDashboard({ user }) {
                               >
                                 {actionLoading === team._id ? 'Approving...' : 'Approve'}
                               </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {activeTab === 'hackathon' && (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-white/10 bg-ink-950/40 text-xs font-bold uppercase tracking-wider text-mist-400">
+                      <th className="px-6 py-4">Team Name</th>
+                      <th className="px-6 py-4">Reg ID</th>
+                      <th className="px-6 py-4">Members</th>
+                      <th className="px-6 py-4">Shortlisted</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5 text-sm">
+                    {visibleList.length === 0 ? (
+                      <tr>
+                        <td colSpan="4" className="px-6 py-10 text-center text-mist-400">
+                          {emptyMessage('No Hackathon pre-registrations found.')}
+                        </td>
+                      </tr>
+                    ) : (
+                      visibleList.map((team) => (
+                        <tr key={team._id} className="hover:bg-white/[0.02] transition">
+                          <td className="px-6 py-4 font-bold text-white">{team.teamName}</td>
+                          <td className="px-6 py-4 font-mono text-xs text-mist-300">{team.registrationId}</td>
+                          <td className="px-6 py-4">
+                            <div className="space-y-2">
+                              {team.members.map((m, i) => (
+                                <div key={i} className="text-xs">
+                                  <span className="font-semibold text-white">
+                                    {m.fullName} {m.isTeamLeader && <span className="text-[10px] text-magenta-300 border border-magenta-300/30 px-1 rounded">Leader</span>}
+                                  </span>
+                                  <div className="text-mist-400">
+                                    {m.universityName} · {m.department} · T-Shirt: {m.tshirtSize}
+                                  </div>
+                                  <div className="text-mist-400">
+                                    WhatsApp: {m.whatsapp} · Email: {m.email}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            {team.shortlisted ? (
+                              <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-1 text-xs font-bold text-green-400 border border-green-500/20">
+                                <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                                Yes
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-400 border border-amber-500/20">
+                                <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                                No
+                              </span>
                             )}
                           </td>
                         </tr>

@@ -26,4 +26,32 @@ export const SECTION_FILTERS = {
        still reads sensibly rather than vanishing from the list. */
     labelFor: (key) => getGame(key)?.name || key.toUpperCase(),
   },
+
+  'project-showcase': {
+    allLabel: 'All universities',
+    unknownLabel: 'University not given',
+    summaryLabel: 'University',
+    keyOf: (team) => {
+      const leader = (team.members || []).find((m) => m.isTeamLeader) || team.members?.[0];
+      return String(leader?.universityName || '').trim().toLowerCase();
+    },
+    labelFor: (_key, sample) => {
+      const leader = (sample.members || []).find((m) => m.isTeamLeader) || sample.members?.[0];
+      return String(leader?.universityName || '').trim();
+    },
+  },
+
+  hackathon: {
+    allLabel: 'All universities',
+    unknownLabel: 'University not given',
+    summaryLabel: 'University',
+    keyOf: (team) => {
+      const leader = (team.members || []).find((m) => m.isTeamLeader) || team.members?.[0];
+      return String(leader?.universityName || '').trim().toLowerCase();
+    },
+    labelFor: (_key, sample) => {
+      const leader = (sample.members || []).find((m) => m.isTeamLeader) || sample.members?.[0];
+      return String(leader?.universityName || '').trim();
+    },
+  },
 };
