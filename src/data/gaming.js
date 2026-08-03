@@ -653,7 +653,7 @@ export const GAMES = [
       text: "In association with PSTU Esports Club",
       logo: "/events/gaming/pstu esports club.png",
     },
-    scope: "Esports · Squad",
+    scope: "South Zone · Squad",
     mode: "Squad of 4",
     tagline:
       "Squad up for the battle royale. Last team standing takes the crown.",
@@ -713,7 +713,7 @@ export const GAMES = [
         icon: "users",
         items: [
           "A squad is exactly 4 players. Enter as a full squad, or enter alone and be placed in a randomly formed one.",
-          "Every player must be a currently enrolled PSTU student with a valid ID card, checked at the desk.",
+          "Open to all students from the South zone (academic ID or verification is checked at the desk).",
           "A player may represent only one squad for the whole tournament.",
           "Entry is free — there is no fee to pay, on the form or at the venue.",
           "Team name and player game IDs are locked once registration closes on 5 August. Check them carefully.",
@@ -760,7 +760,7 @@ export const GAMES = [
         "Either a full squad of four, or nothing — solo entrants are placed in a random squad",
         "Every player’s PUBG Mobile UID (the 6–15 digit number in your profile)",
         "A team leader who can receive room IDs and passwords on WhatsApp",
-        "A valid PSTU student ID for each player, checked at the desk",
+        "A valid student ID from the South zone for each player, checked at the desk",
       ],
       sections: battleRoyaleSections({
         idLabel: "PUBG Mobile UID",
