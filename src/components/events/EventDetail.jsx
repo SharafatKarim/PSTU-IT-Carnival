@@ -21,6 +21,26 @@ import {
 import { getEventDetail } from '@/data/events';
 import { ROUTES, eventDetailNav } from '@/lib/routes';
 
+/* "Entries have closed" as opposed to "entries have not opened yet" — the two
+   look identical through registrationOpen alone, and telling a team to wait for
+   a form that has already shut is the one thing this page must not do.
+ *
+ * Two signals, because they arrived from two directions and both are in use:
+ *
+ *   registrationClosed: true   stated outright (IUPC, whose stage also moved to
+ *                              'published' so the landing ledger stops filing it
+ *                              under "Open now").
+ *   stage: 'open' + the form off
+ *                              closed by implication — the event is still in its
+ *                              open phase, the form is simply switched off
+ *                              (hackathon).
+ *
+ * Either one means the same thing to a visitor, so both resolve here rather than
+ * at each of the three places that ask. */
+const isRegistrationClosed = (event) =>
+  event.registrationOpen === false &&
+  (event.registrationClosed === true || event.stage === 'open');
+
 /* Shared by every non-primary hero button, so they stay visually identical. */
 const SECONDARY_CTA =
   'inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-grape-400/40 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur transition hover:border-grape-400/70 hover:bg-white/10 sm:flex-none';
@@ -73,6 +93,7 @@ const Hero = ({ event }) => {
   ].filter(Boolean);
 
   const registrationOpen = event.registrationOpen !== false;
+  const registrationClosed = isRegistrationClosed(event);
   const hasCover = Boolean(event.cover);
 
   return (
@@ -163,7 +184,7 @@ const Hero = ({ event }) => {
               <span className={`h-1.5 w-1.5 animate-pulse-glow rounded-full ${a.dot}`} />
               Pre-Registration Open
             </span>
-          ) : event.stage === 'open' ? (
+          ) : registrationClosed ? (
             <span className="inline-flex items-center gap-2 rounded-full border border-red-500/40 bg-red-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-red-400">
               <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
               Registration Closed
@@ -234,7 +255,7 @@ const Hero = ({ event }) => {
                 Read the Rules
               </a>
             </>
-          ) : event.stage === 'open' ? (
+          ) : registrationClosed ? (
             <>
               <button
                 disabled
@@ -353,6 +374,7 @@ const EventDetail = ({ slug }) => {
   if (!event) return null;
 
   const registrationOpen = event.registrationOpen !== false;
+  const registrationClosed = isRegistrationClosed(event);
 
   return (
     <div className="min-h-screen">
@@ -392,7 +414,7 @@ const EventDetail = ({ slug }) => {
         >
           {registrationOpen ? (
             <RegisterCta event={event} />
-          ) : event.stage === 'open' ? (
+          ) : registrationClosed ? (
             <div className="mx-auto max-w-2xl text-center rounded-2xl border border-red-500/20 bg-red-950/10 p-8 shadow-card">
               <p className="text-sm font-semibold uppercase tracking-widest text-red-400">Registration Closed</p>
               <h3 className="mt-3 text-lg font-bold text-white">Pre-registration has closed</h3>

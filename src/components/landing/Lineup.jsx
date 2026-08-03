@@ -149,6 +149,12 @@ const PublishedRow = ({ event, detail }) => {
         <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <span className="font-bold text-white">{event.name}</span>
           <span className="text-xs text-mist-400">{event.scope}</span>
+          {/* Carries the half of this tier's meaning the group note cannot. */}
+          {detail?.registrationClosed && (
+            <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-mist-300">
+              Registration closed
+            </span>
+          )}
         </span>
         <span className="mt-0.5 block line-clamp-2 text-sm text-mist-400">
           {event.blurb}
@@ -245,7 +251,10 @@ const Lineup = () => {
       )}
 
       {grouped.published.length > 0 && (
-        <Tier label="Published" note="Entries have not opened yet">
+        /* This tier holds two different situations — entries not open yet, and
+           entries that have been and gone. The group note stays neutral because
+           it covers both; each row says which one it is. */
+        <Tier label="Published" note="Entries not open">
           {grouped.published.map((event) => (
             <PublishedRow key={event.id} event={event} detail={detailFor(event)} />
           ))}

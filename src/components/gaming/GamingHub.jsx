@@ -7,7 +7,10 @@ import GameCard from './GameCard';
 import { ArrowLeftIcon, AlertIcon, GamepadIcon } from '@/components/landing/Icons';
 import { GAMES, GAMING, isGameRegistrationOpen } from '@/data/gaming';
 import { EVENT } from '@/data/content';
-import { ROUTES, gamingNav } from '@/lib/routes';
+import { ROUTES, gamingNav, iupcRegistration } from '@/lib/routes';
+
+/* Resolved once — flipping registrationOpen in events.js moves this too. */
+const iupcReg = iupcRegistration();
 
 /* Derived rather than hand-written: this heading still read "entries have not
    opened yet" after all three tournaments had opened, because the sentence
@@ -42,8 +45,8 @@ const GamingHub = () => (
     <Navbar
       links={gamingNav}
       homeHref={ROUTES.home}
-      ctaHref={ROUTES.register}
-      ctaLabel="IUPC Register"
+      ctaHref={iupcReg.href}
+      ctaLabel={iupcReg.open ? 'IUPC Register' : 'IUPC Teams'}
     />
 
     <main>

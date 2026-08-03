@@ -21,11 +21,14 @@ import {
 } from './landing/Icons';
 import { EVENT, EVENTS, STATS, TIMELINE, word } from '@/data/content';
 import { getEventDetail } from '@/data/events';
-import { ROUTES } from '@/lib/routes';
+import { ROUTES, iupcRegistration } from '@/lib/routes';
 import { currentStop } from '@/lib/schedule';
 import { useNow } from '@/lib/useNow';
 
 const IUPC = getEventDetail('iupc');
+/* Every "register for IUPC" button on this page, resolved once. Static data, so
+   module scope is enough — and one flag in events.js moves all three. */
+const iupcReg = iupcRegistration();
 
 /* ---------------------------------------------------------------------------
    Section shell.
@@ -122,10 +125,10 @@ const OpenNowPanel = () => {
       </dl>
 
       <Link
-        href={ROUTES.register}
+        href={iupcReg.href}
         className="group mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gold-400 px-6 py-3.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
       >
-        Pre-register your team
+        {iupcReg.open ? 'Pre-register your team' : iupcReg.closedLabel}
         <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
       </Link>
       <p className="mt-3 text-center text-xs text-mist-400">
@@ -358,10 +361,10 @@ const HowToEnter = () => {
             </dl>
 
             <Link
-              href={ROUTES.register}
+              href={iupcReg.href}
               className="group mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gold-400 px-6 py-3.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
             >
-              Start pre-registration
+              {iupcReg.open ? 'Start pre-registration' : iupcReg.closedLabel}
               <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
@@ -483,18 +486,21 @@ const FinalCta = () => {
             )}
 
             <h2 className="mt-5 text-3xl font-extrabold sm:text-4xl">
-              Your IUPC team&rsquo;s spot is waiting
+              {iupcReg.open
+                ? 'Your IUPC team’s spot is waiting'
+                : 'IUPC pre-registration has closed'}
             </h2>
             <p className="mx-auto mt-4 max-w-[52ch] text-base leading-relaxed text-white/90">
-              Gather your three coders, pick a name worth remembering, and claim
-              your place at the flagship contest.
+              {iupcReg.open
+                ? 'Gather your three coders, pick a name worth remembering, and claim your place at the flagship contest.'
+                : 'Thank you to every team that entered. Confirmed slots are published university-wise, and final registration then opens for the listed teams.'}
             </p>
 
             <Link
-              href={ROUTES.register}
+              href={iupcReg.href}
               className="group mt-8 inline-flex items-center gap-2 rounded-xl bg-gold-400 px-8 py-4 text-sm font-bold text-ink-950 shadow-lg transition hover:bg-gold-300"
             >
-              Pre-register for IUPC
+              {iupcReg.open ? 'Pre-register for IUPC' : iupcReg.closedLabel}
               <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
 

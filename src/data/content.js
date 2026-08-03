@@ -54,14 +54,17 @@ export const EVENTS = [
     icon: 'code',
     blurb:
       'The flagship ICPC-style Inter-University Programming Contest. Teams of three, a 4–5 hour battle, one keyboard.',
-    status: 'open',
-    cta: 'Pre-Register',
+    /* Pre-registration closed 30 July 2026. `status` must track `stage` in
+       events.js — the drift guard at the bottom of src/lib/routes.js warns in
+       development when it does not — and there is no registerHref any more,
+       because there is no form to send anyone to. */
+    status: 'live',
+    cta: 'View Details',
     /* Resolves against src/data/events.js. The id 'iupc' happens to match its
        slug; the gaming ids do not, so every linked event states it. */
     slug: 'iupc',
     kind: 'event',
     href: ROUTES.iupc,
-    registerHref: ROUTES.register,
   },
   {
     id: 'hackathon',
@@ -321,7 +324,7 @@ export const TIMELINE = [
 export const FAQS = [
   {
     q: 'Which events are open for registration right now?',
-    a: 'IUPC (South Zone) for pre-registration, and all three esports tournaments — eFootball, PUBG Mobile and Free Fire — which close on 5 August. The datathon has its format, rules and prizes published but entries have not opened yet, and the rest of the line-up follows later.',
+    a: 'All three esports tournaments — eFootball, PUBG Mobile and Free Fire. IUPC (South Zone) pre-registration has now closed; confirmed slots are published university-wise, and final registration then opens for the listed teams. The datathon has its format, rules and prizes published but entries have not opened yet, and the rest of the line-up follows later.',
   },
   {
     q: 'How many members can an IUPC team have?',

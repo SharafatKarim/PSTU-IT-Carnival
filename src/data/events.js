@@ -113,9 +113,14 @@ export const EVENT_DETAILS =
         /* How far along this event is. The landing ledger groups by this rather
            than inferring from registrationOpen, which cannot tell "announced
            only" apart from "published but closed". */
-        stage: 'open',
+        stage: 'published',
         /* Flip to false to close entries without deleting the form. */
-        registrationOpen: true,
+        registrationOpen: false,
+        /* ...and this says WHY it is false. Every other published event means
+           "entries have not opened yet"; IUPC pre-registration ran and has now
+           shut, so the pages must say closed rather than coming soon. Without
+           it the site invites people to wait for a form that will not return. */
+        registrationClosed: true,
         registration: {
           /* 'form' means this event owns /events/<slug>/register. */
           kind: 'form',

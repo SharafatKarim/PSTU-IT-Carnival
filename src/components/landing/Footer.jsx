@@ -1,7 +1,10 @@
 import Link from 'next/link';
 import { EVENT, EVENT_TIERS } from '@/data/content';
-import { ROUTES } from '@/lib/routes';
+import { ROUTES, iupcRegistration } from '@/lib/routes';
 import { CalendarIcon, MapPinIcon } from './Icons';
+
+/* Resolved once — flipping registrationOpen in events.js moves this too. */
+const iupcReg = iupcRegistration();
 
 const FooterLink = ({ href, children }) => (
   <li>
@@ -71,7 +74,9 @@ const Footer = () => {
             <ul className="mt-4 space-y-2.5">
               <FooterLink href={ROUTES.events}>All twelve events</FooterLink>
               <FooterLink href={ROUTES.gaming}>Gaming Fest</FooterLink>
-              <FooterLink href={ROUTES.register}>IUPC pre-registration</FooterLink>
+              <FooterLink href={iupcReg.href}>
+                {iupcReg.open ? 'IUPC pre-registration' : 'IUPC registered teams'}
+              </FooterLink>
               <FooterLink href={`${ROUTES.iupc}#contact`}>
                 Contact the coordinator
               </FooterLink>

@@ -7,6 +7,7 @@ import { listTeams } from '@/server/events/iupc/teams';
 import { checkWriteLimits, clientKey } from '@/server/rateLimit';
 import { verifyTurnstile } from '@/server/turnstile';
 import { sendIupcConfirmationEmail } from '@/lib/email';
+import { getEventDetail } from '@/data/events';
 
 /* A registration is ~1 KB. Anything far larger is not a real submission, so
    reject it before parsing rather than buffering it into memory. */
@@ -46,6 +47,21 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
+    /* The form is gone from the site when entries close, but this is what
+       enforces it — a saved page, a bookmarked deep link or a direct POST
+       would otherwise still be issued a registration ID after the intake shut.
+       Checked first so a closed intake costs nothing, and read from the same
+       config the pages render from, so the two cannot disagree.
+
+       Mirrors the gaming route, which has always guarded on
+       isGameRegistrationOpen(); this handler never had the equivalent. */
+    if (!getEventDetail('iupc')?.registrationOpen) {
+      return NextResponse.json(
+        { success: false, message: 'IUPC pre-registration is closed.' },
+        { status: 409 }
+      );
+    }
+
     /* Throttle before touching the database, so a flood costs us nothing. */
     const limit = checkWriteLimits(req, 'iupc:register');
     if (!limit.ok) {

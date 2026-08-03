@@ -1,8 +1,11 @@
 import Link from 'next/link';
 import Footer from '@/components/landing/Footer';
 import { ArrowLeftIcon, ArrowRightIcon, GamepadIcon, CodeIcon } from '@/components/landing/Icons';
-import { ROUTES } from '@/lib/routes';
+import { ROUTES, iupcRegistration } from '@/lib/routes';
 import { GAMES } from '@/data/gaming';
+
+/* Resolved once — flipping registrationOpen in events.js moves this too. */
+const iupcReg = iupcRegistration();
 
 export const metadata = {
   title: 'Page not found — PSTU IT Carnival 2026',
@@ -45,7 +48,7 @@ export default function NotFound() {
 
           <div className="mx-auto mt-12 grid max-w-2xl gap-3 sm:grid-cols-2">
             <Link
-              href={ROUTES.register}
+              href={iupcReg.href}
               className="group flex items-center gap-3 rounded-xl border border-ink-600 bg-ink-800/60 p-4 text-left transition hover:border-grape-500/60"
             >
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-carnival text-white shadow-glow-grape">
@@ -53,7 +56,7 @@ export default function NotFound() {
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block text-sm font-bold text-white">
-                  IUPC Pre-Registration
+                  {iupcReg.open ? 'IUPC Pre-Registration' : 'IUPC Registered Teams'}
                 </span>
                 <span className="block text-xs text-mist-400">
                   Teams of three · South Zone

@@ -93,6 +93,32 @@ export const REGISTRABLE_EVENTS = EVENT_DETAILS.filter(
   (e) => e.registration?.kind === 'form'
 );
 
+/* Where the site's "register for IUPC" buttons point, and whether they should
+   still be offering that at all.
+ *
+ * IUPC is the one event advertised from outside its own page — the landing hero,
+ * the closing panel, the footer, the gaming hub's navbar and the 404 all link to
+ * its form. Closing entries therefore means editing five components, which is
+ * five chances to miss one and leave a gold button promising a form that is
+ * gone. Deriving it from the event's own registrationOpen means flipping that
+ * single flag in events.js moves every one of them, in both directions.
+ *
+ * Callers keep their own wording while entries are open — "Pre-register your
+ * team" and "Start pre-registration" are not interchangeable — and share one
+ * label once they are closed. */
+export const iupcRegistration = () => {
+  const iupc = EVENT_DETAILS.find((e) => e.slug === 'iupc');
+  const open = iupc?.registrationOpen !== false;
+  return {
+    open,
+    /* Closed sends people to the directory rather than the form's notice page:
+       the question a team has after entries shut is whether they are on the
+       list. */
+    href: open ? ROUTES.register : ROUTES.eventTeams('iupc'),
+    closedLabel: 'See registered teams',
+  };
+};
+
 /* A 1v1 tournament has no squads to list, so its directory is /players; the
    battle royales list squads at /teams. Resolved from the game's own config so
    a caller only needs the slug.
@@ -278,7 +304,12 @@ export const siteUrls = () => [
         : 0.9,
   })),
   ...REGISTRABLE_EVENTS.flatMap((event) => [
-    { path: ROUTES.eventRegister(event.slug), priority: 0.9 },
+    /* Same rule the games follow below: a closed form is a thin notice page,
+       not something to keep offering in search results. The directory pages
+       stay — who entered is still worth reading after entries shut. */
+    ...(event.registrationOpen
+      ? [{ path: ROUTES.eventRegister(event.slug), priority: 0.9 }]
+      : []),
     { path: ROUTES.eventTeams(event.slug), priority: 0.6 },
     ...(event.slug === 'iupc' ? [{ path: ROUTES.eventSlots(event.slug), priority: 0.6 }] : []),
   ]),

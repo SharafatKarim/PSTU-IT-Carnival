@@ -167,7 +167,22 @@ When it is `false`, the registration page still exists — it shows what to
 prepare and who to ask, so a shared link never dead-ends — and the cards show a
 disabled "Opens Soon" instead of a link to a form nobody can submit.
 
-Today: **IUPC is open**, all three gaming tournaments are closed.
+`registrationOpen: false` on its own cannot say **why** the form is gone, and
+"opens soon" is the wrong thing to tell someone whose deadline has passed. An
+event that has closed says so:
+
+```js
+// src/data/events.js
+registrationClosed: true,   // entries ran and are now shut, not "not open yet"
+```
+
+An event left at `stage: 'open'` with the form switched off counts as closed
+too, so both spellings render the same red "Registration Closed" state —
+see `isRegistrationClosed` in `src/components/events/EventDetail.jsx`.
+
+These flags are the source of truth; check them in `events.js` and `gaming.js`
+rather than trusting a line here. At the time of writing IUPC pre-registration
+and the hackathon are closed.
 
 ### Adding an event or a game
 
