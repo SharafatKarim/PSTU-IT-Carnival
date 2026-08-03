@@ -27,10 +27,9 @@ const registrationSchema = new mongoose.Schema(
       trim: true,
       maxlength: [100, 'Full name cannot exceed 100 characters'],
     },
-    /* Optional, by the owner's spec. Someone with no email is contacted on
-       WhatsApp, which is why that one is required and this is not. */
     email: {
       type: String,
+      required: [true, 'Email is required'],
       trim: true,
       lowercase: true,
       maxlength: [120, 'Email cannot exceed 120 characters'],

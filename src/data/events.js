@@ -584,7 +584,7 @@ export const EVENT_DETAILS =
             title: 'Registration & Payment',
             icon: 'ticket',
             items: [
-              'Send 100 BDT to 01753132369 via bKash Personal.',
+              'Send 100 BDT to +8801734322148 via bKash Personal.',
               'Keep your transaction ID and fill in the online registration form.',
               'Bring your student ID to the venue for the eligibility check.',
             ],
@@ -598,7 +598,7 @@ export const EVENT_DETAILS =
           kind: 'solo',
           fee: 100,
           feeLabel: '৳100 per participant',
-          receiverNumber: '01753132369',
+          receiverNumber: '+8801734322148',
           accountType: 'Personal',
           methods: ['bKash'],
         },
@@ -607,10 +607,6 @@ export const EVENT_DETAILS =
           {
             q: 'Do I need a team?',
             a: 'No. IT Quiz is an individual event — you register and compete on your own.',
-          },
-          {
-            q: 'I do not have an email address. Can I still register?',
-            a: 'Yes. The email field is optional. Give us a working WhatsApp number instead — that is where we will reach you.',
           },
           {
             q: 'When is my registration confirmed?',
@@ -623,12 +619,12 @@ export const EVENT_DETAILS =
           cta: 'Register for IT Quiz',
           note: 'Individual entry · ৳100',
           process: [
-            'Send ৳100 to 01753132369 via bKash Personal and keep the confirmation.',
+            'Send ৳100 to +8801734322148 via bKash Personal and keep the confirmation.',
             'Fill in your details and enter the transaction ID.',
             'Submit. You get a registration ID immediately, and a confirmation once the payment is checked.',
           ],
           checklist: [
-            'Your full name, WhatsApp number and university',
+            'Your full name, email address, WhatsApp number and university',
             'Academic ID, faculty, semester and session',
             'The ৳100 transaction ID',
           ],

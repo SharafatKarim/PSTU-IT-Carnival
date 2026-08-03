@@ -177,13 +177,13 @@ export default function ItQuizRegistrationForm() {
               label="Email Address"
               name="email"
               type="email"
-              placeholder="Optional"
+              required
+              placeholder="email@example.com"
               autoComplete="email"
-              hint="Optional — we will use WhatsApp if you leave this blank."
               register={(n) => register(n, {
+                  required: 'Email is required',
                   validate: (value) =>
-                    !value?.trim() ||
-                    EMAIL_RE.test(value.trim()) ||
+                    EMAIL_RE.test(value?.trim() || '') ||
                     'Enter a valid email address',
                 })}
               error={errorFor('email')}

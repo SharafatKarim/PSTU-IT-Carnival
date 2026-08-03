@@ -56,12 +56,12 @@ export function validateRegistration(body) {
   }
 
   const email = text(b.email);
-  if (email.length > 0) {
-    if (!EMAIL_RE.test(email)) {
-      errors.push({ field: 'email', message: 'Enter a valid email address' });
-    } else if (email.length > 120) {
-      errors.push({ field: 'email', message: 'Email cannot exceed 120 characters' });
-    }
+  if (email.length === 0) {
+    errors.push({ field: 'email', message: 'Email is required' });
+  } else if (!EMAIL_RE.test(email)) {
+    errors.push({ field: 'email', message: 'Enter a valid email address' });
+  } else if (email.length > 120) {
+    errors.push({ field: 'email', message: 'Email cannot exceed 120 characters' });
   }
 
   const transactionId = text(b.transactionId);
@@ -104,7 +104,7 @@ export function normalizeRegistration(body) {
 
   return {
     fullName: text(b.fullName),
-    ...(email ? { email } : {}),
+    email,
     whatsapp: text(b.whatsapp),
     universityName: text(b.universityName),
     academicId: text(b.academicId),
