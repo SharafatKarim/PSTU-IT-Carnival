@@ -10,6 +10,36 @@
 // stand-ins. Replace them with the confirmed figures before going live.
 // ---------------------------------------------------------------------------
 
+/* ---------------------------------------------------------------------------
+   IUPC final-registration payment.
+
+   A constant, like GAMING_PAYMENT in gaming.js: the pages are server-rendered
+   from this file alone, so the number is baked into the build and there is no
+   database round trip in the payment step. Changing it means editing this line
+   and redeploying.
+
+   The METHOD LIST is what the form offers AND what the server validates
+   against, so the two cannot disagree.
+
+   `total` is what a team sends: Send Money from a personal wallet costs the
+   sender a cash-out charge, and the team covers it so the committee receives
+   the whole fee. Computed rather than written out, so the figure on the form,
+   the figure in the confirmation and the figure recorded against the payment
+   are one number.
+   --------------------------------------------------------------------------- */
+export const IUPC_PAYMENT = {
+  number: '01790876259',
+  accountType: 'Personal',
+  methods: ['bKash', 'Nagad'],
+  fee: 3000,
+  cashOutCharge: 50,
+  instructions:
+    'Use “Send Money” (not Payment) from either wallet, then paste the transaction ID it gives you.',
+};
+
+export const iupcPaymentTotal = () =>
+  IUPC_PAYMENT.fee + IUPC_PAYMENT.cashOutCharge;
+
 export const EVENT_DETAILS =
     [
       {

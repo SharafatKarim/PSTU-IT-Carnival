@@ -245,6 +245,48 @@ async function send({ to, subject, html }) {
  * @param {string} registrationId - Generated unique registration ID
  * @param {string} leaderName - Name of the team leader
  */
+/* Sent when a coordinator matches a team's entry-fee transfer against the
+   wallet statement — from the admin panel, individually or through the SMS
+   sweep. Goes to the team leader alone: correspondence for a team is one mail,
+   not three, which is what the isTeamLeader flag on the member exists for. */
+export async function sendIupcPaymentApprovedEmail({
+  to,
+  leaderName,
+  teamName,
+  registrationId,
+  amount,
+  transactionId,
+}) {
+  const html = shell({
+    title: 'IUPC Entry Fee Confirmed',
+    heading: 'Payment Confirmed!',
+    idLabel: 'Team Registration ID',
+    id: registrationId,
+    idNote: 'Keep this ID — you will be asked for it at the contest desk.',
+    body: `
+          <p>Hi ${esc(leaderName)},</p>
+          <p>We have matched your entry-fee payment for <strong>${esc(teamName)}</strong> against our records. Your team's place at the <strong>Inter-University Programming Contest (IUPC)</strong> is now confirmed.</p>
+          <table role="presentation" cellpadding="0" cellspacing="0" style="margin:16px 0;font-size:14px;">
+            <tr><td style="padding:2px 12px 2px 0;color:#666;">Amount received</td><td style="padding:2px 0;"><strong>BDT ${esc(amount)}</strong></td></tr>
+            <tr><td style="padding:2px 12px 2px 0;color:#666;">Transaction ID</td><td style="padding:2px 0;"><strong>${esc(transactionId)}</strong></td></tr>
+          </table>
+          <p>What happens next?</p>
+          <ul>
+            <li>Your team is on the confirmed list — no further payment is needed.</li>
+            <li>Contest-day instructions, reporting time and seating go to this address.</li>
+            <li>Bring your registration ID and every member's student ID card on the day.</li>
+          </ul>
+          <p>If anything above looks wrong, reply to this email or contact the coordinators.</p>
+          <p>Best regards,<br>IUPC Organizing Committee<br>${BRAND}</p>`,
+  });
+
+  await send({
+    to,
+    subject: `Entry Fee Confirmed — ${teamName} — ${registrationId}`,
+    html,
+  });
+}
+
 export async function sendIupcConfirmationEmail(toEmail, teamName, registrationId, leaderName) {
   const html = shell({
     title: 'IUPC Pre-Registration Confirmed',

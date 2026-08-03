@@ -21,6 +21,45 @@ export const fetchTeams = async (slug, { search = '', page = 1, limit = 20 }, si
   return data.data;
 };
 
+/* Teams per university, for the slot allocation page. Aggregate counts only. */
+export const fetchUniversityCounts = async (signal) => {
+  let res;
+  try {
+    res = await fetch(`${baseURL}/universities`, { signal });
+  } catch (err) {
+    if (err?.name === 'AbortError') throw err;
+    throw new Error('Network error — could not load registration counts.');
+  }
+
+  const data = await res.json().catch(() => null);
+  if (!res.ok) throw new Error(data?.message || 'Could not load registration counts');
+  return data.data.universities;
+};
+
+/* Reports a transfer a team has already made. Resolves to the API's message so
+   the caller can show it; throws with `response.data` attached on failure, the
+   same shape createRegistration uses, so field errors can be surfaced. */
+export const submitPayment = async (payload) => {
+  let res;
+  try {
+    res = await fetch(`${baseURL}/payments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+  } catch {
+    throw new Error('Network error — please check your connection and try again.');
+  }
+
+  const data = await res.json().catch(() => null);
+  if (!res.ok) {
+    const err = new Error(data?.message || 'Payment could not be submitted');
+    err.response = { data };
+    throw err;
+  }
+  return data;
+};
+
 export const createRegistration = async (payload) => {
   let res;
   try {

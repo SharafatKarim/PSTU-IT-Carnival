@@ -7,17 +7,20 @@ import { getEventDetail } from '@/data/events';
 import { eventTeamsNav } from '@/lib/routes';
 import { accentOf } from '@/lib/accents';
 import EventSubPage, { SubPageTabs } from './EventSubPage';
+import PaymentModal from './PaymentModal';
 
 const PAGE_SIZE = 25;
 const DEBOUNCE_MS = 300;
 
 /* Column template shared by the header and every row, so they cannot drift. */
-const COLS = 'sm:grid-cols-[3rem_minmax(0,1fr)_minmax(0,1.15fr)_7.5rem]';
+const COLS = 'sm:grid-cols-[3rem_minmax(0,1fr)_minmax(0,1.15fr)_12.5rem]';
 
 /* 'pre-registered' is where every team starts. It becomes 'paid' once the
    entry fee is settled after final registration opens. */
 const STATUS_STYLES = {
   'pre-registered': 'border-gold-400/40 bg-gold-400/10 text-gold-300',
+  /* Reported, not yet reconciled — deliberately not the same green as paid. */
+  'payment-submitted': 'border-aqua-400/40 bg-aqua-400/10 text-aqua-300',
   paid: 'border-emerald-400/40 bg-emerald-400/10 text-emerald-300',
   rejected: 'border-red-500/40 bg-red-500/10 text-red-300',
 };
@@ -34,7 +37,7 @@ const StatusPill = ({ status = 'pre-registered' }) => (
 );
 
 /* Table row on sm and up; a self-contained card below it. */
-const TeamRow = ({ team, accent }) => (
+const TeamRow = ({ team, accent, onPay }) => (
   <li
     className={`grid grid-cols-1 items-start gap-x-4 gap-y-2 border-t border-ink-700/70 px-3 py-3 transition hover:bg-white/[0.02] sm:items-center sm:py-2.5 ${COLS}`}
   >
@@ -64,11 +67,39 @@ const TeamRow = ({ team, accent }) => (
       )}
     </div>
 
-    <div className="hidden sm:block sm:justify-self-end">
+    <div className="hidden sm:flex sm:items-center sm:justify-end sm:gap-2">
       <StatusPill status={team.status} />
+      <PayButton team={team} onPay={onPay} />
+    </div>
+
+    {/* On mobile the pill rides the top line, so the button gets its own row. */}
+    <div className="sm:hidden">
+      <PayButton team={team} onPay={onPay} full />
     </div>
   </li>
 );
+
+/* Shown until the fee is settled. A team whose reference is already in can see
+   that it landed, but cannot submit a second one — the API refuses anyway. */
+const PayButton = ({ team, onPay, full = false }) => {
+  if (team.status === 'paid' || team.status === 'rejected') return null;
+
+  const submitted = team.status === 'payment-submitted';
+  return (
+    <button
+      type="button"
+      onClick={() => onPay(team)}
+      disabled={submitted}
+      className={`${full ? 'w-full' : ''} whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+        submitted
+          ? 'cursor-not-allowed border border-white/10 bg-white/5 text-mist-500'
+          : 'bg-gold-400 text-ink-950 hover:bg-gold-300'
+      }`}
+    >
+      {submitted ? 'Awaiting check' : 'Pay'}
+    </button>
+  );
+};
 
 const TeamsDirectory = ({ slug = 'iupc' }) => {
   const event = getEventDetail(slug);
@@ -79,6 +110,9 @@ const TeamsDirectory = ({ slug = 'iupc' }) => {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  /* The row whose payment form is open, or null. */
+  const [paying, setPaying] = useState(null);
 
   const abortRef = useRef(null);
 
@@ -117,6 +151,20 @@ const TeamsDirectory = ({ slug = 'iupc' }) => {
     setSearch(value);
     setPage(1); // a new term always starts from the first page
   };
+
+  /* Flip the row locally so the button reads "Awaiting check" straight away.
+     Cheaper and steadier than refetching the page the user is looking at. */
+  const markSubmitted = (registrationId) =>
+    setResult((prev) =>
+      prev && {
+        ...prev,
+        teams: prev.teams.map((t) =>
+          t.registrationId === registrationId
+            ? { ...t, status: 'payment-submitted' }
+            : t
+        ),
+      }
+    );
 
   const teams = result?.teams ?? [];
   const total = result?.total ?? 0;
@@ -183,7 +231,12 @@ const TeamsDirectory = ({ slug = 'iupc' }) => {
         ) : (
           <ul>
             {teams.map((team) => (
-              <TeamRow key={team.registrationId} team={team} accent={accent} />
+              <TeamRow
+                key={team.registrationId}
+                team={team}
+                accent={accent}
+                onPay={setPaying}
+              />
             ))}
           </ul>
         )}
@@ -217,9 +270,17 @@ const TeamsDirectory = ({ slug = 'iupc' }) => {
 
       <p className="mt-5 text-xs leading-relaxed text-mist-500">
         Team, university, member names and status only — contact details are
-        never shown here. Pre-registration is not a confirmed slot; slots are
-        published university-wise once entries close.
+        never shown here. Every pre-registered team has a slot; pay the entry
+        fee from your row to confirm it.
       </p>
+
+      {paying && (
+        <PaymentModal
+          team={paying}
+          onClose={() => setPaying(null)}
+          onPaid={markSubmitted}
+        />
+      )}
     </EventSubPage>
   );
 };

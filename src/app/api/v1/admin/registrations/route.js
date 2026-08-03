@@ -9,7 +9,12 @@ import HackathonRegistration from '@/server/events/hackathon/model';
 import VolunteerRegistration from '@/server/volunteer/model';
 import ProjectShowcaseRegistration from '@/server/events/project-showcase/model';
 import AdminLog from '@/server/admin/logModel';
-import { sendDatathonConfirmationEmail, sendGamingApprovalEmail, sendProjectShowcaseConfirmationEmail } from '@/lib/email';
+import {
+  sendDatathonConfirmationEmail,
+  sendGamingApprovalEmail,
+  sendProjectShowcaseConfirmationEmail,
+  sendIupcPaymentApprovedEmail,
+} from '@/lib/email';
 import { getGame } from '@/data/gaming';
 import { dropScreenshot } from '@/server/payments';
 
@@ -17,12 +22,53 @@ const allowedEmails = process.env.ADMIN_EMAILS
   ? process.env.ADMIN_EMAILS.split(',').map((email) => email.trim().toLowerCase())
   : [];
 
+/* Does this SMS text quote this transaction ID?
+ *
+ * As a WHOLE TOKEN, not a substring. `text.includes(id)` looked equivalent and
+ * was not: a team that submitted "BKB123" would be approved by an SMS carrying
+ * somebody else's "BKB123XYZ", and a short reference like "100" matches the
+ * amount in nearly every message. Either one hands out a free approval to
+ * whoever guesses the shortest string, which is the opposite of what pasting a
+ * bank SMS is meant to prove.
+ *
+ * Splitting on non-alphanumerics is enough: wallet references are alphanumeric
+ * and always arrive delimited by spaces or punctuation ("TrxID BKB123XYZ.").
+ * Comparison is case-insensitive because the stored value is uppercased. */
+const smsQuotes = (text, transactionId) => {
+  if (!transactionId) return false;
+  const wanted = String(transactionId).trim().toLowerCase();
+  if (!wanted) return false;
+
+  /* An all-digit "reference" is refused for AUTO-approval, whatever it matches.
+     Tokenising alone still let two things through, because both stand alone in
+     a wallet SMS: the amount, and the sender's own number. Quote your own
+     11-digit number as your transaction ID, send the committee 10 taka, and the
+     message they paste to approve that transfer would have approved your unpaid
+     entry as well.
+     Real bKash and Nagad references carry letters (8N70QAM3P4), so this costs
+     nothing. It only withholds the automatic path: an admin can still approve
+     such a row by hand, having actually looked at it. */
+  if (!/[a-z]/.test(wanted)) return false;
+
+  return String(text)
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .includes(wanted);
+};
+
 /* An entry that owed nothing when it was submitted. `amount` is written
    server-side from the tournament's fee, so this is the record of what was
    actually due — not a guess from the current config. Legacy rows saved before
    `amount` existed read as undefined and are treated as paid entries, which is
    what they were. */
 const isFreeGamingEntry = (team) => team?.payment?.amount === 0;
+
+/* Correspondence for a team goes to its leader alone — one mail per team, not
+   three. Stored explicitly on the member rather than inferred from position,
+   with the first row as the fallback for any legacy document written before
+   the flag existed. */
+const leaderOf = (team) =>
+  (team.members || []).find((m) => m.isTeamLeader) || (team.members || [])[0];
 
 async function getAdminEmail() {
   const session = await getServerSession();
@@ -94,14 +140,20 @@ export async function PATCH(req) {
 
       const pendingDatathon = await DatathonRegistration.find({ paid: false });
       const pendingGaming = await GamingRegistration.find({ registrationStatus: 'pending' });
+      /* Only teams that actually reported a transfer. A team still sitting at
+         'pre-registered' has quoted nothing, so there is nothing to match. */
+      const pendingIupc = await IupcRegistration.find({
+        registrationStatus: 'payment-submitted',
+      });
 
       const approvedDatathon = [];
       const approvedGaming = [];
+      const approvedIupc = [];
       const failedEmails = [];
 
       // Bulk approve Datathon
       for (const team of pendingDatathon) {
-        if (text.toLowerCase().includes(team.transactionId.toLowerCase())) {
+        if (smsQuotes(text, team.transactionId)) {
           team.paid = true;
           await team.save();
 
@@ -136,7 +188,7 @@ export async function PATCH(req) {
            nothing and must stay out of the sweep. */
         if (isFreeGamingEntry(team)) continue;
 
-        if (team.payment?.transactionId && text.toLowerCase().includes(team.payment.transactionId.toLowerCase())) {
+        if (smsQuotes(text, team.payment?.transactionId)) {
           team.registrationStatus = 'paid';
           team.verifiedAt = new Date();
           await team.save();
@@ -159,7 +211,36 @@ export async function PATCH(req) {
         }
       }
 
-      const totalCount = approvedDatathon.length + approvedGaming.length;
+      // Bulk approve IUPC entry fees
+      for (const team of pendingIupc) {
+        if (!smsQuotes(text, team.payment?.transactionId)) continue;
+
+        team.registrationStatus = 'paid';
+        team.verifiedAt = new Date();
+        await team.save();
+
+        const leader = leaderOf(team);
+        if (leader?.email) {
+          try {
+            await sendIupcPaymentApprovedEmail({
+              to: leader.email,
+              leaderName: leader.name,
+              teamName: team.teamName,
+              registrationId: team.registrationId,
+              amount: team.payment?.amount,
+              transactionId: team.payment?.transactionId,
+            });
+          } catch (mailError) {
+            console.error(`[admin/bulk-approve-iupc] Email failed for ${leader.email}:`, mailError);
+            failedEmails.push(team.teamName);
+          }
+        }
+
+        approvedIupc.push(team.teamName);
+      }
+
+      const totalCount =
+        approvedDatathon.length + approvedGaming.length + approvedIupc.length;
 
       // Log bulk approval
       if (totalCount > 0) {
@@ -170,13 +251,15 @@ export async function PATCH(req) {
           details: {
             approvedDatathonCount: approvedDatathon.length,
             approvedGamingCount: approvedGaming.length,
+            approvedIupcCount: approvedIupc.length,
             approvedDatathonTeams: approvedDatathon,
             approvedGamingTeams: approvedGaming,
+            approvedIupcTeams: approvedIupc,
           },
         });
       }
 
-      let msg = `Bulk approval completed. Approved ${totalCount} team(s)/player(s) (Datathon: ${approvedDatathon.length}, Gaming: ${approvedGaming.length}).`;
+      let msg = `Bulk approval completed. Approved ${totalCount} team(s)/player(s) (Datathon: ${approvedDatathon.length}, Gaming: ${approvedGaming.length}, IUPC: ${approvedIupc.length}).`;
       if (failedEmails.length > 0) {
         msg += ` Email failed for: ${failedEmails.join(', ')}`;
       }
@@ -188,6 +271,7 @@ export async function PATCH(req) {
           approvedCount: totalCount,
           approvedDatathon,
           approvedGaming,
+          approvedIupc,
         },
       });
     }
@@ -311,7 +395,16 @@ export async function PATCH(req) {
         return NextResponse.json({ success: false, message: 'Team not found' }, { status: 404 });
       }
 
-      team.paid = true;
+      if (team.registrationStatus === 'paid') {
+        return NextResponse.json({ success: false, message: 'Payment already approved' });
+      }
+
+      /* This wrote `team.paid = true`, a field the IUPC schema does not have —
+         Mongoose drops unknown paths in strict mode, so the save succeeded, the
+         panel reported success and the team stayed unpaid. The status enum is
+         where this lives, same as the gaming rows. */
+      team.registrationStatus = 'paid';
+      team.verifiedAt = new Date();
       await team.save();
 
       // Log individual IUPC payment toggle
@@ -323,10 +416,34 @@ export async function PATCH(req) {
           teamId: team._id,
           teamName: team.teamName,
           registrationId: team.registrationId,
+          transactionId: team.payment?.transactionId,
         },
       });
 
-      return NextResponse.json({ success: true, message: 'IUPC team marked as paid' });
+      const iupcLeader = leaderOf(team);
+      if (iupcLeader?.email) {
+        try {
+          await sendIupcPaymentApprovedEmail({
+            to: iupcLeader.email,
+            leaderName: iupcLeader.name,
+            teamName: team.teamName,
+            registrationId: team.registrationId,
+            amount: team.payment?.amount,
+            transactionId: team.payment?.transactionId,
+          });
+        } catch (mailError) {
+          console.error('[admin/approve-iupc] Email send failure:', mailError);
+          return NextResponse.json({
+            success: true,
+            message: 'Team marked as paid, but the confirmation email failed to send.',
+          });
+        }
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: 'IUPC team marked as paid and the team leader has been emailed',
+      });
     } else if (eventType === 'it-quiz') {
       const entry = await ItQuizRegistration.findById(id);
       if (!entry) {

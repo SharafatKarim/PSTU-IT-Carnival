@@ -109,9 +109,43 @@ const registrationSchema = new mongoose.Schema(
        for display. Keep them accepted here so an old row can still be saved. */
     registrationStatus: {
       type: String,
-      enum: ['pre-registered', 'paid', 'rejected', 'pending', 'approved'],
+      enum: [
+        'pre-registered',
+        /* The team says it has paid and gave a transaction ID. That is a claim,
+           not proof — anyone can type a plausible reference — so it sits here
+           until a human matches it against the wallet statement. */
+        'payment-submitted',
+        'paid',
+        'rejected',
+        'pending',
+        'approved',
+      ],
       default: 'pre-registered',
     },
+    /* Set when a team submits its entry fee. Absent until then.
+
+       Everything here except the transaction ID is written server-side: the
+       amount from IUPC_PAYMENT, the receiving number as it stood at the time.
+       An entrant can claim any figure and any destination, so neither is taken
+       from the request — the only thing the team supplies is the reference. */
+    payment: {
+      method: { type: String, trim: true },
+      /* Uppercased on the way in so a duplicate check cannot be defeated by
+         typing the same reference in lower case. */
+      transactionId: {
+        type: String,
+        trim: true,
+        uppercase: true,
+        maxlength: [25, 'Transaction ID cannot exceed 25 characters'],
+      },
+      /* Copied rather than looked up later: the wallet can change, and a
+         payment must stay reconcilable against the number that was on screen. */
+      receiverNumber: { type: String, trim: true },
+      amount: { type: Number, min: 0 },
+      submittedAt: { type: Date },
+    },
+    /* When an admin matched the transaction against the statement. */
+    verifiedAt: { type: Date },
     registrationId: {
       type: String,
       required: true,
@@ -119,6 +153,19 @@ const registrationSchema = new mongoose.Schema(
     },
   },
   { timestamps: true }
+);
+
+/* A transaction ID identifies one real transfer, so no two teams may quote the
+   same one. Unique at the database as well as checked in the route: the check
+   gives a readable message, this closes the race between two submissions
+   quoting the same reference at once. Partial so the teams that have not paid
+   do not all collide on a missing field. */
+registrationSchema.index(
+  { 'payment.transactionId': 1 },
+  {
+    unique: true,
+    partialFilterExpression: { 'payment.transactionId': { $type: 'string' } },
+  }
 );
 
 export default mongoose.models.Registration || mongoose.model('Registration', registrationSchema, 'IUPC_pre_reg');

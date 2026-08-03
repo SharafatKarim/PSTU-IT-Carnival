@@ -55,7 +55,7 @@ export default function AdminDashboard({ user }) {
           ...prev,
           [eventType]: prev[eventType].map((t) =>
             t._id === id
-              ? eventType === 'gaming'
+              ? eventType === 'gaming' || eventType === 'iupc'
                 ? { ...t, registrationStatus: 'paid' }
                 : { ...t, paid: true }
               : t
@@ -265,7 +265,7 @@ export default function AdminDashboard({ user }) {
           </button>
         </div>
 
-        {(activeTab === 'datathon' || activeTab === 'gaming') && !loading && (
+        {['datathon', 'gaming', 'iupc'].includes(activeTab) && !loading && (
           <div className="mb-6 rounded-2xl border border-grape-500/20 bg-ink-900/30 p-5 shadow-card backdrop-blur-md">
             <h3 className="text-sm font-bold text-white mb-1.5">Bulk Verify Payments via SMS Text</h3>
             <p className="text-xs text-mist-400 mb-3">
@@ -575,12 +575,15 @@ export default function AdminDashboard({ user }) {
                       <th className="px-6 py-4">Varsity</th>
                       <th className="px-6 py-4">Coach</th>
                       <th className="px-6 py-4">Members</th>
+                      <th className="px-6 py-4">Payment</th>
+                      <th className="px-6 py-4">Status</th>
+                      <th className="px-6 py-4">Action</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5 text-sm">
                     {visibleList.length === 0 ? (
                       <tr>
-                        <td colSpan="5" className="px-6 py-10 text-center text-mist-400">
+                        <td colSpan="8" className="px-6 py-10 text-center text-mist-400">
                           {emptyMessage('No IUPC registrations found.')}
                         </td>
                       </tr>
@@ -606,6 +609,52 @@ export default function AdminDashboard({ user }) {
                                 </div>
                               ))}
                             </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            {team.payment?.transactionId ? (
+                              <div className="text-xs">
+                                <div className="font-mono text-mist-300">{team.payment.transactionId}</div>
+                                <div className="text-[10px] text-mist-500">
+                                  {team.payment.method} · Recv: {team.payment.receiverNumber || 'N/A'}
+                                </div>
+                                <div className="text-xs text-aqua-400">৳{team.payment.amount}</div>
+                              </div>
+                            ) : (
+                              <span className="text-xs text-mist-500">Not submitted</span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4">
+                            {team.registrationStatus === 'paid' ? (
+                              <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-1 text-xs font-bold text-green-400 border border-green-500/20">
+                                <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                                Paid
+                              </span>
+                            ) : team.registrationStatus === 'payment-submitted' ? (
+                              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-400 border border-amber-500/20">
+                                <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+                                Awaiting check
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 text-xs font-bold text-mist-400 border border-white/10">
+                                <span className="h-1.5 w-1.5 rounded-full bg-mist-500" />
+                                Pre-registered
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4">
+                            {/* Approving emails the team leader, so it is only
+                                offered once a team has actually quoted a
+                                reference — there is nothing to confirm before
+                                that, and the mail would be a lie. */}
+                            {team.registrationStatus === 'payment-submitted' && (
+                              <button
+                                onClick={() => handleApprovePayment(team._id, 'iupc')}
+                                disabled={actionLoading !== null}
+                                className="px-3 py-1.5 text-xs font-bold rounded-lg bg-gold-400 text-ink-950 hover:bg-gold-300 transition disabled:opacity-50"
+                              >
+                                {actionLoading === team._id ? 'Approving...' : 'Approve'}
+                              </button>
+                            )}
                           </td>
                         </tr>
                       ))

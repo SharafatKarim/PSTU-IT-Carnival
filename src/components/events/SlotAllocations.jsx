@@ -1,15 +1,16 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AlertIcon } from '@/components/landing/Icons';
 import { UNIVERSITIES } from '@/data/universities';
 import { slotsFor, totalAllocated, hasAllocations } from '@/data/slots';
 import { getEventDetail } from '@/data/events';
+import { fetchUniversityCounts } from '@/services/events/iupc';
 import { eventSlotsNav } from '@/lib/routes';
 import { accentOf } from '@/lib/accents';
 import EventSubPage, { SubPageTabs } from './EventSubPage';
 
-const COLS = 'sm:grid-cols-[minmax(0,1fr)_9rem_6rem]';
+const COLS = 'sm:grid-cols-[minmax(0,1fr)_9rem_7rem_6rem]';
 
 /* The list is the same one the registration form searches — universities are
    never restated here, so a university added there appears here too. */
@@ -17,6 +18,34 @@ const SlotAllocations = ({ slug = 'iupc' }) => {
   const event = getEventDetail(slug);
   const accent = accentOf(event?.accent);
   const [query, setQuery] = useState('');
+
+  /* Teams actually pre-registered, per university. Every pre-registered team
+     gets a slot, so this column is the allocation in all but name until the
+     committee publishes a different split. */
+  const [counts, setCounts] = useState(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchUniversityCounts(controller.signal)
+      .then(setCounts)
+      /* A count that will not load must not take the slot table with it —
+         the page is still useful without the extra column. */
+      .catch(() => setCounts(null));
+    return () => controller.abort();
+  }, []);
+
+  /* Registrations are keyed on what entrants typed, so they are matched to the
+     canonical list on a normalised name, then on the short form for the teams
+     that wrote "PSTU" where the list says "Patuakhali Science and Technology
+     University". */
+  const countFor = useMemo(() => {
+    if (!counts) return () => null;
+    const byName = new Map(counts.map((c) => [c.key, c.count]));
+    return (u) =>
+      byName.get(u.name.trim().toLowerCase()) ??
+      byName.get(u.short.trim().toLowerCase()) ??
+      0;
+  }, [counts]);
 
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -26,8 +55,12 @@ const SlotAllocations = ({ slug = 'iupc' }) => {
         u.name.toLowerCase().includes(q) ||
         u.short.toLowerCase().includes(q) ||
         (u.district || '').toLowerCase().includes(q)
-    ).map((u) => ({ ...u, slots: slotsFor(u.short) }));
-  }, [query]);
+    ).map((u) => ({ ...u, slots: slotsFor(u.short), teams: countFor(u) }));
+  }, [query, countFor]);
+
+  const totalRegistered = counts
+    ? counts.reduce((sum, c) => sum + c.count, 0)
+    : null;
 
   const published = hasAllocations();
 
@@ -38,10 +71,10 @@ const SlotAllocations = ({ slug = 'iupc' }) => {
       nav={eventSlotsNav(slug)}
       eyebrow={event?.scope}
       title="Slot Allocations"
-      intro={`University-wise slots for ${event?.name}. ${
+      intro={`University-wise slots for ${event?.name}. Every pre-registered team is in — the count beside each university is how many teams it entered.${
         published
-          ? `${totalAllocated()} of ${event?.tournament?.slots || ''} allocated so far.`
-          : 'Nothing has been allocated yet — every university shows N/A until slots are published.'
+          ? ` ${totalAllocated()} of ${event?.tournament?.slots || ''} allocated so far.`
+          : ''
       }`}
       tabs={<SubPageTabs slug={slug} active="slots" />}
     >
@@ -49,11 +82,20 @@ const SlotAllocations = ({ slug = 'iupc' }) => {
         <div className="mb-4 flex items-start gap-2.5 rounded-lg border border-gold-400/25 bg-gold-400/[0.07] px-4 py-3 text-sm text-mist-200">
           <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-gold-300" />
           <span>
-            Slots are decided after pre-registration closes on{' '}
+            Pre-registration has closed and{' '}
             <strong className="font-semibold text-white">
-              {event?.tournament?.deadline}
+              every pre-registered team has a slot
             </strong>
-            . This page fills in once the committee publishes the split.
+            {totalRegistered !== null && (
+              <>
+                {' '}— <strong className="font-semibold text-white">{totalRegistered}</strong>{' '}
+                team{totalRegistered === 1 ? '' : 's'} across{' '}
+                <strong className="font-semibold text-white">{counts.length}</strong>{' '}
+                universit{counts.length === 1 ? 'y' : 'ies'}
+              </>
+            )}
+            . Confirm your place by paying the entry fee from your row in the
+            team directory.
           </span>
         </div>
       )}
@@ -80,6 +122,7 @@ const SlotAllocations = ({ slug = 'iupc' }) => {
         >
           <span>University</span>
           <span>District</span>
+          <span className="justify-self-end">Teams</span>
           <span className="justify-self-end">Slots</span>
         </div>
 
@@ -114,6 +157,11 @@ const SlotAllocations = ({ slug = 'iupc' }) => {
                   {u.district || '—'}
                 </p>
 
+                <p className="text-sm text-mist-300 sm:justify-self-end">
+                  <span className="text-mist-500 sm:hidden">Teams: </span>
+                  <TeamCount count={u.teams} />
+                </p>
+
                 <div className="hidden sm:block sm:justify-self-end">
                   <SlotValue slots={u.slots} />
                 </div>
@@ -124,12 +172,30 @@ const SlotAllocations = ({ slug = 'iupc' }) => {
       </div>
 
       <p className="mt-5 text-xs leading-relaxed text-mist-500">
-        N/A means slots for that university have not been decided yet — it does
-        not mean zero. Teams from any listed university may pre-register now.
+        Teams is how many that university actually pre-registered, counted live.
+        Every one of them has a place — the Slots column stays N/A unless the
+        committee publishes a different split.
       </p>
     </EventSubPage>
   );
 };
+
+/* null while the counts are still loading (or failed) — an empty cell rather
+   than a 0 nobody can trust. A real 0 means that university entered nothing. */
+const TeamCount = ({ count }) =>
+  count === null ? (
+    <span className="text-xs text-mist-600">—</span>
+  ) : (
+    <span
+      className={`rounded-md border px-2 py-0.5 text-xs font-bold ${
+        count > 0
+          ? 'border-grape-400/40 bg-grape-500/10 text-grape-300'
+          : 'border-ink-500 bg-ink-900/60 text-mist-500'
+      }`}
+    >
+      {count}
+    </span>
+  );
 
 const SlotValue = ({ slots }) =>
   slots === null ? (

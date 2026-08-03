@@ -57,18 +57,42 @@ export const REGISTRATION_PRINT = {
   iupc: {
     title: 'IUPC Pre-Registrations',
     noun: { one: 'team', many: 'teams' },
-    /* No payment state on the pre-registration list, so the useful headline is
-       reach: how many universities are actually on it. */
+    /* Reach and money, in that order: how many universities are on the list,
+       then how far through the entry fees the committee is. */
     summary: (list) => {
       const varsities = new Set(
         list.map((t) => String(t.varsityName || '').trim().toLowerCase()).filter(Boolean)
       ).size;
-      return `${varsities} ${varsities === 1 ? 'university' : 'universities'} represented`;
+      const paid = list.filter((t) => t.registrationStatus === 'paid').length;
+      const awaiting = list.filter(
+        (t) => t.registrationStatus === 'payment-submitted'
+      ).length;
+      return `${varsities} ${varsities === 1 ? 'university' : 'universities'} · ${paid} paid · ${awaiting} awaiting check`;
     },
     columns: [
       { header: 'Team Name', cls: 'name', value: (t) => t.teamName },
       { header: 'Reg ID', cls: 'mono', value: (t) => t.registrationId },
       { header: 'Varsity', cls: 'wrap', value: (t) => t.varsityName },
+      {
+        header: 'Payment',
+        cls: 'wrap',
+        value: (t) =>
+          lines([
+            t.payment?.transactionId,
+            t.payment?.method,
+            t.payment?.amount != null && `BDT ${t.payment.amount}`,
+          ]),
+      },
+      {
+        header: 'Status',
+        cls: 'num',
+        value: (t) =>
+          t.registrationStatus === 'paid'
+            ? 'Paid'
+            : t.registrationStatus === 'payment-submitted'
+              ? 'Awaiting check'
+              : 'Pre-registered',
+      },
       {
         header: 'Coach',
         cls: 'wrap',

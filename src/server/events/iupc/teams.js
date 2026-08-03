@@ -66,6 +66,31 @@ const toPublicTeam = (doc) => ({
   members: (doc.members || []).map((m) => m.name),
 });
 
+/* Teams per university, for the slot allocation page.
+ *
+ * Grouped on a normalised key because varsity names are typed by entrants —
+ * 'PSTU', 'pstu ' and 'Pstu' are one university — while the label shown is the
+ * spelling of the first row seen, so the page reads the way people wrote it.
+ *
+ * Aggregate only. No document leaves the database: the pipeline returns a name
+ * and a count, so this cannot become a second, unfiltered team directory. */
+export async function universityCounts() {
+  const rows = await Registration.aggregate([
+    {
+      $group: {
+        _id: { $toLower: { $trim: { input: '$varsityName' } } },
+        name: { $first: { $trim: { input: '$varsityName' } } },
+        count: { $sum: 1 },
+      },
+    },
+    { $sort: { count: -1, name: 1 } },
+  ]);
+
+  return rows
+    .filter((row) => row._id)
+    .map((row) => ({ key: row._id, name: row.name, count: row.count }));
+}
+
 export async function listTeams({ search = '', page = 1, limit = 20 } = {}) {
   const filter = buildFilter(String(search).trim());
 
