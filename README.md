@@ -9,8 +9,6 @@ while entries stay closed; the rest are announced but not yet open.
 
 Next.js 16 (App Router) · React 19 · Tailwind CSS v4 · MongoDB · pnpm
 
----
-
 ## Run it
 
 **With Docker** — the whole stack, no local Node or MongoDB needed:
