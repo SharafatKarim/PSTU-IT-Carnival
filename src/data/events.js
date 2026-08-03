@@ -584,7 +584,7 @@ export const EVENT_DETAILS =
             title: 'Registration & Payment',
             icon: 'ticket',
             items: [
-              'Send 100 BDT to +8801734322148 via bKash Personal.',
+              'Send 100 BDT to +8801734322148 via bKash or Nagad (Personal).',
               'Keep your transaction ID and fill in the online registration form.',
               'Bring your student ID to the venue for the eligibility check.',
             ],
@@ -600,7 +600,7 @@ export const EVENT_DETAILS =
           feeLabel: '৳100 per participant',
           receiverNumber: '+8801734322148',
           accountType: 'Personal',
-          methods: ['bKash'],
+          methods: ['bKash', 'Nagad'],
         },
 
         faqs: [
@@ -619,7 +619,7 @@ export const EVENT_DETAILS =
           cta: 'Register for IT Quiz',
           note: 'Individual entry · ৳100',
           process: [
-            'Send ৳100 to +8801734322148 via bKash Personal and keep the confirmation.',
+            'Send ৳100 to +8801734322148 via bKash or Nagad (Personal) and keep the confirmation.',
             'Fill in your details and enter the transaction ID.',
             'Submit. You get a registration ID immediately, and a confirmation once the payment is checked.',
           ],
