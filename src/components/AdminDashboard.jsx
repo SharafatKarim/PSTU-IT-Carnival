@@ -338,10 +338,11 @@ export default function AdminDashboard({ user }) {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
-                  {activeTab === 'hackathon' && (
+                  {(activeTab === 'hackathon' || activeTab === 'datathon') && (
                     <button
                       onClick={() => {
-                        const emails = activeList.flatMap((team) => (team.members || []).map((m) => m.email)).filter(Boolean);
+                        const emailKey = activeTab === 'datathon' ? 'kaggleEmail' : 'email';
+                        const emails = activeList.flatMap((team) => (team.members || []).map((m) => m[emailKey])).filter(Boolean);
                         if (emails.length === 0) {
                           alert('No emails to export!');
                           return;
@@ -350,7 +351,7 @@ export default function AdminDashboard({ user }) {
                         const url = URL.createObjectURL(blob);
                         const link = document.createElement('a');
                         link.href = url;
-                        link.download = 'hackathon_emails.txt';
+                        link.download = `${activeTab}_emails.txt`;
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);
