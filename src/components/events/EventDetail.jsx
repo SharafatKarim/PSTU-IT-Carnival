@@ -41,6 +41,31 @@ const isRegistrationClosed = (event) =>
   event.registrationOpen === false &&
   (event.registrationClosed === true || event.stage === 'open');
 
+/* Which events have a public directory to link at. Listed once because these
+   links belong in BOTH hero branches: they were spelled out in the open branch
+   only, so closing IUPC silently took its teams and slots pages off the page.
+   Those pages stay live after entries shut — that is exactly when a team wants
+   to check it is on the list and which slot it drew. */
+const DIRECTORY_SLUGS = {
+  teams: ['iupc', 'hackathon', 'datathon', 'project-showcase'],
+  slots: ['iupc'],
+};
+
+const DirectoryLinks = ({ event }) => (
+  <>
+    {DIRECTORY_SLUGS.teams.includes(event.slug) && (
+      <Link href={ROUTES.eventTeams(event.slug)} className={SECONDARY_CTA}>
+        View Teams
+      </Link>
+    )}
+    {DIRECTORY_SLUGS.slots.includes(event.slug) && (
+      <Link href={ROUTES.eventSlots(event.slug)} className={SECONDARY_CTA}>
+        Slot Allocations
+      </Link>
+    )}
+  </>
+);
+
 /* Shared by every non-primary hero button, so they stay visually identical. */
 const SECONDARY_CTA =
   'inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-grape-400/40 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur transition hover:border-grape-400/70 hover:bg-white/10 sm:flex-none';
@@ -236,21 +261,7 @@ const Hero = ({ event }) => {
                 Register
                 <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
-              {event.slug === 'iupc' && (
-                <>
-                  <Link href={ROUTES.eventTeams(event.slug)} className={SECONDARY_CTA}>
-                    View Teams
-                  </Link>
-                  <Link href={ROUTES.eventSlots(event.slug)} className={SECONDARY_CTA}>
-                    Slot Allocations
-                  </Link>
-                </>
-              )}
-              {(event.slug === 'hackathon' || event.slug === 'datathon' || event.slug === 'project-showcase') && (
-                <Link href={ROUTES.eventTeams(event.slug)} className={SECONDARY_CTA}>
-                  View Teams
-                </Link>
-              )}
+              <DirectoryLinks event={event} />
               <a href="#rules" className={SECONDARY_CTA}>
                 Read the Rules
               </a>
@@ -263,11 +274,7 @@ const Hero = ({ event }) => {
               >
                 Registration Closed
               </button>
-              {(event.slug === 'hackathon' || event.slug === 'datathon' || event.slug === 'project-showcase') && (
-                <Link href={ROUTES.eventTeams(event.slug)} className={SECONDARY_CTA}>
-                  View Teams
-                </Link>
-              )}
+              <DirectoryLinks event={event} />
               <a href="#rules" className={SECONDARY_CTA}>
                 Read the Rules
               </a>

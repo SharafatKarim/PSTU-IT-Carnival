@@ -47,6 +47,8 @@ const RegistrationClosed = ({ event }) => (
       </div>
 
       <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-ink-600 pt-5">
+        {/* Only the form closed. The directories stay live, and they are what
+            a team actually wants now: am I on the list, and which slot? */}
         <Link
           href={ROUTES.eventTeams(SLUG)}
           className="group inline-flex items-center gap-2 rounded-xl bg-gold-400 px-5 py-2.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
@@ -55,10 +57,16 @@ const RegistrationClosed = ({ event }) => (
           <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
         </Link>
         <Link
-          href={ROUTES.event(SLUG)}
+          href={ROUTES.eventSlots(SLUG)}
           className="rounded-xl border border-ink-500 px-5 py-2.5 text-sm font-semibold text-mist-200 transition hover:bg-white/5 hover:text-white"
         >
-          Back to {event.name}
+          Slot allocations
+        </Link>
+        <Link
+          href={`${ROUTES.event(SLUG)}#rules`}
+          className="rounded-xl border border-ink-500 px-5 py-2.5 text-sm font-semibold text-mist-200 transition hover:bg-white/5 hover:text-white"
+        >
+          Read the rules
         </Link>
       </div>
     </div>
