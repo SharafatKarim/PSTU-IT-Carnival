@@ -66,6 +66,53 @@ const DirectoryLinks = ({ event }) => (
   </>
 );
 
+/* The same notice the #register card renders, cut down to a strip and lifted
+   into the hero.
+ *
+ * That card is five screens down, below the rules — fine for a detail, wrong
+ * for a deadline. A team arriving at this page has one thing left to do and a
+ * date to do it by, so the announcement has to be above the fold with the
+ * action attached, and the card further down stays as the full version for
+ * anyone who reads the page properly.
+ *
+ * Same object drives both, so the two cannot end up quoting different dates. */
+const HeroNotice = ({ event }) => {
+  const notice = event.registrationClosedNotice;
+  if (!notice) return null;
+
+  const hasDirectory = DIRECTORY_SLUGS.teams.includes(event.slug);
+
+  return (
+    <div className="mx-auto mt-6 flex w-full max-w-3xl flex-col items-center gap-4 rounded-2xl border border-gold-400/40 bg-gold-400/10 px-5 py-4 backdrop-blur sm:flex-row sm:gap-5">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gold-400/40 bg-ink-950/50 text-gold-300">
+        <ClockIcon className="h-5 w-5" />
+      </span>
+
+      <div className="min-w-0 flex-1 text-center sm:text-left">
+        <p className="text-[11px] font-bold uppercase tracking-widest text-gold-300">
+          {notice.eyebrow}
+        </p>
+        <p className="mt-1 text-sm font-bold leading-snug text-white">
+          {notice.title}
+        </p>
+        {notice.deadline && (
+          <p className="mt-1 text-sm font-bold text-red-300">{notice.deadline}</p>
+        )}
+      </div>
+
+      {hasDirectory && (
+        <Link
+          href={ROUTES.eventTeams(event.slug)}
+          className="group inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-gold-400 px-5 py-3 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300 sm:w-auto"
+        >
+          Pay now
+          <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+        </Link>
+      )}
+    </div>
+  );
+};
+
 /* Shared by every non-primary hero button, so they stay visually identical. */
 const SECONDARY_CTA =
   'inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-grape-400/40 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur transition hover:border-grape-400/70 hover:bg-white/10 sm:flex-none';
@@ -289,6 +336,8 @@ const Hero = ({ event }) => {
             </a>
           )}
         </div>
+
+        {registrationClosed && <HeroNotice event={event} />}
 
         <p className="mt-5 text-center text-xs text-mist-400">{event.heroNote}</p>
       </div>

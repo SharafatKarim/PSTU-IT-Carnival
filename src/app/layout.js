@@ -14,7 +14,11 @@ export const metadata = {
   description: "PSTU IT Carnival 2026 — South Zone's largest tech competition at Patuakhali Science and Technology University. Twelve events across programming, hackathon, data, quiz, security and gaming. 13–15 August 2026.",
   openGraph: {
     title: "PSTU IT Carnival 2026 — Tech & Gaming Fest",
-    description: "South Zone's largest tech competition. Twelve events across programming, hackathon, data, quiz, security and gaming. IUPC pre-registration is open — 45 team slots, closing 2 August 2026.",
+    /* Spelled out rather than read from events.js — this is a static export
+       evaluated before any of that data is in scope. It is also what a shared
+       link shows, so it goes stale loudly: it was still advertising an open
+       pre-registration a week after entries shut. Update it with the phase. */
+    description: "South Zone's largest tech competition. Twelve events across programming, hackathon, data, quiz, security and gaming. IUPC final registration is open — pay the entry fee by 5 August 2026, 11:45 PM.",
     type: "website",
     images: [
       {

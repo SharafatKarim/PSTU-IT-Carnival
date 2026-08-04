@@ -21,7 +21,7 @@
 // ---------------------------------------------------------------------------
 
 import { GAMES } from '@/data/gaming';
-import { EVENT_DETAILS } from '@/data/events';
+import { EVENT_DETAILS, IUPC_PAYMENT } from '@/data/events';
 
 /* ---------------------------------------------------------------------------
    Route registry.
@@ -109,13 +109,24 @@ export const REGISTRABLE_EVENTS = EVENT_DETAILS.filter(
 export const iupcRegistration = () => {
   const iupc = EVENT_DETAILS.find((e) => e.slug === 'iupc');
   const open = iupc?.registrationOpen !== false;
+
+  /* Entries shutting is not the end of the story. The fee falls due next, and
+     while it is due the honest thing for these buttons to say is "pay" — a
+     team reading "see registered teams" has no reason to click, so the one
+     step that costs them their slot is behind a link that sounds optional.
+     Derived here for the same reason `open` is: one phase, five callers, no
+     chance of two of them disagreeing. */
+  const payment = !open && Boolean(IUPC_PAYMENT.deadline);
+
   return {
     open,
+    payment,
+    paymentDeadline: IUPC_PAYMENT.deadline,
     /* Closed sends people to the directory rather than the form's notice page:
        the question a team has after entries shut is whether they are on the
-       list. */
+       list — and now, that is also where the Pay button lives. */
     href: open ? ROUTES.register : ROUTES.eventTeams('iupc'),
-    closedLabel: 'See registered teams',
+    closedLabel: payment ? 'Pay for your team' : 'See registered teams',
   };
 };
 

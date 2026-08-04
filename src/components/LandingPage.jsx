@@ -30,6 +30,33 @@ const IUPC = getEventDetail('iupc');
    module scope is enough — and one flag in events.js moves all three. */
 const iupcReg = iupcRegistration();
 
+/* The three numbers each of those panels prints, and the deadline it counts
+   down to.
+ *
+ * Written once because all three had their own copy of the same list, and a
+ * copy is what goes stale: pre-registration closing turned "Entries close 2
+ * August 2026" into a date in the past and "To pre-register: Free" into an
+ * answer to a question nobody is asking, in three places at once. While the
+ * fee is due the live number is the payment deadline, so that is what they
+ * print and what the countdown pill measures.
+ *
+ * The icon rides along for the hero panel; the other two ignore it. */
+const iupcFacts = (t) =>
+  iupcReg.payment
+    ? [
+        { icon: UsersIcon, label: 'Team slots', value: t.slots },
+        { icon: TicketIcon, label: 'Entry fee', value: t.entryShort || t.entryFee },
+        { icon: AlertIcon, label: 'Payment closes', value: iupcReg.paymentDeadline },
+      ]
+    : [
+        { icon: UsersIcon, label: 'Team slots', value: t.slots },
+        { icon: TicketIcon, label: 'To pre-register', value: 'Free' },
+        { icon: AlertIcon, label: 'Entries close', value: t.deadline },
+      ];
+
+const iupcDeadline = (t) =>
+  iupcReg.payment ? iupcReg.paymentDeadline : t.deadline;
+
 /* ---------------------------------------------------------------------------
    Section shell.
 
@@ -89,27 +116,27 @@ const OpenNowPanel = () => {
   const t = IUPC?.tournament;
   if (!t) return null;
 
-  const facts = [
-    { icon: UsersIcon, label: 'Team slots', value: t.slots },
-    { icon: TicketIcon, label: 'To pre-register', value: 'Free' },
-    { icon: AlertIcon, label: 'Entries close', value: t.deadline },
-  ];
+  const paying = iupcReg.payment;
+  const deadline = iupcDeadline(t);
+  const facts = iupcFacts(t);
 
   return (
     <div className="rounded-2xl border border-gold-400/40 bg-ink-900/70 p-6 shadow-glow-gold backdrop-blur sm:p-7">
       <div className="flex flex-wrap items-center gap-3">
         <span className="inline-flex items-center gap-2 rounded-full border border-gold-400/40 bg-gold-400/10 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-gold-300">
           <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-gold-400" />
-          Open now
+          {paying ? 'Payment open' : 'Open now'}
         </span>
-        {t.deadline && <Countdown date={t.deadline} />}
+        {deadline && <Countdown date={deadline} />}
       </div>
 
       <h2 className="mt-4 text-xl font-bold text-white">
-        {IUPC.name} pre-registration
+        {IUPC.name} {paying ? 'final registration' : 'pre-registration'}
       </h2>
       <p className="mt-1.5 text-sm leading-relaxed text-mist-300">
-        {IUPC.fullName} — {t.teamSize.replace(/\s*\(.*\)/, '')}.
+        {paying
+          ? 'Pre-registration has closed. Every pre-registered team has a place — pay the entry fee to confirm it.'
+          : `${IUPC.fullName} — ${t.teamSize.replace(/\s*\(.*\)/, '')}.`}
       </p>
 
       <dl className="mt-5 divide-y divide-white/10 border-y border-white/10">
@@ -132,7 +159,9 @@ const OpenNowPanel = () => {
         <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
       </Link>
       <p className="mt-3 text-center text-xs text-mist-400">
-        Free · instant registration ID
+        {paying
+          ? 'Find your team in the directory and press Pay'
+          : 'Free · instant registration ID'}
       </p>
     </div>
   );
@@ -333,24 +362,24 @@ const HowToEnter = () => {
             <div className="flex flex-wrap items-center gap-2.5">
               <span className="inline-flex items-center gap-2 rounded-full border border-gold-400/40 bg-gold-400/10 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-gold-300">
                 <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-gold-400" />
-                Open now
+                {iupcReg.payment ? 'Payment open' : 'Open now'}
               </span>
-              {t.deadline && <Countdown date={t.deadline} />}
+              {iupcDeadline(t) && <Countdown date={iupcDeadline(t)} />}
             </div>
 
             <h3 className="mt-4 text-lg font-bold text-white">
-              Step one takes a minute
+              {iupcReg.payment
+                ? 'The last step is the fee'
+                : 'Step one takes a minute'}
             </h3>
             <p className="mt-1.5 text-sm leading-relaxed text-mist-300">
-              Nothing is paid until your slot is confirmed.
+              {iupcReg.payment
+                ? 'Your slot is held until the entry fee is in.'
+                : 'Nothing is paid until your slot is confirmed.'}
             </p>
 
             <dl className="mt-5 divide-y divide-white/10 border-y border-white/10">
-              {[
-                { label: 'Team slots', value: t.slots },
-                { label: 'To pre-register', value: 'Free' },
-                { label: 'Entries close', value: t.deadline },
-              ].map((fact) => (
+              {iupcFacts(t).map((fact) => (
                 <div key={fact.label} className="flex items-center gap-3 py-2.5">
                   <dt className="flex-1 text-sm text-mist-400">{fact.label}</dt>
                   <dd className="text-sm font-semibold text-white tabular-nums">
@@ -478,9 +507,9 @@ const FinalCta = () => {
           <div className="absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-gold-400/15 blur-3xl" />
 
           <div className="relative mx-auto max-w-2xl">
-            {t?.deadline && (
+            {t && iupcDeadline(t) && (
               <Countdown
-                date={t.deadline}
+                date={iupcDeadline(t)}
                 className="!border-white/25 !bg-white/10 !text-white"
               />
             )}
@@ -488,12 +517,16 @@ const FinalCta = () => {
             <h2 className="mt-5 text-3xl font-extrabold sm:text-4xl">
               {iupcReg.open
                 ? 'Your IUPC team’s spot is waiting'
-                : 'IUPC pre-registration has closed'}
+                : iupcReg.payment
+                  ? 'IUPC final registration is open'
+                  : 'IUPC pre-registration has closed'}
             </h2>
             <p className="mx-auto mt-4 max-w-[52ch] text-base leading-relaxed text-white/90">
               {iupcReg.open
                 ? 'Gather your three coders, pick a name worth remembering, and claim your place at the flagship contest.'
-                : 'Thank you to every team that entered. Confirmed slots are published university-wise, and final registration then opens for the listed teams.'}
+                : iupcReg.payment
+                  ? `Every pre-registered team has a place. Pay the entry fee from your team’s row in the directory by ${iupcReg.paymentDeadline} to confirm it.`
+                  : 'Thank you to every team that entered. Confirmed slots are published university-wise, and final registration then opens for the listed teams.'}
             </p>
 
             <Link
@@ -506,11 +539,7 @@ const FinalCta = () => {
 
             {t && (
               <dl className="mx-auto mt-8 grid max-w-md grid-cols-3 gap-px overflow-hidden rounded-xl bg-white/15 text-left">
-                {[
-                  { label: 'Team slots', value: t.slots },
-                  { label: 'To pre-register', value: 'Free' },
-                  { label: 'Entries close', value: t.deadline },
-                ].map((fact) => (
+                {iupcFacts(t).map((fact) => (
                   <div key={fact.label} className="bg-grape-700/40 px-3 py-3 text-center">
                     <dt className="text-[10px] uppercase tracking-wide text-white/70">
                       {fact.label}
