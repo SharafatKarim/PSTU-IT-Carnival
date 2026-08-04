@@ -146,11 +146,16 @@ const registrationSchema = new mongoose.Schema(
     },
     /* When an admin matched the transaction against the statement. */
     verifiedAt: { type: Date },
-    /* When the "final registration is open" mail went to this team's leader.
-       Stored rather than kept in the panel's memory: the button is green
-       because this is set, so a reload does not offer to send it again and the
-       bulk sweep can skip the teams that already have it. Absent means nobody
-       has been told, which is why the sweep is safe to run twice. */
+    /* When the "final registration is open" mail went to this team's leader
+       FROM THE PANEL, one team at a time. Stored rather than kept in the
+       panel's memory so the green button survives a reload.
+
+       It is not a record of every announcement a team received: the list goes
+       out from a mail client, and this field knows nothing about that. Absent
+       means "the panel has not sent one", not "nobody has been told" — the
+       bulk sweep that once wrote it in batches set it for teams whose mail
+       never arrived, which is why that sweep is gone and the stamps it left
+       were cleared (scripts/clear-iupc-notified.mjs). */
     paymentNotifiedAt: { type: Date },
     registrationId: {
       type: String,

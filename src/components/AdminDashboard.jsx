@@ -20,7 +20,6 @@ export default function AdminDashboard({ user }) {
   /* Kept apart from actionLoading so notifying one team does not grey out every
      Approve button on the page. */
   const [notifyLoading, setNotifyLoading] = useState(null); // team._id being notified
-  const [notifyAllLoading, setNotifyAllLoading] = useState(false);
   const [filterSelections, setFilterSelections] = useState({}); // tab -> selected filter key
 
   const fetchData = async () => {
@@ -109,42 +108,30 @@ export default function AdminDashboard({ user }) {
     }
   };
 
-  /* Everyone unpaid who has not had it yet. Refetches rather than patching the
-     list: the sweep can partially fail, and the server's view of who was
-     actually mailed is the only one worth trusting. */
-  const handleNotifyAll = async () => {
-    const pending = (data.iupc || []).filter(
-      (t) => t.registrationStatus !== 'paid' && !t.paymentNotifiedAt
-    );
-    if (!pending.length) {
-      alert('Every unpaid team has already been notified.');
-      return;
-    }
-    if (
-      !window.confirm(
-        `Email the payment announcement to ${pending.length} team leader${
-          pending.length === 1 ? '' : 's'
-        }? Teams already notified are skipped.`
-      )
-    ) {
+  /* Downloads the team leader addresses so the announcement can be sent from a
+     mail client, the way the datathon list already works.
+     One address per team, not per member: IUPC correspondence goes to the
+     leader alone, which is what the isTeamLeader flag exists for. */
+  const exportIupcLeaderEmails = (teams) => {
+    const emails = teams
+      .map((team) => (team.members || []).find((m) => m.isTeamLeader)?.email)
+      .filter(Boolean);
+
+    if (emails.length === 0) {
+      alert('No team leader emails to export!');
       return;
     }
 
-    setNotifyAllLoading(true);
-    try {
-      const res = await fetch('/api/v1/admin/registrations', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'bulk_notify_payments' }),
-      });
-      const result = await res.json();
-      alert(result.message || 'Bulk notification finished.');
-      if (res.ok && result.success) fetchData();
-    } catch (e) {
-      alert('Network error. The bulk notification did not complete.');
-    } finally {
-      setNotifyAllLoading(false);
-    }
+    const unique = [...new Set(emails)];
+    const blob = new Blob([unique.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'iupc_leader_emails.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const handleBulkApprove = async () => {
@@ -343,30 +330,42 @@ export default function AdminDashboard({ user }) {
         {activeTab === 'iupc' && !loading && (
           <div className="mb-6 rounded-2xl border border-aqua-400/20 bg-ink-900/30 p-5 shadow-card backdrop-blur-md">
             <h3 className="text-sm font-bold text-white mb-1.5">Announce the entry fee</h3>
+            {/* Sending the whole list from here is gone. It reported teams as
+                notified whose mail nobody received, and a green button that
+                lies is worse than no button — a coordinator reads it as done
+                and never follows up. Export the addresses and send from a mail
+                client instead, the way the datathon list already works: the
+                client shows what bounced, which this panel could not.
+                The per-row Notify button stays. It sends one message on one
+                connection and has been verified working. */}
             <p className="text-xs text-mist-400 mb-3">
-              Emails every unpaid team leader that final registration is open — the
-              amount, the wallet number, the deadline and a link to the payment
-              page. Teams already notified are skipped, so this is safe to run
-              again after a partial failure; anything that still fails can be
-              retried from the <span className="font-semibold text-mist-300">Notify</span>{' '}
-              button on its own row.
+              Download the team leader addresses and send the announcement from
+              your own mail client — one address per team, BCC them. The
+              individual <span className="font-semibold text-mist-300">Notify</span>{' '}
+              button on a row still sends the templated mail to that one leader.
             </p>
             <div className="flex flex-wrap items-center gap-3">
               <button
-                onClick={handleNotifyAll}
-                disabled={notifyAllLoading}
-                className="px-5 py-2.5 text-xs font-bold rounded-xl bg-aqua-500 hover:bg-aqua-400 text-ink-950 transition disabled:opacity-50 min-w-[150px]"
+                onClick={() =>
+                  exportIupcLeaderEmails(
+                    (data.iupc || []).filter((t) => t.registrationStatus !== 'paid')
+                  )
+                }
+                className="px-5 py-2.5 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition"
               >
-                {notifyAllLoading ? 'Sending…' : 'Notify all unpaid teams'}
+                Export unpaid leader emails
+              </button>
+              <button
+                onClick={() => exportIupcLeaderEmails(data.iupc || [])}
+                className="px-5 py-2.5 text-xs font-bold rounded-xl border border-white/15 bg-white/5 text-mist-200 hover:bg-white/10 transition"
+              >
+                Export all
               </button>
               <span className="text-xs text-mist-400">
                 {(() => {
                   const list = data.iupc || [];
-                  const unpaid = list.filter((t) => t.registrationStatus !== 'paid');
-                  const waiting = unpaid.filter((t) => !t.paymentNotifiedAt).length;
-                  return `${waiting} of ${unpaid.length} unpaid team${
-                    unpaid.length === 1 ? '' : 's'
-                  } not yet notified`;
+                  const unpaid = list.filter((t) => t.registrationStatus !== 'paid').length;
+                  return `${unpaid} unpaid of ${list.length} team${list.length === 1 ? '' : 's'}`;
                 })()}
               </span>
             </div>

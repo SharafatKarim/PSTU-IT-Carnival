@@ -132,7 +132,6 @@ export async function PATCH(req) {
       'approve_payment',
       'bulk_approve_payments',
       'notify_payment',
-      'bulk_notify_payments',
     ];
     if (!ACTIONS.includes(action)) {
       return NextResponse.json({ success: false, message: 'Invalid action' }, { status: 400 });
@@ -142,10 +141,15 @@ export async function PATCH(req) {
 
     /* Tells one team's leader that the fee is due, and records that we did.
      *
-     * Deliberately allowed on a team that has already been notified: the panel
-     * shows the button again after a failure, and a leader who says the mail
-     * never arrived is a normal support request, not an abuse case. What the
-     * timestamp prevents is the SWEEP mailing everyone twice.
+     * One team per request, by design. The sweep that did the whole list from
+     * here has been removed: it reported teams as notified whose mail nobody
+     * received, and a stamp that lies is worse than no stamp, because it tells
+     * the next coordinator the job is done. The list goes out from a mail
+     * client now — see the export in the panel — and this endpoint is for the
+     * one-off, where a single send either works or says why it did not.
+     *
+     * Repeat sends are allowed. A leader saying the mail never arrived is a
+     * support request, not an abuse case.
      *
      * The stamp is only written when the message actually left. send() returns
      * false with no SMTP configured, and marking a team notified because
@@ -213,77 +217,6 @@ export async function PATCH(req) {
         success: true,
         message: `Payment announcement sent to ${leader.email}`,
         data: { paymentNotifiedAt: team.paymentNotifiedAt },
-      });
-    }
-
-    /* The same mail to everyone who still owes the fee and has not had it.
-     *
-     * Skips teams already notified, so running it again after a partial failure
-     * retries only what failed rather than mailing the whole contest twice.
-     * Sequential on purpose: this is one Gmail account, and forty-nine parallel
-     * SMTP connections is how an account gets rate-limited mid-sweep. */
-    if (action === 'bulk_notify_payments') {
-      const pending = await IupcRegistration.find({
-        registrationStatus: { $ne: 'paid' },
-        paymentNotifiedAt: { $exists: false },
-      });
-
-      const notified = [];
-      const failed = [];
-
-      for (const team of pending) {
-        const leader = leaderOf(team);
-        if (!leader?.email) {
-          failed.push({ team: team.teamName, reason: 'no team leader email' });
-          continue;
-        }
-
-        try {
-          const sent = await sendIupcPaymentOpenEmail({
-            to: leader.email,
-            leaderName: leader.name,
-            teamName: team.teamName,
-            registrationId: team.registrationId,
-            varsityName: team.varsityName,
-          });
-          if (!sent) {
-            failed.push({ team: team.teamName, reason: 'email not configured' });
-            continue;
-          }
-          team.paymentNotifiedAt = new Date();
-          await team.save();
-          notified.push(team.teamName);
-        } catch (mailError) {
-          console.error(`[admin/bulk-notify-iupc] Email failed for ${leader.email}:`, mailError);
-          failed.push({ team: team.teamName, reason: 'send failed' });
-        }
-      }
-
-      await AdminLog.create({
-        adminEmail,
-        action: 'bulk_notify_payments',
-        eventType: 'iupc',
-        details: {
-          notifiedCount: notified.length,
-          failedCount: failed.length,
-          notifiedTeams: notified,
-          failedTeams: failed.map((f) => f.team),
-        },
-      });
-
-      let message = `Notified ${notified.length} team${notified.length === 1 ? '' : 's'}.`;
-      if (failed.length) {
-        message += ` ${failed.length} failed — use the Notify button on those rows: ${failed
-          .map((f) => `${f.team} (${f.reason})`)
-          .join(', ')}`;
-      } else if (!notified.length) {
-        message = 'Every unpaid team has already been notified.';
-      }
-
-      return NextResponse.json({
-        success: true,
-        message,
-        data: { notifiedCount: notified.length, failedCount: failed.length, failed },
       });
     }
 
