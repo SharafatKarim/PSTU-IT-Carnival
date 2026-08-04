@@ -35,6 +35,11 @@ export const IUPC_PAYMENT = {
   cashOutCharge: 50,
   instructions:
     'Use “Send Money” (not Payment) from either wallet, then paste the transaction ID it gives you.',
+  /* When the fee has to be in. Announced on the event page, which reads this
+     line rather than repeating the date — so moving the deadline is one edit.
+     Nothing ENFORCES it: the payments route still accepts a submission after
+     this passes, and a coordinator decides what to do with a late one. */
+  deadline: '5 August 2026, 11:45 PM',
 };
 
 export const iupcPaymentTotal = () =>
@@ -151,6 +156,22 @@ export const EVENT_DETAILS =
            shut, so the pages must say closed rather than coming soon. Without
            it the site invites people to wait for a form that will not return. */
         registrationClosed: true,
+        /* Overrides the generic "entries have shut" card on the event page.
+           Closing is no longer the news — the slots are out and the fee is
+           due, so the card a team lands on has to say that and give the date
+           the money has to be in by. The deadline is interpolated from
+           IUPC_PAYMENT rather than typed again, and no href is stored here
+           because this file names no URLs: EventDetail resolves the event's
+           own teams directory. Any event may set this; the ones that do not
+           keep the generic text. */
+        registrationClosedNotice: {
+          eyebrow: 'Entry Fee Due',
+          title: 'Final registration is open — pay to confirm your slot',
+          body:
+              'Pre-registration has closed and every pre-registered team has a place. Open the team directory, find your team and press Pay to submit the entry fee and its transaction ID.',
+          deadline: `Payment closes ${IUPC_PAYMENT.deadline}`,
+          ctaLabel: 'Open the team directory',
+        },
         registration: {
           /* 'form' means this event owns /events/<slug>/register. */
           kind: 'form',

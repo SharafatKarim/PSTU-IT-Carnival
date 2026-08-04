@@ -376,6 +376,68 @@ const RegisterCta = ({ event }) => {
   );
 };
 
+/* The card in the #register section once entries have shut.
+ *
+ * "Pre-registration has closed" is the right thing to say right up until
+ * something else falls due, and then it is the least useful sentence on the
+ * page — a team arriving to pay does not need to be told the form it already
+ * filled in is gone. So an event may replace the copy with
+ * registrationClosedNotice (IUPC does, to announce the entry-fee deadline) and
+ * everything without one falls through to the generic text unchanged. */
+const ClosedRegistrationCard = ({ event }) => {
+  const notice = event.registrationClosedNotice;
+
+  if (!notice) {
+    return (
+      <div className="mx-auto max-w-2xl text-center rounded-2xl border border-red-500/20 bg-red-950/10 p-8 shadow-card">
+        <p className="text-sm font-semibold uppercase tracking-widest text-red-400">Registration Closed</p>
+        <h3 className="mt-3 text-lg font-bold text-white">Pre-registration has closed</h3>
+        <p className="mt-2 text-sm leading-relaxed text-mist-300">
+          Pre-registration for {event.name} is now closed. The final shortlist of teams will be published soon.
+        </p>
+      </div>
+    );
+  }
+
+  const a = accentOf(event.accent);
+  /* The label is only worth a button if the page it points at exists. */
+  const linkToDirectory =
+    notice.ctaLabel && DIRECTORY_SLUGS.teams.includes(event.slug);
+
+  return (
+    <div
+      className={`mx-auto max-w-2xl rounded-2xl border p-8 text-center shadow-card ${a.border} ${a.bgFaint}`}
+    >
+      <p className={`text-sm font-semibold uppercase tracking-widest ${a.text}`}>
+        {notice.eyebrow}
+      </p>
+      <h3 className="mt-3 text-lg font-bold text-white">{notice.title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-mist-300">{notice.body}</p>
+
+      {/* Red rather than the event accent: this is the one line on the card
+          that costs a team its slot if they read past it. */}
+      {notice.deadline && (
+        <p className="mt-6 inline-flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-950/20 px-4 py-2.5 text-sm font-bold text-red-300">
+          <ClockIcon className="h-4 w-4 shrink-0" />
+          {notice.deadline}
+        </p>
+      )}
+
+      {linkToDirectory && (
+        <div className="mt-6">
+          <Link
+            href={ROUTES.eventTeams(event.slug)}
+            className="group inline-flex items-center justify-center gap-2 rounded-xl bg-gold-400 px-5 py-3.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
+          >
+            {notice.ctaLabel}
+            <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          </Link>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const EventDetail = ({ slug }) => {
   const event = getEventDetail(slug);
   if (!event) return null;
@@ -422,13 +484,7 @@ const EventDetail = ({ slug }) => {
           {registrationOpen ? (
             <RegisterCta event={event} />
           ) : registrationClosed ? (
-            <div className="mx-auto max-w-2xl text-center rounded-2xl border border-red-500/20 bg-red-950/10 p-8 shadow-card">
-              <p className="text-sm font-semibold uppercase tracking-widest text-red-400">Registration Closed</p>
-              <h3 className="mt-3 text-lg font-bold text-white">Pre-registration has closed</h3>
-              <p className="mt-2 text-sm leading-relaxed text-mist-300">
-                Pre-registration for {event.name} is now closed. The final shortlist of teams will be published soon.
-              </p>
-            </div>
+            <ClosedRegistrationCard event={event} />
           ) : (
             <div className="mx-auto max-w-2xl text-center rounded-2xl border border-ink-600 bg-ink-800/40 p-8 shadow-card">
               <p className="text-sm font-semibold uppercase tracking-widest text-gold-400">Registration Opens Later</p>
