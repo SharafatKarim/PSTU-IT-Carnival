@@ -12,45 +12,37 @@ const SLUG = 'hackathon';
 
 export const metadata = eventRegisterMetadata(SLUG);
 
-/* The route exists before entries open so it can say WHY it is shut. */
 const NotOpenYet = ({ event }) => (
   <div className="mx-auto max-w-2xl px-4 py-16 sm:py-24">
-    <div className="rounded-2xl border border-ink-600 bg-ink-800/60 p-6 shadow-card sm:p-8">
-      <div className="flex items-start gap-3">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold-400/10 text-gold-300">
-          <ClockIcon className="h-5 w-5" />
+    <div className="rounded-2xl border border-magenta-500/30 bg-magenta-950/10 p-6 shadow-card sm:p-8 text-center">
+      <div className="flex flex-col items-center">
+        <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-magenta-500/10 text-magenta-400">
+          <ClockIcon className="h-6 w-6" />
         </span>
-        <div>
-          <h1 className="text-xl font-bold text-white">
-            {event.name} pre-registration is not open
-          </h1>
-          <p className="mt-2 text-sm leading-relaxed text-mist-300">
-            It runs 29 July to 7 PM, 2 August 2026, and it is free.
-          </p>
+        <h1 className="mt-4 text-xl font-bold text-white">
+          Hackathon pre-registration has closed
+        </h1>
+        <p className="mt-2 text-sm leading-relaxed text-mist-300">
+          Pre-registration is closed. If your team has already registered, you can submit your online preliminary round solution here before the deadline.
+        </p>
+        <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a
+            href="https://forms.gle/MdP8WSNAwvPQqPLH7"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center justify-center gap-2 rounded-xl bg-magenta-600 hover:bg-magenta-500 px-6 py-3 text-sm font-bold text-white shadow-glow-magenta transition"
+          >
+            Preliminary Submission
+            <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          </a>
+          <Link
+            href={ROUTES.event(SLUG)}
+            className="inline-flex items-center justify-center rounded-xl border border-ink-500 px-5 py-3 text-sm font-semibold text-mist-200 transition hover:bg-white/5 hover:text-white"
+          >
+            Back to Event Details
+          </Link>
         </div>
       </div>
-
-      <div className="mt-6 border-t border-ink-600 pt-5">
-        <p className="text-[11px] font-bold uppercase tracking-wide text-mist-400">
-          Have this ready
-        </p>
-        <ul className="mt-3 space-y-2.5">
-          {event.registration.checklist.map((item) => (
-            <li key={item} className="flex items-start gap-3">
-              <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-aqua-400" />
-              <span className="text-sm leading-relaxed text-mist-300">{item}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <Link
-        href={ROUTES.event(SLUG)}
-        className="group mt-6 inline-flex items-center gap-2 text-sm font-semibold text-mist-300 transition hover:text-white"
-      >
-        Back to {event.name}
-        <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-      </Link>
     </div>
   </div>
 );

@@ -296,7 +296,13 @@ const Hero = ({ event }) => {
                 : (event.slug === 'hackathon' || event.slug === 'datathon' || event.slug === 'project-showcase')
                   ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
                   : 'grid-cols-1 sm:grid-cols-2'
-              : 'mx-auto w-full max-w-xs grid-cols-1'
+              : registrationClosed
+                ? event.slug === 'hackathon'
+                  ? 'mx-auto w-full max-w-3xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
+                  : (event.slug === 'datathon' || event.slug === 'project-showcase')
+                    ? 'mx-auto w-full max-w-xl grid-cols-1 sm:grid-cols-3'
+                    : 'mx-auto w-full max-w-md grid-cols-1 sm:grid-cols-2'
+                : 'mx-auto w-full max-w-xs grid-cols-1'
           }`}
         >
           {registrationOpen ? (
@@ -321,6 +327,17 @@ const Hero = ({ event }) => {
               >
                 Registration Closed
               </button>
+              {event.slug === 'hackathon' && (
+                <a
+                  href="https://forms.gle/MdP8WSNAwvPQqPLH7"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center justify-center gap-2 rounded-xl bg-magenta-600 hover:bg-magenta-500 px-5 py-3.5 text-sm font-bold text-white shadow-glow-magenta transition"
+                >
+                  Preliminary Submission
+                  <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </a>
+              )}
               <DirectoryLinks event={event} />
               <a href="#rules" className={SECONDARY_CTA}>
                 Read the Rules
@@ -437,6 +454,29 @@ const ClosedRegistrationCard = ({ event }) => {
   const notice = event.registrationClosedNotice;
 
   if (!notice) {
+    if (event.slug === 'hackathon') {
+      return (
+        <div className="mx-auto max-w-2xl text-center rounded-2xl border border-magenta-500/30 bg-magenta-950/10 p-8 shadow-card">
+          <p className="text-sm font-semibold uppercase tracking-widest text-magenta-400">Registration Closed</p>
+          <h3 className="mt-3 text-lg font-bold text-white">Pre-registration has closed</h3>
+          <p className="mt-2 text-sm leading-relaxed text-mist-300">
+            Pre-registration is closed. If your team is already registered, submit your online preliminary round solution here before the deadline.
+          </p>
+          <div className="mt-6">
+            <a
+              href="https://forms.gle/MdP8WSNAwvPQqPLH7"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-2 rounded-xl bg-magenta-600 hover:bg-magenta-500 px-6 py-3 text-sm font-bold text-white shadow-glow-magenta transition"
+            >
+              Preliminary Submission
+              <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </a>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="mx-auto max-w-2xl text-center rounded-2xl border border-red-500/20 bg-red-950/10 p-8 shadow-card">
         <p className="text-sm font-semibold uppercase tracking-widest text-red-400">Registration Closed</p>
