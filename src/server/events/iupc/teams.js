@@ -24,9 +24,9 @@ export const serialOf = (registrationId) => {
 
 const escapeRe = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-/* One box searches everything a person might have written down: the team
-   name, the university, the full registration ID, a member's name, or just
-   the serial number off their confirmation screen. */
+/* One box searches what a person might have written down: the team name, the
+   university, a member's name, or the serial number off their confirmation
+   screen. */
 const buildFilter = (search) => {
   if (!search) return {};
 
@@ -43,7 +43,13 @@ const buildFilter = (search) => {
     $or: [
       { teamName: rx },
       { varsityName: rx },
-      { registrationId: rx },
+      /* The registration ID is deliberately NOT matched as text. Every one of
+         them reads PSTU-IUPC-2026-nnnn, so "PSTU" returned all 49 teams and
+         "IUPC" did too — the prefix is the same for a Khulna team as for a
+         Patuakhali one, which makes the field worse than useless in a search
+         box: it drowns the university it looks like it is answering.
+         The serial branch above still finds a team by its number, which is the
+         part of that ID anyone actually quotes. */
       { 'members.name': rx },
     ],
   };

@@ -177,7 +177,7 @@ const TeamsDirectory = ({ slug = 'iupc' }) => {
       nav={eventTeamsNav(slug)}
       eyebrow={event?.scope}
       title="Registered Teams"
-      intro={`Every team pre-registered for ${event?.name}. Search by team, university, member, serial or registration ID.`}
+      intro={`Every team pre-registered for ${event?.name}. Search by team name, university, member, or serial number.`}
       tabs={<SubPageTabs slug={slug} active="teams" />}
     >
       <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
@@ -187,7 +187,7 @@ const TeamsDirectory = ({ slug = 'iupc' }) => {
             type="search"
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search by team, university, member, or serial"
+            placeholder="Search by team name, university, member, or serial"
             className="w-full rounded-lg border border-ink-600 bg-ink-900/70 px-4 py-2.5 text-sm text-white placeholder-mist-500 outline-none transition focus:border-grape-500 focus:ring-2 focus:ring-grape-500/30"
           />
         </label>
