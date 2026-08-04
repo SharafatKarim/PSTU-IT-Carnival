@@ -642,17 +642,48 @@ export default function AdminDashboard({ user }) {
                             )}
                           </td>
                           <td className="px-6 py-4">
-                            {/* Approving emails the team leader, so it is only
-                                offered once a team has actually quoted a
-                                reference — there is nothing to confirm before
-                                that, and the mail would be a lie. */}
-                            {team.registrationStatus === 'payment-submitted' && (
+                            {/* Two ways a team gets paid, and both end at the
+                                same status.
+
+                                A team that submitted a reference online is
+                                approved outright — the reference is right there
+                                in the previous column to check against the
+                                statement.
+
+                                A team that paid in cash at the desk, or over a
+                                wallet whose SMS the coordinator read elsewhere,
+                                never touched the form and sits at
+                                'pre-registered'. Offering nothing here left the
+                                panel unable to record a payment it had actually
+                                received, so the button is offered for those rows
+                                too — behind a confirm, because there is no
+                                reference on screen to check and the approval
+                                emails the team leader either way. */}
+                            {team.registrationStatus !== 'paid' && (
                               <button
-                                onClick={() => handleApprovePayment(team._id, 'iupc')}
+                                onClick={() => {
+                                  if (
+                                    team.registrationStatus !== 'payment-submitted' &&
+                                    !window.confirm(
+                                      `${team.teamName} has not submitted a transaction ID. Mark it paid anyway and email the team leader?`
+                                    )
+                                  ) {
+                                    return;
+                                  }
+                                  handleApprovePayment(team._id, 'iupc');
+                                }}
                                 disabled={actionLoading !== null}
-                                className="px-3 py-1.5 text-xs font-bold rounded-lg bg-gold-400 text-ink-950 hover:bg-gold-300 transition disabled:opacity-50"
+                                className={`px-3 py-1.5 text-xs font-bold rounded-lg transition disabled:opacity-50 ${
+                                  team.registrationStatus === 'payment-submitted'
+                                    ? 'bg-gold-400 text-ink-950 hover:bg-gold-300'
+                                    : 'border border-white/15 bg-white/5 text-mist-200 hover:bg-white/10'
+                                }`}
                               >
-                                {actionLoading === team._id ? 'Approving...' : 'Approve'}
+                                {actionLoading === team._id
+                                  ? 'Approving...'
+                                  : team.registrationStatus === 'payment-submitted'
+                                    ? 'Approve'
+                                    : 'Mark paid'}
                               </button>
                             )}
                           </td>

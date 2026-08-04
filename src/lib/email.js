@@ -257,6 +257,18 @@ export async function sendIupcPaymentApprovedEmail({
   amount,
   transactionId,
 }) {
+  /* A team approved by hand — one that paid at the desk and never touched the
+     form — has no reference and no recorded amount. Printing the labels anyway
+     gave it "Amount received: BDT" and an empty transaction ID, which reads as
+     a broken mail rather than a cash payment. Each row appears only if there is
+     something in it, and the table disappears entirely when there is not. */
+  const receipt = [
+    amount && `<tr><td style="padding:2px 12px 2px 0;color:#666;">Amount received</td><td style="padding:2px 0;"><strong>BDT ${esc(amount)}</strong></td></tr>`,
+    transactionId && `<tr><td style="padding:2px 12px 2px 0;color:#666;">Transaction ID</td><td style="padding:2px 0;"><strong>${esc(transactionId)}</strong></td></tr>`,
+  ]
+    .filter(Boolean)
+    .join('');
+
   const html = shell({
     title: 'IUPC Entry Fee Confirmed',
     heading: 'Payment Confirmed!',
@@ -266,10 +278,7 @@ export async function sendIupcPaymentApprovedEmail({
     body: `
           <p>Hi ${esc(leaderName)},</p>
           <p>We have matched your entry-fee payment for <strong>${esc(teamName)}</strong> against our records. Your team's place at the <strong>Inter-University Programming Contest (IUPC)</strong> is now confirmed.</p>
-          <table role="presentation" cellpadding="0" cellspacing="0" style="margin:16px 0;font-size:14px;">
-            <tr><td style="padding:2px 12px 2px 0;color:#666;">Amount received</td><td style="padding:2px 0;"><strong>BDT ${esc(amount)}</strong></td></tr>
-            <tr><td style="padding:2px 12px 2px 0;color:#666;">Transaction ID</td><td style="padding:2px 0;"><strong>${esc(transactionId)}</strong></td></tr>
-          </table>
+          ${receipt && `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:16px 0;font-size:14px;">${receipt}</table>`}
           <p>What happens next?</p>
           <ul>
             <li>Your team is on the confirmed list — no further payment is needed.</li>

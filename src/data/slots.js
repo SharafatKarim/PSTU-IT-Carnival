@@ -5,33 +5,30 @@
 // src/data/universities.js, the same list the registration form searches, so
 // the two can never disagree.
 //
-// Nothing has been allocated yet, so this map is empty and every university
-// shows "N/A". To publish an allocation, add an entry keyed by the university's
-// `short` form:
+// This map is an OVERRIDE, not the source. Every pre-registered team has been
+// selected, so a university's slots are the teams it entered, counted live —
+// see SlotAllocations.jsx. An entry here wins for that one university, for the
+// day the committee publishes a different split:
 //
 //   export const SLOT_ALLOCATIONS = {
 //     PSTU: 6,
 //     KU: 4,
 //   };
 //
-// A university left out of the map keeps showing N/A. Set 0 to say explicitly
-// that a university received no slots.
+// Keyed by the university's `short` form. A university left out keeps its live
+// count. Set 0 to say a university that entered received no slots — the row
+// stays, showing 0, because a university whose teams are in the directory
+// should not vanish from the page that explains where they stand.
+//
+// Only universities that entered are listed either way; a university with no
+// pre-registrations has nothing to allocate and no row.
 // ---------------------------------------------------------------------------
 
 export const SLOT_ALLOCATIONS = {};
 
-/* null means "not decided yet" — rendered as N/A. 0 is a real allocation. */
+/* null means "no override" — the caller falls back to the live count. 0 is a
+   real allocation and wins. */
 export const slotsFor = (short) => {
   const value = SLOT_ALLOCATIONS[short];
   return typeof value === 'number' ? value : null;
 };
-
-export const totalAllocated = () =>
-  Object.values(SLOT_ALLOCATIONS).reduce(
-    (sum, n) => sum + (typeof n === 'number' ? n : 0),
-    0
-  );
-
-/* True once any allocation exists — the page switches from "not published
-   yet" messaging to a real total. */
-export const hasAllocations = () => Object.keys(SLOT_ALLOCATIONS).length > 0;
