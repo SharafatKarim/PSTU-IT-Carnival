@@ -14,6 +14,7 @@ import {
   sendGamingApprovalEmail,
   sendProjectShowcaseConfirmationEmail,
   sendIupcPaymentApprovedEmail,
+  sendIupcPaymentOpenEmail,
 } from '@/lib/email';
 import { getGame } from '@/data/gaming';
 import { dropScreenshot } from '@/server/payments';
@@ -127,11 +128,164 @@ export async function PATCH(req) {
     const body = await req.json();
     const { id, eventType, action, text } = body;
 
-    if (action !== 'approve_payment' && action !== 'bulk_approve_payments') {
+    const ACTIONS = [
+      'approve_payment',
+      'bulk_approve_payments',
+      'notify_payment',
+      'bulk_notify_payments',
+    ];
+    if (!ACTIONS.includes(action)) {
       return NextResponse.json({ success: false, message: 'Invalid action' }, { status: 400 });
     }
 
     await connectDB();
+
+    /* Tells one team's leader that the fee is due, and records that we did.
+     *
+     * Deliberately allowed on a team that has already been notified: the panel
+     * shows the button again after a failure, and a leader who says the mail
+     * never arrived is a normal support request, not an abuse case. What the
+     * timestamp prevents is the SWEEP mailing everyone twice.
+     *
+     * The stamp is only written when the message actually left. send() returns
+     * false with no SMTP configured, and marking a team notified because
+     * EMAIL_USER was unset would hide the one failure nobody would notice. */
+    if (action === 'notify_payment') {
+      const team = await IupcRegistration.findById(id);
+      if (!team) {
+        return NextResponse.json({ success: false, message: 'Team not found' }, { status: 404 });
+      }
+      if (team.registrationStatus === 'paid') {
+        return NextResponse.json(
+          { success: false, message: 'This team has already paid — nothing to announce.' },
+          { status: 400 }
+        );
+      }
+
+      const leader = leaderOf(team);
+      if (!leader?.email) {
+        return NextResponse.json(
+          { success: false, message: 'This team has no team leader email on record.' },
+          { status: 400 }
+        );
+      }
+
+      let sent;
+      try {
+        sent = await sendIupcPaymentOpenEmail({
+          to: leader.email,
+          leaderName: leader.name,
+          teamName: team.teamName,
+          registrationId: team.registrationId,
+          varsityName: team.varsityName,
+        });
+      } catch (mailError) {
+        console.error(`[admin/notify-iupc] Email failed for ${leader.email}:`, mailError);
+        return NextResponse.json(
+          { success: false, message: `Could not email ${leader.email}. Try again.` },
+          { status: 502 }
+        );
+      }
+
+      if (!sent) {
+        return NextResponse.json(
+          { success: false, message: 'Email is not configured on this server — nothing was sent.' },
+          { status: 503 }
+        );
+      }
+
+      team.paymentNotifiedAt = new Date();
+      await team.save();
+
+      await AdminLog.create({
+        adminEmail,
+        action: 'notify_payment',
+        eventType: 'iupc',
+        details: {
+          teamId: team._id,
+          teamName: team.teamName,
+          registrationId: team.registrationId,
+          notifiedEmail: leader.email,
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: `Payment announcement sent to ${leader.email}`,
+        data: { paymentNotifiedAt: team.paymentNotifiedAt },
+      });
+    }
+
+    /* The same mail to everyone who still owes the fee and has not had it.
+     *
+     * Skips teams already notified, so running it again after a partial failure
+     * retries only what failed rather than mailing the whole contest twice.
+     * Sequential on purpose: this is one Gmail account, and forty-nine parallel
+     * SMTP connections is how an account gets rate-limited mid-sweep. */
+    if (action === 'bulk_notify_payments') {
+      const pending = await IupcRegistration.find({
+        registrationStatus: { $ne: 'paid' },
+        paymentNotifiedAt: { $exists: false },
+      });
+
+      const notified = [];
+      const failed = [];
+
+      for (const team of pending) {
+        const leader = leaderOf(team);
+        if (!leader?.email) {
+          failed.push({ team: team.teamName, reason: 'no team leader email' });
+          continue;
+        }
+
+        try {
+          const sent = await sendIupcPaymentOpenEmail({
+            to: leader.email,
+            leaderName: leader.name,
+            teamName: team.teamName,
+            registrationId: team.registrationId,
+            varsityName: team.varsityName,
+          });
+          if (!sent) {
+            failed.push({ team: team.teamName, reason: 'email not configured' });
+            continue;
+          }
+          team.paymentNotifiedAt = new Date();
+          await team.save();
+          notified.push(team.teamName);
+        } catch (mailError) {
+          console.error(`[admin/bulk-notify-iupc] Email failed for ${leader.email}:`, mailError);
+          failed.push({ team: team.teamName, reason: 'send failed' });
+        }
+      }
+
+      await AdminLog.create({
+        adminEmail,
+        action: 'bulk_notify_payments',
+        eventType: 'iupc',
+        details: {
+          notifiedCount: notified.length,
+          failedCount: failed.length,
+          notifiedTeams: notified,
+          failedTeams: failed.map((f) => f.team),
+        },
+      });
+
+      let message = `Notified ${notified.length} team${notified.length === 1 ? '' : 's'}.`;
+      if (failed.length) {
+        message += ` ${failed.length} failed — use the Notify button on those rows: ${failed
+          .map((f) => `${f.team} (${f.reason})`)
+          .join(', ')}`;
+      } else if (!notified.length) {
+        message = 'Every unpaid team has already been notified.';
+      }
+
+      return NextResponse.json({
+        success: true,
+        message,
+        data: { notifiedCount: notified.length, failedCount: failed.length, failed },
+      });
+    }
 
     if (action === 'bulk_approve_payments') {
       if (!text || typeof text !== 'string') {

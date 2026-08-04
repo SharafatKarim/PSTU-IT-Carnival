@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { getEventDetail } from '@/data/events';
+import { getEventDetail, IUPC_PAYMENT, iupcPaymentTotal } from '@/data/events';
 
 // ---------------------------------------------------------------------------
 // Registration confirmation mail.
@@ -218,9 +218,14 @@ const shell = ({ title, heading, idLabel, id, idNote, body }) => `
     </html>
   `;
 
+/* Returns true when a message actually left, false when SMTP is not configured
+   and this was a no-op. Most callers ignore it — a confirmation that silently
+   does not send is the documented off state. The notify sweep does not: its
+   whole purpose is to record who has been told, and marking 49 teams notified
+   because EMAIL_USER was unset would be worse than sending nothing. */
 async function send({ to, subject, html }) {
   const transporter = getTransporter();
-  if (!transporter) return;
+  if (!transporter) return false;
 
   try {
     const info = await transporter.sendMail({
@@ -230,6 +235,7 @@ async function send({ to, subject, html }) {
       html,
     });
     console.log(`[email] Sent to ${to} — "${subject}". Message ID: ${info.messageId}`);
+    return true;
   } catch (error) {
     console.error(`[email] Failed to send to ${to}:`, error);
     // Rethrow so the caller can log it against the registration it belongs to.
@@ -245,6 +251,73 @@ async function send({ to, subject, html }) {
  * @param {string} registrationId - Generated unique registration ID
  * @param {string} leaderName - Name of the team leader
  */
+/* Tells a pre-registered team that the entry fee is now due.
+ *
+ * Sent from the admin panel, per team or as a sweep — nothing automatic. It is
+ * an announcement rather than a receipt, so it is the one IUPC mail that has to
+ * carry the whole instruction: what to send, where, by when, and what to do
+ * afterwards. A team leader who reads only this email must be able to pay
+ * without visiting the site first, because some of them will try.
+ *
+ * Every figure and the deadline come from IUPC_PAYMENT, the same constant the
+ * payment form and the server-side amount check read. Nothing here is typed a
+ * second time: an email that quotes a different number than the form is how a
+ * team ends up sending the wrong amount and blaming us for it. */
+export async function sendIupcPaymentOpenEmail({
+  to,
+  leaderName,
+  teamName,
+  registrationId,
+  varsityName,
+}) {
+  const total = iupcPaymentTotal();
+  const payUrl = `https://${SITE}/events/iupc/teams`;
+
+  const html = shell({
+    title: 'IUPC Entry Fee — Final Registration Open',
+    heading: 'Final registration is open',
+    idLabel: 'Team Registration ID',
+    id: registrationId,
+    idNote: 'Find your team by this ID on the directory page.',
+    body: `
+          <p>Hi ${esc(leaderName)},</p>
+          <p>Your team <strong>${esc(teamName)}</strong>${varsityName ? ` from <strong>${esc(varsityName)}</strong>` : ''} is pre-registered for the <strong>Inter-University Programming Contest (IUPC)</strong> at ${BRAND}.</p>
+          <p><strong>Every pre-registered team has been selected.</strong> There is no shortlist and no cut — your place is held, and the entry fee is the last step to confirm it.</p>
+
+          <table class="facts" role="presentation" cellpadding="0" cellspacing="0">
+            <tr><td class="label">Entry fee</td><td class="value">BDT ${IUPC_PAYMENT.fee}</td></tr>
+            <tr><td class="label">Cash-out charge</td><td class="value">BDT ${IUPC_PAYMENT.cashOutCharge}</td></tr>
+            <tr><td class="label">Total to send</td><td class="value">BDT ${total}</td></tr>
+            <tr><td class="label">Send to (${esc(IUPC_PAYMENT.accountType)})</td><td class="value">${esc(IUPC_PAYMENT.number)}</td></tr>
+            <tr><td class="label">Accepted wallets</td><td class="value">${esc(IUPC_PAYMENT.methods.join(' / '))}</td></tr>
+            <tr><td class="label">Pay before</td><td class="value">${esc(IUPC_PAYMENT.deadline)}</td></tr>
+          </table>
+
+          <p><strong>How to pay</strong></p>
+          <ol>
+            <li>Send <strong>BDT ${total}</strong> to <strong>${esc(IUPC_PAYMENT.number)}</strong> using &ldquo;Send Money&rdquo; &mdash; not &ldquo;Payment&rdquo; &mdash; from ${esc(IUPC_PAYMENT.methods.join(' or '))}.</li>
+            <li>Open the team directory below and find <strong>${esc(teamName)}</strong>.</li>
+            <li>Press <strong>Pay</strong>, then enter this email address and the transaction ID your wallet gave you.</li>
+          </ol>
+
+          <p style="text-align:center;">
+            <a href="${payUrl}" class="btn" target="_blank">Pay for your team</a>
+          </p>
+          <p style="font-size:12px;color:#7b6d9e;text-align:center;">If the button does not work, open<br><a href="${payUrl}" style="color:#00ffff;">${payUrl}</a></p>
+
+          <p>Your team's status becomes <strong>Awaiting check</strong> the moment you submit, and <strong>Paid</strong> once a coordinator matches your transfer against our records. You will get a confirmation email at that point — this one is not a receipt.</p>
+          <p><strong>Teams that have not paid by ${esc(IUPC_PAYMENT.deadline)} may lose their slot.</strong> If you have already paid, no action is needed.</p>
+          <p>Questions about the fee or a payment that has not been picked up? Reply to this email or contact the coordinators.</p>
+          <p>Best regards,<br>IUPC Organizing Committee<br>${BRAND}</p>`,
+  });
+
+  return send({
+    to,
+    subject: `Entry fee now open — ${teamName} — pay by ${IUPC_PAYMENT.deadline}`,
+    html,
+  });
+}
+
 /* Sent when a coordinator matches a team's entry-fee transfer against the
    wallet statement — from the admin panel, individually or through the SMS
    sweep. Goes to the team leader alone: correspondence for a team is one mail,

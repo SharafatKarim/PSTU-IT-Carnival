@@ -17,6 +17,10 @@ export default function AdminDashboard({ user }) {
   const [actionLoading, setActionLoading] = useState(null); // stores team._id being approved
   const [bulkText, setBulkText] = useState('');
   const [bulkLoading, setBulkLoading] = useState(false);
+  /* Kept apart from actionLoading so notifying one team does not grey out every
+     Approve button on the page. */
+  const [notifyLoading, setNotifyLoading] = useState(null); // team._id being notified
+  const [notifyAllLoading, setNotifyAllLoading] = useState(false);
   const [filterSelections, setFilterSelections] = useState({}); // tab -> selected filter key
 
   const fetchData = async () => {
@@ -69,6 +73,77 @@ export default function AdminDashboard({ user }) {
       alert('Network error. Failed to process approval.');
     } finally {
       setActionLoading(null);
+    }
+  };
+
+  /* "The fee is due" to one team's leader.
+     The row goes green off paymentNotifiedAt, which the server returns, so the
+     state survives a reload rather than living in this component. A failure
+     leaves the row exactly as it was — still offering the button, which is the
+     retry. */
+  const handleNotify = async (id) => {
+    setNotifyLoading(id);
+    try {
+      const res = await fetch('/api/v1/admin/registrations', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, eventType: 'iupc', action: 'notify_payment' }),
+      });
+      const result = await res.json();
+      if (res.ok && result.success) {
+        setData((prev) => ({
+          ...prev,
+          iupc: prev.iupc.map((t) =>
+            t._id === id
+              ? { ...t, paymentNotifiedAt: result.data?.paymentNotifiedAt || new Date().toISOString() }
+              : t
+          ),
+        }));
+      } else {
+        alert(result.message || 'Failed to send the notification.');
+      }
+    } catch (e) {
+      alert('Network error. The notification was not sent.');
+    } finally {
+      setNotifyLoading(null);
+    }
+  };
+
+  /* Everyone unpaid who has not had it yet. Refetches rather than patching the
+     list: the sweep can partially fail, and the server's view of who was
+     actually mailed is the only one worth trusting. */
+  const handleNotifyAll = async () => {
+    const pending = (data.iupc || []).filter(
+      (t) => t.registrationStatus !== 'paid' && !t.paymentNotifiedAt
+    );
+    if (!pending.length) {
+      alert('Every unpaid team has already been notified.');
+      return;
+    }
+    if (
+      !window.confirm(
+        `Email the payment announcement to ${pending.length} team leader${
+          pending.length === 1 ? '' : 's'
+        }? Teams already notified are skipped.`
+      )
+    ) {
+      return;
+    }
+
+    setNotifyAllLoading(true);
+    try {
+      const res = await fetch('/api/v1/admin/registrations', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'bulk_notify_payments' }),
+      });
+      const result = await res.json();
+      alert(result.message || 'Bulk notification finished.');
+      if (res.ok && result.success) fetchData();
+    } catch (e) {
+      alert('Network error. The bulk notification did not complete.');
+    } finally {
+      setNotifyAllLoading(false);
     }
   };
 
@@ -264,6 +339,39 @@ export default function AdminDashboard({ user }) {
             Hackathon ({data.hackathon?.length || 0})
           </button>
         </div>
+
+        {activeTab === 'iupc' && !loading && (
+          <div className="mb-6 rounded-2xl border border-aqua-400/20 bg-ink-900/30 p-5 shadow-card backdrop-blur-md">
+            <h3 className="text-sm font-bold text-white mb-1.5">Announce the entry fee</h3>
+            <p className="text-xs text-mist-400 mb-3">
+              Emails every unpaid team leader that final registration is open — the
+              amount, the wallet number, the deadline and a link to the payment
+              page. Teams already notified are skipped, so this is safe to run
+              again after a partial failure; anything that still fails can be
+              retried from the <span className="font-semibold text-mist-300">Notify</span>{' '}
+              button on its own row.
+            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                onClick={handleNotifyAll}
+                disabled={notifyAllLoading}
+                className="px-5 py-2.5 text-xs font-bold rounded-xl bg-aqua-500 hover:bg-aqua-400 text-ink-950 transition disabled:opacity-50 min-w-[150px]"
+              >
+                {notifyAllLoading ? 'Sending…' : 'Notify all unpaid teams'}
+              </button>
+              <span className="text-xs text-mist-400">
+                {(() => {
+                  const list = data.iupc || [];
+                  const unpaid = list.filter((t) => t.registrationStatus !== 'paid');
+                  const waiting = unpaid.filter((t) => !t.paymentNotifiedAt).length;
+                  return `${waiting} of ${unpaid.length} unpaid team${
+                    unpaid.length === 1 ? '' : 's'
+                  } not yet notified`;
+                })()}
+              </span>
+            </div>
+          </div>
+        )}
 
         {['datathon', 'gaming', 'iupc'].includes(activeTab) && !loading && (
           <div className="mb-6 rounded-2xl border border-grape-500/20 bg-ink-900/30 p-5 shadow-card backdrop-blur-md">
@@ -642,6 +750,7 @@ export default function AdminDashboard({ user }) {
                             )}
                           </td>
                           <td className="px-6 py-4">
+                            <div className="flex flex-col items-start gap-2">
                             {/* Two ways a team gets paid, and both end at the
                                 same status.
 
@@ -686,6 +795,37 @@ export default function AdminDashboard({ user }) {
                                     : 'Mark paid'}
                               </button>
                             )}
+
+                            {/* Green means the announcement reached this team's
+                                leader — it reads paymentNotifiedAt from the
+                                database, not from this session, so it is still
+                                green tomorrow. It stays clickable: green is a
+                                record of what happened, not a lock, and "resend
+                                it, I deleted the mail" is a normal request.
+                                A team that has paid needs no announcement. */}
+                            {team.registrationStatus !== 'paid' && (
+                              <button
+                                onClick={() => handleNotify(team._id)}
+                                disabled={notifyLoading !== null}
+                                title={
+                                  team.paymentNotifiedAt
+                                    ? `Notified ${new Date(team.paymentNotifiedAt).toLocaleString()} — click to send again`
+                                    : 'Email the team leader that the entry fee is due'
+                                }
+                                className={`px-3 py-1.5 text-xs font-bold rounded-lg transition disabled:opacity-50 ${
+                                  team.paymentNotifiedAt
+                                    ? 'border border-green-500/30 bg-green-500/10 text-green-400 hover:bg-green-500/20'
+                                    : 'border border-aqua-400/30 bg-aqua-400/10 text-aqua-300 hover:bg-aqua-400/20'
+                                }`}
+                              >
+                                {notifyLoading === team._id
+                                  ? 'Sending…'
+                                  : team.paymentNotifiedAt
+                                    ? '✓ Notified'
+                                    : 'Notify'}
+                              </button>
+                            )}
+                            </div>
                           </td>
                         </tr>
                       ))

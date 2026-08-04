@@ -146,6 +146,12 @@ const registrationSchema = new mongoose.Schema(
     },
     /* When an admin matched the transaction against the statement. */
     verifiedAt: { type: Date },
+    /* When the "final registration is open" mail went to this team's leader.
+       Stored rather than kept in the panel's memory: the button is green
+       because this is set, so a reload does not offer to send it again and the
+       bulk sweep can skip the teams that already have it. Absent means nobody
+       has been told, which is why the sweep is safe to run twice. */
+    paymentNotifiedAt: { type: Date },
     registrationId: {
       type: String,
       required: true,
