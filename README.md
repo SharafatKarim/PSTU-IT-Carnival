@@ -51,7 +51,6 @@ works with no `.env` at all.
 | `CLIENT_PORT` | `5173` | Host port compose publishes on |
 | `NEXT_PUBLIC_SITE_URL` | `https://` + `EVENT.website` | Base URL used by `sitemap.xml` |
 
----
 
 ## How the URLs are laid out
 
