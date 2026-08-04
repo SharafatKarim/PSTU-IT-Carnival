@@ -232,10 +232,10 @@ export const EVENT_DETAILS =
       },
       {
         slug: 'datathon',
-        /*name: 'Datathon',*/
-        /*fullName: 'PSTU Online Datathon 2026',*/
+        name: 'Datathon',
+        fullName: 'PSTU Online Datathon 2026',
         shortName: 'Datathon',
-        /*icon: 'chart',*/
+        icon: 'chart',
         accent: 'magenta',
         scope: 'National',
         mode: 'Solo or Team of 2',

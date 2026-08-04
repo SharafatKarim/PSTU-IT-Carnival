@@ -113,34 +113,165 @@ const Section = ({
    ordered above the long intro rather than seven blocks down.
    --------------------------------------------------------------------------- */
 const OpenNowPanel = () => {
-  const t = IUPC?.tournament;
-  if (!t) return null;
+  const [currentIdx, setCurrentIdx] = useState(0);
 
-  const paying = iupcReg.payment;
-  const deadline = iupcDeadline(t);
-  const facts = iupcFacts(t);
+  // Compile slides for all active/open events
+  const slides = [];
+
+  // 1. IUPC
+  const iupc = getEventDetail('iupc');
+  if (iupc) {
+    const t = iupc.tournament;
+    const paying = iupcReg.payment;
+    const deadline = iupcDeadline(t);
+    const facts = iupcFacts(t);
+    slides.push({
+      id: 'iupc',
+      badge: paying ? 'Payment open' : 'Open now',
+      deadline,
+      title: `${iupc.name} ${paying ? 'final registration' : 'pre-registration'}`,
+      description: paying
+        ? 'Pre-registration has closed. Every pre-registered team has a place — pay the entry fee to confirm it.'
+        : `${iupc.fullName} — ${t.teamSize.replace(/\s*\(.*\)/, '')}.`,
+      facts,
+      ctaLabel: iupcReg.open ? 'Pre-register your team' : iupcReg.closedLabel,
+      ctaHref: iupcReg.href,
+      footerNote: paying ? 'Find your team in the directory and press Pay' : 'Free · instant registration ID',
+      accent: 'gold',
+    });
+  }
+
+  // 2. Datathon
+  const datathon = getEventDetail('datathon');
+  if (datathon && datathon.registrationOpen !== false) {
+    slides.push({
+      id: 'datathon',
+      badge: 'Open now',
+      deadline: datathon.tournament?.deadline,
+      title: `${datathon.name} Registration`,
+      description: datathon.tagline || 'Team up and turn raw data into insights.',
+      facts: [
+        { icon: UsersIcon, label: 'Team size', value: datathon.tournament?.teamSizeShort || '1-3 members' },
+        { icon: TicketIcon, label: 'Entry fee', value: datathon.tournament?.entryFee || '৳1,500 per team' },
+        { icon: CalendarIcon, label: 'Date', value: datathon.tournament?.date || '14 August' },
+      ],
+      ctaLabel: 'Register for Datathon',
+      ctaHref: ROUTES.eventRegister('datathon'),
+      footerNote: 'Online registration with bKash/Nagad verification',
+      accent: 'magenta',
+    });
+  }
+
+  // 3. Project Showcasing
+  const showcase = getEventDetail('project-showcase');
+  if (showcase && showcase.registrationOpen !== false) {
+    slides.push({
+      id: 'project-showcase',
+      badge: 'Open now',
+      deadline: showcase.tournament?.deadline,
+      title: `${showcase.name} Registration`,
+      description: showcase.tagline || 'Showcase your engineering hardware prototypes.',
+      facts: [
+        { icon: UsersIcon, label: 'Team size', value: showcase.tournament?.teamSizeShort || '1-3 members' },
+        { icon: TicketIcon, label: 'Entry fee', value: showcase.tournament?.entryFee || 'Single-100, Duo-200, Trio-300' },
+        { icon: CalendarIcon, label: 'Date', value: showcase.tournament?.date || '13 August' },
+      ],
+      ctaLabel: 'Register for Showcase',
+      ctaHref: ROUTES.eventRegister('project-showcase'),
+      footerNote: 'IoT & hardware prototype projects',
+      accent: 'aqua',
+    });
+  }
+
+  // 4. IT Quiz
+  const itquiz = getEventDetail('it-quiz');
+  if (itquiz && itquiz.registrationOpen !== false) {
+    slides.push({
+      id: 'it-quiz',
+      badge: 'Open now',
+      deadline: itquiz.tournament?.deadline,
+      title: `${itquiz.name} Registration`,
+      description: itquiz.tagline || 'Buzzer quiz across computing history and tech trivia.',
+      facts: [
+        { icon: UsersIcon, label: 'Participation', value: itquiz.tournament?.teamSizeShort || 'Individual (Solo)' },
+        { icon: TicketIcon, label: 'Entry fee', value: itquiz.tournament?.entryFee || '৳100 per participant' },
+        { icon: CalendarIcon, label: 'Date', value: itquiz.tournament?.date || '14 August' },
+      ],
+      ctaLabel: 'Register for IT Quiz',
+      ctaHref: ROUTES.eventRegister('it-quiz'),
+      footerNote: 'bKash/Nagad payments supported',
+      accent: 'gold',
+    });
+  }
+
+  // 5. Gaming
+  slides.push({
+    id: 'gaming',
+    badge: 'Open now',
+    deadline: '14 August 2026',
+    title: 'Gaming Hub Registrations',
+    description: "PUBG Mobile, Free Fire, eFootball, Ludo and Rubik's Cube tournaments.",
+    facts: [
+      { icon: UsersIcon, label: 'Form factor', value: 'Squad & Solo entry options' },
+      { icon: TicketIcon, label: 'Entry fee', value: 'Varies per game (Free options available)' },
+      { icon: CalendarIcon, label: 'Date', value: '11–13 August 2026' },
+    ],
+    ctaLabel: 'Register for Gaming',
+    ctaHref: ROUTES.gaming,
+    footerNote: 'Esports & classic gaming matches',
+    accent: 'purple',
+  });
+
+  // Auto shift slides every 6 seconds
+  useState(() => {
+    if (typeof window !== 'undefined') {
+      const interval = setInterval(() => {
+        setCurrentIdx((prev) => (prev + 1) % slides.length);
+      }, 6000);
+      return () => clearInterval(interval);
+    }
+  });
+
+  if (slides.length === 0) return null;
+
+  const currentSlide = slides[currentIdx];
+  const style = slideAccentOf(currentSlide.accent);
 
   return (
-    <div className="rounded-2xl border border-gold-400/40 bg-ink-900/70 p-6 shadow-glow-gold backdrop-blur sm:p-7">
-      <div className="flex flex-wrap items-center gap-3">
-        <span className="inline-flex items-center gap-2 rounded-full border border-gold-400/40 bg-gold-400/10 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-gold-300">
-          <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-gold-400" />
-          {paying ? 'Payment open' : 'Open now'}
-        </span>
-        {deadline && <Countdown date={deadline} />}
+    <div className={`rounded-2xl border ${style.cardBorder} bg-ink-900/70 p-6 shadow-card backdrop-blur sm:p-7 relative transition-all duration-300`}>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-widest ${style.badge}`}>
+            <span className={`h-1.5 w-1.5 animate-pulse-glow rounded-full ${style.dot}`} />
+            {currentSlide.badge}
+          </span>
+          {currentSlide.deadline && <Countdown date={currentSlide.deadline} />}
+        </div>
+
+        {/* Slide Counter dots */}
+        <div className="flex items-center gap-1.5">
+          {slides.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentIdx(idx)}
+              className={`h-2 w-2 rounded-full transition-all duration-300 ${
+                idx === currentIdx ? style.bulletActive : style.bullet
+              }`}
+              aria-label={`Go to slide ${idx + 1}`}
+            />
+          ))}
+        </div>
       </div>
 
-      <h2 className="mt-4 text-xl font-bold text-white">
-        {IUPC.name} {paying ? 'final registration' : 'pre-registration'}
+      <h2 className="mt-4 text-xl font-bold text-white transition-colors duration-300">
+        {currentSlide.title}
       </h2>
-      <p className="mt-1.5 text-sm leading-relaxed text-mist-300">
-        {paying
-          ? 'Pre-registration has closed. Every pre-registered team has a place — pay the entry fee to confirm it.'
-          : `${IUPC.fullName} — ${t.teamSize.replace(/\s*\(.*\)/, '')}.`}
+      <p className="mt-1.5 text-sm leading-relaxed text-mist-300 min-h-[40px]">
+        {currentSlide.description}
       </p>
 
       <dl className="mt-5 divide-y divide-white/10 border-y border-white/10">
-        {facts.map((fact) => (
+        {currentSlide.facts.map((fact) => (
           <div key={fact.label} className="flex items-center gap-3 py-2.5">
             <fact.icon className="h-4 w-4 shrink-0 text-mist-400" />
             <dt className="flex-1 text-sm text-mist-400">{fact.label}</dt>
@@ -152,19 +283,59 @@ const OpenNowPanel = () => {
       </dl>
 
       <Link
-        href={iupcReg.href}
-        className="group mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gold-400 px-6 py-3.5 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300"
+        href={currentSlide.ctaHref}
+        className={`group mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-bold transition-all duration-300 ${style.btn}`}
       >
-        {iupcReg.open ? 'Pre-register your team' : iupcReg.closedLabel}
+        {currentSlide.ctaLabel}
         <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
       </Link>
       <p className="mt-3 text-center text-xs text-mist-400">
-        {paying
-          ? 'Find your team in the directory and press Pay'
-          : 'Free · instant registration ID'}
+        {currentSlide.footerNote}
       </p>
     </div>
   );
+};
+
+const slideAccentOf = (accent) => {
+  switch (accent) {
+    case 'magenta':
+      return {
+        cardBorder: 'border-magenta-500/30',
+        badge: 'border-magenta-500/40 bg-magenta-500/10 text-magenta-400',
+        dot: 'bg-magenta-500',
+        btn: 'bg-magenta-600 hover:bg-magenta-500 shadow-glow-magenta text-white',
+        bullet: 'bg-magenta-500/20 hover:bg-magenta-500/40',
+        bulletActive: 'bg-magenta-500 scale-125 shadow-glow-magenta',
+      };
+    case 'aqua':
+      return {
+        cardBorder: 'border-aqua-500/30',
+        badge: 'border-aqua-500/40 bg-aqua-500/10 text-aqua-400',
+        dot: 'bg-aqua-500',
+        btn: 'bg-aqua-500 hover:bg-aqua-400 shadow-glow-aqua text-ink-950',
+        bullet: 'bg-aqua-500/20 hover:bg-aqua-500/40',
+        bulletActive: 'bg-aqua-500 scale-125 shadow-glow-aqua',
+      };
+    case 'purple':
+      return {
+        cardBorder: 'border-purple-500/30',
+        badge: 'border-purple-500/40 bg-purple-500/10 text-purple-400',
+        dot: 'bg-purple-500',
+        btn: 'bg-purple-600 hover:bg-purple-500 shadow-glow-purple text-white',
+        bullet: 'bg-purple-500/20 hover:bg-purple-500/40',
+        bulletActive: 'bg-purple-500 scale-125 shadow-glow-purple',
+      };
+    case 'gold':
+    default:
+      return {
+        cardBorder: 'border-gold-400/40',
+        badge: 'border-gold-400/40 bg-gold-400/10 text-gold-300',
+        dot: 'bg-gold-400',
+        btn: 'bg-gold-400 hover:bg-gold-300 shadow-glow-gold text-ink-950',
+        bullet: 'bg-gold-400/20 hover:bg-gold-400/40',
+        bulletActive: 'bg-gold-400 scale-125 shadow-glow-gold',
+      };
+  }
 };
 
 const Hero = () => (
