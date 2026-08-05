@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/server/db';
 import Registration from '@/server/events/iupc/model';
-import { IUPC_PAYMENT, iupcPaymentTotal } from '@/data/events';
+import { IUPC_PAYMENT, iupcPaymentTotal, iupcPaymentClosed } from '@/data/events';
 import { checkWriteLimits, clientKey } from '@/server/rateLimit';
 import { verifyTurnstile } from '@/server/turnstile';
 
@@ -84,6 +84,20 @@ export async function POST(req) {
       return NextResponse.json(
         { success: false, message: challenge.message },
         { status: 403 }
+      );
+    }
+
+    /* The deadline, enforced. The Pay button hides itself once this passes, but
+       that is the courtesy — this is the control. The endpoint is public, the
+       button's decision lives in a browser, and a POST arrives regardless of
+       what the page rendered.
+       Checked before the team is even looked up: a late submission is refused
+       on its own merits, and saying so costs no database round trip. */
+    if (iupcPaymentClosed()) {
+      return fail(
+        `The entry-fee deadline (${IUPC_PAYMENT.deadline}) has passed, so payments are no longer accepted here. If you have already sent the money, contact the coordinators — do not send it again.`,
+        null,
+        403
       );
     }
 

@@ -3,9 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AlertIcon, ArrowLeftIcon, ArrowRightIcon, CheckIcon } from '@/components/landing/Icons';
 import { fetchTeams } from '@/services/events/iupc';
-import { getEventDetail } from '@/data/events';
+import { getEventDetail, IUPC_PAYMENT, iupcPaymentClosed } from '@/data/events';
 import { eventTeamsNav } from '@/lib/routes';
 import { accentOf } from '@/lib/accents';
+import { useNow } from '@/lib/useNow';
 import EventSubPage, { SubPageTabs } from './EventSubPage';
 import PaymentModal from './PaymentModal';
 
@@ -37,7 +38,7 @@ const StatusPill = ({ status = 'pre-registered' }) => (
 );
 
 /* Table row on sm and up; a self-contained card below it. */
-const TeamRow = ({ team, accent, onPay }) => (
+const TeamRow = ({ team, accent, onPay, closed }) => (
   <li
     className={`grid grid-cols-1 items-start gap-x-4 gap-y-2 border-t border-ink-700/70 px-3 py-3 transition hover:bg-white/[0.02] sm:items-center sm:py-2.5 ${COLS}`}
   >
@@ -69,34 +70,45 @@ const TeamRow = ({ team, accent, onPay }) => (
 
     <div className="hidden sm:flex sm:items-center sm:justify-end sm:gap-2">
       <StatusPill status={team.status} />
-      <PayButton team={team} onPay={onPay} />
+      <PayButton team={team} onPay={onPay} closed={closed} />
     </div>
 
     {/* On mobile the pill rides the top line, so the button gets its own row. */}
     <div className="sm:hidden">
-      <PayButton team={team} onPay={onPay} full />
+      <PayButton team={team} onPay={onPay} closed={closed} full />
     </div>
   </li>
 );
 
 /* Shown until the fee is settled. A team whose reference is already in can see
-   that it landed, but cannot submit a second one — the API refuses anyway. */
-const PayButton = ({ team, onPay, full = false }) => {
+   that it landed, but cannot submit a second one — the API refuses anyway.
+ *
+ * `closed` is the deadline having passed, decided on the CLIENT's clock. It
+ * cannot be decided here at render time: this page is statically prerendered,
+ * so a build on the 4th would bake in "open" for ever. It arrives as null until
+ * the browser has told us what time it is, and null renders as open — the same
+ * fallback the countdown pill uses, and the honest one, since the alternative
+ * is flashing "closed" at everyone for a frame. The API is what actually
+ * refuses a late submission. */
+const PayButton = ({ team, onPay, closed, full = false }) => {
   if (team.status === 'paid' || team.status === 'rejected') return null;
 
   const submitted = team.status === 'payment-submitted';
+  const disabled = submitted || closed;
+
   return (
     <button
       type="button"
       onClick={() => onPay(team)}
-      disabled={submitted}
+      disabled={disabled}
+      title={closed ? `The entry-fee deadline (${IUPC_PAYMENT.deadline}) has passed` : undefined}
       className={`${full ? 'w-full' : ''} whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-bold transition ${
-        submitted
+        disabled
           ? 'cursor-not-allowed border border-white/10 bg-white/5 text-mist-500'
           : 'bg-gold-400 text-ink-950 hover:bg-gold-300'
       }`}
     >
-      {submitted ? 'Awaiting check' : 'Pay'}
+      {submitted ? 'Awaiting check' : closed ? 'Closed' : 'Pay'}
     </button>
   );
 };
@@ -113,6 +125,11 @@ const TeamsDirectory = ({ slug = 'iupc' }) => {
 
   /* The row whose payment form is open, or null. */
   const [paying, setPaying] = useState(null);
+
+  /* null until the browser reports the time — see PayButton for why this is not
+     decided at render time. */
+  const now = useNow();
+  const closed = now ? iupcPaymentClosed(now) : false;
 
   const abortRef = useRef(null);
 
@@ -180,6 +197,22 @@ const TeamsDirectory = ({ slug = 'iupc' }) => {
       intro={`Every team pre-registered for ${event?.name}. Search by team name, university, member, or serial number.`}
       tabs={<SubPageTabs slug={slug} active="teams" />}
     >
+      {/* A row full of greyed-out buttons is a bug until something says why. */}
+      {closed && (
+        <div className="mb-4 flex items-start gap-2.5 rounded-lg border border-red-500/25 bg-red-950/20 px-4 py-3 text-sm text-mist-200">
+          <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
+          <span>
+            <strong className="font-semibold text-white">
+              The entry-fee deadline has passed
+            </strong>{' '}
+            — payments closed on {IUPC_PAYMENT.deadline} and can no longer be
+            submitted here. If you have already sent the money and your team
+            still shows as pre-registered, contact the coordinators rather than
+            sending it again.
+          </span>
+        </div>
+      )}
+
       <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
         <label className="relative flex-1">
           <span className="sr-only">Search teams</span>
@@ -236,6 +269,7 @@ const TeamsDirectory = ({ slug = 'iupc' }) => {
                 team={team}
                 accent={accent}
                 onPay={setPaying}
+                closed={closed}
               />
             ))}
           </ul>

@@ -27,6 +27,41 @@
    the figure in the confirmation and the figure recorded against the payment
    are one number.
    --------------------------------------------------------------------------- */
+/* THE deadline. Everything else about it is derived from this one string.
+
+   An instant with an explicit +06:00, not a date: the contest is in Dhaka and
+   the cutoff has to fall at the same moment for a team paying from Khulna and
+   a coordinator checking from anywhere else. A bare '2026-08-06' would be
+   parsed as UTC midnight and shut the window six hours early.
+
+   23:59:59 rather than 23:59:00 so the whole of the final minute counts —
+   "11:59 PM" reads as the last minute of the day, and it should behave that
+   way. */
+const IUPC_PAYMENT_DEADLINE = '2026-08-06T23:59:59+06:00';
+
+const DHAKA_OFFSET_MS = 6 * 60 * 60 * 1000;
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+
+/* The instant above, written the way the site writes dates: "6 August 2026,
+   11:59 PM". Derived rather than typed beside it, because the two would
+   eventually disagree and the one that loses is the human-readable half — the
+   version on the poster, in the email and in the announcement, promising a
+   date the button does not honour. Seconds are dropped; they are an
+   implementation detail of "the end of that minute". */
+const dhakaLabel = (iso) => {
+  const shifted = new Date(new Date(iso).getTime() + DHAKA_OFFSET_MS);
+  const hours = shifted.getUTCHours();
+  const minutes = String(shifted.getUTCMinutes()).padStart(2, '0');
+  const hour12 = hours % 12 === 0 ? 12 : hours % 12;
+  return (
+    `${shifted.getUTCDate()} ${MONTH_NAMES[shifted.getUTCMonth()]} ` +
+    `${shifted.getUTCFullYear()}, ${hour12}:${minutes} ${hours < 12 ? 'AM' : 'PM'}`
+  );
+};
+
 export const IUPC_PAYMENT = {
   number: '01790876259',
   accountType: 'Personal',
@@ -35,12 +70,28 @@ export const IUPC_PAYMENT = {
   cashOutCharge: 50,
   instructions:
     'Use “Send Money” (not Payment) from either wallet, then paste the transaction ID it gives you.',
-  /* When the fee has to be in. Announced on the event page, which reads this
-     line rather than repeating the date — so moving the deadline is one edit.
-     Nothing ENFORCES it: the payments route still accepts a submission after
-     this passes, and a coordinator decides what to do with a late one. */
-  deadline: '5 August 2026, 11:45 PM',
+  /* The machine-readable half — what the Pay button and the API compare
+     against. Move the deadline by editing IUPC_PAYMENT_DEADLINE above; every
+     page, email and check follows. */
+  deadlineAt: IUPC_PAYMENT_DEADLINE,
+  /* The human half. Announced on the event page, the landing panels, the slots
+     page and the notification email, all of which read this rather than
+     repeating the date. */
+  deadline: dhakaLabel(IUPC_PAYMENT_DEADLINE),
 };
+
+/* Has the entry-fee window shut?
+ *
+ * Checked in BOTH places on purpose. The button reads it to stop offering a
+ * form that cannot succeed; the API reads it because a disabled button is a
+ * courtesy, not a control — the endpoint is public and a POST does not care
+ * what the page rendered.
+ *
+ * `now` is injectable so the caller decides which clock: the browser passes
+ * the client's (see useNow — these pages are prerendered, so build time is not
+ * the current time), the server passes its own. */
+export const iupcPaymentClosed = (now = new Date()) =>
+  now.getTime() > new Date(IUPC_PAYMENT.deadlineAt).getTime();
 
 export const iupcPaymentTotal = () =>
   IUPC_PAYMENT.fee + IUPC_PAYMENT.cashOutCharge;
