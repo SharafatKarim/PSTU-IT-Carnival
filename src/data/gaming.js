@@ -1181,8 +1181,8 @@ export const GAMES = [
        --------------------------------------------------------------------- */
     tournament: {
       date: '14 August 2026',
-      time: '2:00 PM (Reporting: 1:30 PM)',
-      venue: 'Agriculture Conference Room',
+      time: '10:30 AM (Reporting: 10:00 AM)',
+      venue: 'Central auditorium',
       entryFee: '৳100 per player',
       entryShort: '৳100',
       entryScope: 'per player',
