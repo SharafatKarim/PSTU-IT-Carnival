@@ -83,8 +83,6 @@ URLs that were public before this layout — `/gaming`, `/gaming/<slug>`,
 `/api/v1/registrations` re-exports the IUPC handler rather than redirecting,
 because a 308 would rely on the caller replaying its POST body.
 
----
-
 ## Project structure
 
 ```
