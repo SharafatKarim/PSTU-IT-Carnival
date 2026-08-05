@@ -243,7 +243,7 @@ export async function POST(req, { params }) {
        redeployed. Read from the same constant the form renders from, so the
        two can never disagree. */
     const doc = normalizeGameRegistration(game, body, {
-      receiverNumber: GAMING_PAYMENT.number,
+      receiverNumber: game.payment?.number || GAMING_PAYMENT.number,
     });
     doc.payment.screenshot = screenshotId;
 

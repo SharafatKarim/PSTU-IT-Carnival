@@ -220,6 +220,38 @@ const paymentSection = {
   ],
 };
 
+const efootballPaymentSection = {
+  key: "payment",
+  title: "Payment",
+  subtitle:
+    "Send the entry fee first, then enter the transaction ID below. Your registration is confirmed once the committee matches the payment against it.",
+  payment: true,
+  fields: [
+    {
+      name: "payment.method",
+      label: "Payment Method",
+      type: "select",
+      options: ["bKash", "Nagad", "Rocket"],
+      placeholder: "Which service did you pay with?",
+      required: true,
+    },
+    {
+      name: "payment.transactionId",
+      label: "Transaction ID (TrxID)",
+      placeholder: "e.g. 9F7A2B4C1D",
+      hint: "The reference in the confirmation SMS. Each one can only be used for a single registration.",
+      required: true,
+      autoComplete: "off",
+      rules: {
+        pattern: {
+          value: /^[A-Za-z0-9]{6,25}$/,
+          message: "Transaction ID is 6–25 letters and digits, no spaces",
+        },
+      },
+    },
+  ],
+};
+
 const chessPaymentSection = {
   key: "payment",
   title: "Payment",
@@ -558,6 +590,13 @@ export const GAMES = [
     stage: "open",
     /* Flip to false to close entries without deleting the form. */
     registrationOpen: true,
+    payment: {
+      number: "bKash: 01833054648\nRocket: 018330546482\nNagad: 01560051844",
+      accountType: "Personal",
+      methods: ["bKash", "Nagad", "Rocket"],
+      instructions:
+        "Use “Send Money” (bKash/Nagad) or send to Rocket (12 digits) from any wallet above, then enter the transaction ID it gives you.",
+    },
     registration: {
       kind: "solo",
       /* No entry-type question — every eFootball entry is a solo one. The
@@ -568,7 +607,7 @@ export const GAMES = [
         "Your eFootball / Konami user ID, exactly as it appears in game",
         "The device you will play on — the rules require it before your round starts",
         "A valid student ID for eligibility checks",
-        "৳100 sent via bKash or Nagad, and the transaction ID it gives you",
+        "৳100 sent via bKash, Rocket or Nagad, and the transaction ID it gives you",
       ],
       sections: [
         {
@@ -608,7 +647,7 @@ export const GAMES = [
             },
           ],
         },
-        paymentSection,
+        efootballPaymentSection,
         agreementSection,
       ],
     },

@@ -186,7 +186,7 @@ const PayTo = ({ game, entryType, account, accent }) => {
           <p className="text-[11px] font-bold uppercase tracking-wide text-mist-500">
             Send to {account.accountType ? `(${account.accountType})` : ''}
           </p>
-          <p className="mt-1 select-all font-mono text-xl font-extrabold text-white">
+          <p className="mt-1 select-all font-mono text-xl font-extrabold text-white whitespace-pre-line">
             {account.number}
           </p>
           <p className="mt-0.5 text-[11px] text-mist-500">
