@@ -232,10 +232,12 @@ export async function PATCH(req) {
       const pendingIupc = await IupcRegistration.find({
         registrationStatus: 'payment-submitted',
       });
+      const pendingItQuiz = await ItQuizRegistration.find({ paid: false });
 
       const approvedDatathon = [];
       const approvedGaming = [];
       const approvedIupc = [];
+      const approvedItQuiz = [];
       const failedEmails = [];
 
       // Bulk approve Datathon
@@ -326,8 +328,38 @@ export async function PATCH(req) {
         approvedIupc.push(team.teamName);
       }
 
+      /* Bulk approve IT Quiz entries.
+       *
+       * The one difference from the three above: an IT Quiz entrant may prove
+       * payment with a SCREENSHOT instead of a reference, so transactionId is
+       * optional on this model. smsQuotes() already returns false for an empty
+       * ID, which is the behaviour we want — a screenshot-only entry can never
+       * be matched by an SMS sweep and stays for an admin to look at. Nothing
+       * here needs to special-case it; it is written down because the absence
+       * of a check is easy to read as an oversight.
+       *
+       * The screenshot is dropped on approval for the same reason the
+       * individual path drops it: it existed to prove this payment, it has now
+       * done that, and students' financial documents are not retained.
+       *
+       * No confirmation email — this event does not send one on approval, and
+       * the sweep is not the place to invent that. */
+      for (const entry of pendingItQuiz) {
+        if (!smsQuotes(text, entry.payment?.transactionId)) continue;
+
+        entry.paid = true;
+        await dropScreenshot(entry.payment?.screenshot);
+        if (entry.payment) entry.payment.screenshot = null;
+        await entry.save();
+
+        approvedItQuiz.push(entry.fullName || entry.registrationId);
+      }
+
       const totalCount =
-        approvedDatathon.length + approvedGaming.length + approvedIupc.length;
+        approvedDatathon.length +
+        approvedGaming.length +
+        approvedIupc.length +
+        approvedItQuiz.length;
 
       // Log bulk approval
       if (totalCount > 0) {
@@ -339,14 +371,16 @@ export async function PATCH(req) {
             approvedDatathonCount: approvedDatathon.length,
             approvedGamingCount: approvedGaming.length,
             approvedIupcCount: approvedIupc.length,
+            approvedItQuizCount: approvedItQuiz.length,
             approvedDatathonTeams: approvedDatathon,
             approvedGamingTeams: approvedGaming,
             approvedIupcTeams: approvedIupc,
+            approvedItQuizEntrants: approvedItQuiz,
           },
         });
       }
 
-      let msg = `Bulk approval completed. Approved ${totalCount} team(s)/player(s) (Datathon: ${approvedDatathon.length}, Gaming: ${approvedGaming.length}, IUPC: ${approvedIupc.length}).`;
+      let msg = `Bulk approval completed. Approved ${totalCount} team(s)/player(s) (Datathon: ${approvedDatathon.length}, Gaming: ${approvedGaming.length}, IUPC: ${approvedIupc.length}, IT Quiz: ${approvedItQuiz.length}).`;
       if (failedEmails.length > 0) {
         msg += ` Email failed for: ${failedEmails.join(', ')}`;
       }
@@ -359,6 +393,7 @@ export async function PATCH(req) {
           approvedDatathon,
           approvedGaming,
           approvedIupc,
+          approvedItQuiz,
         },
       });
     }

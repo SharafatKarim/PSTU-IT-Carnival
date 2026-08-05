@@ -372,7 +372,11 @@ export default function AdminDashboard({ user }) {
           </div>
         )}
 
-        {['datathon', 'gaming', 'iupc'].includes(activeTab) && !loading && (
+        {/* The sweep itself is not per-tab — one paste is matched against every
+            event's unpaid entries at once, so which tab you start it from
+            changes nothing. The box appears on the tabs whose entries it can
+            actually approve, which is what makes it discoverable. */}
+        {['datathon', 'gaming', 'iupc', 'it-quiz'].includes(activeTab) && !loading && (
           <div className="mb-6 rounded-2xl border border-grape-500/20 bg-ink-900/30 p-5 shadow-card backdrop-blur-md">
             <h3 className="text-sm font-bold text-white mb-1.5">Bulk Verify Payments via SMS Text</h3>
             <p className="text-xs text-mist-400 mb-3">
