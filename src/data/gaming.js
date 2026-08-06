@@ -1370,7 +1370,7 @@ export const GAMES = [
       teamSizeShort: "Solo",
       slots: "32 players",
       platform: "On-site Speedcubing",
-      deadline: "5 August 2026",
+      deadline: "11 August 2026",
     },
 
     prizes: [
