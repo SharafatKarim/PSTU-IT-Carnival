@@ -483,6 +483,12 @@ export const EVENT_DETAILS = [
     shortName: 'Hackathon',
     icon: 'rocket',
     accent: 'magenta',
+    registrationClosedNotice: {
+      eyebrow: 'Registration Closed',
+      title: 'Pre-registration has closed',
+      body: 'Registration is closed. The preliminary round results will be published soon.',
+      ctaLabel: 'View Registered Teams',
+    },
     cover: '/events/hackathon/cover.jpg',
     scope: 'National',
     tagline: '🚀 The Only National-Level Event of PSTU IT Carnival 2026',

@@ -74,9 +74,9 @@ export const EVENTS = [
     icon: 'rocket',
     blurb:
       'Build a working product against the clock in a national-level innovation sprint for student teams.',
-    status: 'open',
-    cta: 'Preliminary Submission',
-    registerHref: 'https://forms.gle/MdP8WSNAwvPQqPLH7',
+    status: 'live',
+    cta: 'Submission Closed',
+    registerHref: null,
     slug: 'hackathon',
     kind: 'event',
     href: ROUTES.event('hackathon'),

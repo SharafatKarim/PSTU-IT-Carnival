@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from '@/components/landing/Navbar';
@@ -486,17 +487,6 @@ const ClosedRegistrationCard = ({ event }) => {
   const notice = event.registrationClosedNotice;
 
   if (!notice) {
-    if (event.slug === 'hackathon') {
-      return (
-        <div className="mx-auto max-w-2xl text-center rounded-2xl border border-magenta-500/30 bg-magenta-950/10 p-8 shadow-card">
-          <p className="text-sm font-semibold uppercase tracking-widest text-magenta-400">Submission Closed</p>
-          <h3 className="mt-3 text-lg font-bold text-white">Preliminary round submission has closed</h3>
-          <p className="mt-2 text-sm leading-relaxed text-mist-300">
-            The preliminary submission round for the Hackathon is now closed. The final shortlist of teams will be published soon.
-          </p>
-        </div>
-      );
-    }
 
     return (
       <div className="mx-auto max-w-2xl text-center rounded-2xl border border-red-500/20 bg-red-950/10 p-8 shadow-card">
@@ -548,6 +538,83 @@ const ClosedRegistrationCard = ({ event }) => {
   );
 };
 
+const EmbeddedTeamsList = ({ slug }) => {
+  const [search, setSearch] = useState('');
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const query = new URLSearchParams({ limit: '100' });
+        if (search) query.set('search', search);
+        const res = await fetch(`/api/v1/events/${slug}/registrations?${query}`);
+        if (!res.ok) throw new Error('Could not load teams');
+        const data = await res.json();
+        if (active) setResult(data.data);
+      } catch (err) {
+        if (active) setError(err.message);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    const debounceId = setTimeout(load, 300);
+    return () => {
+      active = false;
+      clearTimeout(debounceId);
+    };
+  }, [slug, search]);
+
+  const teams = result?.teams ?? [];
+
+  return (
+    <div className="mx-auto max-w-4xl mt-12 border-t border-white/10 pt-10">
+      <h3 className="text-xl font-bold text-center text-white mb-6">Registered Teams</h3>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center mb-4">
+        <input
+          type="search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search registered teams..."
+          className="flex-1 rounded-xl border border-ink-600 bg-ink-900/70 px-4 py-2.5 text-sm text-white placeholder-mist-500 outline-none transition focus:border-magenta-500 focus:ring-2 focus:ring-magenta-500/30"
+        />
+        <p className="text-sm text-mist-400">
+          {loading ? 'Loading…' : `${result?.total ?? 0} team(s)`}
+        </p>
+      </div>
+
+      <div className="overflow-hidden rounded-xl border border-ink-600 bg-ink-800/50">
+        {error ? (
+          <p className="p-6 text-sm text-red-300 text-center">{error}</p>
+        ) : loading && !result ? (
+          <p className="p-10 text-center text-sm text-mist-400">Loading teams…</p>
+        ) : teams.length === 0 ? (
+          <p className="p-10 text-center text-sm text-mist-400">No teams found</p>
+        ) : (
+          <div className="divide-y divide-ink-700/50">
+            {teams.map((t) => (
+              <div key={t.registrationId} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-white/[0.02] transition">
+                <div>
+                  <h4 className="font-bold text-white text-base">{t.teamName}</h4>
+                  <p className="text-xs text-magenta-400 mt-0.5">{t.university}</p>
+                </div>
+                <div className="text-xs text-mist-400">
+                  <span className="font-semibold text-mist-300">Members:</span>{' '}
+                  {t.players?.map((p) => p.name).join(', ') || 'N/A'}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const EventDetail = ({ slug }) => {
   const event = getEventDetail(slug);
   if (!event) return null;
@@ -595,7 +662,10 @@ const EventDetail = ({ slug }) => {
           {registrationOpen ? (
             <RegisterCta event={event} />
           ) : registrationClosed ? (
-            <ClosedRegistrationCard event={event} />
+            <>
+              <ClosedRegistrationCard event={event} />
+              {event.slug === 'hackathon' && <EmbeddedTeamsList slug={event.slug} />}
+            </>
           ) : (
             <div className="mx-auto max-w-2xl text-center rounded-2xl border border-ink-600 bg-ink-800/40 p-8 shadow-card">
               <p className="text-sm font-semibold uppercase tracking-widest text-gold-400">Registration Opens Later</p>

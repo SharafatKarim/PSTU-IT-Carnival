@@ -20,12 +20,19 @@ const NotOpenYet = ({ event }) => (
           <ClockIcon className="h-6 w-6" />
         </span>
         <h1 className="mt-4 text-xl font-bold text-white">
-          Hackathon preliminary submission has closed
+          Hackathon pre-registration has closed
         </h1>
         <p className="mt-2 text-sm leading-relaxed text-mist-300">
-          Preliminary round submissions are now closed. The final shortlist of teams will be announced soon.
+          Registration has closed. The preliminary round results will be announced soon.
         </p>
-        <div className="mt-6">
+        <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Link
+            href={ROUTES.eventTeams(SLUG)}
+            className="group inline-flex items-center justify-center gap-2 rounded-xl bg-magenta-600 hover:bg-magenta-500 px-6 py-3 text-sm font-bold text-white shadow-glow-magenta transition"
+          >
+            View Registered Teams
+            <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          </Link>
           <Link
             href={ROUTES.event(SLUG)}
             className="inline-flex items-center justify-center rounded-xl border border-ink-500 px-5 py-3 text-sm font-semibold text-mist-200 transition hover:bg-white/5 hover:text-white"
