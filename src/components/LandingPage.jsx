@@ -510,7 +510,7 @@ const HowToEnter = () => {
                   <span className="font-semibold text-mist-200">
                     {prize.place}
                   </span>{' '}
-                  — {prize.perks.join(', ')}
+                  — {(prize.perks || []).join(', ')}
                 </span>
               </li>
             ))}

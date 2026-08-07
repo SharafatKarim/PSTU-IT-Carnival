@@ -102,7 +102,7 @@ const TournamentInfo = ({ game }) => {
                     </p>
                   )}
                   <ul className="mt-3 space-y-1">
-                    {prize.perks.map((perk) => (
+                    {(prize.perks || []).map((perk) => (
                       <li key={perk} className="text-xs text-mist-400">
                         {perk}
                       </li>
