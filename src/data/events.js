@@ -476,25 +476,6 @@ export const EVENT_DETAILS = [
        'published'. The page fills itself in — no component changes.
        ---------------------------------------------------------------------------
      */
-      {
-        slug: 'hackathon',
-        name: 'Hackathon',
-        fullName: 'PSTU IT Carnival 2026 Hackathon',
-        shortName: 'Hackathon',
-        icon: 'rocket',
-        accent: 'magenta',
-        cover: '/events/hackathon/cover.jpg',
-        scope: 'National',
-        tagline: '🚀 The Only National-Level Event of PSTU IT Carnival 2026',
-        blurb:
-            'Challenge yourself by solving real-world industry problems, collaborate with talented innovators, and compete for exciting prizes.',
-        stage: 'published',
-        registrationOpen: false,
-   To promote one: add a `tournament` block, `rules`, `registration`, `faqs`
-   and `coordinators` in the shape IUPC uses above, then change stage to
-   'published'. The page fills itself in — no component changes.
-   ---------------------------------------------------------------------------
- */
   {
     slug: 'hackathon',
     name: 'Hackathon',
@@ -507,7 +488,7 @@ export const EVENT_DETAILS = [
     tagline: '🚀 The Only National-Level Event of PSTU IT Carnival 2026',
     blurb:
         'Challenge yourself by solving real-world industry problems, collaborate with talented innovators, and compete for exciting prizes.',
-    stage: 'open',
+    stage: 'published',
     registrationOpen: false,
 
     /* Phase 1 costs nothing, so this form takes no payment details at all —
