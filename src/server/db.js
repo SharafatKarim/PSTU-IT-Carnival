@@ -9,6 +9,9 @@ import mongoose from 'mongoose';
  * in development. This prevents connections growing exponentially
  * during API Route usage.
  */
+
+// Application hot reload too much for this database connction also established from start 
+// to solve this we use global variable, that datase connection don't established from scartch.
 let cached = global.mongoose;
 
 if (!cached) {

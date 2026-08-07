@@ -307,23 +307,20 @@ export const EVENT_DETAILS =
           {
             place: '1st Prize',
             rank: 1,
-            amount: 'To be announced',
-            perks: ['Prize details will be announced soon']
+            amount: '10,000 BDT',
           },
           {
             place: '2nd Prize',
             rank: 2,
-            amount: 'To be announced',
-            perks: ['Prize details will be announced soon']
+            amount: '6,000 BDT',
           },
           {
             place: '3rd Prize',
             rank: 3,
-            amount: 'To be announced',
-            perks: ['Prize details will be announced soon']
+            amount: '4,000',
           },
           {
-            place: 'PSTU Best Junior Team Prize',
+            place: 'PSTU Best Junior 2 Team Prize',
             rank: 4,
             amount: 'To be announced',
             perks: ['Prize details will be announced soon']
