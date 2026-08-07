@@ -308,10 +308,9 @@ export const EVENT_DETAILS = [
     /* No cover art yet. The hero skips both the image and its scrim when
        this is absent — pointing at a missing file only made the page
        darker. */
-
-    cover: '/events/datathon/datathon3.jpg',
+    cover: '/events/datathon/datathon3.jpeg',
     /* Prizes accounment: */
-    /*prizeNote: 'Prize will be announced very soon',*/
+    prizeNote: "Let's Welcome Our Sponsor Poridi.",
     prizes: [
       {
         place: '1st Prize',
