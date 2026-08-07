@@ -618,10 +618,12 @@ export async function sendDatathonConfirmationEmail(toEmail, teamName, registrat
                 <td class="content-padding" style="padding: 35px 30px; background-color: #150f30; color: #d1cbe5 !important; line-height: 1.6; font-size: 15px;">
                   <h2 style="color: #ffffff !important; font-size: 20px; margin-top: 0; margin-bottom: 16px;">Datathon Registration Confirmed!</h2>
                   
-                  <p style="color: #d1cbe5 !important; margin: 0 0 15px 0;">Hi <strong style="color: #ffffff !important;">${leaderName}</strong>,</p>
+                  <p style="color: #d1cbe5 !important; margin: 0 0 15px 0;">Hi <strong style="color: #ffffff !important;">${
+      leaderName}</strong>,</p>
                   
                   <p style="color: #d1cbe5 !important; margin: 0 0 20px 0;">
-                    Your team <strong style="color: #ffffff !important;">${teamName}</strong> has been successfully registered for the <strong style="color: #ffffff !important;">PSTU Online Datathon 2026</strong>. We have verified your bKash payment transaction.
+                    Your team <strong style="color: #ffffff !important;">${
+      teamName}</strong> has been successfully registered for the <strong style="color: #ffffff !important;">PSTU Online Datathon 2026</strong>. We have verified your bKash payment transaction.
                   </p>
 
                   <!-- Highlight Box -->
@@ -629,7 +631,8 @@ export async function sendDatathonConfirmationEmail(toEmail, teamName, registrat
                     <tr>
                       <td align="center" style="background-color: #1b1340; border: 1px solid #4a3399; border-radius: 12px; padding: 20px;">
                         <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #a692ff !important; font-weight: bold; margin-bottom: 5px;">Registration ID</div>
-                        <div class="reg-id-val" style="font-size: 28px; font-weight: 800; color: #ffd700 !important; letter-spacing: 1px; font-family: monospace; margin: 0;">${registrationId}</div>
+                        <div class="reg-id-val" style="font-size: 28px; font-weight: 800; color: #ffd700 !important; letter-spacing: 1px; font-family: monospace; margin: 0;">${
+      registrationId}</div>
                         <div style="margin-top: 15px; font-size: 14px; color: #b0a5cf !important;">Your registration is now fully confirmed. Please keep this ID safe for contest activities.</div>
                       </td>
                     </tr>
@@ -639,13 +642,14 @@ export async function sendDatathonConfirmationEmail(toEmail, teamName, registrat
                   <ul style="margin: 0 0 20px 0; padding-left: 20px; color: #d1cbe5 !important;">
                     <li style="margin-bottom: 8px;"><strong style="color: #ffffff !important;">Contest Start Date</strong>: August 8, 2026</li>
                     <li style="margin-bottom: 8px;"><strong style="color: #ffffff !important;">Contest Platform</strong>: Online (Submission Form released on August 11, 2026)</li>
-                    <li style="margin-bottom: 8px;"><strong style="color: #ffffff !important;">Submission Deadline</strong>: August 12, 2026 (11:59 PM)</li>
+                    <li style="margin-bottom: 8px;"><strong style="color: #ffffff !important;">Submission Deadline</strong>: August 13, 2026 (6:00 AM)</li>
                   </ul>
 
                   <p style="color: #d1cbe5 !important; margin: 0 0 20px 0;">
                     To ensure you don't miss any critical announcements, competition rules, or Kaggle updates, please join our official WhatsApp group below:<br/>
                     <strong>WhatsApp Group Link:</strong> <a href="https://chat.whatsapp.com/ByP45c2kLqPBwZlohyaFSS" target="_blank" style="color: #00ffff !important; text-decoration: none; font-weight: 600;">https://chat.whatsapp.com/ByP45c2kLqPBwZlohyaFSS</a><br/>
-                    Happy coding!
+                    <strong>kaggle Compitation Link:</strong> <a href="https://www.kaggle.com/t/e71fc661c2574a239ab2ae35b00e427a " target="_blank" style="color: #00ffff !important; text-decoration: none; font-weight: 600;">https://www.kaggle.com/t/e71fc661c2574a239ab2ae35b00e427a </a><br/>
+                    also share the link with your teammates and Happy coding!
                   </p>
 
                   <p style="color: #d1cbe5 !important; margin: 0 0 15px 0;">If you have any questions or support inquiries, feel free to contact the coordinators.</p>
@@ -666,6 +670,7 @@ export async function sendDatathonConfirmationEmail(toEmail, teamName, registrat
                     Visit official website: 
                     <a href="https://itcarnival26.pstu.ac.bd" target="_blank" style="color: #00ffff !important; text-decoration: none; font-weight: 600;">itcarnival26.pstu.ac.bd</a>
                   </p>
+                  
                 </td>
               </tr>
 
