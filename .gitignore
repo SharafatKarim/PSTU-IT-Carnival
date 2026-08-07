@@ -10,10 +10,6 @@
 !.yarn/releases
 !.yarn/versions
 
-rag.md
-
-.env
-
 # testing
 /coverage
 
