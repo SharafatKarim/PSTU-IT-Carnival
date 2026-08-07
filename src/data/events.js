@@ -350,7 +350,7 @@ export const EVENT_DETAILS = [
       teamSizeShort: 'Max 2',
       slots: 'Open to all university students',
       platform: 'Online',
-      deadline: '12 August 2026, 11:58 PM',
+      deadline: '8 August 2026, 11:59 PM',
     },
 
     rules: [
