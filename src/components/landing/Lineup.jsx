@@ -30,7 +30,14 @@ const detailFor = (event) => {
 };
 
 const IconTile = ({ icon, accent, muted, small }) => {
-  const Icon = ICON_MAP[icon] || ICON_MAP.code;
+  // If no icon is provided, render nothing (so callers can omit icons by
+  // leaving the value undefined/null in the data). Also avoid showing a
+  // fallback decorative icon when the intent is to hide it.
+  if (!icon) return null;
+
+  const Icon = ICON_MAP[icon];
+  if (!Icon) return null;
+
   return (
     <span
       className={`flex shrink-0 items-center justify-center rounded-xl border ${

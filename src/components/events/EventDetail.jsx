@@ -213,9 +213,9 @@ const Hero = ({ event }) => {
               </div>
 
               <dl className="hidden shrink-0 flex-col items-end gap-1 text-right sm:flex">
-                {quickFacts.map((fact) => (
+                {quickFacts.map((fact, i) => (
                   <dd
-                    key={fact.value}
+                    key={i}
                     className="inline-flex items-center gap-2 text-xs font-medium text-mist-100 drop-shadow sm:text-sm"
                   >
                     {fact.value}
@@ -280,8 +280,8 @@ const Hero = ({ event }) => {
         </p>
 
         <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-mist-200 sm:hidden">
-          {quickFacts.map((fact) => (
-            <span key={fact.value} className="inline-flex items-center gap-1.5">
+          {quickFacts.map((fact, i) => (
+            <span key={i} className="inline-flex items-center gap-1.5">
               <fact.icon className="h-4 w-4 text-mist-400" />
               {fact.value}
             </span>
@@ -365,6 +365,41 @@ const Hero = ({ event }) => {
           accentClass: item.accent ? a.text : undefined,
         }))}
       />
+    </section>
+  );
+};
+
+const SponsorBanner = ({ sponsor, accent }) => {
+  if (!sponsor) return null;
+  return (
+    <section className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
+      <div className={`rounded-3xl border border-white/10 bg-ink-900/80 p-6 sm:p-8 ${accent.border}`}>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-mist-500">
+              Sponsor
+            </p>
+            <h2 className="mt-3 text-2xl font-extrabold text-white sm:text-3xl">
+              {sponsor.title || 'Sponsored by'}
+            </h2>
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-mist-300">
+              {sponsor.description || 'This event is supported by our sponsor. Visit their site for more details.'}
+            </p>
+          </div>
+
+          {sponsor.website && (
+            <a
+              href={sponsor.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-white/10 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/15"
+            >
+              {sponsor.cta || 'Visit Sponsor'}
+              <ArrowRightIcon className="h-4 w-4" />
+            </a>
+          )}
+        </div>
+      </div>
     </section>
   );
 };
@@ -544,6 +579,7 @@ const EventDetail = ({ slug }) => {
       />
       <main>
         <Hero event={event} />
+        <SponsorBanner sponsor={event.sponsor} accent={accentOf(event.accent)} />
 
         <Section
           id="info"

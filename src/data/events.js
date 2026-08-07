@@ -309,8 +309,15 @@ export const EVENT_DETAILS = [
        this is absent — pointing at a missing file only made the page
        darker. */
     cover: '/events/datathon/datathon3.jpeg',
+    sponsor: {
+      title: 'Proudly sponsored by',
+      description:
+          'This datathon is powered by Poridi. Poridhi transforms traditional engineering education into hands-on,digital experiences making learning immersive, practical and future-ready.  ',
+      website: 'https://poridhi.io/',
+      cta: 'Visit Sponsor',
+    },
     /* Prizes accounment: */
-    prizeNote: "Let's Welcome Our Sponsor Poridi.",
+    /*prizeNote: "Let's Welcome Our Sponsor Poridi.",*/
     prizes: [
       {
         place: '1st Prize',
@@ -336,9 +343,9 @@ export const EVENT_DETAILS = [
     ],
 
     tournament: {
-      date: '8–12 August 2026',
-      time: 'Starts Aug 8 (12:00 AM) — Ends Aug 12 (11:58 PM)',
-      venue: 'Online (Code Submission via Google Form)',
+      /*date: '8–12 August 2026',*/
+      /*time: 'Starts Aug 8 (12:00 AM) — Ends Aug 12 (11:58 PM)',*/
+      /*venue: 'Online (Code Submission via Google Form)',*/
       entryFee: '৳300 per team/participant',
       entryShort: '৳300',
       entryScope: 'per team',
