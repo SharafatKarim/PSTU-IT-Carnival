@@ -328,15 +328,12 @@ const Hero = ({ event }) => {
                 Registration Closed
               </button>
               {event.slug === 'hackathon' && (
-                <a
-                  href="https://forms.gle/MdP8WSNAwvPQqPLH7"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group inline-flex items-center justify-center gap-2 rounded-xl bg-magenta-600 hover:bg-magenta-500 px-5 py-3.5 text-sm font-bold text-white shadow-glow-magenta transition"
+                <button
+                  disabled
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-white/5 border border-white/10 px-5 py-3.5 text-sm font-bold text-mist-400 cursor-not-allowed"
                 >
-                  Preliminary Submission
-                  <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                </a>
+                  Submission Closed
+                </button>
               )}
               <DirectoryLinks event={event} />
               <a href="#rules" className={SECONDARY_CTA}>
@@ -492,22 +489,11 @@ const ClosedRegistrationCard = ({ event }) => {
     if (event.slug === 'hackathon') {
       return (
         <div className="mx-auto max-w-2xl text-center rounded-2xl border border-magenta-500/30 bg-magenta-950/10 p-8 shadow-card">
-          <p className="text-sm font-semibold uppercase tracking-widest text-magenta-400">Registration Closed</p>
-          <h3 className="mt-3 text-lg font-bold text-white">Pre-registration has closed</h3>
+          <p className="text-sm font-semibold uppercase tracking-widest text-magenta-400">Submission Closed</p>
+          <h3 className="mt-3 text-lg font-bold text-white">Preliminary round submission has closed</h3>
           <p className="mt-2 text-sm leading-relaxed text-mist-300">
-            Pre-registration is closed. If your team is already registered, submit your online preliminary round solution here before the deadline.
+            The preliminary submission round for the Hackathon is now closed. The final shortlist of teams will be published soon.
           </p>
-          <div className="mt-6">
-            <a
-              href="https://forms.gle/MdP8WSNAwvPQqPLH7"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex items-center gap-2 rounded-xl bg-magenta-600 hover:bg-magenta-500 px-6 py-3 text-sm font-bold text-white shadow-glow-magenta transition"
-            >
-              Preliminary Submission
-              <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </a>
-          </div>
         </div>
       );
     }

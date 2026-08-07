@@ -14,27 +14,18 @@ export const metadata = eventRegisterMetadata(SLUG);
 
 const NotOpenYet = ({ event }) => (
   <div className="mx-auto max-w-2xl px-4 py-16 sm:py-24">
-    <div className="rounded-2xl border border-magenta-500/30 bg-magenta-950/10 p-6 shadow-card sm:p-8 text-center">
+    <div className="rounded-2xl border border-red-500/20 bg-red-950/10 p-6 shadow-card sm:p-8 text-center">
       <div className="flex flex-col items-center">
-        <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-magenta-500/10 text-magenta-400">
+        <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-500/10 text-red-400">
           <ClockIcon className="h-6 w-6" />
         </span>
         <h1 className="mt-4 text-xl font-bold text-white">
-          Hackathon pre-registration has closed
+          Hackathon preliminary submission has closed
         </h1>
         <p className="mt-2 text-sm leading-relaxed text-mist-300">
-          Pre-registration is closed. If your team has already registered, you can submit your online preliminary round solution here before the deadline.
+          Preliminary round submissions are now closed. The final shortlist of teams will be announced soon.
         </p>
-        <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <a
-            href="https://forms.gle/MdP8WSNAwvPQqPLH7"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group inline-flex items-center justify-center gap-2 rounded-xl bg-magenta-600 hover:bg-magenta-500 px-6 py-3 text-sm font-bold text-white shadow-glow-magenta transition"
-          >
-            Preliminary Submission
-            <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </a>
+        <div className="mt-6">
           <Link
             href={ROUTES.event(SLUG)}
             className="inline-flex items-center justify-center rounded-xl border border-ink-500 px-5 py-3 text-sm font-semibold text-mist-200 transition hover:bg-white/5 hover:text-white"
