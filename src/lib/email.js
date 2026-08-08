@@ -640,15 +640,14 @@ export async function sendDatathonConfirmationEmail(toEmail, teamName, registrat
 
                   <p style="color: #ffffff !important; font-weight: bold; margin: 20px 0 10px 0;">Contest details:</p>
                   <ul style="margin: 0 0 20px 0; padding-left: 20px; color: #d1cbe5 !important;">
-                    <li style="margin-bottom: 8px;"><strong style="color: #ffffff !important;">Contest Start Date</strong>: August 8, 2026</li>
-                    <li style="margin-bottom: 8px;"><strong style="color: #ffffff !important;">Contest Platform</strong>: Online (Submission Form released on August 11, 2026)</li>
-                    <li style="margin-bottom: 8px;"><strong style="color: #ffffff !important;">Submission Deadline</strong>: August 13, 2026 (6:00 AM)</li>
+                    <li style="margin-bottom: 8px;"><strong style="color: #ffffff !important;">Contest Start Date</strong>: August 9 (10.00 PM), 2026</li>
+                    <li style="margin-bottom: 8px;"><strong style="color: #ffffff !important;">Contest Platform</strong>: Online (Submission Form released on August 13, 2026)</li>
+                    <li style="margin-bottom: 8px;"><strong style="color: #ffffff !important;">Submission Deadline</strong>: August 14, 2026 (6:00 AM)</li>
                   </ul>
 
                   <p style="color: #d1cbe5 !important; margin: 0 0 20px 0;">
                     To ensure you don't miss any critical announcements, competition rules, or Kaggle updates, please join our official WhatsApp group below:<br/>
                     <strong>WhatsApp Group Link:</strong> <a href="https://chat.whatsapp.com/ByP45c2kLqPBwZlohyaFSS" target="_blank" style="color: #00ffff !important; text-decoration: none; font-weight: 600;">https://chat.whatsapp.com/ByP45c2kLqPBwZlohyaFSS</a><br/>
-                    <strong>kaggle Compitation Link:</strong> <a href="https://www.kaggle.com/t/e71fc661c2574a239ab2ae35b00e427a " target="_blank" style="color: #00ffff !important; text-decoration: none; font-weight: 600;">https://www.kaggle.com/t/e71fc661c2574a239ab2ae35b00e427a </a><br/>
                     also share the link with your teammates and Happy coding!
                   </p>
 
