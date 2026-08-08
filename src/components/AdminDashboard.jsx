@@ -408,88 +408,124 @@ export default function AdminDashboard({ user }) {
         ) : (
           <div className="bg-ink-900/60 border border-ink-600 rounded-2xl overflow-hidden shadow-card">
             {printConfig && (
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-ink-950/30 p-4">
-                <div className="flex flex-wrap items-center gap-2.5">
-                  {filterDef && filterOptions.length > 0 && (
-                    <select
-                      value={selectedFilter}
-                      onChange={(e) =>
-                        setFilterSelections((prev) => ({ ...prev, [activeTab]: e.target.value }))
-                      }
-                      className="rounded-lg border border-ink-500 bg-ink-950/60 px-3 py-2 text-xs font-medium text-white outline-none focus:border-grape-400 focus:ring-1 focus:ring-grape-400/30 transition"
-                    >
-                      <option value="all" className="bg-ink-900">
-                        {filterDef.allLabel} ({activeList.length})
-                      </option>
-                      {filterOptions.map((option) => (
-                        <option key={option.value} value={option.value} className="bg-ink-900">
-                          {option.label} ({option.count})
-                        </option>
-                      ))}
-                    </select>
-                  )}
-
-                  <p className="text-xs text-mist-400">
-                    {filterActive ? (
-                      <>
-                        Showing <span className="font-bold text-white">{visibleList.length}</span> of{' '}
-                        <span className="font-bold text-white">{activeList.length}</span>{' '}
-                        {nounFor(activeList.length)}
-                      </>
-                    ) : (
-                      <>
-                        <span className="font-bold text-white">{activeList.length}</span>{' '}
-                        {nounFor(activeList.length)}
-                      </>
-                    )}
-                    {visibleList.length > 0 && (
-                      <span className="text-mist-500"> · {printConfig.summary(visibleList)}</span>
-                    )}
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2">
-                  {(activeTab === 'hackathon' || activeTab === 'datathon') && (
-                    <button
-                      onClick={() => {
-                        const emailKey = activeTab === 'datathon' ? 'kaggleEmail' : 'email';
-                        const emails = activeList.flatMap((team) => (team.members || []).map((m) => m[emailKey])).filter(Boolean);
-                        if (emails.length === 0) {
-                          alert('No emails to export!');
-                          return;
+              <div className="border-b border-white/10 bg-ink-950/30 p-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    {filterDef && filterOptions.length > 0 && (
+                      <select
+                        value={selectedFilter}
+                        onChange={(e) =>
+                          setFilterSelections((prev) => ({ ...prev, [activeTab]: e.target.value }))
                         }
-                        const blob = new Blob([emails.join('\n')], { type: 'text/plain;charset=utf-8' });
-                        const url = URL.createObjectURL(blob);
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.download = `${activeTab}_emails.txt`;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                        URL.revokeObjectURL(url);
-                      }}
-                      className="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition"
-                    >
-                      Export Emails
-                    </button>
-                  )}
-                  <button
-                    onClick={() => handlePrint(visibleList, true)}
-                    disabled={visibleList.length === 0}
-                    className="px-4 py-2 text-xs font-bold rounded-lg bg-grape-600 hover:bg-grape-500 text-white transition disabled:opacity-40 disabled:hover:bg-grape-600"
-                  >
-                    Print / Save PDF ({visibleList.length})
-                  </button>
-                  {filterActive && (
+                        className="rounded-lg border border-ink-500 bg-ink-950/60 px-3 py-2 text-xs font-medium text-white outline-none focus:border-grape-400 focus:ring-1 focus:ring-grape-400/30 transition"
+                      >
+                        <option value="all" className="bg-ink-900">
+                          {filterDef.allLabel} ({activeList.length})
+                        </option>
+                        {filterOptions.map((option) => (
+                          <option key={option.value} value={option.value} className="bg-ink-900">
+                            {option.label} ({option.count})
+                          </option>
+                        ))}
+                      </select>
+                    )}
+
+                    <p className="text-xs text-mist-400">
+                      {filterActive ? (
+                        <>
+                          Showing <span className="font-bold text-white">{visibleList.length}</span> of{' '}
+                          <span className="font-bold text-white">{activeList.length}</span>{' '}
+                          {nounFor(activeList.length)}
+                        </>
+                      ) : (
+                        <>
+                          <span className="font-bold text-white">{activeList.length}</span>{' '}
+                          {nounFor(activeList.length)}
+                        </>
+                      )}
+                      {visibleList.length > 0 && (
+                        <span className="text-mist-500"> · {printConfig.summary(visibleList)}</span>
+                      )}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    {(activeTab === 'hackathon' || activeTab === 'datathon') && (
+                      <button
+                        onClick={() => {
+                          const emailKey = activeTab === 'datathon' ? 'kaggleEmail' : 'email';
+                          const emails = activeList.flatMap((team) => (team.members || []).map((m) => m[emailKey])).filter(Boolean);
+                          if (emails.length === 0) {
+                            alert('No emails to export!');
+                            return;
+                          }
+                          const blob = new Blob([emails.join('\n')], { type: 'text/plain;charset=utf-8' });
+                          const url = URL.createObjectURL(blob);
+                          const link = document.createElement('a');
+                          link.href = url;
+                          link.download = `${activeTab}_emails.txt`;
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                          URL.revokeObjectURL(url);
+                        }}
+                        className="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition"
+                      >
+                        Export Emails
+                      </button>
+                    )}
                     <button
-                      onClick={() => handlePrint(activeList, false)}
-                      disabled={activeList.length === 0}
-                      className="px-4 py-2 text-xs font-bold rounded-lg border border-grape-400/40 bg-white/5 text-white hover:bg-white/10 transition disabled:opacity-40"
+                      onClick={() => handlePrint(visibleList, true)}
+                      disabled={visibleList.length === 0}
+                      className="px-4 py-2 text-xs font-bold rounded-lg bg-grape-600 hover:bg-grape-500 text-white transition disabled:opacity-40 disabled:hover:bg-grape-600"
                     >
-                      Print All ({activeList.length})
+                      Print / Save PDF ({visibleList.length})
                     </button>
-                  )}
+                    {filterActive && (
+                      <button
+                        onClick={() => handlePrint(activeList, false)}
+                        disabled={activeList.length === 0}
+                        className="px-4 py-2 text-xs font-bold rounded-lg border border-grape-400/40 bg-white/5 text-white hover:bg-white/10 transition disabled:opacity-40"
+                      >
+                        Print All ({activeList.length})
+                      </button>
+                    )}
+                  </div>
                 </div>
+
+                {activeTab === 'gaming' && (
+                  <div className="flex flex-wrap items-center gap-2 border-t border-white/5 pt-3 mt-3">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-mist-400 mr-2">Print by Game:</span>
+                    {[
+                      { slug: 'free-fire', label: 'Free Fire' },
+                      { slug: 'pubg-mobile', label: 'PUBG' },
+                      { slug: 'ludo', label: 'Ludo' },
+                      { slug: 'chess', label: 'Chess' },
+                      { slug: 'efootball', label: 'eFootball' },
+                      { slug: 'rubiks-cube', label: "Rubik's" }
+                    ].map((g) => {
+                      const count = activeList.filter((e) => String(e.game || '').trim().toLowerCase() === g.slug).length;
+                      return (
+                        <button
+                          key={g.slug}
+                          onClick={() => {
+                            const gameList = activeList.filter((e) => String(e.game || '').trim().toLowerCase() === g.slug);
+                            printTable({
+                              title: `${g.label} Registrations`,
+                              summary: `Game: ${g.label} · ${printConfig.summary(gameList)}`,
+                              columns: printConfig.columns,
+                              rows: gameList,
+                            });
+                          }}
+                          disabled={count === 0}
+                          className="px-2.5 py-1 text-[11px] font-semibold rounded bg-white/5 border border-white/10 text-mist-300 hover:bg-white/10 hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                          {g.label} ({count})
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
 
