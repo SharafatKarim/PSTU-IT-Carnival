@@ -855,7 +855,7 @@ export const GAMES = [
     mode: "Squad of 4",
     tagline: "Fast, furious mobile battle royale. Drop in, gear up, survive.",
     blurb:
-      "Twenty-four squads in two groups, one Bermuda match to survive, then three maps to decide it. No room to breathe.",
+      "Forty-eight squads in four groups, preliminary online matches, then a three-match Final Round on 13 August 2026.",
     heroNote:
       "Enter as a squad of four, or on your own — we will place you in one.",
 
@@ -868,10 +868,10 @@ export const GAMES = [
       entryScope: "per player",
       feePerPlayer: 0,
       prizePool: "৳10,000",
-      format: "Two groups of 12 · Top 6 from each reach the final",
+      format: "Four groups of 12 · Top 3 from each qualify for the final",
       teamSize: "4 players",
       teamSizeShort: "Squad of 4",
-      slots: "24 squads (2 groups of 12)",
+      slots: "48 squads (4 groups of 12)",
       platform: "Mobile & tablet only",
       deadline: GAMING_DEADLINE,
     },
@@ -879,13 +879,15 @@ export const GAMES = [
     matchFormat: {
       title: "Group stage into the final",
       subtitle:
-        "Twenty-four squads split into two groups of twelve. One Bermuda match decides who advances; the top six from each group play a three-map final.",
+        "Forty-eight squads split into four groups of twelve. Preliminary round matches decide who advances; the top three from each group play a three-match final.",
       stages: [
-        { label: "Group A", value: "Bermuda" },
-        { label: "Group B", value: "Bermuda" },
-        { label: "Final · Match 1", value: "Purgatory" },
-        { label: "Final · Match 2", value: "Kalahari" },
-        { label: "Final · Match 3", value: "Nexterra" },
+        { label: "Group A (Online)", value: "Bermuda" },
+        { label: "Group B (Online)", value: "Bermuda" },
+        { label: "Group C (Online)", value: "Bermuda" },
+        { label: "Group D (Online)", value: "Bermuda" },
+        { label: "Final · Match 1 (Onsite)", value: "Purgatory" },
+        { label: "Final · Match 2 (Onsite)", value: "Kalahari" },
+        { label: "Final · Match 3 (Onsite)", value: "Nexterra" },
       ],
       points: brPoints("Booyah"),
     },
@@ -920,16 +922,16 @@ export const GAMES = [
           "Every player must be a currently enrolled PSTU student with a valid ID card, checked at the desk.",
           "A player may represent only one squad for the whole tournament.",
           "Entry is free — no payment required.",
-          "Twenty-four squads are accepted, split into two groups of twelve. Team name and player game IDs are locked once registration closes on 5 August.",
+          "Forty-eight squads are accepted, split into four groups of twelve. Team name and player game IDs are locked once registration closes.",
         ],
       },
       {
         title: "Match Format",
         icon: "flag",
         items: [
-          "Group stage: two groups of 12 squads, one match each on Bermuda.",
-          "The top 6 squads from each group advance — twelve squads reach the final.",
-          "Final: three matches, on Purgatory, Kalahari and Nexterra.",
+          "The preliminary round will be conducted online, with the participating teams divided into four groups of 12 teams each. From each group, the top three teams will qualify for the Final Round.",
+          "Preliminary round date to be announced.",
+          "The Final Round will be held on 13 August 2026, featuring only the qualified teams. The Final Round will consist of three matches.",
           "The final starts from zero. Group points decide who qualifies, not the final standing.",
           "Custom room ID and password are shared in the official group before each match.",
           "Squads must join the lobby 5 minutes before start time; late squads forfeit that match.",
@@ -995,15 +997,15 @@ export const GAMES = [
       },
       {
         q: "How do we qualify for the final?",
-        a: "Twenty-four squads are split into two groups of twelve, and each group plays one match on Bermuda. The top six squads from each group advance, so twelve squads reach the three-map final.",
+        a: "Forty-eight squads are split into four groups of twelve. From each group, the top three teams qualify, so twelve squads reach the three-match Final Round.",
       },
       {
         q: "Do group-stage points carry into the final?",
-        a: "No. The final starts from zero — the group match decides who qualifies, not where they finish.",
+        a: "No. The final starts from zero — group points decide who qualifies, not where they finish in the final.",
       },
       {
         q: "What does it cost?",
-        a: "৳25 per player, so ৳100 for a full squad of four. You pay when you register: send it to the number shown on the form using Send Money, then enter the transaction ID. Nothing is collected at the venue.",
+        a: "Registration is completely free. There are no entry fees.",
       },
       {
         q: "Are emulators allowed?",
