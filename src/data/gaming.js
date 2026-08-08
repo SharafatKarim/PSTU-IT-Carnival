@@ -968,7 +968,9 @@ export const GAMES = [
     ],
 
     stage: "open",
-    registrationOpen: true,
+    registrationOpen: false,
+    closedHeading: "Registration has closed",
+    closedNote: "Registration for the Free Fire tournament is now closed. The fixture and schedule will be announced soon.",
     registration: {
       kind: "squad",
       idPrefix: "PSTU-FF-2026",

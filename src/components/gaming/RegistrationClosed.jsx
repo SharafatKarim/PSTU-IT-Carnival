@@ -30,10 +30,10 @@ const RegistrationClosed = ({ game, coordinators }) => {
               </span>
               <div>
                 <h3 className="text-lg font-bold text-white">
-                  {GAMING.closedHeading}
+                  {game.closedHeading || GAMING.closedHeading}
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-mist-300">
-                  {GAMING.closedNote}
+                  {game.closedNote || GAMING.closedNote}
                 </p>
               </div>
             </div>
