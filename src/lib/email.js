@@ -649,6 +649,9 @@ export async function sendDatathonConfirmationEmail(toEmail, teamName, registrat
                     To ensure you don't miss any critical announcements, competition rules, or Kaggle updates, please join our official WhatsApp group below:<br/>
                     <strong>WhatsApp Group Link:</strong> <a href="https://chat.whatsapp.com/ByP45c2kLqPBwZlohyaFSS" target="_blank" style="color: #00ffff !important; text-decoration: none; font-weight: 600;">https://chat.whatsapp.com/ByP45c2kLqPBwZlohyaFSS</a><br/>
                     also share the link with your teammates and Happy coding!
+
+                    <strong>Kaggle Competition Link:</strong> <a href="https://www.kaggle.com/t/ffbd393a58d5463584074d98abcba10b" target="_blank" style="color: #00ffff !important; text-decoration: none; font-weight: 600;">https://www.kaggle.com/t/ffbd393a58d5463584074d98abcba10b</a><br/>
+                    also share the link with your teammates!
                   </p>
 
                   <p style="color: #d1cbe5 !important; margin: 0 0 15px 0;">If you have any questions or support inquiries, feel free to contact the coordinators.</p>
