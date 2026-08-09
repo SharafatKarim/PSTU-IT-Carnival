@@ -263,3 +263,83 @@ export const REGISTRATION_PRINT = {
     ],
   },
 };
+
+/* ---------------------------------------------------------------------------
+   IUPC kit handover.
+
+   Not a tab config — a second sheet printed from the IUPC toolbar, for the desk
+   on contest day. It differs from the tab printout in three ways that all come
+   from being a working document rather than a record:
+
+   PAID TEAMS ONLY. A team that has not settled the fee is not collecting a kit,
+   and printing it gives whoever is at the desk a decision to make that is not
+   theirs to make. The filtering happens at the call site, which owns the list.
+
+   T-SHIRT SIZE against each member, because that is the question actually being
+   asked while handing a bag over. The tab printout carries phone numbers
+   instead, which is the right column for chasing a team and the wrong one here.
+
+   AN EMPTY COLUMN to tick. Which is why BLANK exists: printTable renders an
+   empty or null cell as an em dash, and a column of em dashes reads as "no
+   data" rather than "write here". Non-breaking spaces give a genuinely blank
+   box, and the width keeps it wide enough for a pen.
+   --------------------------------------------------------------------------- */
+const BLANK = ' '.repeat(12);
+
+export const IUPC_KIT_PRINT = {
+  title: 'IUPC Kit Handover — Paid Teams',
+  summary: (list) => {
+    const shirts = list.reduce((n, t) => n + (t.members?.length || 0), 0);
+    return `${list.length} paid ${list.length === 1 ? 'team' : 'teams'} · ${shirts} t-shirt${shirts === 1 ? '' : 's'} to hand out`;
+  },
+  columns: [
+    { header: 'Team Name', cls: 'name', value: (t) => t.teamName },
+    { header: 'Reg ID', cls: 'mono', value: (t) => t.registrationId },
+    { header: 'Varsity', cls: 'wrap', value: (t) => t.varsityName },
+    {
+      header: 'Members & T-Shirt',
+      cls: 'wrap',
+      value: (t) =>
+        lines(
+          (t.members || []).map(
+            (m, i) =>
+              `${memberLabel(m, i, m.isTeamLeader)} — ${m.tshirtSize || 'size not set'}`
+          )
+        ),
+    },
+    {
+      header: 'Coach',
+      cls: 'wrap',
+      value: (t) => lines([t.coach?.name, t.coach?.phone]),
+    },
+    { header: 'Kits Delivered', width: '110px', value: () => BLANK },
+  ],
+};
+
+/* T-shirt counts for the paid teams, in garment order rather than alphabetical
+   — nobody orders shirts L, M, S, XL, XXL.
+ *
+ * A member whose size is missing gets its own bucket instead of being dropped.
+ * The schema requires the field, so this should always be zero; if it is not,
+ * the total still reconciles with three shirts per team, and a silent shortfall
+ * at the printer is worse than an ugly line on a report. */
+const SHIRT_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
+const NO_SIZE = '(size not set)';
+
+export const tshirtCounts = (teams) => {
+  const counts = new Map(SHIRT_SIZES.map((size) => [size, 0]));
+
+  for (const team of teams) {
+    for (const member of team.members || []) {
+      const size = String(member.tshirtSize || '').trim().toUpperCase();
+      const key = counts.has(size) ? size : NO_SIZE;
+      counts.set(key, (counts.get(key) || 0) + 1);
+    }
+  }
+
+  /* Drop the unset bucket when it is empty so the normal report is five lines. */
+  if (!counts.get(NO_SIZE)) counts.delete(NO_SIZE);
+
+  const rows = [...counts.entries()].map(([size, count]) => ({ size, count }));
+  return { rows, total: rows.reduce((n, r) => n + r.count, 0) };
+};

@@ -6,7 +6,7 @@ import Footer from './landing/Footer';
 import { AlertIcon, CheckIcon } from './landing/Icons';
 import VolunteerTable from './admin/VolunteerTable';
 import printTable from './admin/printTable';
-import { REGISTRATION_PRINT } from './admin/registrationPrint';
+import { REGISTRATION_PRINT, IUPC_KIT_PRINT, tshirtCounts } from './admin/registrationPrint';
 import { SECTION_FILTERS } from './admin/sectionFilters';
 
 export default function AdminDashboard({ user }) {
@@ -226,6 +226,55 @@ export default function AdminDashboard({ user }) {
       columns: printConfig.columns,
       rows: list,
     });
+
+  /* Contest-day paperwork, both derived from the paid teams and nothing else.
+     A team that has not settled the fee is not collecting a kit and is not
+     getting a shirt printed for it, so the filter is the whole point rather
+     than a convenience — see IUPC_KIT_PRINT. Reads activeList, not
+     visibleList: the university filter is for looking things up on screen, and
+     a kit sheet missing eleven universities because a dropdown was left set is
+     the kind of mistake nobody catches until the desk runs out of bags. */
+  const paidIupcTeams = useMemo(
+    () => (data.iupc || []).filter((t) => t.registrationStatus === 'paid'),
+    [data.iupc]
+  );
+
+  const handleKitPrint = () =>
+    printTable({
+      title: IUPC_KIT_PRINT.title,
+      summary: IUPC_KIT_PRINT.summary(paidIupcTeams),
+      columns: IUPC_KIT_PRINT.columns,
+      rows: paidIupcTeams,
+    });
+
+  /* CSV rather than the plain list the email exports use — this one goes to
+     whoever is ordering the shirts, and a spreadsheet is what they open. */
+  const handleTshirtExport = () => {
+    const { rows, total } = tshirtCounts(paidIupcTeams);
+    if (total === 0) {
+      alert('No paid teams yet — there are no t-shirts to count.');
+      return;
+    }
+
+    const csv = [
+      'Size,Count',
+      ...rows.map((r) => `${r.size},${r.count}`),
+      `TOTAL,${total}`,
+      '',
+      `# IUPC t-shirts for ${paidIupcTeams.length} paid team(s)`,
+      `# Generated ${new Date().toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })}`,
+    ].join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'iupc_tshirt_counts.csv';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="min-h-screen bg-ink-950 text-white flex flex-col">
@@ -492,6 +541,34 @@ export default function AdminDashboard({ user }) {
                     )}
                   </div>
                 </div>
+
+                {/* Contest-day sheets, kept off the main row because they are
+                    not "print what is on screen" — both ignore the filter and
+                    both cover paid teams only. */}
+                {activeTab === 'iupc' && (
+                  <div className="flex flex-wrap items-center gap-2 border-t border-white/5 pt-3 mt-3">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-mist-400 mr-2">
+                      Contest day:
+                    </span>
+                    <button
+                      onClick={handleKitPrint}
+                      disabled={paidIupcTeams.length === 0}
+                      className="px-2.5 py-1 text-[11px] font-semibold rounded bg-white/5 border border-white/10 text-mist-300 hover:bg-white/10 hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      Kit Handover Sheet ({paidIupcTeams.length} paid)
+                    </button>
+                    <button
+                      onClick={handleTshirtExport}
+                      disabled={paidIupcTeams.length === 0}
+                      className="px-2.5 py-1 text-[11px] font-semibold rounded bg-white/5 border border-white/10 text-mist-300 hover:bg-white/10 hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      Export T-Shirt Counts ({tshirtCounts(paidIupcTeams).total})
+                    </button>
+                    <span className="text-[11px] text-mist-500">
+                      Paid teams only · ignores the university filter
+                    </span>
+                  </div>
+                )}
 
                 {activeTab === 'gaming' && (
                   <div className="flex flex-wrap items-center gap-2 border-t border-white/5 pt-3 mt-3">
