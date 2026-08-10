@@ -650,7 +650,7 @@ export async function sendDatathonConfirmationEmail(toEmail, teamName, registrat
                     <strong>WhatsApp Group Link:</strong> <a href="https://chat.whatsapp.com/ByP45c2kLqPBwZlohyaFSS" target="_blank" style="color: #00ffff !important; text-decoration: none; font-weight: 600;">https://chat.whatsapp.com/ByP45c2kLqPBwZlohyaFSS</a><br/>
                     also share the link with your teammates and Happy coding!
 
-                    <strong>Kaggle Competition Link:</strong> <a href="https://www.kaggle.com/t/ffbd393a58d5463584074d98abcba10b" target="_blank" style="color: #00ffff !important; text-decoration: none; font-weight: 600;">https://www.kaggle.com/t/ffbd393a58d5463584074d98abcba10b</a><br/>
+                    <strong>Kaggle Competition Link:</strong> <a href="https://www.kaggle.com/t/8c32ac5c82c5f644aadf97257176fc9f" target="_blank" style="color: #00ffff !important; text-decoration: none; font-weight: 600;">https://www.kaggle.com/t/8c32ac5c82c5f644aadf97257176fc9f</a><br/>
                     also share the link with your teammates!
                   </p>
 
