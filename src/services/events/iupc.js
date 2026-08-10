@@ -39,10 +39,10 @@ export const fetchUniversityCounts = async (signal) => {
 /* Reports a transfer a team has already made. Resolves to the API's message so
    the caller can show it; throws with `response.data` attached on failure, the
    same shape createRegistration uses, so field errors can be surfaced. */
-export const submitPayment = async (payload) => {
+export const submitPayment = async (slug, payload) => {
   let res;
   try {
-    res = await fetch(`${baseURL}/payments`, {
+    res = await fetch(`/api/v1/events/${slug}/payments`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

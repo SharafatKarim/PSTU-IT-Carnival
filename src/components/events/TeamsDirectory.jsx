@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AlertIcon, ArrowLeftIcon, ArrowRightIcon, CheckIcon } from '@/components/landing/Icons';
 import { fetchTeams } from '@/services/events/iupc';
-import { getEventDetail, IUPC_PAYMENT, iupcPaymentClosed } from '@/data/events';
+import { getEventDetail, IUPC_PAYMENT, iupcPaymentClosed, HACKATHON_PAYMENT, hackathonPaymentClosed, HACKATHON_ACCEPTED_TEAMS } from '@/data/events';
 import { eventTeamsNav } from '@/lib/routes';
 import { accentOf } from '@/lib/accents';
 import { useNow } from '@/lib/useNow';
@@ -26,19 +26,28 @@ const STATUS_STYLES = {
   rejected: 'border-red-500/40 bg-red-500/10 text-red-300',
 };
 
-const StatusPill = ({ status = 'pre-registered' }) => (
-  <span
-    className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
-      STATUS_STYLES[status] || STATUS_STYLES['pre-registered']
-    }`}
-  >
-    {status === 'paid' && <CheckIcon className="h-3 w-3" />}
-    {status}
-  </span>
-);
+const StatusPill = ({ status = 'pre-registered', team, isHackathon }) => {
+  const isSelected = isHackathon && team && HACKATHON_ACCEPTED_TEAMS.includes(team.registrationId);
+  const displayStatus = (status === 'pre-registered' && isSelected) ? 'selected' : status;
+
+  return (
+    <span
+      className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
+        STATUS_STYLES[status] || STATUS_STYLES['pre-registered']
+      }`}
+    >
+      {status === 'paid' && <CheckIcon className="h-3 w-3" />}
+      {displayStatus === 'selected'
+        ? 'Selected'
+        : displayStatus === 'payment-submitted'
+          ? 'Awaiting check'
+          : displayStatus}
+    </span>
+  );
+};
 
 /* Table row on sm and up; a self-contained card below it. */
-const TeamRow = ({ team, accent, onPay, closed }) => (
+const TeamRow = ({ team, accent, onPay, closed, isHackathon, paymentConfig }) => (
   <li
     className={`grid grid-cols-1 items-start gap-x-4 gap-y-2 border-t border-ink-700/70 px-3 py-3 transition hover:bg-white/[0.02] sm:items-center sm:py-2.5 ${COLS}`}
   >
@@ -50,7 +59,7 @@ const TeamRow = ({ team, accent, onPay, closed }) => (
       </span>
       {/* Status rides along the top line on mobile, own column on desktop. */}
       <span className="sm:hidden">
-        <StatusPill status={team.status} />
+        <StatusPill status={team.status} team={team} isHackathon={isHackathon} />
       </span>
     </div>
 
@@ -62,20 +71,20 @@ const TeamRow = ({ team, accent, onPay, closed }) => (
     </div>
 
     <div className="min-w-0">
-      <p className="truncate text-sm text-mist-200">{team.varsityName}</p>
+      <p className="truncate text-sm text-mist-200">{team.varsityName || 'Hackathon Team'}</p>
       {team.members?.length > 0 && (
         <p className="truncate text-xs text-mist-500">{team.members.join(' · ')}</p>
       )}
     </div>
 
     <div className="hidden sm:flex sm:items-center sm:justify-end sm:gap-2">
-      <StatusPill status={team.status} />
-      <PayButton team={team} onPay={onPay} closed={closed} />
+      <StatusPill status={team.status} team={team} isHackathon={isHackathon} />
+      <PayButton team={team} onPay={onPay} closed={closed} isHackathon={isHackathon} paymentConfig={paymentConfig} />
     </div>
 
     {/* On mobile the pill rides the top line, so the button gets its own row. */}
     <div className="sm:hidden">
-      <PayButton team={team} onPay={onPay} closed={closed} full />
+      <PayButton team={team} onPay={onPay} closed={closed} isHackathon={isHackathon} paymentConfig={paymentConfig} full />
     </div>
   </li>
 );
@@ -90,8 +99,9 @@ const TeamRow = ({ team, accent, onPay, closed }) => (
  * fallback the countdown pill uses, and the honest one, since the alternative
  * is flashing "closed" at everyone for a frame. The API is what actually
  * refuses a late submission. */
-const PayButton = ({ team, onPay, closed, full = false }) => {
+const PayButton = ({ team, onPay, closed, isHackathon, paymentConfig, full = false }) => {
   if (team.status === 'paid' || team.status === 'rejected') return null;
+  if (isHackathon && !HACKATHON_ACCEPTED_TEAMS.includes(team.registrationId)) return null;
 
   const submitted = team.status === 'payment-submitted';
   const disabled = submitted || closed;
@@ -101,7 +111,7 @@ const PayButton = ({ team, onPay, closed, full = false }) => {
       type="button"
       onClick={() => onPay(team)}
       disabled={disabled}
-      title={closed ? `The entry-fee deadline (${IUPC_PAYMENT.deadline}) has passed` : undefined}
+      title={closed ? `The entry-fee deadline (${paymentConfig.deadline}) has passed` : undefined}
       className={`${full ? 'w-full' : ''} whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-bold transition ${
         disabled
           ? 'cursor-not-allowed border border-white/10 bg-white/5 text-mist-500'
@@ -123,13 +133,16 @@ const TeamsDirectory = ({ slug = 'iupc' }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const isHackathon = slug === 'hackathon';
+  const paymentConfig = isHackathon ? HACKATHON_PAYMENT : IUPC_PAYMENT;
+
   /* The row whose payment form is open, or null. */
   const [paying, setPaying] = useState(null);
 
   /* null until the browser reports the time — see PayButton for why this is not
      decided at render time. */
   const now = useNow();
-  const closed = now ? iupcPaymentClosed(now) : false;
+  const closed = now ? (isHackathon ? hackathonPaymentClosed(now) : iupcPaymentClosed(now)) : false;
 
   const abortRef = useRef(null);
 
@@ -205,7 +218,7 @@ const TeamsDirectory = ({ slug = 'iupc' }) => {
             <strong className="font-semibold text-white">
               The entry-fee deadline has passed
             </strong>{' '}
-            — payments closed on {IUPC_PAYMENT.deadline} and can no longer be
+            — payments closed on {paymentConfig.deadline} and can no longer be
             submitted here. If you have already sent the money and your team
             still shows as pre-registered, contact the coordinators rather than
             sending it again.
@@ -270,6 +283,8 @@ const TeamsDirectory = ({ slug = 'iupc' }) => {
                 accent={accent}
                 onPay={setPaying}
                 closed={closed}
+                isHackathon={isHackathon}
+                paymentConfig={paymentConfig}
               />
             ))}
           </ul>

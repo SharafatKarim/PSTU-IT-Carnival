@@ -1,6 +1,6 @@
 import Registration from './model';
 
-const PUBLIC_FIELDS = 'registrationId teamName finalRegistered shortlisted members.fullName members.universityName';
+const PUBLIC_FIELDS = 'registrationId teamName finalRegistered shortlisted registrationStatus payment.transactionId members.fullName members.universityName';
 
 export const serialOf = (registrationId) => {
   const match = /(\d+)$/.exec(registrationId || '');
@@ -27,13 +27,21 @@ const buildFilter = (search) => {
   };
 };
 
+const LEGACY_STATUS = { pending: 'pre-registered', approved: 'paid' };
+
+const normaliseStatus = (status, finalRegistered) => {
+  if (finalRegistered) return 'paid';
+  return LEGACY_STATUS[status] || status || 'pre-registered';
+};
+
 const toPublicTeam = (doc) => ({
   serial: serialOf(doc.registrationId),
   registrationId: doc.registrationId,
   teamName: doc.teamName,
-  status: doc.finalRegistered ? 'paid' : 'pre-registered',
+  status: normaliseStatus(doc.registrationStatus, doc.finalRegistered),
   shortlisted: doc.shortlisted,
   members: (doc.members || []).map((m) => `${m.fullName} (${m.universityName})`),
+  hasTxId: Boolean(doc.payment?.transactionId),
 });
 
 export async function listTeams({ search = '', page = 1, limit = 20 } = {}) {

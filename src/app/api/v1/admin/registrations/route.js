@@ -232,11 +232,15 @@ export async function PATCH(req) {
       const pendingIupc = await IupcRegistration.find({
         registrationStatus: 'payment-submitted',
       });
+      const pendingHackathon = await HackathonRegistration.find({
+        registrationStatus: 'payment-submitted',
+      });
       const pendingItQuiz = await ItQuizRegistration.find({ paid: false });
 
       const approvedDatathon = [];
       const approvedGaming = [];
       const approvedIupc = [];
+      const approvedHackathon = [];
       const approvedItQuiz = [];
       const failedEmails = [];
 
@@ -328,6 +332,17 @@ export async function PATCH(req) {
         approvedIupc.push(team.teamName);
       }
 
+      for (const team of pendingHackathon) {
+        if (!smsQuotes(text, team.payment?.transactionId)) continue;
+
+        team.registrationStatus = 'paid';
+        team.finalRegistered = true;
+        team.verifiedAt = new Date();
+        await team.save();
+
+        approvedHackathon.push(team.teamName);
+      }
+
       /* Bulk approve IT Quiz entries.
        *
        * The one difference from the three above: an IT Quiz entrant may prove
@@ -359,6 +374,7 @@ export async function PATCH(req) {
         approvedDatathon.length +
         approvedGaming.length +
         approvedIupc.length +
+        approvedHackathon.length +
         approvedItQuiz.length;
 
       // Log bulk approval
@@ -371,16 +387,18 @@ export async function PATCH(req) {
             approvedDatathonCount: approvedDatathon.length,
             approvedGamingCount: approvedGaming.length,
             approvedIupcCount: approvedIupc.length,
+            approvedHackathonCount: approvedHackathon.length,
             approvedItQuizCount: approvedItQuiz.length,
             approvedDatathonTeams: approvedDatathon,
             approvedGamingTeams: approvedGaming,
             approvedIupcTeams: approvedIupc,
+            approvedHackathonTeams: approvedHackathon,
             approvedItQuizEntrants: approvedItQuiz,
           },
         });
       }
 
-      let msg = `Bulk approval completed. Approved ${totalCount} team(s)/player(s) (Datathon: ${approvedDatathon.length}, Gaming: ${approvedGaming.length}, IUPC: ${approvedIupc.length}, IT Quiz: ${approvedItQuiz.length}).`;
+      let msg = `Bulk approval completed. Approved ${totalCount} team(s)/player(s) (Datathon: ${approvedDatathon.length}, Gaming: ${approvedGaming.length}, IUPC: ${approvedIupc.length}, Hackathon: ${approvedHackathon.length}, IT Quiz: ${approvedItQuiz.length}).`;
       if (failedEmails.length > 0) {
         msg += ` Email failed for: ${failedEmails.join(', ')}`;
       }
@@ -393,6 +411,7 @@ export async function PATCH(req) {
           approvedDatathon,
           approvedGaming,
           approvedIupc,
+          approvedHackathon,
           approvedItQuiz,
         },
       });
@@ -636,6 +655,34 @@ export async function PATCH(req) {
       });
 
       return NextResponse.json({ success: true, message: 'Payment approved' });
+    } else if (eventType === 'hackathon') {
+      const team = await HackathonRegistration.findById(id);
+      if (!team) {
+        return NextResponse.json({ success: false, message: 'Team not found' }, { status: 404 });
+      }
+
+      if (team.registrationStatus === 'paid' || team.finalRegistered) {
+        return NextResponse.json({ success: false, message: 'Payment already approved' });
+      }
+
+      team.registrationStatus = 'paid';
+      team.finalRegistered = true;
+      team.verifiedAt = new Date();
+      await team.save();
+
+      await AdminLog.create({
+        adminEmail,
+        action: 'hackathon_paid_toggle',
+        eventType: 'hackathon',
+        details: {
+          teamId: team._id,
+          teamName: team.teamName,
+          registrationId: team.registrationId,
+          transactionId: team.payment?.transactionId,
+        },
+      });
+
+      return NextResponse.json({ success: true, message: 'Hackathon payment approved' });
     }
 
     return NextResponse.json({ success: false, message: 'Unsupported event type' }, { status: 400 });

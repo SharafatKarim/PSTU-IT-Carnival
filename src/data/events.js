@@ -91,6 +91,79 @@ export const IUPC_PAYMENT = {
   deadline: dhakaLabel(IUPC_PAYMENT_DEADLINE),
 };
 
+const HACKATHON_PAYMENT_DEADLINE = '2026-08-15T23:59:59+06:00';
+export const HACKATHON_PAYMENT = {
+  numbers: [
+    { value: '01782847103', label: 'bKash' },
+    { value: '01581344210', label: 'bKash + Nagad' }
+  ],
+  fee: 2000,
+  cashOutCharge: 0,
+  instructions: 'Use Send Money to any of the numbers below. Paste the transaction ID below.',
+  deadlineAt: HACKATHON_PAYMENT_DEADLINE,
+  deadline: dhakaLabel(HACKATHON_PAYMENT_DEADLINE),
+};
+
+export const hackathonPaymentClosed = (now = new Date()) =>
+    now.getTime() > new Date(HACKATHON_PAYMENT.deadlineAt).getTime();
+
+export const hackathonPaymentTotal = () =>
+    HACKATHON_PAYMENT.fee + HACKATHON_PAYMENT.cashOutCharge;
+
+export const HACKATHON_ACCEPTED_TEAMS = [
+  "PSTU-HACK-2026-0090",
+  "PSTU-HACK-2026-0161",
+  "PSTU-HACK-2026-0107",
+  "PSTU-HACK-2026-0018",
+  "PSTU-HACK-2026-0061",
+  "PSTU-HACK-2026-0101",
+  "PSTU-HACK-2026-0012",
+  "PSTU-HACK-2026-0187",
+  "PSTU-HACK-2026-0135",
+  "PSTU-HACK-2026-0093",
+  "PSTU-HACK-2026-0185",
+  "PSTU-HACK-2026-0111",
+  "PSTU-HACK-2026-0153",
+  "PSTU-HACK-2026-0040",
+  "PSTU-HACK-2026-0026",
+  "PSTU-HACK-2026-0019",
+  "PSTU-HACK-2026-0179",
+  "PSTU-HACK-2026-0094",
+  "PSTU-HACK-2026-0131",
+  "PSTU-HACK-2026-0163",
+  "PSTU-HACK-2026-0157",
+  "PSTU-HACK-2026-0174",
+  "PSTU-HACK-2026-0189",
+  "PSTU-HACK-2026-0143",
+  "PSTU-HACK-2026-0027",
+  "PSTU-HACK-2026-0044",
+  "PSTU-HACK-2026-0154",
+  "PSTU-HACK-2026-0015",
+  "PSTU-HACK-2026-0142",
+  "PSTU-HACK-2026-0151",
+  "PSTU-HACK-2026-0031",
+  "PSTU-HACK-2026-0126",
+  "PSTU-HACK-2026-0010",
+  "PSTU-HACK-2026-0032",
+  "PSTU-HACK-2026-0041",
+  "PSTU-HACK-2026-0172",
+  "PSTU-HACK-2026-0092",
+  "PSTU-HACK-2026-0070",
+  "PSTU-HACK-2026-0132",
+  "PSTU-HACK-2026-0118",
+  "PSTU-HACK-2026-0146",
+  "PSTU-HACK-2026-0042",
+  "PSTU-HACK-2026-0020",
+  "PSTU-HACK-2026-0109",
+  "PSTU-HACK-2026-0009",
+  "PSTU-HACK-2026-0043",
+  "PSTU-HACK-2026-0129",
+  "PSTU-HACK-2026-0110",
+  "PSTU-HACK-2026-0155",
+  "PSTU-HACK-2026-0067"
+];
+
+
 /* Has the entry-fee window shut?
  *
  * Checked in BOTH places on purpose. The button reads it to stop offering a
@@ -484,9 +557,11 @@ export const EVENT_DETAILS = [
     icon: 'rocket',
     accent: 'magenta',
     registrationClosedNotice: {
-      eyebrow: 'Registration Closed',
-      title: 'Pre-registration has closed',
-      body: 'Registration is closed. The preliminary round results will be published soon.',
+      eyebrow: 'Entry Fee Due',
+      title: 'Final registration is open — pay to confirm your slot',
+      body:
+          'Pre-registration has closed. Accepted/shortlisted teams must submit the ৳2,000 entry fee to confirm their slot. Open the team list below, find your team, and press Pay to submit your payment details.',
+      deadline: `Payment closes ${HACKATHON_PAYMENT.deadline}`,
       ctaLabel: 'View Registered Teams',
     },
     cover: '/events/hackathon/cover.jpg',
@@ -494,8 +569,8 @@ export const EVENT_DETAILS = [
     tagline: '🚀 The Only National-Level Event of PSTU IT Carnival 2026',
     blurb:
         'Challenge yourself by solving real-world industry problems, collaborate with talented innovators, and compete for exciting prizes.',
-    stage: 'published',
-    registrationOpen: false,
+    stage: 'open',
+    registrationOpen: true,
 
     /* Phase 1 costs nothing, so this form takes no payment details at all —
        no transaction ID, no screenshot. The ৳2,000 applies at final

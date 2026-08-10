@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { CloseIcon, CheckIcon, AlertIcon } from '@/components/landing/Icons';
-import { IUPC_PAYMENT, iupcPaymentTotal } from '@/data/events';
+import { IUPC_PAYMENT, iupcPaymentTotal, HACKATHON_PAYMENT, hackathonPaymentTotal } from '@/data/events';
 import { submitPayment } from '@/services/events/iupc';
 
 /* Entry-fee submission for one team, launched from its row in the directory.
@@ -15,11 +15,15 @@ import { submitPayment } from '@/services/events/iupc';
  * page that lists every registration ID. It is the one detail the directory
  * withholds, so it is what distinguishes the team from a passer-by. */
 const PaymentModal = ({ team, onClose, onPaid }) => {
-  const total = iupcPaymentTotal();
+  const isHackathon = team.registrationId?.startsWith('PSTU-HACK-');
+  const slug = isHackathon ? 'hackathon' : 'iupc';
+  const paymentConfig = isHackathon ? HACKATHON_PAYMENT : IUPC_PAYMENT;
+  const total = isHackathon ? hackathonPaymentTotal() : iupcPaymentTotal();
+  const methods = isHackathon ? ['bKash', 'Nagad'] : IUPC_PAYMENT.methods;
 
   const [form, setForm] = useState({
     leaderEmail: '',
-    method: IUPC_PAYMENT.methods[0],
+    method: methods[0],
     transactionId: '',
   });
   const [loading, setLoading] = useState(false);
@@ -62,7 +66,7 @@ const PaymentModal = ({ team, onClose, onPaid }) => {
 
     setLoading(true);
     try {
-      const result = await submitPayment({
+      const result = await submitPayment(slug, {
         registrationId: team.registrationId,
         leaderEmail: form.leaderEmail.trim(),
         method: form.method,
@@ -146,25 +150,44 @@ const PaymentModal = ({ team, onClose, onPaid }) => {
                     Amount to send
                   </p>
                   <p className="mt-1 text-xl font-extrabold text-gold-300">৳{total}</p>
-                  <p className="mt-0.5 text-[11px] text-mist-500">
-                    ৳{IUPC_PAYMENT.fee} entry fee + ৳{IUPC_PAYMENT.cashOutCharge} cash-out
-                    charge
-                  </p>
+                  {isHackathon ? (
+                    <p className="mt-0.5 text-[11px] text-mist-500">
+                      ৳{paymentConfig.fee} entry fee (No cash-out charge required)
+                    </p>
+                  ) : (
+                    <p className="mt-0.5 text-[11px] text-mist-500">
+                      ৳{IUPC_PAYMENT.fee} entry fee + ৳{IUPC_PAYMENT.cashOutCharge} cash-out
+                      charge
+                    </p>
+                  )}
                 </div>
                 <div className="bg-ink-900/60 px-4 py-3.5">
                   <p className="text-[11px] font-bold uppercase tracking-wide text-mist-500">
-                    Send to ({IUPC_PAYMENT.accountType})
+                    Send to
                   </p>
-                  <p className="mt-1 select-all font-mono text-xl font-extrabold text-white">
-                    {IUPC_PAYMENT.number}
-                  </p>
-                  <p className="mt-0.5 text-[11px] text-mist-500">
-                    Accepted: {IUPC_PAYMENT.methods.join(' · ')}
-                  </p>
+                  {isHackathon ? (
+                    <div className="mt-1 space-y-1 font-mono text-sm font-extrabold text-white">
+                      {paymentConfig.numbers.map((n) => (
+                        <div key={n.value} className="flex justify-between select-all">
+                          <span>{n.value}</span>
+                          <span className="text-[10px] text-mist-400 font-normal">({n.label})</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <>
+                      <p className="mt-1 select-all font-mono text-xl font-extrabold text-white">
+                        {IUPC_PAYMENT.number}
+                      </p>
+                      <p className="mt-0.5 text-[11px] text-mist-500">
+                        Accepted: {IUPC_PAYMENT.methods.join(' · ')}
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
               <p className="border-t border-white/5 px-4 py-3 text-xs leading-relaxed text-mist-300">
-                {IUPC_PAYMENT.instructions}
+                {paymentConfig.instructions}
               </p>
             </div>
 
@@ -205,7 +228,7 @@ const PaymentModal = ({ team, onClose, onPaid }) => {
                     onChange={set('method')}
                     className={inputClass('method')}
                   >
-                    {IUPC_PAYMENT.methods.map((m) => (
+                    {methods.map((m) => (
                       <option key={m} value={m} className="bg-ink-900">
                         {m}
                       </option>

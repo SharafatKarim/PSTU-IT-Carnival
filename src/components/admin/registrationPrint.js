@@ -234,17 +234,41 @@ export const REGISTRATION_PRINT = {
   },
 
   hackathon: {
-    title: 'Hackathon Pre-Registrations',
+    title: 'Hackathon Registrations',
     noun: { one: 'team', many: 'teams' },
     summary: (list) => {
       const varsities = new Set(
         list.flatMap((t) => (t.members || []).map((m) => String(m.universityName || '').trim().toLowerCase())).filter(Boolean)
       ).size;
-      return `${varsities} ${varsities === 1 ? 'university' : 'universities'} represented`;
+      const paid = list.filter((t) => t.status === 'paid' || t.finalRegistered).length;
+      const awaiting = list.filter((t) => t.status === 'payment-submitted').length;
+      return `${varsities} varsities · ${paid} paid · ${awaiting} awaiting check`;
     },
     columns: [
       { header: 'Team Name', cls: 'name', value: (t) => t.teamName },
       { header: 'Reg ID', cls: 'mono', value: (t) => t.registrationId },
+      {
+        header: 'Payment',
+        cls: 'wrap',
+        value: (t) =>
+          t.status === 'paid' || t.status === 'payment-submitted'
+            ? lines([
+                t.payment?.transactionId,
+                t.payment?.method,
+                t.payment?.amount != null && `BDT ${t.payment.amount}`,
+              ])
+            : 'Unpaid',
+      },
+      {
+        header: 'Status',
+        cls: 'num',
+        value: (t) =>
+          t.status === 'paid'
+            ? 'Paid'
+            : t.status === 'payment-submitted'
+              ? 'Awaiting check'
+              : 'Pre-registered',
+      },
       {
         header: 'Members',
         cls: 'wrap',

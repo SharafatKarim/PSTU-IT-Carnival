@@ -60,7 +60,9 @@ export default function AdminDashboard({ user }) {
             t._id === id
               ? eventType === 'gaming' || eventType === 'iupc'
                 ? { ...t, registrationStatus: 'paid' }
-                : { ...t, paid: true }
+                : eventType === 'hackathon'
+                  ? { ...t, registrationStatus: 'paid', finalRegistered: true }
+                  : { ...t, paid: true }
               : t
           ),
         }));
@@ -1112,52 +1114,116 @@ export default function AdminDashboard({ user }) {
                       <th className="px-6 py-4">Reg ID</th>
                       <th className="px-6 py-4">Members</th>
                       <th className="px-6 py-4">Shortlisted</th>
+                      <th className="px-6 py-4">Payment</th>
+                      <th className="px-6 py-4">Status</th>
+                      <th className="px-6 py-4">Action</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5 text-sm">
                     {visibleList.length === 0 ? (
                       <tr>
-                        <td colSpan="4" className="px-6 py-10 text-center text-mist-400">
+                        <td colSpan="7" className="px-6 py-10 text-center text-mist-400">
                           {emptyMessage('No Hackathon pre-registrations found.')}
                         </td>
                       </tr>
                     ) : (
-                      visibleList.map((team) => (
-                        <tr key={team._id} className="hover:bg-white/[0.02] transition">
-                          <td className="px-6 py-4 font-bold text-white">{team.teamName}</td>
-                          <td className="px-6 py-4 font-mono text-xs text-mist-300">{team.registrationId}</td>
-                          <td className="px-6 py-4">
-                            <div className="space-y-2">
-                              {team.members.map((m, i) => (
-                                <div key={i} className="text-xs">
-                                  <span className="font-semibold text-white">
-                                    {m.fullName} {m.isTeamLeader && <span className="text-[10px] text-magenta-300 border border-magenta-300/30 px-1 rounded">Leader</span>}
-                                  </span>
-                                  <div className="text-mist-400">
-                                    {m.universityName} · {m.department} · T-Shirt: {m.tshirtSize}
+                      visibleList.map((team) => {
+                        const isPaid = team.registrationStatus === 'paid' || team.finalRegistered;
+                        return (
+                          <tr key={team._id} className="hover:bg-white/[0.02] transition">
+                            <td className="px-6 py-4 font-bold text-white">{team.teamName}</td>
+                            <td className="px-6 py-4 font-mono text-xs text-mist-300">{team.registrationId}</td>
+                            <td className="px-6 py-4">
+                              <div className="space-y-2">
+                                {team.members.map((m, i) => (
+                                  <div key={i} className="text-xs">
+                                    <span className="font-semibold text-white">
+                                      {m.fullName} {m.isTeamLeader && <span className="text-[10px] text-magenta-300 border border-magenta-300/30 px-1 rounded">Leader</span>}
+                                    </span>
+                                    <div className="text-mist-400">
+                                      {m.universityName} · {m.department} · T-Shirt: {m.tshirtSize}
+                                    </div>
+                                    <div className="text-mist-400">
+                                      {m.email} · {m.whatsapp}
+                                    </div>
                                   </div>
-                                  <div className="text-mist-400">
-                                    WhatsApp: {m.whatsapp} · Email: {m.email}
+                                ))}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span
+                                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold ${
+                                  team.shortlisted
+                                    ? 'bg-magenta-500/10 text-magenta-400 border border-magenta-500/20'
+                                    : 'bg-white/5 text-mist-400 border border-white/10'
+                                }`}
+                              >
+                                {team.shortlisted ? 'Yes' : 'No'}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              {team.payment?.transactionId ? (
+                                <div className="text-xs">
+                                  <div className="font-mono text-mist-300">{team.payment.transactionId}</div>
+                                  <div className="text-[10px] text-mist-500">
+                                    {team.payment.method} · Recv: {team.payment.receiverNumber || 'N/A'}
                                   </div>
+                                  <div className="text-xs text-aqua-400">৳{team.payment.amount}</div>
                                 </div>
-                              ))}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            {team.shortlisted ? (
-                              <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-1 text-xs font-bold text-green-400 border border-green-500/20">
-                                <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-                                Yes
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-400 border border-amber-500/20">
-                                <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-                                No
-                              </span>
-                            )}
-                          </td>
-                        </tr>
-                      ))
+                              ) : (
+                                <span className="text-xs text-mist-500">Not submitted</span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4">
+                              {isPaid ? (
+                                <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-1 text-xs font-bold text-green-400 border border-green-500/20">
+                                  <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                                  Paid
+                                </span>
+                              ) : team.registrationStatus === 'payment-submitted' ? (
+                                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-400 border border-amber-500/20">
+                                  <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+                                  Awaiting check
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 text-xs font-bold text-mist-400 border border-white/10">
+                                  <span className="h-1.5 w-1.5 rounded-full bg-mist-500" />
+                                  Pre-registered
+                                </span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4">
+                              {!isPaid && (
+                                <button
+                                  onClick={() => {
+                                    if (
+                                      team.registrationStatus !== 'payment-submitted' &&
+                                      !window.confirm(
+                                        `${team.teamName} has not submitted a transaction ID. Mark it paid anyway?`
+                                      )
+                                    ) {
+                                      return;
+                                    }
+                                    handleApprovePayment(team._id, 'hackathon');
+                                  }}
+                                  disabled={actionLoading !== null}
+                                  className={`px-3 py-1.5 text-xs font-bold rounded-lg transition disabled:opacity-50 ${
+                                    team.registrationStatus === 'payment-submitted'
+                                      ? 'bg-gold-400 text-ink-950 hover:bg-gold-300'
+                                      : 'border border-white/15 bg-white/5 text-mist-200 hover:bg-white/10'
+                                  }`}
+                                >
+                                  {actionLoading === team._id
+                                    ? 'Approving...'
+                                    : team.registrationStatus === 'payment-submitted'
+                                      ? 'Approve'
+                                      : 'Mark paid'}
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })
                     )}
                   </tbody>
                 </table>

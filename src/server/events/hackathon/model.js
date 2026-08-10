@@ -91,6 +91,26 @@ const registrationSchema = new mongoose.Schema(
     /* Set when a team is picked for the on-site finale. */
     shortlisted: { type: Boolean, default: false },
 
+    registrationStatus: {
+      type: String,
+      enum: ['pre-registered', 'payment-submitted', 'paid', 'rejected'],
+      default: 'pre-registered',
+    },
+
+    payment: {
+      method: { type: String, trim: true },
+      transactionId: {
+        type: String,
+        trim: true,
+        uppercase: true,
+        maxlength: [25, 'Transaction ID cannot exceed 25 characters'],
+      },
+      receiverNumber: { type: String, trim: true },
+      amount: { type: Number, min: 0 },
+      submittedAt: { type: Date },
+    },
+    verifiedAt: { type: Date },
+
     agreements: {
       infoCorrect: { type: Boolean, default: false },
       rules: { type: Boolean, default: false },
@@ -99,6 +119,14 @@ const registrationSchema = new mongoose.Schema(
     registrationId: { type: String, unique: true, trim: true },
   },
   { timestamps: true }
+);
+
+registrationSchema.index(
+  { 'payment.transactionId': 1 },
+  {
+    unique: true,
+    partialFilterExpression: { 'payment.transactionId': { $type: 'string' } },
+  }
 );
 
 export default mongoose.models.HackathonRegistration ||
