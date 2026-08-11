@@ -8,6 +8,7 @@ import VolunteerTable from './admin/VolunteerTable';
 import printTable from './admin/printTable';
 import { REGISTRATION_PRINT, IUPC_KIT_PRINT, tshirtCounts } from './admin/registrationPrint';
 import { SECTION_FILTERS } from './admin/sectionFilters';
+import { HACKATHON_ACCEPTED_TEAMS } from '@/data/events';
 
 export default function AdminDashboard({ user }) {
   const [activeTab, setActiveTab] = useState('datathon'); // 'datathon' | 'iupc' | 'gaming' | 'it-quiz' | 'volunteer' | 'project-showcase'
@@ -1151,15 +1152,20 @@ export default function AdminDashboard({ user }) {
                               </div>
                             </td>
                             <td className="px-6 py-4">
-                              <span
-                                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold ${
-                                  team.shortlisted
-                                    ? 'bg-magenta-500/10 text-magenta-400 border border-magenta-500/20'
-                                    : 'bg-white/5 text-mist-400 border border-white/10'
-                                }`}
-                              >
-                                {team.shortlisted ? 'Yes' : 'No'}
-                              </span>
+                              {(() => {
+                                const isShortlisted = team.shortlisted || HACKATHON_ACCEPTED_TEAMS.includes(team.registrationId);
+                                return (
+                                  <span
+                                    className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold ${
+                                      isShortlisted
+                                        ? 'bg-magenta-500/10 text-magenta-400 border border-magenta-500/20'
+                                        : 'bg-white/5 text-mist-400 border border-white/10'
+                                    }`}
+                                  >
+                                    {isShortlisted ? 'Yes' : 'No'}
+                                  </span>
+                                );
+                              })()}
                             </td>
                             <td className="px-6 py-4">
                               {team.payment?.transactionId ? (

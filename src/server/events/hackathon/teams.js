@@ -1,4 +1,5 @@
 import Registration from './model';
+import { HACKATHON_ACCEPTED_TEAMS } from '@/data/events';
 
 const PUBLIC_FIELDS = 'registrationId teamName finalRegistered shortlisted registrationStatus payment.transactionId members.fullName members.universityName';
 
@@ -39,7 +40,7 @@ const toPublicTeam = (doc) => ({
   registrationId: doc.registrationId,
   teamName: doc.teamName,
   status: normaliseStatus(doc.registrationStatus, doc.finalRegistered),
-  shortlisted: doc.shortlisted,
+  shortlisted: Boolean(doc.shortlisted || HACKATHON_ACCEPTED_TEAMS.includes(doc.registrationId)),
   members: (doc.members || []).map((m) => `${m.fullName} (${m.universityName})`),
   hasTxId: Boolean(doc.payment?.transactionId),
 });

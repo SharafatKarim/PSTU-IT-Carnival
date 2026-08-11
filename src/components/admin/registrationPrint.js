@@ -1,12 +1,4 @@
-/* What each admin tab puts on paper.
- *
- * One entry per tab, mirroring the columns already on screen so a printout and
- * the dashboard read the same — minus the Action column, which means nothing
- * once printed. Cell text may contain newlines; printTable.js escapes first and
- * only then turns those into line breaks.
- *
- * `cls` picks a style from the print stylesheet: num (centred, no wrap), mono
- * (tabular IDs), name (bold), wrap (breaks long words). */
+import { HACKATHON_ACCEPTED_TEAMS } from '@/data/events';
 
 const dash = '—';
 
@@ -283,7 +275,14 @@ export const REGISTRATION_PRINT = {
             )
           ),
       },
-      { header: 'Shortlisted', cls: 'num', value: (t) => (t.shortlisted ? 'Yes' : 'No') },
+      {
+        header: 'Shortlisted',
+        cls: 'num',
+        value: (t) =>
+          t.shortlisted || HACKATHON_ACCEPTED_TEAMS.includes(t.registrationId)
+            ? 'Yes'
+            : 'No',
+      },
     ],
   },
 };
