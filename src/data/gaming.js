@@ -1161,6 +1161,10 @@ export const GAMES = [
         email: "ug2102021@cse.pstu.ac.bd",
       },
     ],
+    stage: "open",
+    registrationOpen: false,
+    closedHeading: "Registration has closed",
+    closedNote: "Registration for the Chess (Rapid) tournament is now closed. The fixture and schedule will be announced soon.",
   },
   {
     slug: 'ludo',
