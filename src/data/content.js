@@ -54,12 +54,15 @@ export const EVENTS = [
     icon: 'code',
     blurb:
       'The flagship ICPC-style Inter-University Programming Contest. Teams of three, a 4–5 hour battle, one keyboard.',
-    /* Pre-registration closed 30 July 2026. `status` must track `stage` in
-       events.js — the drift guard at the bottom of src/lib/routes.js warns in
-       development when it does not — and there is no registerHref any more,
-       because there is no form to send anyone to. */
-    status: 'live',
-    cta: 'View Details',
+    /* Pre-registration closed 2 August 2026 and REOPENED when the carnival
+       moved to 27–29 August; it closes again 20 August. `status` must track
+       `stage` in events.js — the drift guard at the bottom of
+       src/lib/routes.js warns in development when it does not, and
+       scripts/check-data.mjs fails the build over it, which is how this line
+       was caught rather than shipped. */
+    status: 'open',
+    cta: 'Pre-Register',
+    registerHref: '/events/iupc/register',
     /* Resolves against src/data/events.js. The id 'iupc' happens to match its
        slug; the gaming ids do not, so every linked event states it. */
     slug: 'iupc',

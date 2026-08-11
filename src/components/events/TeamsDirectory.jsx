@@ -210,6 +210,29 @@ const TeamsDirectory = ({ slug = 'iupc' }) => {
       intro={`Every team pre-registered for ${event?.name}. Search by team name, university, member, or serial number.`}
       tabs={<SubPageTabs slug={slug} active="teams" />}
     >
+      {/* While the fee window is open this page has to carry the reminder on
+          its own. The landing page leads with whatever phase is current — with
+          IUPC pre-registration reopened that is "pre-register", which is right
+          for a team that has not entered and says nothing to the ones already
+          on this list with a fee outstanding. They arrive here; this is where
+          the date belongs. Hidden once every row is settled, so a fully paid
+          directory is not nagging anybody. */}
+      {!closed && !loading && teams.some((t) => t.status !== 'paid') && (
+        <div className="mb-4 flex items-start gap-2.5 rounded-lg border border-gold-400/25 bg-gold-400/[0.07] px-4 py-3 text-sm text-mist-200">
+          <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-gold-300" />
+          <span>
+            <strong className="font-semibold text-white">
+              The entry fee is still due
+            </strong>{' '}
+            — find your team below and press Pay. Payments close{' '}
+            <strong className="font-semibold text-white">
+              {paymentConfig.deadline}
+            </strong>
+            ; a team that has not paid by then may lose its slot.
+          </span>
+        </div>
+      )}
+
       {/* A row full of greyed-out buttons is a bug until something says why. */}
       {closed && (
         <div className="mb-4 flex items-start gap-2.5 rounded-lg border border-red-500/25 bg-red-950/20 px-4 py-3 text-sm text-mist-200">

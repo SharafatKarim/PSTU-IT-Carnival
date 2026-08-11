@@ -38,7 +38,12 @@
    23:59:59 rather than 23:59:00 so the whole of the final minute counts —
    "11:59 PM" reads as the last minute of the day, and it should behave that
    way. */
-const IUPC_PAYMENT_DEADLINE = '2026-08-06T23:59:59+06:00';
+/* Extended from 6 August when the carnival moved to 27–29 August and
+   pre-registration reopened. It sits AFTER the pre-registration deadline of
+   20 August on purpose: a team that joins on the last day still needs days to
+   send money, and a fee window that shuts the moment entries do would collect
+   nothing from the teams the reopening exists to admit. */
+const IUPC_PAYMENT_DEADLINE = '2026-08-23T23:59:59+06:00';
 
 const DHAKA_OFFSET_MS = 6 * 60 * 60 * 1000;
 const MONTH_NAMES = [
@@ -214,11 +219,12 @@ export const EVENT_DETAILS = [
       teamSizeShort: '3 + coach',
       slots: '45 teams',
       platform: 'Onsite — workstations provided',
-      /* Extended from 31 July. Every countdown, timeline stop and
+      /* Extended from 31 July, then from 2 August when the carnival moved and
+         pre-registration was reopened. Every countdown, timeline stop and
          "entries close" line on the site reads this one value, so they all
          move with it — only the meta description in layout.js and the
          confirmation email spell the date out separately. */
-      deadline: '2 August 2026',
+      deadline: '20 August 2026, 11:59 PM',
     },
 
     /* Non-monetary only. Prize money has not been announced; add an
@@ -282,22 +288,27 @@ export const EVENT_DETAILS = [
     /* How far along this event is. The landing ledger groups by this rather
        than inferring from registrationOpen, which cannot tell "announced
        only" apart from "published but closed". */
-    stage: 'published',
-    /* Flip to false to close entries without deleting the form. */
-    registrationOpen: false,
-    /* ...and this says WHY it is false. Every other published event means
-       "entries have not opened yet"; IUPC pre-registration ran and has now
-       shut, so the pages must say closed rather than coming soon. Without
-       it the site invites people to wait for a form that will not return. */
-    registrationClosed: true,
-    /* Overrides the generic "entries have shut" card on the event page.
-       Closing is no longer the news — the slots are out and the fee is
-       due, so the card a team lands on has to say that and give the date
-       the money has to be in by. The deadline is interpolated from
-       IUPC_PAYMENT rather than typed again, and no href is stored here
-       because this file names no URLs: EventDetail resolves the event's
-       own teams directory. Any event may set this; the ones that do not
-       keep the generic text. */
+    stage: 'open',
+    /* REOPENED. Pre-registration ran, shut on 2 August, and is open again
+       because the carnival moved to 27–29 August — three extra weeks is long
+       enough that turning teams away would be a choice rather than a deadline.
+       Back to 'open' above so the landing ledger files it under "Open now"
+       again instead of leaving it in the published-but-shut tier.
+
+       This flag is also what the intake API checks, so flipping it here is what
+       actually reopens the form rather than just the button that links to it. */
+    registrationOpen: true,
+    /* registrationClosed is deliberately absent while entries are open. It says
+       "entries ran and have shut" as opposed to "have not opened yet", and both
+       readings are wrong right now. Set it back to true, alongside
+       registrationOpen: false, when 20 August passes. */
+    /* Dormant while entries are open — EventDetail only renders this once
+       isRegistrationClosed() is true. Left in place because it is exactly what
+       the page should say when this shuts again on 20 August and the fee falls
+       due for the teams that joined in the meantime. The deadline is
+       interpolated from IUPC_PAYMENT rather than typed again, and no href is
+       stored here because this file names no URLs: EventDetail resolves the
+       event's own teams directory. */
     registrationClosedNotice: {
       eyebrow: 'Entry Fee Due',
       title: 'Final registration is open — pay to confirm your slot',
