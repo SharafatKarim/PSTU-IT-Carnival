@@ -91,7 +91,7 @@ export const IUPC_PAYMENT = {
   deadline: dhakaLabel(IUPC_PAYMENT_DEADLINE),
 };
 
-const HACKATHON_PAYMENT_DEADLINE = '2026-08-15T23:59:59+06:00';
+const HACKATHON_PAYMENT_DEADLINE = '2026-08-29T23:59:59+06:00';
 export const HACKATHON_PAYMENT = {
   numbers: [
     { value: '01782847103', label: 'bKash' },
@@ -203,7 +203,7 @@ export const EVENT_DETAILS = [
     cover: '/events/iupc/cover.jpg',
 
     tournament: {
-      date: '15 August 2026',
+      date: '29 August 2026',
       time: '9:00 AM — 3:00 PM',
       venue: 'CSE–FBA Building, PSTU',
       entryFee: '৳3,000 per team',
@@ -452,7 +452,7 @@ export const EVENT_DETAILS = [
           'Competition starts: August 8, 2026 (12:00 AM).',
           'Google Form released for code submission: August 11, 2026.',
           'Competition ends & code submission deadline: August 12, 2026 (11:59 PM).',
-          'Winners announcement & award ceremony: August 15, 2026, during the Grand Closing Ceremony of IT Carnival 2026.',
+          'Winners announcement & award ceremony: August 29, 2026, during the Grand Closing Ceremony of IT Carnival 2026.',
           'Physical presence is NOT mandatory. All prize money, digital certificates, and rewards will be transferred/dispatched online.'
         ],
       },
@@ -593,7 +593,7 @@ export const EVENT_DETAILS = [
         'Pre-register your team here before 2 August 7:00 PM. It costs nothing.',
         'Two emails follow with the problem statement. Build your solution and submit it as a presentation or abstract.',
         'Shortlisted teams get a selection email, then final registration runs 9–11 August with the ৳2,000 team fee.',
-        'The on-site finale is 15 August at the TSC Conference Hall.',
+        'The on-site finale is 29 August at the TSC Conference Hall.',
       ],
       checklist: [
         'Your team name',
@@ -603,7 +603,7 @@ export const EVENT_DETAILS = [
       ],
     },
     tournament: {
-      date: '15 August 2026',
+      date: '29 August 2026',
       time: '9:00 AM — 5:00 PM (questions emailed at 8:00 AM)',
       venue: 'TSC Conference Hall, PSTU',
       entryFee: 'Free to pre-register · ৳2,000 per team at final registration',
@@ -643,7 +643,7 @@ export const EVENT_DETAILS = [
         title: 'Phase 3: On-Site Grand Finale',
         icon: 'clock',
         items: [
-          '15 August 2026, TSC Conference Hall, PSTU.',
+          '29 August 2026, TSC Conference Hall, PSTU.',
           'The final on-site round will feature a new industry-level problem statement that teams must solve within the allocated time (9:00 AM to 3:00 PM).',
           '৳2,000 per team, paid at final registration by the shortlisted teams only.',
           '8:00 AM — the final problem statement is emailed to every selected team.',
@@ -665,7 +665,7 @@ export const EVENT_DETAILS = [
     faqs: [
       {
         q: 'Is physical presence required for Phase 1?',
-        a: 'No. Pre-registration and the first submission are fully online. You only need to be at PSTU if your team is shortlisted for the on-site finale on 15 August 2026.'
+        a: 'No. Pre-registration and the first submission are fully online. You only need to be at PSTU if your team is shortlisted for the on-site finale on 29 August 2026.',
       },
       {
         q: 'What is the team size?',
@@ -705,7 +705,7 @@ export const EVENT_DETAILS = [
     heroNote: 'Individual participation — no team required.',
 
     tournament: {
-      date: '14 August 2026',
+      date: '28 August 2026',
       time: '10:00 AM',
       venue: 'TSC Conference Room',
       entryFee: '৳100 per participant',
@@ -859,7 +859,7 @@ export const EVENT_DETAILS = [
     registrationOpen: true,
 
     tournament: {
-      date: '13 August 2026',
+      date: '27 August 2026',
       time: '2:00 PM onwards',
       venue: 'PME Lab',
       entryFee: 'Single: ৳100 · Duo: ৳200 · Trio: ৳300',
@@ -949,7 +949,7 @@ export const EVENT_DETAILS = [
       },
       {
         q: 'When and where is the event taking place?',
-        a: 'The event will be held on August 13, 2026, starting from 2:00 PM onwards at the PME Lab. Participants are expected to arrive early to set up their projects.',
+        a: 'The event will be held on August 27, 2026, starting from 2:00 PM onwards at the PME Lab. Participants are expected to arrive early to set up their projects.',
       },
       {
         q: 'Is offline presence mandatory?',

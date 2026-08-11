@@ -641,8 +641,8 @@ export async function sendDatathonConfirmationEmail(toEmail, teamName, registrat
                   <p style="color: #ffffff !important; font-weight: bold; margin: 20px 0 10px 0;">Contest details:</p>
                   <ul style="margin: 0 0 20px 0; padding-left: 20px; color: #d1cbe5 !important;">
                     <li style="margin-bottom: 8px;"><strong style="color: #ffffff !important;">Contest Start Date</strong>: August 9 (10.00 PM), 2026</li>
-                    <li style="margin-bottom: 8px;"><strong style="color: #ffffff !important;">Contest Platform</strong>: Online (Submission Form released on August 13, 2026)</li>
-                    <li style="margin-bottom: 8px;"><strong style="color: #ffffff !important;">Submission Deadline</strong>: August 14, 2026 (6:00 AM)</li>
+                    <li style="margin-bottom: 8px;"><strong style="color: #ffffff !important;">Contest Platform</strong>: Online (Submission Form released on August 27, 2026)</li>
+                    <li style="margin-bottom: 8px;"><strong style="color: #ffffff !important;">Submission Deadline</strong>: August 28, 2026 (6:00 AM)</li>
                   </ul>
 
                   <p style="color: #d1cbe5 !important; margin: 0 0 20px 0;">
@@ -780,7 +780,7 @@ export async function sendProjectShowcaseConfirmationEmail(toEmail, teamName, re
           <p>Your team <strong>${esc(teamName)}</strong> has been successfully registered for the <strong>Project Showcasing</strong> event at ${BRAND}. We have verified your payment.</p>
           <p>What happens next?</p>
           <ul>
-            <li>The exhibition and judging will take place on <strong>13 August 2026</strong> starting from <strong>2:00 PM onwards</strong>.</li>
+            <li>The exhibition and judging will take place on <strong>27 August 2026</strong> starting from <strong>2:00 PM onwards</strong>.</li>
             <li>Venue: <strong>PME Lab</strong>.</li>
             <li>Make sure to arrive early with your functional hardware setup, laptops, required cables, and extension cords.</li>
             <li>Offline presence of at least one team member is mandatory.</li>

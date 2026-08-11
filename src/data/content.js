@@ -17,7 +17,7 @@ export const EVENT = {
   tagline: 'South Zone’s Largest Tech Competition',
   intro:
     'Three days, twelve events, one stage — competitive programming, hackathons, data science, quizzes, project showcases and gaming at Patuakhali Science and Technology University.',
-  date: '13–15 August 2026',
+  date: '27–29 August 2026',
   venue: 'CSE–FBA Building, PSTU',
   format: 'Onsite · 3 Days',
   organizer: 'CSE Club, PSTU',

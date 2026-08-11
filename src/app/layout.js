@@ -11,7 +11,7 @@ const inter = Inter({
 export const metadata = {
   metadataBase: new URL('https://itcarnival26.pstu.ac.bd'),
   title: "PSTU IT Carnival 2026 — Tech & Gaming Fest",
-  description: "PSTU IT Carnival 2026 — South Zone's largest tech competition at Patuakhali Science and Technology University. Twelve events across programming, hackathon, data, quiz, security and gaming. 13–15 August 2026.",
+  description: "PSTU IT Carnival 2026 — South Zone's largest tech competition at Patuakhali Science and Technology University. Twelve events across programming, hackathon, data, quiz, security and gaming. 27–29 August 2026.",
   openGraph: {
     title: "PSTU IT Carnival 2026 — Tech & Gaming Fest",
     /* Spelled out rather than read from events.js — this is a static export

@@ -34,8 +34,8 @@ const EMAIL_RULES = {
 /* eFootball and Free Fire share a day and a room. PUBG Mobile moved to the 14th
    on 30 July 2026 and so carries its own date — GAMING_DAY is no longer "the
    gaming day", it is the day the other two run. */
-const GAMING_DAY = "13 August 2026";
-const PUBG_DAY = "14 August 2026";
+const GAMING_DAY = "27 August 2026";
+const PUBG_DAY = "28 August 2026";
 const GAMING_VENUE = "Seminar Room, TSC (3rd Floor), PSTU";
 const GAMING_DEADLINE = "5 August 2026";
 const TIME_TBA = "To be announced";
@@ -717,7 +717,7 @@ export const GAMES = [
       teamSizeShort: "Squad of 4",
       slots: "25 squads",
       platform: "Mobile & tablet only",
-      deadline: "14 August 2026",
+      deadline: "28 August 2026",
     },
 
     matchFormat: {
@@ -855,7 +855,7 @@ export const GAMES = [
     mode: "Squad of 4",
     tagline: "Fast, furious mobile battle royale. Drop in, gear up, survive.",
     blurb:
-      "Forty-eight squads in four groups, preliminary online matches, then a three-match Final Round on 13 August 2026.",
+      "Forty-eight squads in four groups, preliminary online matches, then a three-match Final Round on 27 August 2026.",
     heroNote:
       "Enter as a squad of four, or on your own — we will place you in one.",
 
@@ -931,7 +931,7 @@ export const GAMES = [
         items: [
           "The preliminary round will be conducted online, with the participating teams divided into four groups of 12 teams each. From each group, the top three teams will qualify for the Final Round.",
           "Preliminary round date to be announced.",
-          "The Final Round will be held on 13 August 2026, featuring only the qualified teams. The Final Round will consist of three matches.",
+          "The Final Round will be held on 27 August 2026, featuring only the qualified teams. The Final Round will consist of three matches.",
           "The final starts from zero. Group points decide who qualifies, not the final standing.",
           "Custom room ID and password are shared in the official group before each match.",
           "Squads must join the lobby 5 minutes before start time; late squads forfeit that match.",
@@ -1039,7 +1039,7 @@ export const GAMES = [
     heroNote: "Individual participation — no team required.",
 
     tournament: {
-      date: "14 August 2026",
+      date: "28 August 2026",
       time: "4:00 PM (Reporting: 3:30 PM)",
       venue: "Agriculture Conference Room",
       entryFee: "৳100 per player",
@@ -1184,7 +1184,7 @@ export const GAMES = [
        other. Change them here and every surface follows.
        --------------------------------------------------------------------- */
     tournament: {
-      date: '14 August 2026',
+      date: '28 August 2026',
       time: '10:30 AM (Reporting: 10:00 AM)',
       venue: 'Central auditorium',
       entryFee: '৳100 per player',
@@ -1361,7 +1361,7 @@ export const GAMES = [
     heroNote: "Individual participation — no team required.",
 
     tournament: {
-      date: "14 August 2026",
+      date: "28 August 2026",
       time: "5:00 PM (Reporting: 4:30 PM)",
       venue: "Agriculture Conference Room",
       entryFee: "৳100 per player",
@@ -1490,7 +1490,7 @@ export const GAMING = {
   eyebrow: "Gaming Fest",
   title: "Six arenas. One Booyah.",
   intro:
-    "The gaming wing of PSTU IT Carnival 2026 runs three esports tournaments — one solo, two squad-based — alongside three board and puzzle events. eFootball and Free Fire run on 13 August, PUBG Mobile on 14 August, and entries are open now; the board events follow later.",
+    "The gaming wing of PSTU IT Carnival 2026 runs three esports tournaments — one solo, two squad-based — alongside three board and puzzle events. eFootball and Free Fire run on 27 August, PUBG Mobile on 28 August, and entries are open now; the board events follow later.",
   note: "Entry fees are paid online while you register — send the amount via bKash or Nagad Send Money, then enter the transaction ID on the form. Your entry is confirmed once a coordinator verifies it.",
   /* Shown wherever a closed tournament would otherwise offer a form. */
   closedHeading: "Registration opens soon",

@@ -1,7 +1,7 @@
 # PSTU IT Carnival 2026
 
 The website for **PSTU IT Carnival 2026** — a three-day tech and gaming festival
-at Patuakhali Science and Technology University, 13–15 August 2026.
+at Patuakhali Science and Technology University, 27–29 August 2026.
 
 Eleven events. IUPC (the flagship ICPC-style contest) takes pre-registrations
 online; the three gaming tournaments publish their formats, rules and prizes

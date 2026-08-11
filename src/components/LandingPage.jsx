@@ -153,7 +153,7 @@ const OpenNowPanel = () => {
       facts: [
         { icon: UsersIcon, label: 'Team size', value: datathon.tournament?.teamSizeShort || '1-3 members' },
         { icon: TicketIcon, label: 'Entry fee', value: datathon.tournament?.entryFee || '৳1,500 per team' },
-        { icon: CalendarIcon, label: 'Date', value: datathon.tournament?.date || '14 August' },
+        { icon: CalendarIcon, label: 'Date', value: datathon.tournament?.date || '28 August' },
       ],
       ctaLabel: 'Register for Datathon',
       ctaHref: ROUTES.eventRegister('datathon'),
@@ -174,7 +174,7 @@ const OpenNowPanel = () => {
       facts: [
         { icon: UsersIcon, label: 'Team size', value: showcase.tournament?.teamSizeShort || '1-3 members' },
         { icon: TicketIcon, label: 'Entry fee', value: showcase.tournament?.entryFee || 'Single-100, Duo-200, Trio-300' },
-        { icon: CalendarIcon, label: 'Date', value: showcase.tournament?.date || '13 August' },
+        { icon: CalendarIcon, label: 'Date', value: showcase.tournament?.date || '27 August' },
       ],
       ctaLabel: 'Register for Showcase',
       ctaHref: ROUTES.eventRegister('project-showcase'),
@@ -195,7 +195,7 @@ const OpenNowPanel = () => {
       facts: [
         { icon: UsersIcon, label: 'Participation', value: itquiz.tournament?.teamSizeShort || 'Individual (Solo)' },
         { icon: TicketIcon, label: 'Entry fee', value: itquiz.tournament?.entryFee || '৳100 per participant' },
-        { icon: CalendarIcon, label: 'Date', value: itquiz.tournament?.date || '14 August' },
+        { icon: CalendarIcon, label: 'Date', value: itquiz.tournament?.date || '28 August' },
       ],
       ctaLabel: 'Register for IT Quiz',
       ctaHref: ROUTES.eventRegister('it-quiz'),
@@ -208,13 +208,13 @@ const OpenNowPanel = () => {
   slides.push({
     id: 'gaming',
     badge: 'Open now',
-    deadline: '14 August 2026',
+    deadline: '28 August 2026',
     title: 'Gaming Hub Registrations',
     description: "PUBG Mobile, Free Fire, eFootball, Ludo and Rubik's Cube tournaments.",
     facts: [
       { icon: UsersIcon, label: 'Form factor', value: 'Squad & Solo entry options' },
       { icon: TicketIcon, label: 'Entry fee', value: 'Varies per game (Free options available)' },
-      { icon: CalendarIcon, label: 'Date', value: '11–13 August 2026' },
+      { icon: CalendarIcon, label: 'Date', value: '25–27 August 2026' },
     ],
     ctaLabel: 'Register for Gaming',
     ctaHref: ROUTES.gaming,

@@ -42,7 +42,7 @@ const DATE_RE = /(\d{1,2})(?:\s*[–—-]\s*\d{1,2})?\s+([A-Za-z]{3,})\.?\s+(\d{
 
 /**
  * Reads the date formats the data actually uses: "31 July 2026",
- * "Closes 31 July 2026", "13–15 August 2026" (takes the first day).
+ * "Closes 31 July 2026", "27–29 August 2026" (takes the first day).
  * Returns null when there is no explicit day, so callers render no countdown
  * rather than a wrong one.
  */
