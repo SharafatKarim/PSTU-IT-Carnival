@@ -573,13 +573,13 @@ const EmbeddedTeamsList = ({ slug }) => {
 
   return (
     <div className="mx-auto max-w-4xl mt-12 border-t border-white/10 pt-10">
-      <h3 className="text-xl font-bold text-center text-white mb-6">Registered Teams</h3>
+      <h3 className="text-xl font-bold text-center text-white mb-6">{slug === 'hackathon' ? 'Selected Teams' : 'Registered Teams'}</h3>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center mb-4">
         <input
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search registered teams..."
+          placeholder={slug === 'hackathon' ? 'Search selected teams...' : 'Search registered teams...'}
           className="flex-1 rounded-xl border border-ink-600 bg-ink-900/70 px-4 py-2.5 text-sm text-white placeholder-mist-500 outline-none transition focus:border-magenta-500 focus:ring-2 focus:ring-magenta-500/30"
         />
         <p className="text-sm text-mist-400">

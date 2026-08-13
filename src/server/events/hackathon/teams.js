@@ -11,19 +11,36 @@ export const serialOf = (registrationId) => {
 const escapeRe = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 const buildFilter = (search) => {
-  if (!search) return {};
+  const baseFilter = {
+    $or: [
+      { shortlisted: true },
+      { registrationId: { $in: HACKATHON_ACCEPTED_TEAMS } },
+    ],
+  };
+
+  if (!search) return baseFilter;
 
   if (/^\d+$/.test(search)) {
-    return { registrationId: new RegExp(`-0*${search}$`) };
+    return {
+      $and: [
+        baseFilter,
+        { registrationId: new RegExp(`-0*${search}$`) },
+      ],
+    };
   }
 
   const rx = new RegExp(escapeRe(search), 'i');
   return {
-    $or: [
-      { teamName: rx },
-      { registrationId: rx },
-      { 'members.fullName': rx },
-      { 'members.universityName': rx },
+    $and: [
+      baseFilter,
+      {
+        $or: [
+          { teamName: rx },
+          { registrationId: rx },
+          { 'members.fullName': rx },
+          { 'members.universityName': rx },
+        ],
+      },
     ],
   };
 };

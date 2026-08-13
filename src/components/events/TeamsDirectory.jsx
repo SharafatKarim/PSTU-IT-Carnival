@@ -206,8 +206,8 @@ const TeamsDirectory = ({ slug = 'iupc' }) => {
       slug={slug}
       nav={eventTeamsNav(slug)}
       eyebrow={event?.scope}
-      title="Registered Teams"
-      intro={`Every team pre-registered for ${event?.name}. Search by team name, university, member, or serial number.`}
+      title={isHackathon ? "Selected Teams" : "Registered Teams"}
+      intro={isHackathon ? "Selected teams for the Hackathon grand finale. Search your team name or ID and press Pay to submit your payment details." : `Every team pre-registered for ${event?.name}. Search by team name, university, member, or serial number.`}
       tabs={<SubPageTabs slug={slug} active="teams" />}
     >
       {/* While the fee window is open this page has to carry the reminder on
