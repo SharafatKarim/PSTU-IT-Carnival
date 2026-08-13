@@ -488,7 +488,10 @@ export const EVENT_DETAILS = [
     ],
 
     stage: 'open',
-    registrationOpen: true,
+    registrationOpen: false,
+    registrationClosed: true,
+    closedHeading: 'Registration has closed',
+    closedNote: 'Registration for the Datathon is now closed. Thank you to everyone who registered!',
     registration: {
       kind: 'form',
       cta: 'Start Registration',
@@ -728,7 +731,7 @@ export const EVENT_DETAILS = [
       teamSizeShort: 'Individual',
       slots: '100 participants',
       platform: 'On-site',
-      deadline: '10 August 2026',
+      deadline: '24 August 2026',
     },
 
     prizes: [

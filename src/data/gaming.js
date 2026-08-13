@@ -496,7 +496,7 @@ export const GAMES = [
       teamSizeShort: "Solo",
       slots: "64 players",
       platform: "Mobile — bring your own device",
-      deadline: GAMING_DEADLINE,
+      deadline: "24 August 2026",
     },
 
     matchFormat: {
@@ -674,6 +674,8 @@ export const GAMES = [
         a: "When you register. Send ৳100 per player to the number shown on the form using Send Money, then enter the transaction ID to complete your entry. Nothing is collected at the venue.",
       },
     ],
+    stage: "open",
+    registrationOpen: true,
   },
 
   // -------------------------------------------------------------------------
