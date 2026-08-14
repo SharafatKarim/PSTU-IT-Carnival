@@ -885,7 +885,7 @@ export const EVENT_DETAILS = [
       teamSizeShort: '1–3 members',
       slots: 'Unlimited',
       platform: 'Hardware-based projects',
-      deadline: '12 August 2026',
+      deadline: '27 August 2026',
     },
 
     prizes: [
