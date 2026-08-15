@@ -1050,9 +1050,9 @@ export const EVENT_DETAILS = [
     heroNote: 'Individual Developer · Absolutely Free Registration',
 
     tournament: {
-      date: 'To be confirmed',
+      date: '27 August 2026',
       time: '10:00 AM – 2:30 PM (Result Announcement: 3:30 PM)',
-      venue: 'To be confirmed',
+      venue: 'TSC Conference Hall, Patuakhali Science and Technology University',
       entryFee: 'Free',
       entryShort: 'Free',
       entryScope: 'per developer',
@@ -1067,16 +1067,13 @@ export const EVENT_DETAILS = [
 
     prizes: [
       {
-        place: 'Top 3 Winners',
+        place: 'Top 3 Developers',
         rank: 1,
         amount: 'Crests, Certificates & BDAPPS Promotion',
-        perks: ['Free promotion on BDAPPS platform', 'Crest & Certificate of Excellence'],
-      },
-      {
-        place: 'Top 5 Developers',
-        rank: 2,
-        amount: 'Crests & Certificates',
-        perks: ['Crest & Certificate of Excellence for Top 5 Developers'],
+        perks: [
+          'Certificates and crests for top 3 Developers',
+          'Free promotion on BDAPPS platform',
+        ],
       },
     ],
 
@@ -1094,10 +1091,10 @@ export const EVENT_DETAILS = [
         title: 'Event Schedule & Venue',
         icon: 'calendar',
         items: [
-          'Date: Date will be confirmed later.',
+          'Date: 27th August, 2026.',
           'Time: 10.00 AM – 2.30 PM.',
           'Result Announcement: 3.30 PM.',
-          'Venue: Venue will be confirmed later.',
+          'Venue: TSC Conference Hall, Patuakhali Science and Technology University.',
         ],
       },
       {
@@ -1106,7 +1103,7 @@ export const EVENT_DETAILS = [
         items: [
           'Registration Deadline: 26th August, 2026.',
           'Registration Fee: Absolutely Free.',
-          'Prizes: Certificates & Crests for TOP 5 Developers and Free promotion on BDAPPS platform for TOP 3 Winners.',
+          'Prizes: Certificates & crests for top 3 Developers and free promotion in BDAPPS platform.',
           'Sponsor: BDAPPS.',
         ],
       },

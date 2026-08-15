@@ -1185,7 +1185,7 @@ export const GAMES = [
        PROVISIONAL — five values here still need a yes from the committee.
 
        They gave us the ৳100 fee and the form fields, nothing else. Date, time,
-       venue, deadline and slots are set to match Chess, the other board event,
+       venue and slots are set to match Chess, the other board event,
        so the page is structurally right and the two boards agree with each
        other. Change them here and every surface follows.
        --------------------------------------------------------------------- */
@@ -1202,7 +1202,7 @@ export const GAMES = [
       teamSizeShort: 'Solo',
       slots: '32 players',
       platform: 'On-site Board Game',
-      deadline: '11 August 2026',
+      deadline: '24 August 2026',
     },
 
     /* The datathon's pattern for a fee that is settled before the prize is. */
@@ -1380,7 +1380,7 @@ export const GAMES = [
       teamSizeShort: "Solo",
       slots: "32 players",
       platform: "On-site Speedcubing",
-      deadline: "11 August 2026",
+      deadline: "24 August 2026",
     },
 
     prizes: [
