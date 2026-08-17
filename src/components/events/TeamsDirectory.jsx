@@ -20,6 +20,8 @@ const COLS = 'sm:grid-cols-[3rem_minmax(0,1fr)_minmax(0,1.15fr)_12.5rem]';
    entry fee is settled after final registration opens. */
 const STATUS_STYLES = {
   'pre-registered': 'border-gold-400/40 bg-gold-400/10 text-gold-300',
+  selected: 'border-magenta-400/40 bg-magenta-400/10 text-magenta-300',
+  delayed: 'border-red-400/40 bg-red-400/10 text-red-300',
   /* Reported, not yet reconciled — deliberately not the same green as paid. */
   'payment-submitted': 'border-aqua-400/40 bg-aqua-400/10 text-aqua-300',
   paid: 'border-emerald-400/40 bg-emerald-400/10 text-emerald-300',
@@ -27,13 +29,13 @@ const STATUS_STYLES = {
 };
 
 const StatusPill = ({ status = 'pre-registered', team, isHackathon }) => {
-  const isSelected = isHackathon && team && HACKATHON_ACCEPTED_TEAMS.includes(team.registrationId);
+  const isSelected = isHackathon && team && (status === 'selected' || HACKATHON_ACCEPTED_TEAMS.includes(team.registrationId));
   const displayStatus = (status === 'pre-registered' && isSelected) ? 'selected' : status;
 
   return (
     <span
       className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
-        STATUS_STYLES[status] || STATUS_STYLES['pre-registered']
+        STATUS_STYLES[displayStatus] || STATUS_STYLES['pre-registered']
       }`}
     >
       {status === 'paid' && <CheckIcon className="h-3 w-3" />}
@@ -100,8 +102,9 @@ const TeamRow = ({ team, accent, onPay, closed, isHackathon, paymentConfig }) =>
  * is flashing "closed" at everyone for a frame. The API is what actually
  * refuses a late submission. */
 const PayButton = ({ team, onPay, closed, isHackathon, paymentConfig, full = false }) => {
-  if (team.status === 'paid' || team.status === 'rejected') return null;
-  if (isHackathon && !HACKATHON_ACCEPTED_TEAMS.includes(team.registrationId)) return null;
+  if (team.status === 'paid' || team.status === 'rejected' || team.status === 'delayed') return null;
+  const isSelected = isHackathon && team && (team.status === 'selected' || HACKATHON_ACCEPTED_TEAMS.includes(team.registrationId));
+  if (isHackathon && !isSelected) return null;
 
   const submitted = team.status === 'payment-submitted';
   const disabled = submitted || closed;

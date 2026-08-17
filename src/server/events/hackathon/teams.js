@@ -12,8 +12,10 @@ const escapeRe = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 const buildFilter = (search) => {
   const baseFilter = {
+    registrationStatus: { $ne: 'delayed' },
     $or: [
       { shortlisted: true },
+      { registrationStatus: 'selected' },
       { registrationId: { $in: HACKATHON_ACCEPTED_TEAMS } },
     ],
   };
@@ -57,7 +59,11 @@ const toPublicTeam = (doc) => ({
   registrationId: doc.registrationId,
   teamName: doc.teamName,
   status: normaliseStatus(doc.registrationStatus, doc.finalRegistered),
-  shortlisted: Boolean(doc.shortlisted || HACKATHON_ACCEPTED_TEAMS.includes(doc.registrationId)),
+  shortlisted: Boolean(
+    doc.shortlisted ||
+    doc.registrationStatus === 'selected' ||
+    HACKATHON_ACCEPTED_TEAMS.includes(doc.registrationId)
+  ),
   members: (doc.members || []).map((m) => `${m.fullName} (${m.universityName})`),
   hasTxId: Boolean(doc.payment?.transactionId),
 });

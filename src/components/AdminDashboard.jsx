@@ -18,6 +18,8 @@ export default function AdminDashboard({ user }) {
   const [actionLoading, setActionLoading] = useState(null); // stores team._id being approved
   const [bulkText, setBulkText] = useState('');
   const [bulkLoading, setBulkLoading] = useState(false);
+  const [hackathonText, setHackathonText] = useState('');
+  const [hackathonLoading, setHackathonLoading] = useState(false);
   /* Kept apart from actionLoading so notifying one team does not grey out every
      Approve button on the page. */
   const [notifyLoading, setNotifyLoading] = useState(null); // team._id being notified
@@ -161,6 +163,63 @@ export default function AdminDashboard({ user }) {
       alert('Network error. Failed to process bulk approval.');
     } finally {
       setBulkLoading(false);
+    }
+  };
+
+  const handleBulkHackathonStatus = async (targetStatus) => {
+    if (!hackathonText.trim()) {
+      alert('Please enter or paste comma-separated emails first!');
+      return;
+    }
+    setHackathonLoading(true);
+    try {
+      const res = await fetch('/api/v1/admin/registrations', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'bulk_hackathon_status',
+          text: hackathonText,
+          targetStatus,
+        }),
+      });
+      const result = await res.json();
+      if (res.ok && result.success) {
+        alert(result.message);
+        setHackathonText('');
+        fetchData();
+      } else {
+        alert(result.message || 'Bulk status update failed.');
+      }
+    } catch (e) {
+      alert('Network error. Failed to process bulk update.');
+    } finally {
+      setHackathonLoading(false);
+    }
+  };
+
+  const handleSetHackathonStatus = async (id, targetStatus) => {
+    setActionLoading(id);
+    try {
+      const res = await fetch('/api/v1/admin/registrations', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id,
+          eventType: 'hackathon',
+          action: 'approve_payment',
+          targetStatus,
+        }),
+      });
+      const result = await res.json();
+      if (res.ok && result.success) {
+        fetchData();
+      } else {
+        alert(result.message || 'Failed to update team status.');
+      }
+    } catch (e) {
+      alert('Network error. Failed to update team status.');
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -459,6 +518,47 @@ export default function AdminDashboard({ user }) {
               >
                 {bulkLoading ? 'Processing...' : 'Bulk Approve SMS'}
               </button>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'hackathon' && !loading && (
+          <div className="mb-6 rounded-2xl border border-magenta-500/20 bg-ink-900/30 p-5 shadow-card backdrop-blur-md">
+            <h3 className="text-sm font-bold text-white mb-1.5">Bulk Hackathon Status Management</h3>
+            <p className="text-xs text-mist-400 mb-3">
+              Paste comma-separated email addresses of hackathon team members. Mark them as <strong className="text-magenta-300">Selected</strong> (re-opens payment &amp; shows on web), <strong className="text-green-400">Paid</strong>, or <strong className="text-amber-400">Delayed</strong> (hides from web).
+            </p>
+            <div className="flex flex-col gap-3">
+              <textarea
+                value={hackathonText}
+                onChange={(e) => setHackathonText(e.target.value)}
+                placeholder="Example: teamleader@gmail.com, member2@gmail.com..."
+                rows={2}
+                className="w-full rounded-xl border border-ink-500 bg-ink-950/50 px-3 py-2 text-sm text-white placeholder-mist-500 outline-none focus:border-magenta-500 focus:ring-1 focus:ring-magenta-500/25 transition"
+              />
+              <div className="flex flex-wrap gap-3">
+                <button
+                  onClick={() => handleBulkHackathonStatus('selected')}
+                  disabled={hackathonLoading}
+                  className="px-4 py-2 text-xs font-bold rounded-xl bg-magenta-600 hover:bg-magenta-500 text-white transition disabled:opacity-50 shadow-glow-magenta"
+                >
+                  {hackathonLoading ? 'Processing...' : 'Mark Selected (Show & Open Payment)'}
+                </button>
+                <button
+                  onClick={() => handleBulkHackathonStatus('paid')}
+                  disabled={hackathonLoading}
+                  className="px-4 py-2 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition disabled:opacity-50"
+                >
+                  {hackathonLoading ? 'Processing...' : 'Mark Paid'}
+                </button>
+                <button
+                  onClick={() => handleBulkHackathonStatus('delayed')}
+                  disabled={hackathonLoading}
+                  className="px-4 py-2 text-xs font-bold rounded-xl bg-amber-600 hover:bg-amber-500 text-white transition disabled:opacity-50"
+                >
+                  {hackathonLoading ? 'Processing...' : 'Mark Delayed (Hide from Web)'}
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -1244,6 +1344,16 @@ export default function AdminDashboard({ user }) {
                                   <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
                                   Paid
                                 </span>
+                              ) : team.registrationStatus === 'selected' ? (
+                                <span className="inline-flex items-center gap-1.5 rounded-full bg-magenta-500/10 px-2.5 py-1 text-xs font-bold text-magenta-400 border border-magenta-500/20">
+                                  <span className="h-1.5 w-1.5 rounded-full bg-magenta-500" />
+                                  Selected
+                                </span>
+                              ) : team.registrationStatus === 'delayed' ? (
+                                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-400 border border-amber-500/20">
+                                  <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                                  Delayed (Hidden)
+                                </span>
                               ) : team.registrationStatus === 'payment-submitted' ? (
                                 <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-400 border border-amber-500/20">
                                   <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
@@ -1257,33 +1367,35 @@ export default function AdminDashboard({ user }) {
                               )}
                             </td>
                             <td className="px-6 py-4">
-                              {!isPaid && (
-                                <button
-                                  onClick={() => {
-                                    if (
-                                      team.registrationStatus !== 'payment-submitted' &&
-                                      !window.confirm(
-                                        `${team.teamName} has not submitted a transaction ID. Mark it paid anyway?`
-                                      )
-                                    ) {
-                                      return;
-                                    }
-                                    handleApprovePayment(team._id, 'hackathon');
-                                  }}
-                                  disabled={actionLoading !== null}
-                                  className={`px-3 py-1.5 text-xs font-bold rounded-lg transition disabled:opacity-50 ${
-                                    team.registrationStatus === 'payment-submitted'
-                                      ? 'bg-gold-400 text-ink-950 hover:bg-gold-300'
-                                      : 'border border-white/15 bg-white/5 text-mist-200 hover:bg-white/10'
-                                  }`}
-                                >
-                                  {actionLoading === team._id
-                                    ? 'Approving...'
-                                    : team.registrationStatus === 'payment-submitted'
-                                      ? 'Approve'
-                                      : 'Mark paid'}
-                                </button>
-                              )}
+                              <div className="flex flex-wrap gap-1.5">
+                                {!isPaid && (
+                                  <button
+                                    onClick={() => handleSetHackathonStatus(team._id, 'paid')}
+                                    disabled={actionLoading !== null}
+                                    className="px-2.5 py-1 text-xs font-bold rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 transition disabled:opacity-50"
+                                  >
+                                    {actionLoading === team._id ? 'Updating...' : 'Mark Paid'}
+                                  </button>
+                                )}
+                                {team.registrationStatus !== 'selected' && !isPaid && (
+                                  <button
+                                    onClick={() => handleSetHackathonStatus(team._id, 'selected')}
+                                    disabled={actionLoading !== null}
+                                    className="px-2.5 py-1 text-xs font-bold rounded-lg bg-magenta-600 text-white hover:bg-magenta-500 transition disabled:opacity-50"
+                                  >
+                                    Mark Selected
+                                  </button>
+                                )}
+                                {team.registrationStatus !== 'delayed' && !isPaid && (
+                                  <button
+                                    onClick={() => handleSetHackathonStatus(team._id, 'delayed')}
+                                    disabled={actionLoading !== null}
+                                    className="px-2.5 py-1 text-xs font-bold rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 transition disabled:opacity-50"
+                                  >
+                                    Mark Delayed
+                                  </button>
+                                )}
+                              </div>
                             </td>
                           </tr>
                         );

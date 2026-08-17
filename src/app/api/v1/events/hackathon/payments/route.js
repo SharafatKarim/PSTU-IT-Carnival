@@ -95,8 +95,12 @@ export async function POST(req) {
     }
     if (errors.length > 0) return fail('Validation failed', errors, 400);
 
-    // Verify if team ID is in the accepted list
-    if (!HACKATHON_ACCEPTED_TEAMS.includes(registrationId)) {
+    await connectDB();
+
+    const team = await Registration.findOne({ registrationId });
+
+    const isAccepted = HACKATHON_ACCEPTED_TEAMS.includes(registrationId) || team?.shortlisted || team?.registrationStatus === 'selected';
+    if (!isAccepted) {
       return fail(
         'This team is not in the list of accepted teams for final Hackathon registration.',
         [{ field: 'registrationId', message: 'Not an accepted team ID' }],
@@ -104,9 +108,13 @@ export async function POST(req) {
       );
     }
 
-    await connectDB();
-
-    const team = await Registration.findOne({ registrationId });
+    if (team?.registrationStatus === 'delayed') {
+      return fail(
+        'Payment is not available for this team at this time.',
+        [{ field: 'registrationId', message: 'Team status is delayed' }],
+        403
+      );
+    }
 
     const leader =
       team && (team.members.find((m) => m.isTeamLeader) || team.members[0]);

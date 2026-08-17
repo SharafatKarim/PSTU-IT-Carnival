@@ -135,6 +135,8 @@ export async function PATCH(req) {
       'approve_payment',
       'bulk_approve_payments',
       'notify_payment',
+      'bulk_hackathon_status',
+      'set_hackathon_status',
     ];
     if (!ACTIONS.includes(action)) {
       return NextResponse.json({ success: false, message: 'Invalid action' }, { status: 400 });
@@ -220,6 +222,69 @@ export async function PATCH(req) {
         success: true,
         message: `Payment announcement sent to ${leader.email}`,
         data: { paymentNotifiedAt: team.paymentNotifiedAt },
+      });
+    }
+
+    if (action === 'bulk_hackathon_status') {
+      const { text, emails: providedEmails, targetStatus = 'selected' } = body;
+      let inputEmails = [];
+      if (Array.isArray(providedEmails)) {
+        inputEmails = providedEmails.map((e) => String(e).trim().toLowerCase()).filter(Boolean);
+      } else if (typeof text === 'string') {
+        inputEmails = text
+          .split(/[\s,\n]+/)
+          .map((e) => e.trim().toLowerCase())
+          .filter((e) => e.includes('@'));
+      }
+
+      if (inputEmails.length === 0) {
+        return NextResponse.json({ success: false, message: 'No valid emails provided.' }, { status: 400 });
+      }
+
+      const validStatuses = ['selected', 'paid', 'delayed', 'pre-registered'];
+      if (!validStatuses.includes(targetStatus)) {
+        return NextResponse.json({ success: false, message: 'Invalid target status.' }, { status: 400 });
+      }
+
+      const teams = await HackathonRegistration.find({
+        $or: [
+          { memberEmails: { $in: inputEmails } },
+          { 'members.email': { $in: inputEmails } },
+        ],
+      });
+
+      const updatedTeams = [];
+      for (const team of teams) {
+        team.registrationStatus = targetStatus;
+        if (targetStatus === 'selected') {
+          team.shortlisted = true;
+        } else if (targetStatus === 'paid') {
+          team.finalRegistered = true;
+          team.verifiedAt = new Date();
+        }
+        await team.save();
+        updatedTeams.push(team.teamName || team.registrationId);
+      }
+
+      await AdminLog.create({
+        adminEmail,
+        action: 'bulk_hackathon_status',
+        eventType: 'hackathon',
+        details: {
+          targetStatus,
+          emailsCount: inputEmails.length,
+          matchedCount: updatedTeams.length,
+          teams: updatedTeams,
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: `Bulk update completed: ${updatedTeams.length} hackathon team(s) marked as '${targetStatus}'.`,
+        data: {
+          matchedCount: updatedTeams.length,
+          updatedTeams,
+        },
       });
     }
 
@@ -664,28 +729,39 @@ export async function PATCH(req) {
         return NextResponse.json({ success: false, message: 'Team not found' }, { status: 404 });
       }
 
-      if (team.registrationStatus === 'paid' || team.finalRegistered) {
-        return NextResponse.json({ success: false, message: 'Payment already approved' });
-      }
+      const { targetStatus = 'paid' } = body;
 
-      team.registrationStatus = 'paid';
-      team.finalRegistered = true;
-      team.verifiedAt = new Date();
+      if (targetStatus === 'paid') {
+        if (team.registrationStatus === 'paid' || team.finalRegistered) {
+          return NextResponse.json({ success: false, message: 'Payment already approved' });
+        }
+        team.registrationStatus = 'paid';
+        team.finalRegistered = true;
+        team.verifiedAt = new Date();
+      } else if (targetStatus === 'selected') {
+        team.registrationStatus = 'selected';
+        team.shortlisted = true;
+      } else if (targetStatus === 'delayed') {
+        team.registrationStatus = 'delayed';
+      } else {
+        team.registrationStatus = targetStatus;
+      }
       await team.save();
 
       await AdminLog.create({
         adminEmail,
-        action: 'hackathon_paid_toggle',
+        action: 'hackathon_status_toggle',
         eventType: 'hackathon',
         details: {
           teamId: team._id,
           teamName: team.teamName,
           registrationId: team.registrationId,
+          targetStatus,
           transactionId: team.payment?.transactionId,
         },
       });
 
-      return NextResponse.json({ success: true, message: 'Hackathon payment approved' });
+      return NextResponse.json({ success: true, message: `Hackathon team status updated to '${targetStatus}'` });
     } else if (eventType === 'app-challenge') {
       const entry = await AppChallengeRegistration.findById(id);
       if (!entry) {

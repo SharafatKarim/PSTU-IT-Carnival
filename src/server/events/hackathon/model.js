@@ -93,7 +93,7 @@ const registrationSchema = new mongoose.Schema(
 
     registrationStatus: {
       type: String,
-      enum: ['pre-registered', 'payment-submitted', 'paid', 'rejected'],
+      enum: ['pre-registered', 'selected', 'delayed', 'payment-submitted', 'paid', 'rejected'],
       default: 'pre-registered',
     },
 
