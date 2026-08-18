@@ -876,10 +876,11 @@ export const EVENT_DETAILS = [
       date: '27 August 2026',
       time: '2:00 PM onwards',
       venue: 'PME Lab',
-      entryFee: 'Single: ৳100 · Duo: ৳200 · Trio: ৳300',
-      entryShort: '৳100–300',
+      entryFee: 'Single: ৳50 · Duo: ৳100 · Trio: ৳150',
+      entryShort: '৳50–150',
       entryScope: 'per team',
-      feePerPlayer: 100,
+      feePerPlayer: 50,
+      prizePool: '৳4,000',
       format: 'On-site Exhibition & Judging',
       teamSize: '1–3 members',
       teamSizeShort: '1–3 members',
@@ -933,9 +934,9 @@ export const EVENT_DETAILS = [
 
     entry: {
       kind: 'team',
-      fee: 100,
-      feeLabel: '৳100 (Single) / ৳200 (Duo) / ৳300 (Trio)',
-      receiverNumber: '+8801953546089',
+      fee: 50,
+      feeLabel: '৳50 (Single) / ৳100 (Duo) / ৳150 (Trio)',
+      receiverNumber: '+8801734322148',
       accountType: 'Personal',
       methods: ['bKash'],
     },
@@ -951,7 +952,7 @@ export const EVENT_DETAILS = [
       },
       {
         q: 'How much is the registration fee?',
-        a: 'The entry fee depends on your team size: Single: 100 BDT, Duo: 200 BDT, Trio: 300 BDT.',
+        a: 'The entry fee depends on your team size: Single: 50 BDT, Duo: 100 BDT, Trio: 150 BDT.',
       },
       {
         q: 'What is the deadline for registration?',
@@ -982,9 +983,9 @@ export const EVENT_DETAILS = [
     registration: {
       kind: 'form',
       cta: 'Register for Project Showcasing',
-      note: 'Team of 1–3 members · ৳100 / ৳200 / ৳300',
+      note: 'Team of 1–3 members · ৳50 / ৳100 / ৳150',
       process: [
-        'Send the fee (৳100 for Single, ৳200 for Duo, ৳300 for Trio) to +8801953546089 via bKash Personal.',
+        'Send the fee (৳50 for Single, ৳100 for Duo, ৳150 for Trio) to +8801734322148 via bKash Personal.',
         'Fill in your team and member details.',
         'Submit. You get a registration ID immediately, and a confirmation once the payment is checked.',
       ],
@@ -995,6 +996,18 @@ export const EVENT_DETAILS = [
     },
 
     coordinators: [
+      {
+        name: 'Imamul Anan',
+        role: 'Coordinator · CSE Club, PSTU',
+        phone: '+8801734322148',
+        email: 'ug2102065@cse.pstu.ac.bd',
+      },
+      {
+        name: 'Kaiyum',
+        role: 'Coordinator · CSE Club, PSTU',
+        phone: '+8801753132369',
+        email: 'ug2102059@cse.pstu.ac.bd',
+      },
       {
         name: 'Maynul',
         role: 'Coordinator · CSE Club, PSTU',

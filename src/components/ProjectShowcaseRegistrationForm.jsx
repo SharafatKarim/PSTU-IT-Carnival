@@ -126,15 +126,16 @@ export default function ProjectShowcaseRegistrationForm() {
     );
   }
 
-  // Calculate required amount based on member choices
-  const feeAmount = hasSecondMember ? (hasThirdMember ? 300 : 200) : 100;
+  // Calculate required amount based on member choices (50 BDT per person)
+  const feeAmount = hasSecondMember ? (hasThirdMember ? 150 : 100) : 50;
+  const receiverNumber = event?.entry?.receiverNumber || '+8801734322148';
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">Project Showcasing Registration</h1>
         <p className="mt-3 text-base text-mist-300">
-          Send BDT <strong className="text-white">{feeAmount}</strong> to <strong className="text-white">+8801953546089</strong> (bKash personal only) and fill in the details below.
+          Send BDT <strong className="text-white">{feeAmount}</strong> to <strong className="text-white">{receiverNumber}</strong> (bKash personal only) and fill in the details below.
         </p>
       </div>
 
