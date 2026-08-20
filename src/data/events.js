@@ -96,7 +96,7 @@ export const IUPC_PAYMENT = {
   deadline: dhakaLabel(IUPC_PAYMENT_DEADLINE),
 };
 
-const HACKATHON_PAYMENT_DEADLINE = '2026-08-19T23:59:59+06:00';
+const HACKATHON_PAYMENT_DEADLINE = '2026-08-22T23:59:59+06:00';
 export const HACKATHON_PAYMENT = {
   numbers: [
     { value: '01782847103', label: 'bKash' },
