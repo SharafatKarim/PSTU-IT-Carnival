@@ -134,7 +134,6 @@ title and the form notice together.
 redirects all build their `href` from it, so renaming an event moves every link
 that points at it.
 
----
 
 ## Editing content
 
