@@ -34,7 +34,6 @@ const adminLogSchema = new mongoose.Schema(
         'iupc',
         'it-quiz',
         'project-showcase',
-        'app-challenge',
         'general',
       ],
     },

@@ -8,7 +8,6 @@ import ItQuizRegistration from '@/server/events/it-quiz/model';
 import HackathonRegistration from '@/server/events/hackathon/model';
 import VolunteerRegistration from '@/server/volunteer/model';
 import ProjectShowcaseRegistration from '@/server/events/project-showcase/model';
-import AppChallengeRegistration from '@/server/events/app-challenge/model';
 import AdminLog from '@/server/admin/logModel';
 import {
   sendDatathonConfirmationEmail,
@@ -97,7 +96,6 @@ export async function GET(req) {
     const gamingTeams = await GamingRegistration.find({}).sort({ createdAt: -1 }).lean();
     const volunteers = await VolunteerRegistration.find({}).sort({ createdAt: -1 }).lean();
     const projectShowcase = await ProjectShowcaseRegistration.find({}).sort({ createdAt: -1 }).lean();
-    const appChallenge = await AppChallengeRegistration.find({}).sort({ createdAt: -1 }).lean();
 
     /* Screenshot BYTES are never in these rows — only an ObjectId. The image
        is fetched one at a time from /api/v1/admin/screenshots/<id>, so opening
@@ -112,7 +110,6 @@ export async function GET(req) {
         gaming: gamingTeams,
         volunteer: volunteers,
         'project-showcase': projectShowcase,
-        'app-challenge': appChallenge,
       },
     });
   } catch (error) {
@@ -762,27 +759,6 @@ export async function PATCH(req) {
       });
 
       return NextResponse.json({ success: true, message: `Hackathon team status updated to '${targetStatus}'` });
-    } else if (eventType === 'app-challenge') {
-      const entry = await AppChallengeRegistration.findById(id);
-      if (!entry) {
-        return NextResponse.json({ success: false, message: 'Registration not found' }, { status: 404 });
-      }
-      entry.paid = true;
-      await entry.save();
-
-      await AdminLog.create({
-        adminEmail,
-        action: 'approve_payment',
-        eventType: 'app-challenge',
-        details: {
-          teamId: entry._id,
-          appName: entry.appName,
-          fullName: entry.fullName,
-          registrationId: entry.registrationId,
-        },
-      });
-
-      return NextResponse.json({ success: true, message: 'Registration approved' });
     }
 
     return NextResponse.json({ success: false, message: 'Unsupported event type' }, { status: 400 });

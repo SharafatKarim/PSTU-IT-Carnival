@@ -138,21 +138,7 @@ export const EVENTS = [
     kind: 'event',
     href: ROUTES.event('project-showcase'),
   },
-  {
-    id: 'app-challenge',
-    name: 'App Challenge',
-    scope: 'National',
-    category: 'tech',
-    icon: 'rocket',
-    blurb:
-      'Demonstrate your pre-built functional mobile app live, present with PPTX, and compete for top prizes and BDAPPS platform promotion.',
-    status: 'open',
-    cta: 'Register',
-    registerHref: ROUTES.eventRegister('app-challenge'),
-    slug: 'app-challenge',
-    kind: 'event',
-    href: ROUTES.event('app-challenge'),
-  },
+
   {
     id: 'pubg',
     name: 'PUBG Mobile',

@@ -40,7 +40,6 @@ export const EVENT_PAGE_SLUGS = [
   'it-quiz',
   'ctf',
   'project-showcase',
-  'app-challenge',
 ];
 
 /* Games with a detail page at /events/gaming/<slug>. */

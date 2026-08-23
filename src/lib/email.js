@@ -796,40 +796,5 @@ export async function sendProjectShowcaseConfirmationEmail(toEmail, teamName, re
   });
 }
 
-/**
- * Sends a confirmation email to the App Challenge participant upon registration.
- *
- * @param {string} toEmail - Developer's email address
- * @param {string} appName - Name of the registered app
- * @param {string} registrationId - Generated unique registration ID
- * @param {string} developerName - Name of the developer
- */
-export async function sendAppChallengeConfirmationEmail(toEmail, appName, registrationId, developerName) {
-  const html = shell({
-    title: 'App Challenge Registration Confirmed',
-    heading: 'Registration Confirmed!',
-    idLabel: 'Registration ID',
-    id: registrationId,
-    idNote: 'Keep this ID safe — it identifies your entry on the event day.',
-    body: `
-          <p>Hi ${esc(developerName)},</p>
-          <p>Your registration for <strong>${esc(appName)}</strong> in the <strong>App Challenge</strong> at ${BRAND} has been confirmed. Registration is free, sponsored by <strong>BDAPPS</strong>.</p>
-          <p>What to bring on the event day?</p>
-          <ul>
-            <li>Your pre-built functional mobile application in live running condition.</li>
-            <li>A PowerPoint (pptx) presentation detailing your app features and architecture.</li>
-            <li>Event Time: <strong>10:00 AM – 2:30 PM</strong> (Result Announcement: <strong>3:30 PM</strong>).</li>
-            <li>Date & Venue will be confirmed prior to the event. Registration deadline: <strong>26 August 2026</strong>.</li>
-          </ul>
-          <p>If you have any questions, reply to this email or contact the event coordinators.</p>
-          <p>Best regards,<br>App Challenge Committee<br>${BRAND}</p>`,
-  });
-
-  await send({
-    to: toEmail,
-    subject: `App Challenge Confirmed — ${registrationId}`,
-    html,
-  });
-}
 
 
