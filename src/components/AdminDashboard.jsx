@@ -681,6 +681,38 @@ export default function AdminDashboard({ user }) {
                   </div>
                 )}
 
+                {activeTab === 'hackathon' && (
+                  <div className="flex flex-wrap items-center gap-2 border-t border-white/5 pt-3 mt-3">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-mist-400 mr-2">
+                      PDF Export:
+                    </span>
+                    <button
+                      onClick={() => {
+                        const paidHackathonTeams = (data.hackathon || []).filter(
+                          (t) => t.status === 'paid' || t.finalRegistered
+                        );
+                        if (paidHackathonTeams.length === 0) {
+                          alert('No paid hackathon teams found!');
+                          return;
+                        }
+                        printTable({
+                          title: 'Hackathon Paid Teams',
+                          summary: `Paid Teams Only · ${paidHackathonTeams.length} team${paidHackathonTeams.length === 1 ? '' : 's'}`,
+                          columns: REGISTRATION_PRINT.hackathon.columns,
+                          rows: paidHackathonTeams,
+                        });
+                      }}
+                      disabled={(data.hackathon || []).filter((t) => t.status === 'paid' || t.finalRegistered).length === 0}
+                      className="px-2.5 py-1 text-[11px] font-semibold rounded bg-emerald-600/20 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-600/30 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      Export Paid Teams PDF ({(data.hackathon || []).filter((t) => t.status === 'paid' || t.finalRegistered).length} paid)
+                    </button>
+                    <span className="text-[11px] text-mist-500">
+                      Paid teams only
+                    </span>
+                  </div>
+                )}
+
                 {activeTab === 'gaming' && (
                   <div className="flex flex-wrap items-center gap-2 border-t border-white/5 pt-3 mt-3">
                     <span className="text-[11px] font-bold uppercase tracking-wider text-mist-400 mr-2">Print by Game:</span>
