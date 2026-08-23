@@ -160,7 +160,7 @@ export const EVENTS = [
     category: 'gaming',
     icon: 'gamepad',
     blurb: 'Squad up for the battle royale. Last team standing takes the crown.',
-    status: 'open',
+    status: 'live',
     slug: 'pubg-mobile',
     kind: 'game',
     href: ROUTES.game('pubg-mobile'),

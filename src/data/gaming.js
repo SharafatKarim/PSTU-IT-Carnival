@@ -719,7 +719,7 @@ export const GAMES = [
       teamSizeShort: "Squad of 4",
       slots: "25 squads",
       platform: "Mobile & tablet only",
-      deadline: "28 August 2026",
+      deadline: "23 August 2026, 12:00 PM",
     },
 
     matchFormat: {
@@ -792,8 +792,9 @@ export const GAMES = [
       },
     ],
 
-    stage: "open",
-    registrationOpen: true,
+    stage: "published",
+    registrationOpen: false,
+    registrationClosed: true,
     registration: {
       kind: "squad",
       idPrefix: "PSTU-PUBG-2026",
