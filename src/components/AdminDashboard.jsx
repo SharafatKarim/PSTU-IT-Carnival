@@ -852,6 +852,8 @@ export default function AdminDashboard({ user }) {
                                   </span>
                                   <div className="text-mist-400">
                                     ID: <span className="text-gold-300">{p.gameId}</span> {p.device && `· ${p.device}`}
+                                    {p.academicId && ` · Acad ID: ${p.academicId}`}
+                                    {p.faculty && ` · Faculty: ${p.faculty}`}
                                   </div>
                                 </div>
                               ))}

@@ -146,7 +146,12 @@ export const REGISTRATION_PRINT = {
             (t.players || []).map((p, i) =>
               lines([
                 memberLabel(p, i, p.isLeader),
-                `    ${join([p.gameId && `ID: ${p.gameId}`, p.device])}`,
+                `    ${join([
+                  p.gameId && `ID: ${p.gameId}`,
+                  p.device,
+                  p.academicId && `Acad ID: ${p.academicId}`,
+                  p.faculty && `Faculty: ${p.faculty}`,
+                ])}`,
               ])
             )
           ),
