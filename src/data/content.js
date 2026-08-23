@@ -60,9 +60,7 @@ export const EVENTS = [
        src/lib/routes.js warns in development when it does not, and
        scripts/check-data.mjs fails the build over it, which is how this line
        was caught rather than shipped. */
-    status: 'open',
-    cta: 'Pre-Register',
-    registerHref: '/events/iupc/register',
+    status: 'live',
     /* Resolves against src/data/events.js. The id 'iupc' happens to match its
        slug; the gaming ids do not, so every linked event states it. */
     slug: 'iupc',

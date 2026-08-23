@@ -18,7 +18,7 @@ export const metadata = {
        evaluated before any of that data is in scope. It is also what a shared
        link shows, so it goes stale loudly: it was still advertising an open
        pre-registration a week after entries shut. Update it with the phase. */
-    description: "South Zone's largest tech competition. Twelve events across programming, hackathon, data, quiz, security and gaming. IUPC pre-registration has reopened — free to enter, closes 20 August 2026, 11:59 PM.",
+    description: "South Zone's largest tech competition. Twelve events across programming, hackathon, data, quiz, security and gaming. IUPC pre-registration has closed — final registration and entry fee payment window is open.",
     type: "website",
     images: [
       {

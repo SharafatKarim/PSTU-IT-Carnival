@@ -288,20 +288,9 @@ export const EVENT_DETAILS = [
     /* How far along this event is. The landing ledger groups by this rather
        than inferring from registrationOpen, which cannot tell "announced
        only" apart from "published but closed". */
-    stage: 'open',
-    /* REOPENED. Pre-registration ran, shut on 2 August, and is open again
-       because the carnival moved to 27–29 August — three extra weeks is long
-       enough that turning teams away would be a choice rather than a deadline.
-       Back to 'open' above so the landing ledger files it under "Open now"
-       again instead of leaving it in the published-but-shut tier.
-
-       This flag is also what the intake API checks, so flipping it here is what
-       actually reopens the form rather than just the button that links to it. */
-    registrationOpen: true,
-    /* registrationClosed is deliberately absent while entries are open. It says
-       "entries ran and have shut" as opposed to "have not opened yet", and both
-       readings are wrong right now. Set it back to true, alongside
-       registrationOpen: false, when 20 August passes. */
+    stage: 'published',
+    registrationOpen: false,
+    registrationClosed: true,
     /* Dormant while entries are open — EventDetail only renders this once
        isRegistrationClosed() is true. Left in place because it is exactly what
        the page should say when this shuts again on 20 August and the fee falls
