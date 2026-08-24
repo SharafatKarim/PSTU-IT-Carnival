@@ -6,7 +6,7 @@ import Footer from './landing/Footer';
 import { AlertIcon, CheckIcon } from './landing/Icons';
 import VolunteerTable from './admin/VolunteerTable';
 import printTable from './admin/printTable';
-import { REGISTRATION_PRINT, IUPC_KIT_PRINT, tshirtCounts } from './admin/registrationPrint';
+import { REGISTRATION_PRINT, IUPC_KIT_PRINT, HACKATHON_KIT_PRINT, tshirtCounts, tshirtDistributionPrintConfig } from './admin/registrationPrint';
 import { SECTION_FILTERS } from './admin/sectionFilters';
 import { HACKATHON_ACCEPTED_TEAMS } from '@/data/events';
 
@@ -301,6 +301,11 @@ export default function AdminDashboard({ user }) {
     [data.iupc]
   );
 
+  const paidHackathonTeams = useMemo(
+    () => (data.hackathon || []).filter((t) => t.status === 'paid' || t.finalRegistered),
+    [data.hackathon]
+  );
+
   const handleKitPrint = () =>
     printTable({
       title: IUPC_KIT_PRINT.title,
@@ -309,10 +314,25 @@ export default function AdminDashboard({ user }) {
       rows: paidIupcTeams,
     });
 
-  /* CSV rather than the plain list the email exports use — this one goes to
-     whoever is ordering the shirts, and a spreadsheet is what they open. */
-  const handleTshirtExport = () => {
-    const { rows, total } = tshirtCounts(paidIupcTeams);
+  const handleHackathonKitPrint = () =>
+    printTable({
+      title: HACKATHON_KIT_PRINT.title,
+      summary: HACKATHON_KIT_PRINT.summary(paidHackathonTeams),
+      columns: HACKATHON_KIT_PRINT.columns,
+      rows: paidHackathonTeams,
+    });
+
+  const handlePrintTshirtDistribution = (teams, eventTitle) => {
+    const config = tshirtDistributionPrintConfig(teams, eventTitle);
+    if (config.rows.length === 0) {
+      alert(`No paid ${eventTitle} teams found or no t-shirts recorded.`);
+      return;
+    }
+    printTable(config);
+  };
+
+  const handleTshirtExport = (teams, eventSlug) => {
+    const { rows, total } = tshirtCounts(teams);
     if (total === 0) {
       alert('No paid teams yet — there are no t-shirts to count.');
       return;
@@ -323,7 +343,7 @@ export default function AdminDashboard({ user }) {
       ...rows.map((r) => `${r.size},${r.count}`),
       `TOTAL,${total}`,
       '',
-      `# IUPC t-shirts for ${paidIupcTeams.length} paid team(s)`,
+      `# ${eventSlug.toUpperCase()} t-shirts for ${teams.length} paid team(s)`,
       `# Generated ${new Date().toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })}`,
     ].join('\n');
 
@@ -331,7 +351,7 @@ export default function AdminDashboard({ user }) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'iupc_tshirt_counts.csv';
+    link.download = `${eventSlug}_tshirt_counts.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -669,14 +689,21 @@ export default function AdminDashboard({ user }) {
                       Kit Handover Sheet ({paidIupcTeams.length} paid)
                     </button>
                     <button
-                      onClick={handleTshirtExport}
+                      onClick={() => handlePrintTshirtDistribution(paidIupcTeams, 'IUPC')}
+                      disabled={paidIupcTeams.length === 0}
+                      className="px-2.5 py-1 text-[11px] font-semibold rounded bg-grape-600/30 border border-grape-500/40 text-grape-200 hover:bg-grape-600/50 hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      Print T-Shirt Distribution
+                    </button>
+                    <button
+                      onClick={() => handleTshirtExport(paidIupcTeams, 'iupc')}
                       disabled={paidIupcTeams.length === 0}
                       className="px-2.5 py-1 text-[11px] font-semibold rounded bg-white/5 border border-white/10 text-mist-300 hover:bg-white/10 hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
                     >
-                      Export T-Shirt Counts ({tshirtCounts(paidIupcTeams).total})
+                      Export T-Shirt CSV ({tshirtCounts(paidIupcTeams).total})
                     </button>
                     <span className="text-[11px] text-mist-500">
-                      Paid teams only · ignores the university filter
+                      Paid teams only · ignores current filters
                     </span>
                   </div>
                 )}
@@ -684,13 +711,31 @@ export default function AdminDashboard({ user }) {
                 {activeTab === 'hackathon' && (
                   <div className="flex flex-wrap items-center gap-2 border-t border-white/5 pt-3 mt-3">
                     <span className="text-[11px] font-bold uppercase tracking-wider text-mist-400 mr-2">
-                      PDF Export:
+                      Contest day / Paid exports:
                     </span>
                     <button
+                      onClick={handleHackathonKitPrint}
+                      disabled={paidHackathonTeams.length === 0}
+                      className="px-2.5 py-1 text-[11px] font-semibold rounded bg-white/5 border border-white/10 text-mist-300 hover:bg-white/10 hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      Kit Handover Sheet ({paidHackathonTeams.length} paid)
+                    </button>
+                    <button
+                      onClick={() => handlePrintTshirtDistribution(paidHackathonTeams, 'Hackathon')}
+                      disabled={paidHackathonTeams.length === 0}
+                      className="px-2.5 py-1 text-[11px] font-semibold rounded bg-grape-600/30 border border-grape-500/40 text-grape-200 hover:bg-grape-600/50 hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      Print T-Shirt Distribution
+                    </button>
+                    <button
+                      onClick={() => handleTshirtExport(paidHackathonTeams, 'hackathon')}
+                      disabled={paidHackathonTeams.length === 0}
+                      className="px-2.5 py-1 text-[11px] font-semibold rounded bg-white/5 border border-white/10 text-mist-300 hover:bg-white/10 hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      Export T-Shirt CSV ({tshirtCounts(paidHackathonTeams).total})
+                    </button>
+                    <button
                       onClick={() => {
-                        const paidHackathonTeams = (data.hackathon || []).filter(
-                          (t) => t.status === 'paid' || t.finalRegistered
-                        );
                         if (paidHackathonTeams.length === 0) {
                           alert('No paid hackathon teams found!');
                           return;
@@ -702,10 +747,10 @@ export default function AdminDashboard({ user }) {
                           rows: paidHackathonTeams,
                         });
                       }}
-                      disabled={(data.hackathon || []).filter((t) => t.status === 'paid' || t.finalRegistered).length === 0}
+                      disabled={paidHackathonTeams.length === 0}
                       className="px-2.5 py-1 text-[11px] font-semibold rounded bg-emerald-600/20 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-600/30 transition disabled:opacity-30 disabled:cursor-not-allowed"
                     >
-                      Export Paid Teams PDF ({(data.hackathon || []).filter((t) => t.status === 'paid' || t.finalRegistered).length} paid)
+                      Export Paid Teams PDF ({paidHackathonTeams.length} paid)
                     </button>
                     <span className="text-[11px] text-mist-500">
                       Paid teams only

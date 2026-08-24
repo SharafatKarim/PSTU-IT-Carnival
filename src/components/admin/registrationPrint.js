@@ -344,6 +344,55 @@ export const IUPC_KIT_PRINT = {
   ],
 };
 
+export const HACKATHON_KIT_PRINT = {
+  title: 'Hackathon Kit Handover — Paid Teams',
+  summary: (list) => {
+    const shirts = list.reduce((n, t) => n + (t.members?.length || 0), 0);
+    return `${list.length} paid ${list.length === 1 ? 'team' : 'teams'} · ${shirts} t-shirt${shirts === 1 ? '' : 's'} to hand out`;
+  },
+  columns: [
+    { header: 'Team Name', cls: 'name', value: (t) => t.teamName },
+    { header: 'Reg ID', cls: 'mono', value: (t) => t.registrationId },
+    {
+      header: 'Members & T-Shirt',
+      cls: 'wrap',
+      value: (t) =>
+        lines(
+          (t.members || []).map(
+            (m, i) =>
+              `${i + 1}. ${m.fullName || 'Unnamed'}${m.isTeamLeader ? ' (Leader)' : ''} — ${m.tshirtSize || 'size not set'}`
+          )
+        ),
+    },
+    {
+      header: 'Contact',
+      cls: 'wrap',
+      value: (t) => {
+        const leader = (t.members || []).find((m) => m.isTeamLeader) || t.members?.[0];
+        return lines([leader?.fullName && `Leader: ${leader.fullName}`, leader?.email, leader?.whatsapp]);
+      },
+    },
+    { header: 'Kits Delivered', width: '110px', value: () => BLANK },
+  ],
+};
+
+export const TSHIRT_DISTRIBUTION_PRINT = {
+  columns: [
+    { header: 'T-Shirt Size', cls: 'name', value: (r) => r.size },
+    { header: 'Count / Quantity', cls: 'num', value: (r) => String(r.count) },
+  ],
+};
+
+export const tshirtDistributionPrintConfig = (teams, eventTitle) => {
+  const { rows, total } = tshirtCounts(teams);
+  return {
+    title: `${eventTitle} T-Shirt Size Distribution — Paid Teams`,
+    summary: `${teams.length} paid ${teams.length === 1 ? 'team' : 'teams'} · ${total} total t-shirt${total === 1 ? '' : 's'}`,
+    columns: TSHIRT_DISTRIBUTION_PRINT.columns,
+    rows,
+  };
+};
+
 /* T-shirt counts for the paid teams, in garment order rather than alphabetical
    — nobody orders shirts L, M, S, XL, XXL.
  *
@@ -371,3 +420,4 @@ export const tshirtCounts = (teams) => {
   const rows = [...counts.entries()].map(([size, count]) => ({ size, count }));
   return { rows, total: rows.reduce((n, r) => n + r.count, 0) };
 };
+
