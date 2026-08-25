@@ -204,6 +204,21 @@ export const REGISTRATION_PRINT = {
     ],
   },
 
+  'app-challenge': {
+    title: 'App Challenge Registrations',
+    noun: { one: 'entry', many: 'entries' },
+    summary: (list) => `${list.length} registered`,
+    columns: [
+      { header: 'App Name', cls: 'name', value: (e) => e.appName },
+      { header: 'Reg ID', cls: 'mono', value: (e) => e.registrationId },
+      { header: 'Developer Name', cls: 'name', value: (e) => e.fullName },
+      { header: 'Student ID', cls: 'mono', value: (e) => e.studentId },
+      { header: 'Email', cls: 'wrap', value: (e) => e.email },
+      { header: 'Short Abstract', cls: 'wrap', value: (e) => e.shortAbstract },
+      { header: 'Status', cls: 'num', value: () => 'Verified' },
+    ],
+  },
+
   'project-showcase': {
     title: 'Project Showcasing Registrations',
     noun: { one: 'team', many: 'teams' },

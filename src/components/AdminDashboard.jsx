@@ -11,8 +11,8 @@ import { SECTION_FILTERS } from './admin/sectionFilters';
 import { HACKATHON_ACCEPTED_TEAMS } from '@/data/events';
 
 export default function AdminDashboard({ user }) {
-  const [activeTab, setActiveTab] = useState('datathon'); // 'datathon' | 'iupc' | 'gaming' | 'it-quiz' | 'volunteer' | 'project-showcase'
-  const [data, setData] = useState({ iupc: [], datathon: [], gaming: [], 'it-quiz': [], volunteer: [], 'project-showcase': [], hackathon: [] });
+  const [activeTab, setActiveTab] = useState('datathon'); // 'datathon' | 'iupc' | 'gaming' | 'it-quiz' | 'volunteer' | 'project-showcase' | 'app-challenge'
+  const [data, setData] = useState({ iupc: [], datathon: [], gaming: [], 'it-quiz': [], volunteer: [], 'project-showcase': [], 'app-challenge': [], hackathon: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [actionLoading, setActionLoading] = useState(null); // stores team._id being approved
@@ -446,7 +446,16 @@ export default function AdminDashboard({ user }) {
           >
             Project Showcasing ({data['project-showcase']?.length || 0})
           </button>
-
+          <button
+            onClick={() => setActiveTab('app-challenge')}
+            className={`px-6 py-3 text-sm font-bold border-b-2 transition ${
+              activeTab === 'app-challenge'
+                ? 'border-magenta-500 text-white'
+                : 'border-transparent text-mist-400 hover:text-white'
+            }`}
+          >
+            App Challenge ({data['app-challenge']?.length || 0})
+          </button>
           <button
             onClick={() => setActiveTab('hackathon')}
             className={`px-6 py-3 text-sm font-bold border-b-2 transition ${
@@ -623,23 +632,16 @@ export default function AdminDashboard({ user }) {
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2">
-                    {(['hackathon', 'datathon', 'it-quiz', 'project-showcase'].includes(activeTab)) && (
+                    {(activeTab === 'hackathon' || activeTab === 'datathon') && (
                       <button
                         onClick={() => {
-                          let emails = [];
-                          if (activeTab === 'it-quiz') {
-                            emails = activeList.map((entry) => entry.email).filter(Boolean);
-                          } else if (activeTab === 'datathon') {
-                            emails = activeList.flatMap((team) => (team.members || []).map((m) => m.kaggleEmail || m.email)).filter(Boolean);
-                          } else {
-                            emails = activeList.flatMap((team) => (team.members || []).map((m) => m.email)).filter(Boolean);
-                          }
-                          const unique = [...new Set(emails)];
-                          if (unique.length === 0) {
+                          const emailKey = activeTab === 'datathon' ? 'kaggleEmail' : 'email';
+                          const emails = activeList.flatMap((team) => (team.members || []).map((m) => m[emailKey])).filter(Boolean);
+                          if (emails.length === 0) {
                             alert('No emails to export!');
                             return;
                           }
-                          const blob = new Blob([unique.join('\n')], { type: 'text/plain;charset=utf-8' });
+                          const blob = new Blob([emails.join('\n')], { type: 'text/plain;charset=utf-8' });
                           const url = URL.createObjectURL(blob);
                           const link = document.createElement('a');
                           link.href = url;
@@ -1293,7 +1295,53 @@ export default function AdminDashboard({ user }) {
               </div>
             )}
 
-
+            {activeTab === 'app-challenge' && (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-white/10 bg-ink-950/40 text-xs font-bold uppercase tracking-wider text-mist-400">
+                      <th className="px-6 py-4">App Name / Reg ID</th>
+                      <th className="px-6 py-4">Developer</th>
+                      <th className="px-6 py-4">Student ID / Email</th>
+                      <th className="px-6 py-4">Abstract</th>
+                      <th className="px-6 py-4">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5 text-sm">
+                    {!data['app-challenge'] || data['app-challenge'].length === 0 ? (
+                      <tr>
+                        <td colSpan="5" className="px-6 py-10 text-center text-mist-400">
+                          {emptyMessage('No App Challenge registrations found.')}
+                        </td>
+                      </tr>
+                    ) : (
+                      data['app-challenge'].map((entry) => (
+                        <tr key={entry._id} className="hover:bg-white/[0.02] transition">
+                          <td className="px-6 py-4">
+                            <div className="font-bold text-white">{entry.appName}</div>
+                            <div className="font-mono text-[11px] text-mist-400">{entry.registrationId}</div>
+                          </td>
+                          <td className="px-6 py-4 font-semibold text-white">{entry.fullName}</td>
+                          <td className="px-6 py-4 text-xs text-mist-300">
+                            <div>ID: {entry.studentId}</div>
+                            <div className="text-mist-400">{entry.email}</div>
+                          </td>
+                          <td className="px-6 py-4 text-xs text-mist-300 max-w-xs truncate" title={entry.shortAbstract}>
+                            {entry.shortAbstract}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-1 text-xs font-bold text-green-400 border border-green-500/20">
+                              <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                              Registered
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
 
             {activeTab === 'hackathon' && (
               <div className="overflow-x-auto">

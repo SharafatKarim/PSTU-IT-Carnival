@@ -1030,7 +1030,128 @@ export const EVENT_DETAILS = [
         'A jeopardy-style security contest — web, forensics, reverse engineering and cryptography challenges solved against the clock.',
     stage: 'announced',
   },
+  {
+    slug: 'app-challenge',
+    name: 'App Challenge',
+    fullName: 'App Challenge — PSTU IT Carnival 2026',
+    shortName: 'App Challenge',
+    icon: 'rocket',
+    accent: 'magenta',
+    scope: 'National',
+    sponsor: {
+      name: 'BDAPPS',
+      title: 'Sponsored by BDAPPS',
+      description:
+        'This App Challenge is proudly sponsored by BDAPPS — the developer platform for building, hosting, and monetizing applications. Winners receive free promotion on the BDAPPS platform.',
+      website: 'https://bdapps.com/',
+      cta: 'Visit BDAPPS',
+    },
+    tagline: 'Demonstrate your live mobile app and win BDAPPS promotion.',
+    blurb:
+      'Bring your pre-built mobile app, demonstrate it live, and present its features with a PPTX presentation.',
+    heroNote: 'Individual Developer · Absolutely Free Registration',
 
+    tournament: {
+      date: '27 August 2026',
+      time: '10:00 AM – 2:30 PM (Result Announcement: 3:30 PM)',
+      venue: 'TSC Conference Hall, Patuakhali Science and Technology University',
+      entryFee: 'Free',
+      entryShort: 'Free',
+      entryScope: 'per developer',
+      feePerPlayer: 0,
+      format: 'Onsite (Live App Demonstration & PPTX Presentation)',
+      teamSize: 'Individual Developer',
+      teamSizeShort: 'Individual',
+      slots: 'Open',
+      platform: 'Mobile App',
+      deadline: '26 August 2026',
+    },
+
+    prizes: [
+      {
+        place: 'Top 3 Developers',
+        rank: 1,
+        amount: 'Crests, Certificates & BDAPPS Promotion',
+        perks: [
+          'Certificates and crests for top 3 Developers',
+          'Free promotion on BDAPPS platform',
+        ],
+      },
+    ],
+
+    rules: [
+      {
+        title: 'Challenge Details',
+        icon: 'spark',
+        items: [
+          'Bring your fully ready (pre-built) and functional mobile app.',
+          'Demonstrate your app in a live running condition.',
+          'Present your app’s features and functionality with a PowerPoint (pptx) presentation.',
+        ],
+      },
+      {
+        title: 'Event Schedule & Venue',
+        icon: 'calendar',
+        items: [
+          'Date: 27th August, 2026.',
+          'Time: 10.00 AM – 2.30 PM.',
+          'Result Announcement: 3.30 PM.',
+          'Venue: TSC Conference Hall, Patuakhali Science and Technology University.',
+        ],
+      },
+      {
+        title: 'Registration & Prizes',
+        icon: 'ticket',
+        items: [
+          'Registration Deadline: 26th August, 2026.',
+          'Registration Fee: Absolutely Free.',
+          'Prizes: Certificates & crests for top 3 Developers and free promotion in BDAPPS platform.',
+          'Sponsor: BDAPPS.',
+        ],
+      },
+    ],
+
+    stage: 'open',
+    registrationOpen: true,
+
+    entry: {
+      kind: 'solo',
+      fee: 0,
+      feeLabel: 'Free Registration (Sponsored by BDAPPS)',
+    },
+
+    faqs: [
+      {
+        q: 'What do I need to bring for the App Challenge?',
+        a: 'You need to bring your fully ready (pre-built) functional mobile app, a device to demonstrate it live, and a PowerPoint (pptx) presentation.',
+      },
+      {
+        q: 'Is there any registration fee?',
+        a: 'No, registration is Absolutely Free, sponsored by BDAPPS.',
+      },
+      {
+        q: 'When is the registration deadline?',
+        a: 'Registration closes on 26th August, 2026.',
+      },
+    ],
+
+    registration: {
+      kind: 'form',
+      cta: 'Register for App Challenge',
+      note: 'Free Registration · Sponsored by BDAPPS',
+      process: [
+        'Fill out the registration form with your App’s Name, Short Abstract, Full Name, Student ID, and Email Address.',
+        'Submit the form before 26th August, 2026.',
+        'Show up on the event day with your working mobile app and PPTX presentation for live demonstration.',
+      ],
+      checklist: [
+        "App's Name and Short Abstract",
+        'Developer Full Name, Student ID, and Email',
+        'Working mobile app build & PowerPoint (pptx) presentation',
+      ],
+    },
+    coordinators: [],
+  },
 ];
 
 export const getEventDetail = (slug) =>
