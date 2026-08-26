@@ -151,11 +151,15 @@ export function printSeatPlan({ title = 'IUPC Seat Plan Bench Cards', teams = []
   const cardsHtml = teams.length
     ? teams
         .map((t) => {
-          const room = t.room || 'Room TBD';
-          const seat = t.seat ? `Seat ${t.seat}` : 'Seat TBD';
+          const teamIdStr = t.teamId || t.registrationId || '';
+          const room = t.room ? t.room : 'Room TBD';
+          const seat = t.seat ? (String(t.seat).toLowerCase().startsWith('seat') ? t.seat : `Seat ${t.seat}`) : 'Seat TBD';
           return `
             <div class="card">
-              <div class="card-header">PSTU IT CARNIVAL 2026 · IUPC</div>
+              <div class="card-header">
+                <span>PSTU IT CARNIVAL 2026 · IUPC</span>
+                ${teamIdStr ? `<span class="card-id-tag">${esc(teamIdStr)}</span>` : ''}
+              </div>
               <div class="card-body">
                 <div class="team-name">${esc(t.teamName)}</div>
                 <div class="varsity-name">${esc(t.varsityName)}</div>
@@ -203,6 +207,9 @@ export function printSeatPlan({ title = 'IUPC Seat Plan Bench Cards', teams = []
     page-break-inside: avoid;
   }
   .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-size: 8px;
     font-weight: 700;
     text-transform: uppercase;
@@ -211,6 +218,12 @@ export function printSeatPlan({ title = 'IUPC Seat Plan Bench Cards', teams = []
     border-bottom: 1px solid #ddd;
     padding-bottom: 3px;
     margin-bottom: 4px;
+  }
+  .card-id-tag {
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 9px;
+    font-weight: 800;
+    color: #111;
   }
   .card-body {
     flex: 1;

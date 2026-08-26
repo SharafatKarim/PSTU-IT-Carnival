@@ -80,8 +80,24 @@ export default function AdminDashboard({ user }) {
     }
   };
 
+  const mergeIupcAllocation = (teams) => {
+    return (teams || []).map((t) => {
+      const edit = allocationEdits[t._id] || {};
+      const teamId = edit.teamId !== undefined ? edit.teamId : (t.teamId || t.registrationId || '');
+      const room = edit.room !== undefined ? edit.room : (t.room || '');
+      const seat = edit.seat !== undefined ? edit.seat : (t.seat || '');
+      return {
+        ...t,
+        teamId,
+        room,
+        seat,
+      };
+    });
+  };
+
   const exportIupcTeamsCsv = (teams) => {
-    if (!teams || teams.length === 0) {
+    const mergedTeams = mergeIupcAllocation(teams);
+    if (!mergedTeams || mergedTeams.length === 0) {
       alert('No IUPC teams to export!');
       return;
     }
@@ -96,7 +112,7 @@ export default function AdminDashboard({ user }) {
 
     const headers = ['team name', 'varsity', 'room', 'seat', 'email(team leader)', 'reference'];
 
-    const rows = teams.map((team) => {
+    const rows = mergedTeams.map((team) => {
       const leader = (team.members || []).find((m) => m.isTeamLeader) || (team.members || [])[0];
       const leaderEmail = leader?.email || '';
       return [
@@ -427,13 +443,15 @@ export default function AdminDashboard({ user }) {
     [data.hackathon]
   );
 
-  const handleKitPrint = () =>
+  const handleKitPrint = () => {
+    const teams = mergeIupcAllocation(paidIupcTeams);
     printTable({
       title: IUPC_KIT_PRINT.title,
-      summary: IUPC_KIT_PRINT.summary(paidIupcTeams),
+      summary: IUPC_KIT_PRINT.summary(teams),
       columns: IUPC_KIT_PRINT.columns,
-      rows: paidIupcTeams,
+      rows: teams,
     });
+  };
 
   const handleHackathonKitPrint = () =>
     printTable({
@@ -768,7 +786,7 @@ export default function AdminDashboard({ user }) {
                     {activeTab === 'iupc' && (
                       <>
                         <button
-                          onClick={() => printSeatPlan({ title: 'IUPC Bench Seat Plan', teams: visibleList })}
+                          onClick={() => printSeatPlan({ title: 'IUPC Bench Seat Plan', teams: mergeIupcAllocation(visibleList) })}
                           disabled={visibleList.length === 0}
                           className="px-4 py-2 text-xs font-bold rounded-lg bg-grape-600 hover:bg-grape-500 text-white transition disabled:opacity-40 shadow-glow-grape"
                         >
