@@ -355,7 +355,7 @@ export const IUPC_KIT_PRINT = {
         lines(
           (t.members || []).map(
             (m, i) =>
-              `${memberLabel(m, i, m.isTeamLeader)} — ${m.tshirtSize || 'size not set'}`
+              `${memberLabel(m, i, m.isTeamLeader)}${m.phone ? ` (${m.phone})` : ''} — ${m.tshirtSize || 'size not set'}`
           )
         ),
     },
