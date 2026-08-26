@@ -28,18 +28,20 @@ const escapeRe = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
    university, a member's name, or the serial number off their confirmation
    screen. */
 const buildFilter = (search) => {
-  if (!search) return {};
+  const statusFilter = { registrationStatus: { $in: ['paid', 'approved'] } };
+  if (!search) return statusFilter;
 
   /* A bare number is a serial lookup and nothing else — "3" means team 3,
      not "every team with a 3 somewhere in it". Matching it as a substring
      swept in unrelated teams via member names and the 2026 in every ID.
      Both "7" and "0007" find -0007. */
   if (/^\d+$/.test(search)) {
-    return { registrationId: new RegExp(`-0*${search}$`) };
+    return { ...statusFilter, registrationId: new RegExp(`-0*${search}$`) };
   }
 
   const rx = new RegExp(escapeRe(search), 'i');
   return {
+    ...statusFilter,
     $or: [
       { teamName: rx },
       { varsityName: rx },
@@ -80,6 +82,9 @@ const toPublicTeam = (doc) => ({
  * and a count, so this cannot become a second, unfiltered team directory. */
 export async function universityCounts() {
   const rows = await Registration.aggregate([
+    {
+      $match: { registrationStatus: { $in: ['paid', 'approved'] } },
+    },
     {
       $group: {
         _id: { $toLower: { $trim: { input: '$varsityName' } } },

@@ -214,6 +214,7 @@ export const EVENT_DETAILS = [
       entryFee: '৳3,000 per team',
       entryShort: '৳3,000',
       entryScope: 'per team',
+      prizePool: '৳50,000',
       format: 'ICPC-style · 4–5 hours · one workstation',
       teamSize: '3 members (+1 coach)',
       teamSizeShort: '3 + coach',
@@ -227,18 +228,17 @@ export const EVENT_DETAILS = [
       deadline: '20 August 2026, 11:59 PM',
     },
 
-    /* Non-monetary only. Prize money has not been announced; add an
-       `amount` to an entry when a figure is confirmed and TournamentInfo
-       prints it. The landing page reads this same array, so the two cannot
-       disagree. */
     prizes: [
       {
         place: 'Champion',
         rank: 1,
+        amount: '৳20,000',
         perks: ['Winner trophy', 'Certificate of excellence'],
       },
-      {place: '1st Runner-Up', rank: 2, perks: ['Certificate of merit']},
-      {place: '2nd Runner-Up', rank: 3, perks: ['Certificate of merit']},
+      { place: '1st Runner-Up', rank: 2, amount: '৳12,000', perks: ['Certificate of merit'] },
+      { place: '2nd Runner-Up', rank: 3, amount: '৳8,000', perks: ['Certificate of merit'] },
+      { place: '4th Place', rank: 4, amount: '৳6,000', perks: ['Certificate of merit'] },
+      { place: '5th Place', rank: 5, amount: '৳4,000', perks: ['Certificate of merit'] },
     ],
 
     rules: [
