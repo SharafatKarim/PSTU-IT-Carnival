@@ -337,7 +337,16 @@ export const IUPC_KIT_PRINT = {
   },
   columns: [
     { header: 'Team Name', cls: 'name', value: (t) => t.teamName },
-    { header: 'Team ID', cls: 'mono', value: (t) => t.teamId || t.registrationId },
+    {
+      header: 'Team ID / Location',
+      cls: 'mono',
+      value: (t) =>
+        lines([
+          `ID: ${t.teamId || t.registrationId || 'N/A'}`,
+          `Room: ${t.room || 'TBD'}`,
+          `Seat: ${t.seat || 'TBD'}`,
+        ]),
+    },
     { header: 'Varsity', cls: 'wrap', value: (t) => t.varsityName },
     {
       header: 'Members & T-Shirt',
