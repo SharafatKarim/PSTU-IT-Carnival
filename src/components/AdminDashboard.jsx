@@ -1129,27 +1129,27 @@ export default function AdminDashboard({ user }) {
                       <th className="px-3 py-3">Payment</th>
                       <th className="px-3 py-3">Status</th>
                       <th className="px-3 py-3">Allocation</th>
-                      <th className="px-3 py-3">Action</th>
+                      {!hideUnpaidIupc && <th className="px-3 py-3">Action</th>}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5 text-sm">
                     {visibleList.length === 0 ? (
                       <tr>
-                        <td colSpan="8" className="px-3 py-8 text-center text-mist-400">
+                        <td colSpan={hideUnpaidIupc ? 7 : 8} className="px-3 py-8 text-center text-mist-400">
                           {emptyMessage('No IUPC registrations found.')}
                         </td>
                       </tr>
                     ) : (
                       visibleList.map((team) => (
                         <tr key={team._id} className="hover:bg-white/[0.02] transition">
-                          <td className="px-3 py-3 font-bold text-white min-w-[130px]">{team.teamName}</td>
-                          <td className="px-3 py-3 text-mist-300 min-w-[140px]">{team.varsityName}</td>
-                          <td className="px-3 py-3 text-xs text-mist-300 min-w-[140px]">
+                          <td className="px-3 py-3 font-bold text-white min-w-[140px]">{team.teamName}</td>
+                          <td className="px-3 py-3 text-mist-300 min-w-[220px]">{team.varsityName}</td>
+                          <td className="px-3 py-3 text-xs text-mist-300 min-w-[160px]">
                             <div>{team.coach?.name}</div>
                             <div className="text-mist-400">{team.coach?.email}</div>
                             <div className="text-mist-400">{team.coach?.phone}</div>
                           </td>
-                          <td className="px-3 py-3 min-w-[150px]">
+                          <td className="px-3 py-3 min-w-[170px]">
                             <div className="space-y-2">
                               {team.members.map((m, i) => (
                                 <div key={i} className="text-xs">
@@ -1193,9 +1193,9 @@ export default function AdminDashboard({ user }) {
                             )}
                           </td>
                           <td className="px-3 py-3 text-xs">
-                            <div className="flex flex-col gap-1.5 min-w-[170px]">
+                            <div className="flex flex-col gap-1.5 min-w-[210px]">
                               <div>
-                                <label className="text-[10px] text-mist-400 block font-medium">Team ID / Reg ID</label>
+                                <label className="text-[10px] text-mist-400 block font-semibold mb-0.5">Team ID / Reg ID</label>
                                 <input
                                   type="text"
                                   placeholder="Team ID / Reg ID"
@@ -1213,12 +1213,12 @@ export default function AdminDashboard({ user }) {
                                       },
                                     }))
                                   }
-                                  className="w-full rounded border border-ink-600 bg-ink-950 px-2 py-1 text-xs text-white placeholder-mist-600 outline-none focus:border-aqua-400"
+                                  className="w-full rounded-lg border border-ink-600 bg-ink-950 px-2.5 py-1.5 text-xs font-mono text-white placeholder-mist-600 outline-none focus:border-aqua-400 focus:ring-1 focus:ring-aqua-400/30"
                                 />
                               </div>
-                              <div className="flex gap-1.5">
+                              <div className="flex gap-2">
                                 <div className="w-1/2">
-                                  <label className="text-[10px] text-mist-400 block font-medium">Room</label>
+                                  <label className="text-[10px] text-mist-400 block font-semibold mb-0.5">Room</label>
                                   <input
                                     type="text"
                                     placeholder="Room"
@@ -1236,11 +1236,11 @@ export default function AdminDashboard({ user }) {
                                         },
                                       }))
                                     }
-                                    className="w-full rounded border border-ink-600 bg-ink-950 px-2 py-1 text-xs text-white placeholder-mist-600 outline-none focus:border-aqua-400"
+                                    className="w-full rounded-lg border border-ink-600 bg-ink-950 px-2.5 py-1.5 text-xs text-white placeholder-mist-600 outline-none focus:border-aqua-400 focus:ring-1 focus:ring-aqua-400/30"
                                   />
                                 </div>
                                 <div className="w-1/2">
-                                  <label className="text-[10px] text-mist-400 block font-medium">Seat</label>
+                                  <label className="text-[10px] text-mist-400 block font-semibold mb-0.5">Seat</label>
                                   <input
                                     type="text"
                                     placeholder="Seat"
@@ -1258,97 +1258,75 @@ export default function AdminDashboard({ user }) {
                                         },
                                       }))
                                     }
-                                    className="w-full rounded border border-ink-600 bg-ink-950 px-2 py-1 text-xs text-white placeholder-mist-600 outline-none focus:border-aqua-400"
+                                    className="w-full rounded-lg border border-ink-600 bg-ink-950 px-2.5 py-1.5 text-xs text-white placeholder-mist-600 outline-none focus:border-aqua-400 focus:ring-1 focus:ring-aqua-400/30"
                                   />
                                 </div>
                               </div>
                               <button
                                 onClick={() => handleSaveAllocation(team._id, team)}
                                 disabled={allocationSaving === team._id}
-                                className="mt-0.5 px-2 py-1 text-[10px] font-bold rounded bg-aqua-600/30 border border-aqua-400/40 text-aqua-300 hover:bg-aqua-600/50 hover:text-white transition disabled:opacity-50"
+                                className="mt-0.5 w-full py-1 text-[11px] font-bold rounded-lg bg-aqua-600/30 border border-aqua-400/40 text-aqua-300 hover:bg-aqua-600/50 hover:text-white transition disabled:opacity-50"
                               >
                                 {allocationSaving === team._id ? 'Saving...' : 'Save Allocation'}
                               </button>
                             </div>
                           </td>
-                          <td className="px-3 py-3">
-                            <div className="flex flex-col items-start gap-2">
-                            {/* Two ways a team gets paid, and both end at the
-                                same status.
+                          {!hideUnpaidIupc && (
+                            <td className="px-3 py-3">
+                              <div className="flex flex-col items-start gap-2">
+                                {team.registrationStatus !== 'paid' && (
+                                  <button
+                                    onClick={() => {
+                                      if (
+                                        team.registrationStatus !== 'payment-submitted' &&
+                                        !window.confirm(
+                                          `${team.teamName} has not submitted a transaction ID. Mark it paid anyway and email the team leader?`
+                                        )
+                                      ) {
+                                        return;
+                                      }
+                                      handleApprovePayment(team._id, 'iupc');
+                                    }}
+                                    disabled={actionLoading !== null}
+                                    className={`px-3 py-1.5 text-xs font-bold rounded-lg transition disabled:opacity-50 ${
+                                      team.registrationStatus === 'payment-submitted'
+                                        ? 'bg-gold-400 text-ink-950 hover:bg-gold-300'
+                                        : 'border border-white/15 bg-white/5 text-mist-200 hover:bg-white/10'
+                                    }`}
+                                  >
+                                    {actionLoading === team._id
+                                      ? 'Approving...'
+                                      : team.registrationStatus === 'payment-submitted'
+                                        ? 'Approve'
+                                        : 'Mark paid'}
+                                  </button>
+                                )}
 
-                                A team that submitted a reference online is
-                                approved outright — the reference is right there
-                                in the previous column to check against the
-                                statement.
-
-                                A team that paid in cash at the desk, or over a
-                                wallet whose SMS the coordinator read elsewhere,
-                                never touched the form and sits at
-                                'pre-registered'. Offering nothing here left the
-                                panel unable to record a payment it had actually
-                                received, so the button is offered for those rows
-                                too — behind a confirm, because there is no
-                                reference on screen to check and the approval
-                                emails the team leader either way. */}
-                            {team.registrationStatus !== 'paid' && (
-                              <button
-                                onClick={() => {
-                                  if (
-                                    team.registrationStatus !== 'payment-submitted' &&
-                                    !window.confirm(
-                                      `${team.teamName} has not submitted a transaction ID. Mark it paid anyway and email the team leader?`
-                                    )
-                                  ) {
-                                    return;
-                                  }
-                                  handleApprovePayment(team._id, 'iupc');
-                                }}
-                                disabled={actionLoading !== null}
-                                className={`px-3 py-1.5 text-xs font-bold rounded-lg transition disabled:opacity-50 ${
-                                  team.registrationStatus === 'payment-submitted'
-                                    ? 'bg-gold-400 text-ink-950 hover:bg-gold-300'
-                                    : 'border border-white/15 bg-white/5 text-mist-200 hover:bg-white/10'
-                                }`}
-                              >
-                                {actionLoading === team._id
-                                  ? 'Approving...'
-                                  : team.registrationStatus === 'payment-submitted'
-                                    ? 'Approve'
-                                    : 'Mark paid'}
-                              </button>
-                            )}
-
-                            {/* Green means the announcement reached this team's
-                                leader — it reads paymentNotifiedAt from the
-                                database, not from this session, so it is still
-                                green tomorrow. It stays clickable: green is a
-                                record of what happened, not a lock, and "resend
-                                it, I deleted the mail" is a normal request.
-                                A team that has paid needs no announcement. */}
-                            {team.registrationStatus !== 'paid' && (
-                              <button
-                                onClick={() => handleNotify(team._id)}
-                                disabled={notifyLoading !== null}
-                                title={
-                                  team.paymentNotifiedAt
-                                    ? `Notified ${new Date(team.paymentNotifiedAt).toLocaleString()} — click to send again`
-                                    : 'Email the team leader that the entry fee is due'
-                                }
-                                className={`px-3 py-1.5 text-xs font-bold rounded-lg transition disabled:opacity-50 ${
-                                  team.paymentNotifiedAt
-                                    ? 'border border-green-500/30 bg-green-500/10 text-green-400 hover:bg-green-500/20'
-                                    : 'border border-aqua-400/30 bg-aqua-400/10 text-aqua-300 hover:bg-aqua-400/20'
-                                }`}
-                              >
-                                {notifyLoading === team._id
-                                  ? 'Sending…'
-                                  : team.paymentNotifiedAt
-                                    ? '✓ Notified'
-                                    : 'Notify'}
-                              </button>
-                            )}
-                            </div>
-                          </td>
+                                {team.registrationStatus !== 'paid' && (
+                                  <button
+                                    onClick={() => handleNotify(team._id)}
+                                    disabled={notifyLoading !== null}
+                                    title={
+                                      team.paymentNotifiedAt
+                                        ? `Notified ${new Date(team.paymentNotifiedAt).toLocaleString()} — click to send again`
+                                        : 'Email the team leader that the entry fee is due'
+                                    }
+                                    className={`px-3 py-1.5 text-xs font-bold rounded-lg transition disabled:opacity-50 ${
+                                      team.paymentNotifiedAt
+                                        ? 'border border-green-500/30 bg-green-500/10 text-green-400 hover:bg-green-500/20'
+                                        : 'border border-aqua-400/30 bg-aqua-400/10 text-aqua-300 hover:bg-aqua-400/20'
+                                    }`}
+                                  >
+                                    {notifyLoading === team._id
+                                      ? 'Sending…'
+                                      : team.paymentNotifiedAt
+                                        ? '✓ Notified'
+                                        : 'Notify'}
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          )}
                         </tr>
                       ))
                     )}
