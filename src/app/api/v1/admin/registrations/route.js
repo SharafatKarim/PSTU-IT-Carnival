@@ -90,7 +90,12 @@ export async function GET(req) {
 
     await connectDB();
 
-    const iupcTeams = await IupcRegistration.find({}).sort({ createdAt: -1 }).lean();
+    const iupcTeamsRaw = await IupcRegistration.find({}).lean();
+    const iupcTeams = iupcTeamsRaw.sort((a, b) => {
+      const vComp = String(a.varsityName || '').trim().localeCompare(String(b.varsityName || '').trim(), undefined, { sensitivity: 'base', numeric: true });
+      if (vComp !== 0) return vComp;
+      return String(a.teamName || '').trim().localeCompare(String(b.teamName || '').trim(), undefined, { sensitivity: 'base', numeric: true });
+    });
     const datathonTeams = await DatathonRegistration.find({}).sort({ createdAt: -1 }).lean();
     const itQuiz = await ItQuizRegistration.find({}).sort({ createdAt: -1 }).lean();
     const hackathon = await HackathonRegistration.find({}).sort({ createdAt: -1 }).lean();

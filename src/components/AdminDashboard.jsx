@@ -319,8 +319,16 @@ export default function AdminDashboard({ user }) {
   const filterDef = SECTION_FILTERS[activeTab];
   const activeList = useMemo(() => {
     const list = data[activeTab] || [];
-    if (activeTab === 'iupc' && hideUnpaidIupc) {
-      return list.filter((t) => t.registrationStatus === 'paid');
+    if (activeTab === 'iupc') {
+      const sorted = [...list].sort((a, b) => {
+        const vComp = String(a.varsityName || '').trim().localeCompare(String(b.varsityName || '').trim(), undefined, { sensitivity: 'base', numeric: true });
+        if (vComp !== 0) return vComp;
+        return String(a.teamName || '').trim().localeCompare(String(b.teamName || '').trim(), undefined, { sensitivity: 'base', numeric: true });
+      });
+      if (hideUnpaidIupc) {
+        return sorted.filter((t) => t.registrationStatus === 'paid');
+      }
+      return sorted;
     }
     return list;
   }, [data, activeTab, hideUnpaidIupc]);
@@ -393,7 +401,14 @@ export default function AdminDashboard({ user }) {
      a kit sheet missing eleven universities because a dropdown was left set is
      the kind of mistake nobody catches until the desk runs out of bags. */
   const paidIupcTeams = useMemo(
-    () => (data.iupc || []).filter((t) => t.registrationStatus === 'paid'),
+    () =>
+      (data.iupc || [])
+        .filter((t) => t.registrationStatus === 'paid')
+        .sort((a, b) => {
+          const vComp = String(a.varsityName || '').trim().localeCompare(String(b.varsityName || '').trim(), undefined, { sensitivity: 'base', numeric: true });
+          if (vComp !== 0) return vComp;
+          return String(a.teamName || '').trim().localeCompare(String(b.teamName || '').trim(), undefined, { sensitivity: 'base', numeric: true });
+        }),
     [data.iupc]
   );
 
