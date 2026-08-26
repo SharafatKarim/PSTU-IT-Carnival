@@ -68,7 +68,7 @@ const TeamRow = ({ team, accent, onPay, closed, isHackathon, paymentConfig }) =>
     <div className="min-w-0">
       <p className="truncate text-sm font-bold text-white">{team.teamName}</p>
       <p className="truncate font-mono text-[10px] text-mist-500">
-        {team.registrationId}
+        {team.teamId || team.registrationId}
       </p>
     </div>
 

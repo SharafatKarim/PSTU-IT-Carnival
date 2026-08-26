@@ -17,8 +17,9 @@ const PUBLIC_FIELDS = 'registrationId teamId room seat teamName varsityName regi
 
 /* "PSTU-IUPC-2026-0007" -> 7. The serial people quote is the trailing counter,
    not the whole ID, so it is derived rather than stored twice. */
-export const serialOf = (registrationId) => {
-  const match = /(\d+)$/.exec(registrationId || '');
+export const serialOf = (teamId, registrationId) => {
+  const customId = teamId || registrationId || '';
+  const match = /(\d+)$/.exec(customId);
   return match ? Number(match[1]) : null;
 };
 
@@ -61,7 +62,7 @@ const normaliseStatus = (status) =>
   LEGACY_STATUS[status] || status || 'pre-registered';
 
 const toPublicTeam = (doc) => ({
-  serial: serialOf(doc.registrationId),
+  serial: serialOf(doc.teamId, doc.registrationId),
   registrationId: doc.registrationId,
   teamId: doc.teamId || doc.registrationId,
   room: doc.room || '',

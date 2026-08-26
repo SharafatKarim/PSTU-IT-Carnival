@@ -138,7 +138,7 @@ const PaymentModal = ({ team, onClose, onPaid }) => {
               <h2 className="text-xl font-extrabold">Pay the entry fee</h2>
               <p className="mt-1 text-sm text-mist-300">
                 <span className="font-semibold text-white">{team.teamName}</span>
-                <span className="text-mist-500"> · {team.registrationId}</span>
+                <span className="text-mist-500"> · {team.teamId || team.registrationId}</span>
               </p>
             </div>
 
