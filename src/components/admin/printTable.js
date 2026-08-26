@@ -185,8 +185,8 @@ export function printSeatPlan({ title = 'IUPC Seat Plan Bench Cards', teams = []
   body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    color: #111;
-    background: #fff;
+    color: #000000;
+    background: #ffffff;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
@@ -196,7 +196,7 @@ export function printSeatPlan({ title = 'IUPC Seat Plan Bench Cards', teams = []
     gap: 6mm 8mm;
   }
   .card {
-    border: 2px dashed #444;
+    border: 2px dashed #000000;
     border-radius: 8px;
     padding: 10px 12px;
     background: #ffffff;
@@ -210,20 +210,24 @@ export function printSeatPlan({ title = 'IUPC Seat Plan Bench Cards', teams = []
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 8px;
+    font-size: 8.5px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #555;
-    border-bottom: 1px solid #ddd;
+    letter-spacing: 0.06em;
+    color: #222222;
+    border-bottom: 1.5px solid #000000;
     padding-bottom: 3px;
     margin-bottom: 4px;
   }
   .card-id-tag {
     font-family: "SFMono-Regular", Consolas, monospace;
-    font-size: 9px;
+    font-size: 9.5px;
     font-weight: 800;
-    color: #111;
+    color: #000000;
+    border: 1px solid #000000;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: #ffffff;
   }
   .card-body {
     flex: 1;
@@ -232,16 +236,16 @@ export function printSeatPlan({ title = 'IUPC Seat Plan Bench Cards', teams = []
     justify-content: center;
   }
   .team-name {
-    font-size: 15px;
-    font-weight: 800;
-    color: #000;
+    font-size: 16px;
+    font-weight: 900;
+    color: #000000;
     line-height: 1.25;
     word-break: break-word;
   }
   .varsity-name {
-    font-size: 11px;
-    color: #444;
-    font-weight: 500;
+    font-size: 11.5px;
+    color: #111111;
+    font-weight: 600;
     margin-top: 2px;
     line-height: 1.3;
   }
@@ -251,25 +255,26 @@ export function printSeatPlan({ title = 'IUPC Seat Plan Bench Cards', teams = []
     justify-content: space-between;
     gap: 8px;
     margin-top: auto;
-    padding-top: 4px;
-    border-top: 1.5px solid #111;
+    padding-top: 5px;
+    border-top: 2px solid #000000;
   }
   .room-tag {
     font-size: 11px;
-    font-weight: 700;
-    background: #eeeeee;
-    color: #222;
+    font-weight: 800;
+    background: #ffffff;
+    color: #000000;
     padding: 2px 8px;
     border-radius: 4px;
-    border: 1px solid #ccc;
+    border: 1.5px solid #000000;
   }
   .seat-tag {
-    font-size: 12px;
-    font-weight: 800;
-    background: #111111;
-    color: #ffffff;
+    font-size: 13px;
+    font-weight: 900;
+    background: #ffffff;
+    color: #000000;
     padding: 2px 10px;
     border-radius: 4px;
+    border: 2px solid #000000;
   }
   .empty {
     text-align: center;
