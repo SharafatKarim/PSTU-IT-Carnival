@@ -99,7 +99,7 @@ export default function AdminDashboard({ user }) {
         escapeCsv(team.room || ''),
         escapeCsv(team.seat || ''),
         escapeCsv(leaderEmail),
-        escapeCsv(team.teamId || ''),
+        escapeCsv(team.teamId || team.registrationId || ''),
       ].join(',');
     });
 
@@ -115,6 +115,18 @@ export default function AdminDashboard({ user }) {
     URL.revokeObjectURL(url);
   };
 
+  const sortIupcTeams = (teams) => {
+    return [...(teams || [])].sort((a, b) => {
+      const vA = String(a.varsityName || '').trim();
+      const vB = String(b.varsityName || '').trim();
+      const vComp = vA.localeCompare(vB, 'en', { sensitivity: 'base', numeric: true });
+      if (vComp !== 0) return vComp;
+      const tA = String(a.teamName || '').trim();
+      const tB = String(b.teamName || '').trim();
+      return tA.localeCompare(tB, 'en', { sensitivity: 'base', numeric: true });
+    });
+  };
+
   const fetchData = async () => {
     setLoading(true);
     setError('');
@@ -122,7 +134,10 @@ export default function AdminDashboard({ user }) {
       const res = await fetch('/api/v1/admin/registrations');
       const result = await res.json();
       if (res.ok && result.success) {
-        setData(result.data);
+        setData({
+          ...result.data,
+          iupc: sortIupcTeams(result.data.iupc || []),
+        });
       } else {
         setError(result.message || 'Failed to fetch registrations');
       }
@@ -320,11 +335,7 @@ export default function AdminDashboard({ user }) {
   const activeList = useMemo(() => {
     const list = data[activeTab] || [];
     if (activeTab === 'iupc') {
-      const sorted = [...list].sort((a, b) => {
-        const vComp = String(a.varsityName || '').trim().localeCompare(String(b.varsityName || '').trim(), undefined, { sensitivity: 'base', numeric: true });
-        if (vComp !== 0) return vComp;
-        return String(a.teamName || '').trim().localeCompare(String(b.teamName || '').trim(), undefined, { sensitivity: 'base', numeric: true });
-      });
+      const sorted = sortIupcTeams(list);
       if (hideUnpaidIupc) {
         return sorted.filter((t) => t.registrationStatus === 'paid');
       }
@@ -401,14 +412,7 @@ export default function AdminDashboard({ user }) {
      a kit sheet missing eleven universities because a dropdown was left set is
      the kind of mistake nobody catches until the desk runs out of bags. */
   const paidIupcTeams = useMemo(
-    () =>
-      (data.iupc || [])
-        .filter((t) => t.registrationStatus === 'paid')
-        .sort((a, b) => {
-          const vComp = String(a.varsityName || '').trim().localeCompare(String(b.varsityName || '').trim(), undefined, { sensitivity: 'base', numeric: true });
-          if (vComp !== 0) return vComp;
-          return String(a.teamName || '').trim().localeCompare(String(b.teamName || '').trim(), undefined, { sensitivity: 'base', numeric: true });
-        }),
+    () => sortIupcTeams((data.iupc || []).filter((t) => t.registrationStatus === 'paid')),
     [data.iupc]
   );
 
@@ -1140,7 +1144,12 @@ export default function AdminDashboard({ user }) {
                       visibleList.map((team) => (
                         <tr key={team._id} className="hover:bg-white/[0.02] transition">
                           <td className="px-6 py-4 font-bold text-white">{team.teamName}</td>
-                          <td className="px-6 py-4 font-mono text-xs text-mist-300">{team.registrationId}</td>
+                          <td className="px-6 py-4 font-mono text-xs text-mist-300">
+                            <div className="font-semibold text-white">{team.teamId || team.registrationId}</div>
+                            {team.teamId && team.teamId !== team.registrationId && (
+                              <div className="text-[10px] text-mist-500">{team.registrationId}</div>
+                            )}
+                          </td>
                           <td className="px-6 py-4 text-mist-300">{team.varsityName}</td>
                           <td className="px-6 py-4 text-xs text-mist-300">
                             <div>{team.coach?.name}</div>

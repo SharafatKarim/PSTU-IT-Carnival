@@ -63,7 +63,7 @@ export const REGISTRATION_PRINT = {
     },
     columns: [
       { header: 'Team Name', cls: 'name', value: (t) => t.teamName },
-      { header: 'Reg ID', cls: 'mono', value: (t) => t.registrationId },
+      { header: 'Reg ID', cls: 'mono', value: (t) => t.teamId || t.registrationId },
       { header: 'Varsity', cls: 'wrap', value: (t) => t.varsityName },
       {
         header: 'Payment',
@@ -337,7 +337,7 @@ export const IUPC_KIT_PRINT = {
   },
   columns: [
     { header: 'Team Name', cls: 'name', value: (t) => t.teamName },
-    { header: 'Reg ID', cls: 'mono', value: (t) => t.registrationId },
+    { header: 'Reg ID', cls: 'mono', value: (t) => t.teamId || t.registrationId },
     { header: 'Varsity', cls: 'wrap', value: (t) => t.varsityName },
     {
       header: 'Members & T-Shirt',

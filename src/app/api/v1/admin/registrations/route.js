@@ -92,9 +92,13 @@ export async function GET(req) {
 
     const iupcTeamsRaw = await IupcRegistration.find({}).lean();
     const iupcTeams = iupcTeamsRaw.sort((a, b) => {
-      const vComp = String(a.varsityName || '').trim().localeCompare(String(b.varsityName || '').trim(), undefined, { sensitivity: 'base', numeric: true });
+      const vA = String(a.varsityName || '').trim();
+      const vB = String(b.varsityName || '').trim();
+      const vComp = vA.localeCompare(vB, 'en', { sensitivity: 'base', numeric: true });
       if (vComp !== 0) return vComp;
-      return String(a.teamName || '').trim().localeCompare(String(b.teamName || '').trim(), undefined, { sensitivity: 'base', numeric: true });
+      const tA = String(a.teamName || '').trim();
+      const tB = String(b.teamName || '').trim();
+      return tA.localeCompare(tB, 'en', { sensitivity: 'base', numeric: true });
     });
     const datathonTeams = await DatathonRegistration.find({}).sort({ createdAt: -1 }).lean();
     const itQuiz = await ItQuizRegistration.find({}).sort({ createdAt: -1 }).lean();
