@@ -5,10 +5,16 @@ import Navbar from './landing/Navbar';
 import Footer from './landing/Footer';
 import { AlertIcon, CheckIcon } from './landing/Icons';
 import VolunteerTable from './admin/VolunteerTable';
-import printTable from './admin/printTable';
+import printTable, { printSeatPlan } from './admin/printTable';
 import { REGISTRATION_PRINT, IUPC_KIT_PRINT, HACKATHON_KIT_PRINT, tshirtCounts, tshirtDistributionPrintConfig } from './admin/registrationPrint';
 import { SECTION_FILTERS } from './admin/sectionFilters';
 import { HACKATHON_ACCEPTED_TEAMS } from '@/data/events';
+
+const IUPC_ROOMS = [
+  { name: 'CIT Lab', capacity: 20 },
+  { name: 'Mobile Apps', capacity: 13 },
+  { name: 'ACL Lab', capacity: 10 },
+];
 
 export default function AdminDashboard({ user }) {
   const [activeTab, setActiveTab] = useState('datathon'); // 'datathon' | 'iupc' | 'gaming' | 'it-quiz' | 'volunteer' | 'project-showcase' | 'app-challenge'
@@ -760,13 +766,22 @@ export default function AdminDashboard({ user }) {
 
                   <div className="flex flex-wrap items-center gap-2">
                     {activeTab === 'iupc' && (
-                      <button
-                        onClick={() => exportIupcTeamsCsv(visibleList)}
-                        disabled={visibleList.length === 0}
-                        className="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition disabled:opacity-40"
-                      >
-                        Export Teams CSV ({visibleList.length})
-                      </button>
+                      <>
+                        <button
+                          onClick={() => printSeatPlan({ title: 'IUPC Bench Seat Plan', teams: visibleList })}
+                          disabled={visibleList.length === 0}
+                          className="px-4 py-2 text-xs font-bold rounded-lg bg-grape-600 hover:bg-grape-500 text-white transition disabled:opacity-40 shadow-glow-grape"
+                        >
+                          Print Seat Plan ({visibleList.length})
+                        </button>
+                        <button
+                          onClick={() => exportIupcTeamsCsv(visibleList)}
+                          disabled={visibleList.length === 0}
+                          className="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition disabled:opacity-40"
+                        >
+                          Export Teams CSV ({visibleList.length})
+                        </button>
+                      </>
                     )}
                     {(activeTab === 'hackathon' || activeTab === 'datathon') && (
                       <button
@@ -792,14 +807,16 @@ export default function AdminDashboard({ user }) {
                         Export Emails
                       </button>
                     )}
-                    <button
-                      onClick={() => handlePrint(visibleList, true)}
-                      disabled={visibleList.length === 0}
-                      className="px-4 py-2 text-xs font-bold rounded-lg bg-grape-600 hover:bg-grape-500 text-white transition disabled:opacity-40 disabled:hover:bg-grape-600"
-                    >
-                      Print / Save PDF ({visibleList.length})
-                    </button>
-                    {filterActive && (
+                    {activeTab !== 'iupc' && (
+                      <button
+                        onClick={() => handlePrint(visibleList, true)}
+                        disabled={visibleList.length === 0}
+                        className="px-4 py-2 text-xs font-bold rounded-lg bg-grape-600 hover:bg-grape-500 text-white transition disabled:opacity-40 disabled:hover:bg-grape-600"
+                      >
+                        Print / Save PDF ({visibleList.length})
+                      </button>
+                    )}
+                    {activeTab !== 'iupc' && filterActive && (
                       <button
                         onClick={() => handlePrint(activeList, false)}
                         disabled={activeList.length === 0}
@@ -1193,83 +1210,140 @@ export default function AdminDashboard({ user }) {
                             )}
                           </td>
                           <td className="px-3 py-3 text-xs">
-                            <div className="flex flex-col gap-1.5 min-w-[210px]">
-                              <div>
-                                <label className="text-[10px] text-mist-400 block font-semibold mb-0.5">Team ID / Reg ID</label>
-                                <input
-                                  type="text"
-                                  placeholder="Team ID / Reg ID"
-                                  value={
-                                    allocationEdits[team._id]?.teamId !== undefined
-                                      ? allocationEdits[team._id].teamId
-                                      : team.teamId || team.registrationId || ''
+                            {(() => {
+                              const currentRoom =
+                                allocationEdits[team._id]?.room !== undefined
+                                  ? allocationEdits[team._id].room
+                                  : team.room || '';
+                              const currentSeat =
+                                allocationEdits[team._id]?.seat !== undefined
+                                  ? allocationEdits[team._id].seat
+                                  : team.seat || '';
+                              const currentTeamId =
+                                allocationEdits[team._id]?.teamId !== undefined
+                                  ? allocationEdits[team._id].teamId
+                                  : team.teamId || team.registrationId || '';
+
+                              const reservedSeats = new Set();
+                              if (currentRoom) {
+                                for (const t of data.iupc || []) {
+                                  if (t._id === team._id) continue;
+                                  const tRoom =
+                                    allocationEdits[t._id]?.room !== undefined
+                                      ? allocationEdits[t._id].room
+                                      : t.room;
+                                  const tSeat =
+                                    allocationEdits[t._id]?.seat !== undefined
+                                      ? allocationEdits[t._id].seat
+                                      : t.seat;
+                                  if (tRoom === currentRoom && tSeat) {
+                                    reservedSeats.add(String(tSeat).trim());
                                   }
-                                  onChange={(e) =>
-                                    setAllocationEdits((prev) => ({
-                                      ...prev,
-                                      [team._id]: {
-                                        ...(prev[team._id] || {}),
-                                        teamId: e.target.value,
-                                      },
-                                    }))
-                                  }
-                                  className="w-full rounded-lg border border-ink-600 bg-ink-950 px-2.5 py-1.5 text-xs font-mono text-white placeholder-mist-600 outline-none focus:border-aqua-400 focus:ring-1 focus:ring-aqua-400/30"
-                                />
-                              </div>
-                              <div className="flex gap-2">
-                                <div className="w-1/2">
-                                  <label className="text-[10px] text-mist-400 block font-semibold mb-0.5">Room</label>
-                                  <input
-                                    type="text"
-                                    placeholder="Room"
-                                    value={
-                                      allocationEdits[team._id]?.room !== undefined
-                                        ? allocationEdits[team._id].room
-                                        : team.room || ''
-                                    }
-                                    onChange={(e) =>
-                                      setAllocationEdits((prev) => ({
-                                        ...prev,
-                                        [team._id]: {
-                                          ...(prev[team._id] || {}),
-                                          room: e.target.value,
-                                        },
-                                      }))
-                                    }
-                                    className="w-full rounded-lg border border-ink-600 bg-ink-950 px-2.5 py-1.5 text-xs text-white placeholder-mist-600 outline-none focus:border-aqua-400 focus:ring-1 focus:ring-aqua-400/30"
-                                  />
+                                }
+                              }
+
+                              const roomConfig = IUPC_ROOMS.find((r) => r.name === currentRoom);
+                              const maxCapacity = roomConfig ? roomConfig.capacity : 30;
+                              const seatList = Array.from({ length: maxCapacity }, (_, i) => String(i + 1));
+                              if (currentSeat && !seatList.includes(String(currentSeat))) {
+                                seatList.push(String(currentSeat));
+                              }
+
+                              return (
+                                <div className="flex flex-col gap-1.5 min-w-[210px]">
+                                  <div>
+                                    <label className="text-[10px] text-mist-400 block font-semibold mb-0.5">Team ID / Reg ID</label>
+                                    <input
+                                      type="text"
+                                      placeholder="Team ID / Reg ID"
+                                      value={currentTeamId}
+                                      onChange={(e) =>
+                                        setAllocationEdits((prev) => ({
+                                          ...prev,
+                                          [team._id]: {
+                                            ...(prev[team._id] || {}),
+                                            teamId: e.target.value,
+                                          },
+                                        }))
+                                      }
+                                      className="w-full rounded-lg border border-ink-600 bg-ink-950 px-2.5 py-1.5 text-xs font-mono text-white placeholder-mist-600 outline-none focus:border-aqua-400 focus:ring-1 focus:ring-aqua-400/30"
+                                    />
+                                  </div>
+                                  <div className="flex gap-2">
+                                    <div className="w-1/2">
+                                      <label className="text-[10px] text-mist-400 block font-semibold mb-0.5">Room</label>
+                                      <select
+                                        value={currentRoom}
+                                        onChange={(e) =>
+                                          setAllocationEdits((prev) => ({
+                                            ...prev,
+                                            [team._id]: {
+                                              ...(prev[team._id] || {}),
+                                              room: e.target.value,
+                                              seat: '',
+                                            },
+                                          }))
+                                        }
+                                        className="w-full rounded-lg border border-ink-600 bg-ink-950 px-2 py-1.5 text-xs text-white outline-none focus:border-aqua-400 focus:ring-1 focus:ring-aqua-400/30"
+                                      >
+                                        <option value="" className="bg-ink-900">Select Room</option>
+                                        {IUPC_ROOMS.map((r) => (
+                                          <option key={r.name} value={r.name} className="bg-ink-900">
+                                            {r.name} ({r.capacity})
+                                          </option>
+                                        ))}
+                                        {currentRoom && !IUPC_ROOMS.some((r) => r.name === currentRoom) && (
+                                          <option value={currentRoom} className="bg-ink-900">
+                                            {currentRoom}
+                                          </option>
+                                        )}
+                                      </select>
+                                    </div>
+                                    <div className="w-1/2">
+                                      <label className="text-[10px] text-mist-400 block font-semibold mb-0.5">Seat</label>
+                                      <select
+                                        value={currentSeat}
+                                        disabled={!currentRoom}
+                                        onChange={(e) =>
+                                          setAllocationEdits((prev) => ({
+                                            ...prev,
+                                            [team._id]: {
+                                              ...(prev[team._id] || {}),
+                                              seat: e.target.value,
+                                            },
+                                          }))
+                                        }
+                                        className="w-full rounded-lg border border-ink-600 bg-ink-950 px-2 py-1.5 text-xs text-white outline-none focus:border-aqua-400 focus:ring-1 focus:ring-aqua-400/30 disabled:opacity-40"
+                                      >
+                                        <option value="" className="bg-ink-900">
+                                          {currentRoom ? 'Select Seat' : 'Pick Room'}
+                                        </option>
+                                        {seatList.map((sNum) => {
+                                          const isTaken = reservedSeats.has(String(sNum));
+                                          return (
+                                            <option
+                                              key={sNum}
+                                              value={sNum}
+                                              disabled={isTaken}
+                                              className="bg-ink-900"
+                                            >
+                                              Seat {sNum} {isTaken ? '(Reserved)' : ''}
+                                            </option>
+                                          );
+                                        })}
+                                      </select>
+                                    </div>
+                                  </div>
+                                  <button
+                                    onClick={() => handleSaveAllocation(team._id, team)}
+                                    disabled={allocationSaving === team._id}
+                                    className="mt-0.5 w-full py-1 text-[11px] font-bold rounded-lg bg-aqua-600/30 border border-aqua-400/40 text-aqua-300 hover:bg-aqua-600/50 hover:text-white transition disabled:opacity-50"
+                                  >
+                                    {allocationSaving === team._id ? 'Saving...' : 'Save Allocation'}
+                                  </button>
                                 </div>
-                                <div className="w-1/2">
-                                  <label className="text-[10px] text-mist-400 block font-semibold mb-0.5">Seat</label>
-                                  <input
-                                    type="text"
-                                    placeholder="Seat"
-                                    value={
-                                      allocationEdits[team._id]?.seat !== undefined
-                                        ? allocationEdits[team._id].seat
-                                        : team.seat || ''
-                                    }
-                                    onChange={(e) =>
-                                      setAllocationEdits((prev) => ({
-                                        ...prev,
-                                        [team._id]: {
-                                          ...(prev[team._id] || {}),
-                                          seat: e.target.value,
-                                        },
-                                      }))
-                                    }
-                                    className="w-full rounded-lg border border-ink-600 bg-ink-950 px-2.5 py-1.5 text-xs text-white placeholder-mist-600 outline-none focus:border-aqua-400 focus:ring-1 focus:ring-aqua-400/30"
-                                  />
-                                </div>
-                              </div>
-                              <button
-                                onClick={() => handleSaveAllocation(team._id, team)}
-                                disabled={allocationSaving === team._id}
-                                className="mt-0.5 w-full py-1 text-[11px] font-bold rounded-lg bg-aqua-600/30 border border-aqua-400/40 text-aqua-300 hover:bg-aqua-600/50 hover:text-white transition disabled:opacity-50"
-                              >
-                                {allocationSaving === team._id ? 'Saving...' : 'Save Allocation'}
-                              </button>
-                            </div>
+                              );
+                            })()}
                           </td>
                           {!hideUnpaidIupc && (
                             <td className="px-3 py-3">

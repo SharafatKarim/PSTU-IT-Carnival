@@ -144,3 +144,153 @@ export default function printTable({ title, summary = '', columns, rows = [] }) 
   activeFrame = frame;
   document.body.appendChild(frame);
 }
+
+export function printSeatPlan({ title = 'IUPC Seat Plan Bench Cards', teams = [] }) {
+  if (typeof document === 'undefined') return;
+
+  const cardsHtml = teams.length
+    ? teams
+        .map((t) => {
+          const room = t.room || 'Room TBD';
+          const seat = t.seat ? `Seat ${t.seat}` : 'Seat TBD';
+          return `
+            <div class="card">
+              <div class="card-header">PSTU IT CARNIVAL 2026 · IUPC</div>
+              <div class="card-body">
+                <div class="team-name">${esc(t.teamName)}</div>
+                <div class="varsity-name">${esc(t.varsityName)}</div>
+              </div>
+              <div class="card-footer">
+                <span class="room-tag">${esc(room)}</span>
+                <span class="seat-tag">${esc(seat)}</span>
+              </div>
+            </div>
+          `;
+        })
+        .join('')
+    : '<div class="empty">No teams to print seat plan for.</div>';
+
+  const doc = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>${esc(title)} — PSTU IT Carnival 2026</title>
+<style>
+  @page { size: A4 portrait; margin: 8mm; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    color: #111;
+    background: #fff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6mm 8mm;
+  }
+  .card {
+    border: 2px dashed #444;
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 48mm;
+    page-break-inside: avoid;
+  }
+  .card-header {
+    font-size: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #555;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 3px;
+    margin-bottom: 4px;
+  }
+  .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .team-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: #000;
+    line-height: 1.25;
+    word-break: break-word;
+  }
+  .varsity-name {
+    font-size: 11px;
+    color: #444;
+    font-weight: 500;
+    margin-top: 2px;
+    line-height: 1.3;
+  }
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 4px;
+    border-top: 1.5px solid #111;
+  }
+  .room-tag {
+    font-size: 11px;
+    font-weight: 700;
+    background: #eeeeee;
+    color: #222;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  .seat-tag {
+    font-size: 12px;
+    font-weight: 800;
+    background: #111111;
+    color: #ffffff;
+    padding: 2px 10px;
+    border-radius: 4px;
+  }
+  .empty {
+    text-align: center;
+    padding: 40px;
+    font-size: 14px;
+    color: #666;
+  }
+</style>
+</head>
+<body>
+  <div class="grid">${cardsHtml}</div>
+</body>
+</html>`;
+
+  if (activeFrame) {
+    activeFrame.remove();
+    activeFrame = null;
+  }
+
+  const frame = document.createElement('iframe');
+  frame.setAttribute('aria-hidden', 'true');
+  frame.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
+  frame.srcdoc = doc;
+  frame.onload = () => {
+    const win = frame.contentWindow;
+    if (!win) return;
+    win.onafterprint = () => {
+      if (activeFrame === frame) activeFrame = null;
+      frame.remove();
+    };
+    win.focus();
+    win.print();
+  };
+
+  activeFrame = frame;
+  document.body.appendChild(frame);
+}
