@@ -1122,34 +1122,34 @@ export default function AdminDashboard({ user }) {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b border-white/10 bg-ink-950/40 text-xs font-bold uppercase tracking-wider text-mist-400">
-                      <th className="px-6 py-4">Team Name</th>
-                      <th className="px-6 py-4">Varsity</th>
-                      <th className="px-6 py-4">Coach</th>
-                      <th className="px-6 py-4">Members</th>
-                      <th className="px-6 py-4">Payment</th>
-                      <th className="px-6 py-4">Status</th>
-                      <th className="px-6 py-4">Allocation</th>
-                      <th className="px-6 py-4">Action</th>
+                      <th className="px-3 py-3">Team Name</th>
+                      <th className="px-3 py-3">Varsity</th>
+                      <th className="px-3 py-3">Coach</th>
+                      <th className="px-3 py-3">Members</th>
+                      <th className="px-3 py-3">Payment</th>
+                      <th className="px-3 py-3">Status</th>
+                      <th className="px-3 py-3">Allocation</th>
+                      <th className="px-3 py-3">Action</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5 text-sm">
                     {visibleList.length === 0 ? (
                       <tr>
-                        <td colSpan="8" className="px-6 py-10 text-center text-mist-400">
+                        <td colSpan="8" className="px-3 py-8 text-center text-mist-400">
                           {emptyMessage('No IUPC registrations found.')}
                         </td>
                       </tr>
                     ) : (
                       visibleList.map((team) => (
                         <tr key={team._id} className="hover:bg-white/[0.02] transition">
-                          <td className="px-6 py-4 font-bold text-white">{team.teamName}</td>
-                          <td className="px-6 py-4 text-mist-300">{team.varsityName}</td>
-                          <td className="px-6 py-4 text-xs text-mist-300">
+                          <td className="px-3 py-3 font-bold text-white min-w-[130px]">{team.teamName}</td>
+                          <td className="px-3 py-3 text-mist-300 min-w-[140px]">{team.varsityName}</td>
+                          <td className="px-3 py-3 text-xs text-mist-300 min-w-[140px]">
                             <div>{team.coach?.name}</div>
                             <div className="text-mist-400">{team.coach?.email}</div>
                             <div className="text-mist-400">{team.coach?.phone}</div>
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-3 py-3 min-w-[150px]">
                             <div className="space-y-2">
                               {team.members.map((m, i) => (
                                 <div key={i} className="text-xs">
@@ -1161,9 +1161,9 @@ export default function AdminDashboard({ user }) {
                               ))}
                             </div>
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-3 py-3">
                             {team.payment?.transactionId ? (
-                              <div className="text-xs">
+                              <div className="text-xs whitespace-nowrap">
                                 <div className="font-mono text-mist-300">{team.payment.transactionId}</div>
                                 <div className="text-[10px] text-mist-500">
                                   {team.payment.method} · Recv: {team.payment.receiverNumber || 'N/A'}
@@ -1174,26 +1174,26 @@ export default function AdminDashboard({ user }) {
                               <span className="text-xs text-mist-500">Not submitted</span>
                             )}
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-3 py-3">
                             {team.registrationStatus === 'paid' ? (
-                              <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-1 text-xs font-bold text-green-400 border border-green-500/20">
+                              <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-1 text-xs font-bold text-green-400 border border-green-500/20 whitespace-nowrap">
                                 <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
                                 Paid
                               </span>
                             ) : team.registrationStatus === 'payment-submitted' ? (
-                              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-400 border border-amber-500/20">
+                              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-400 border border-amber-500/20 whitespace-nowrap">
                                 <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
                                 Awaiting check
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 text-xs font-bold text-mist-400 border border-white/10">
+                              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 text-xs font-bold text-mist-400 border border-white/10 whitespace-nowrap">
                                 <span className="h-1.5 w-1.5 rounded-full bg-mist-500" />
                                 Pre-registered
                               </span>
                             )}
                           </td>
-                          <td className="px-6 py-4 text-xs">
-                            <div className="flex flex-col gap-1.5 min-w-[140px]">
+                          <td className="px-3 py-3 text-xs">
+                            <div className="flex flex-col gap-1.5 min-w-[170px]">
                               <div>
                                 <label className="text-[10px] text-mist-400 block font-medium">Team ID / Reg ID</label>
                                 <input
@@ -1216,7 +1216,7 @@ export default function AdminDashboard({ user }) {
                                   className="w-full rounded border border-ink-600 bg-ink-950 px-2 py-1 text-xs text-white placeholder-mist-600 outline-none focus:border-aqua-400"
                                 />
                               </div>
-                              <div className="flex gap-1">
+                              <div className="flex gap-1.5">
                                 <div className="w-1/2">
                                   <label className="text-[10px] text-mist-400 block font-medium">Room</label>
                                   <input
@@ -1271,7 +1271,7 @@ export default function AdminDashboard({ user }) {
                               </button>
                             </div>
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-3 py-3">
                             <div className="flex flex-col items-start gap-2">
                             {/* Two ways a team gets paid, and both end at the
                                 same status.
