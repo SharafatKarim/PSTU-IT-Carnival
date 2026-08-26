@@ -162,6 +162,21 @@ const registrationSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    seat: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    room: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    teamId: {
+      type: String,
+      trim: true,
+      default: '',
+    },
   },
   { timestamps: true }
 );

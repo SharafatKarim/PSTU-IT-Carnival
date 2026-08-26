@@ -24,6 +24,96 @@ export default function AdminDashboard({ user }) {
      Approve button on the page. */
   const [notifyLoading, setNotifyLoading] = useState(null); // team._id being notified
   const [filterSelections, setFilterSelections] = useState({}); // tab -> selected filter key
+  const [hideUnpaidIupc, setHideUnpaidIupc] = useState(false);
+  const [allocationEdits, setAllocationEdits] = useState({});
+  const [allocationSaving, setAllocationSaving] = useState(null);
+
+  const handleSaveAllocation = async (teamId, currentValues) => {
+    const edit = allocationEdits[teamId] || {};
+    const seat = edit.seat !== undefined ? edit.seat : currentValues.seat || '';
+    const room = edit.room !== undefined ? edit.room : currentValues.room || '';
+    const customTeamId = edit.teamId !== undefined ? edit.teamId : currentValues.teamId || '';
+
+    setAllocationSaving(teamId);
+    try {
+      const res = await fetch('/api/v1/admin/registrations', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: teamId,
+          eventType: 'iupc',
+          action: 'update_iupc_allocation',
+          seat,
+          room,
+          teamId: customTeamId,
+        }),
+      });
+      const result = await res.json();
+      if (res.ok && result.success) {
+        setData((prev) => ({
+          ...prev,
+          iupc: (prev.iupc || []).map((t) =>
+            t._id === teamId
+              ? { ...t, seat: result.data.seat, room: result.data.room, teamId: result.data.teamId }
+              : t
+          ),
+        }));
+        setAllocationEdits((prev) => {
+          const next = { ...prev };
+          delete next[teamId];
+          return next;
+        });
+        alert('Allocation updated successfully!');
+      } else {
+        alert(result.message || 'Failed to update allocation.');
+      }
+    } catch (e) {
+      alert('Network error. Failed to update allocation.');
+    } finally {
+      setAllocationSaving(null);
+    }
+  };
+
+  const exportIupcTeamsCsv = (teams) => {
+    if (!teams || teams.length === 0) {
+      alert('No IUPC teams to export!');
+      return;
+    }
+
+    const escapeCsv = (val) => {
+      const str = String(val ?? '');
+      if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
+    const headers = ['team name', 'varsity', 'room', 'seat', 'email(team leader)', 'reference'];
+
+    const rows = teams.map((team) => {
+      const leader = (team.members || []).find((m) => m.isTeamLeader) || (team.members || [])[0];
+      const leaderEmail = leader?.email || '';
+      return [
+        escapeCsv(team.teamName),
+        escapeCsv(team.varsityName),
+        escapeCsv(team.room || ''),
+        escapeCsv(team.seat || ''),
+        escapeCsv(leaderEmail),
+        escapeCsv(team.teamId || ''),
+      ].join(',');
+    });
+
+    const csvContent = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `iupc_teams_${hideUnpaidIupc ? 'paid_' : ''}allocation.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -227,7 +317,13 @@ export default function AdminDashboard({ user }) {
      search box. Everything below drives the other four. */
   const printConfig = REGISTRATION_PRINT[activeTab];
   const filterDef = SECTION_FILTERS[activeTab];
-  const activeList = useMemo(() => data[activeTab] || [], [data, activeTab]);
+  const activeList = useMemo(() => {
+    const list = data[activeTab] || [];
+    if (activeTab === 'iupc' && hideUnpaidIupc) {
+      return list.filter((t) => t.registrationStatus === 'paid');
+    }
+    return list;
+  }, [data, activeTab, hideUnpaidIupc]);
 
   /* Selections are kept per tab so switching away and back does not silently
      reset what an admin was looking at. '' is a real key (the missing-value
@@ -612,6 +708,18 @@ export default function AdminDashboard({ user }) {
                       </select>
                     )}
 
+                    {activeTab === 'iupc' && (
+                      <label className="flex items-center gap-2 text-xs font-semibold text-mist-300 cursor-pointer bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg border border-white/10 transition">
+                        <input
+                          type="checkbox"
+                          checked={hideUnpaidIupc}
+                          onChange={(e) => setHideUnpaidIupc(e.target.checked)}
+                          className="rounded border-ink-500 text-aqua-500 focus:ring-aqua-500/25 bg-ink-950"
+                        />
+                        Hide Unpaid Teams
+                      </label>
+                    )}
+
                     <p className="text-xs text-mist-400">
                       {filterActive ? (
                         <>
@@ -632,6 +740,15 @@ export default function AdminDashboard({ user }) {
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2">
+                    {activeTab === 'iupc' && (
+                      <button
+                        onClick={() => exportIupcTeamsCsv(visibleList)}
+                        disabled={visibleList.length === 0}
+                        className="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition disabled:opacity-40"
+                      >
+                        Export Teams CSV ({visibleList.length})
+                      </button>
+                    )}
                     {(activeTab === 'hackathon' || activeTab === 'datathon') && (
                       <button
                         onClick={() => {
@@ -993,13 +1110,14 @@ export default function AdminDashboard({ user }) {
                       <th className="px-6 py-4">Members</th>
                       <th className="px-6 py-4">Payment</th>
                       <th className="px-6 py-4">Status</th>
+                      <th className="px-6 py-4">Allocation</th>
                       <th className="px-6 py-4">Action</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5 text-sm">
                     {visibleList.length === 0 ? (
                       <tr>
-                        <td colSpan="8" className="px-6 py-10 text-center text-mist-400">
+                        <td colSpan="9" className="px-6 py-10 text-center text-mist-400">
                           {emptyMessage('No IUPC registrations found.')}
                         </td>
                       </tr>
@@ -1056,6 +1174,85 @@ export default function AdminDashboard({ user }) {
                                 Pre-registered
                               </span>
                             )}
+                          </td>
+                          <td className="px-6 py-4 text-xs">
+                            <div className="flex flex-col gap-1.5 min-w-[140px]">
+                              <div>
+                                <label className="text-[10px] text-mist-400 block font-medium">Team ID</label>
+                                <input
+                                  type="text"
+                                  placeholder="e.g. T-01"
+                                  value={
+                                    allocationEdits[team._id]?.teamId !== undefined
+                                      ? allocationEdits[team._id].teamId
+                                      : team.teamId || ''
+                                  }
+                                  onChange={(e) =>
+                                    setAllocationEdits((prev) => ({
+                                      ...prev,
+                                      [team._id]: {
+                                        ...(prev[team._id] || {}),
+                                        teamId: e.target.value,
+                                      },
+                                    }))
+                                  }
+                                  className="w-full rounded border border-ink-600 bg-ink-950 px-2 py-1 text-xs text-white placeholder-mist-600 outline-none focus:border-aqua-400"
+                                />
+                              </div>
+                              <div className="flex gap-1">
+                                <div className="w-1/2">
+                                  <label className="text-[10px] text-mist-400 block font-medium">Room</label>
+                                  <input
+                                    type="text"
+                                    placeholder="Room"
+                                    value={
+                                      allocationEdits[team._id]?.room !== undefined
+                                        ? allocationEdits[team._id].room
+                                        : team.room || ''
+                                    }
+                                    onChange={(e) =>
+                                      setAllocationEdits((prev) => ({
+                                        ...prev,
+                                        [team._id]: {
+                                          ...(prev[team._id] || {}),
+                                          room: e.target.value,
+                                        },
+                                      }))
+                                    }
+                                    className="w-full rounded border border-ink-600 bg-ink-950 px-2 py-1 text-xs text-white placeholder-mist-600 outline-none focus:border-aqua-400"
+                                  />
+                                </div>
+                                <div className="w-1/2">
+                                  <label className="text-[10px] text-mist-400 block font-medium">Seat</label>
+                                  <input
+                                    type="text"
+                                    placeholder="Seat"
+                                    value={
+                                      allocationEdits[team._id]?.seat !== undefined
+                                        ? allocationEdits[team._id].seat
+                                        : team.seat || ''
+                                    }
+                                    onChange={(e) =>
+                                      setAllocationEdits((prev) => ({
+                                        ...prev,
+                                        [team._id]: {
+                                          ...(prev[team._id] || {}),
+                                          seat: e.target.value,
+                                        },
+                                      }))
+                                    }
+                                    className="w-full rounded border border-ink-600 bg-ink-950 px-2 py-1 text-xs text-white placeholder-mist-600 outline-none focus:border-aqua-400"
+                                  />
+                                </div>
+                              </div>
+                              <button
+                                onClick={() => handleSaveAllocation(team._id, team)}
+                                disabled={allocationSaving === team._id}
+                                className="mt-0.5 px-2 py-1 text-[10px] font-bold rounded bg-aqua-600/30 border border-aqua-400/40 text-aqua-300 hover:bg-aqua-600/50 hover:text-white transition disabled:opacity-50"
+                              >
+                                {allocationSaving === team._id ? 'Saving...' : 'Save Allocation'}
+                              </button>
+                            </div>
                           </td>
                           <td className="px-6 py-4">
                             <div className="flex flex-col items-start gap-2">

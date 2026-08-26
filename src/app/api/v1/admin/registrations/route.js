@@ -137,6 +137,7 @@ export async function PATCH(req) {
       'notify_payment',
       'bulk_hackathon_status',
       'set_hackathon_status',
+      'update_iupc_allocation',
     ];
     if (!ACTIONS.includes(action)) {
       return NextResponse.json({ success: false, message: 'Invalid action' }, { status: 400 });
@@ -159,6 +160,43 @@ export async function PATCH(req) {
      * The stamp is only written when the message actually left. send() returns
      * false with no SMTP configured, and marking a team notified because
      * EMAIL_USER was unset would hide the one failure nobody would notice. */
+    if (action === 'update_iupc_allocation') {
+      const { seat, room, teamId: customTeamId } = body;
+      const team = await IupcRegistration.findById(id);
+      if (!team) {
+        return NextResponse.json({ success: false, message: 'Team not found' }, { status: 404 });
+      }
+
+      team.seat = String(seat ?? '').trim();
+      team.room = String(room ?? '').trim();
+      team.teamId = String(customTeamId ?? '').trim();
+      await team.save();
+
+      await AdminLog.create({
+        adminEmail,
+        action: 'update_iupc_allocation',
+        eventType: 'iupc',
+        details: {
+          teamId: team._id,
+          teamName: team.teamName,
+          registrationId: team.registrationId,
+          seat: team.seat,
+          room: team.room,
+          assignedTeamId: team.teamId,
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: 'IUPC team seat/room/teamId updated successfully',
+        data: {
+          seat: team.seat,
+          room: team.room,
+          teamId: team.teamId,
+        },
+      });
+    }
+
     if (action === 'notify_payment') {
       const team = await IupcRegistration.findById(id);
       if (!team) {
