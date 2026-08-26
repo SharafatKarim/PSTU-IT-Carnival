@@ -32,7 +32,7 @@ export default function AdminDashboard({ user }) {
     const edit = allocationEdits[teamId] || {};
     const seat = edit.seat !== undefined ? edit.seat : currentValues.seat || '';
     const room = edit.room !== undefined ? edit.room : currentValues.room || '';
-    const customTeamId = edit.teamId !== undefined ? edit.teamId : currentValues.teamId || '';
+    const customTeamId = edit.teamId !== undefined ? edit.teamId : (currentValues.teamId || currentValues.registrationId || '');
 
     setAllocationSaving(teamId);
     try {
@@ -1123,7 +1123,6 @@ export default function AdminDashboard({ user }) {
                   <thead>
                     <tr className="border-b border-white/10 bg-ink-950/40 text-xs font-bold uppercase tracking-wider text-mist-400">
                       <th className="px-6 py-4">Team Name</th>
-                      <th className="px-6 py-4">Reg ID</th>
                       <th className="px-6 py-4">Varsity</th>
                       <th className="px-6 py-4">Coach</th>
                       <th className="px-6 py-4">Members</th>
@@ -1136,7 +1135,7 @@ export default function AdminDashboard({ user }) {
                   <tbody className="divide-y divide-white/5 text-sm">
                     {visibleList.length === 0 ? (
                       <tr>
-                        <td colSpan="9" className="px-6 py-10 text-center text-mist-400">
+                        <td colSpan="8" className="px-6 py-10 text-center text-mist-400">
                           {emptyMessage('No IUPC registrations found.')}
                         </td>
                       </tr>
@@ -1144,12 +1143,6 @@ export default function AdminDashboard({ user }) {
                       visibleList.map((team) => (
                         <tr key={team._id} className="hover:bg-white/[0.02] transition">
                           <td className="px-6 py-4 font-bold text-white">{team.teamName}</td>
-                          <td className="px-6 py-4 font-mono text-xs text-mist-300">
-                            <div className="font-semibold text-white">{team.teamId || team.registrationId}</div>
-                            {team.teamId && team.teamId !== team.registrationId && (
-                              <div className="text-[10px] text-mist-500">{team.registrationId}</div>
-                            )}
-                          </td>
                           <td className="px-6 py-4 text-mist-300">{team.varsityName}</td>
                           <td className="px-6 py-4 text-xs text-mist-300">
                             <div>{team.coach?.name}</div>
@@ -1202,14 +1195,14 @@ export default function AdminDashboard({ user }) {
                           <td className="px-6 py-4 text-xs">
                             <div className="flex flex-col gap-1.5 min-w-[140px]">
                               <div>
-                                <label className="text-[10px] text-mist-400 block font-medium">Team ID</label>
+                                <label className="text-[10px] text-mist-400 block font-medium">Team ID / Reg ID</label>
                                 <input
                                   type="text"
-                                  placeholder="e.g. T-01"
+                                  placeholder="Team ID / Reg ID"
                                   value={
                                     allocationEdits[team._id]?.teamId !== undefined
                                       ? allocationEdits[team._id].teamId
-                                      : team.teamId || ''
+                                      : team.teamId || team.registrationId || ''
                                   }
                                   onChange={(e) =>
                                     setAllocationEdits((prev) => ({
