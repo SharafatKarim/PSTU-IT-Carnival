@@ -171,15 +171,25 @@ export async function PATCH(req) {
      * EMAIL_USER was unset would hide the one failure nobody would notice. */
     if (action === 'update_iupc_allocation') {
       const { seat, room, teamId: customTeamId } = body;
-      const team = await IupcRegistration.findById(id);
+      const cleanSeat = String(seat ?? '').trim();
+      const cleanRoom = String(room ?? '').trim();
+      const cleanTeamId = String(customTeamId ?? '').trim();
+
+      const team = await IupcRegistration.findByIdAndUpdate(
+        id,
+        {
+          $set: {
+            seat: cleanSeat,
+            room: cleanRoom,
+            teamId: cleanTeamId,
+          },
+        },
+        { new: true, runValidators: false }
+      );
+
       if (!team) {
         return NextResponse.json({ success: false, message: 'Team not found' }, { status: 404 });
       }
-
-      team.seat = String(seat ?? '').trim();
-      team.room = String(room ?? '').trim();
-      team.teamId = String(customTeamId ?? '').trim();
-      await team.save();
 
       await AdminLog.create({
         adminEmail,

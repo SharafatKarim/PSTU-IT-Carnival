@@ -194,4 +194,8 @@ registrationSchema.index(
   }
 );
 
-export default mongoose.models.Registration || mongoose.model('Registration', registrationSchema, 'IUPC_pre_reg');
+if (mongoose.models.Registration) {
+  delete mongoose.models.Registration;
+}
+
+export default mongoose.model('Registration', registrationSchema, 'IUPC_pre_reg');
