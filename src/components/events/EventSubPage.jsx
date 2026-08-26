@@ -77,6 +77,7 @@ export const SubPageTabs = ({ slug, active }) => {
   const items = [
     { key: 'teams', label: 'Registered Teams', href: ROUTES.eventTeams(slug) },
     { key: 'slots', label: 'Slot Allocations', href: ROUTES.eventSlots(slug) },
+    ...(slug === 'iupc' ? [{ key: 'seat-plan', label: 'Seat Plans', href: ROUTES.eventSeatPlan(slug) }] : []),
   ];
 
   return (

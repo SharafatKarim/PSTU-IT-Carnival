@@ -50,6 +50,7 @@ const isRegistrationClosed = (event) =>
 const DIRECTORY_SLUGS = {
   teams: ['iupc', 'hackathon', 'datathon', 'project-showcase'],
   slots: ['iupc'],
+  seatPlan: ['iupc'],
 };
 
 const DirectoryLinks = ({ event }) => (
@@ -62,6 +63,11 @@ const DirectoryLinks = ({ event }) => (
     {DIRECTORY_SLUGS.slots.includes(event.slug) && (
       <Link href={ROUTES.eventSlots(event.slug)} className={SECONDARY_CTA}>
         Slot Allocations
+      </Link>
+    )}
+    {DIRECTORY_SLUGS.seatPlan.includes(event.slug) && (
+      <Link href={ROUTES.eventSeatPlan(event.slug)} className={SECONDARY_CTA}>
+        Seat Plans
       </Link>
     )}
   </>
@@ -106,7 +112,7 @@ const HeroNotice = ({ event }) => {
           href={ROUTES.eventTeams(event.slug)}
           className="group inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-gold-400 px-5 py-3 text-sm font-bold text-ink-950 shadow-glow-gold transition hover:bg-gold-300 sm:w-auto"
         >
-          Pay now
+          View Registered Teams
           <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
         </Link>
       )}

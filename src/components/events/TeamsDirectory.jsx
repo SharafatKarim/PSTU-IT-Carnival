@@ -102,6 +102,7 @@ const TeamRow = ({ team, accent, onPay, closed, isHackathon, paymentConfig }) =>
  * is flashing "closed" at everyone for a frame. The API is what actually
  * refuses a late submission. */
 const PayButton = ({ team, onPay, closed, isHackathon, paymentConfig, full = false }) => {
+  if (!isHackathon) return null;
   if (team.status === 'paid' || team.status === 'rejected' || team.status === 'delayed') return null;
   const isSelected = isHackathon && team && (team.status === 'selected' || HACKATHON_ACCEPTED_TEAMS.includes(team.registrationId));
   if (isHackathon && !isSelected) return null;

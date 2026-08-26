@@ -72,6 +72,8 @@ export const ROUTES = {
   eventTeams: (slug) => `${EVENTS_BASE}/${slug}/teams`,
   /* University-wise slot split, published after entries close. */
   eventSlots: (slug) => `${EVENTS_BASE}/${slug}/slots`,
+  /* Seat plan allocations for contest day. */
+  eventSeatPlan: (slug) => `${EVENTS_BASE}/${slug}/seat-plan`,
   /* Gaming is an event like any other — it just has games nested below it. */
   gaming: GAMING_BASE,
   game: (slug) => `${GAMING_BASE}/${slug}`,
@@ -95,39 +97,17 @@ export const REGISTRABLE_EVENTS = EVENT_DETAILS.filter(
 );
 
 /* Where the site's "register for IUPC" buttons point, and whether they should
-   still be offering that at all.
- *
- * IUPC is the one event advertised from outside its own page — the landing hero,
- * the closing panel, the footer, the gaming hub's navbar and the 404 all link to
- * its form. Closing entries therefore means editing five components, which is
- * five chances to miss one and leave a gold button promising a form that is
- * gone. Deriving it from the event's own registrationOpen means flipping that
- * single flag in events.js moves every one of them, in both directions.
- *
- * Callers keep their own wording while entries are open — "Pre-register your
- * team" and "Start pre-registration" are not interchangeable — and share one
- * label once they are closed. */
+   still be offering that at all. */
 export const iupcRegistration = () => {
   const iupc = EVENT_DETAILS.find((e) => e.slug === 'iupc');
   const open = iupc?.registrationOpen !== false;
 
-  /* Entries shutting is not the end of the story. The fee falls due next, and
-     while it is due the honest thing for these buttons to say is "pay" — a
-     team reading "see registered teams" has no reason to click, so the one
-     step that costs them their slot is behind a link that sounds optional.
-     Derived here for the same reason `open` is: one phase, five callers, no
-     chance of two of them disagreeing. */
-  const payment = !open && Boolean(IUPC_PAYMENT.deadline);
-
   return {
     open,
-    payment,
+    payment: false,
     paymentDeadline: IUPC_PAYMENT.deadline,
-    /* Closed sends people to the directory rather than the form's notice page:
-       the question a team has after entries shut is whether they are on the
-       list — and now, that is also where the Pay button lives. */
     href: open ? ROUTES.register : ROUTES.eventTeams('iupc'),
-    closedLabel: payment ? 'Pay for your team' : 'See registered teams',
+    closedLabel: 'See registered teams',
   };
 };
 
@@ -270,6 +250,7 @@ export const eventTeamsNav = (slug) => {
   ];
   if (slug === 'iupc') {
     nav.push({ label: 'Slot Allocations', href: ROUTES.eventSlots(slug) });
+    nav.push({ label: 'Seat Plans', href: ROUTES.eventSeatPlan(slug) });
   }
   nav.push({ label: 'All Events', href: ROUTES.events });
   return nav;
@@ -279,6 +260,15 @@ export const eventSlotsNav = (slug) => [
   { label: 'Home', href: ROUTES.home },
   { label: 'Event Details', href: ROUTES.event(slug) },
   { label: 'Registered Teams', href: ROUTES.eventTeams(slug) },
+  ...(slug === 'iupc' ? [{ label: 'Seat Plans', href: ROUTES.eventSeatPlan(slug) }] : []),
+  { label: 'All Events', href: ROUTES.events },
+];
+
+export const eventSeatPlanNav = (slug) => [
+  { label: 'Home', href: ROUTES.home },
+  { label: 'Event Details', href: ROUTES.event(slug) },
+  { label: 'Registered Teams', href: ROUTES.eventTeams(slug) },
+  { label: 'Slot Allocations', href: ROUTES.eventSlots(slug) },
   { label: 'All Events', href: ROUTES.events },
 ];
 

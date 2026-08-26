@@ -94,11 +94,21 @@ export function eventTeamsMetadata(slug) {
 
 export function eventSlotsMetadata(slug) {
   const event = getEventDetail(slug);
-  if (!event) return missing('Slot allocations');
+  if (!event) return missing('Slots');
 
   return build(
     `${event.name} Slot Allocations — ${SUFFIX}`,
-    `University-wise slot allocation for ${event.fullName} at ${SUFFIX}.`
+    `University-wise slot allocation breakdown for ${event.fullName} at ${SUFFIX}.`
+  );
+}
+
+export function eventSeatPlanMetadata(slug) {
+  const event = getEventDetail(slug);
+  if (!event) return missing('Seat Plans');
+
+  return build(
+    `${event.name} Seat Plans — ${SUFFIX}`,
+    `Official team seat plan and classroom allocations for ${event.fullName} at ${SUFFIX}.`
   );
 }
 

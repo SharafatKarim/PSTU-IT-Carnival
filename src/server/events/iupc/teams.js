@@ -13,7 +13,7 @@ import Registration from './model';
 // members.studentId.
 // ---------------------------------------------------------------------------
 
-const PUBLIC_FIELDS = 'registrationId teamName varsityName registrationStatus members.name';
+const PUBLIC_FIELDS = 'registrationId teamId room seat teamName varsityName registrationStatus members.name';
 
 /* "PSTU-IUPC-2026-0007" -> 7. The serial people quote is the trailing counter,
    not the whole ID, so it is derived rather than stored twice. */
@@ -43,13 +43,8 @@ const buildFilter = (search) => {
     $or: [
       { teamName: rx },
       { varsityName: rx },
-      /* The registration ID is deliberately NOT matched as text. Every one of
-         them reads PSTU-IUPC-2026-nnnn, so "PSTU" returned all 49 teams and
-         "IUPC" did too — the prefix is the same for a Khulna team as for a
-         Patuakhali one, which makes the field worse than useless in a search
-         box: it drowns the university it looks like it is answering.
-         The serial branch above still finds a team by its number, which is the
-         part of that ID anyone actually quotes. */
+      { teamId: rx },
+      { room: rx },
       { 'members.name': rx },
     ],
   };
@@ -66,6 +61,9 @@ const normaliseStatus = (status) =>
 const toPublicTeam = (doc) => ({
   serial: serialOf(doc.registrationId),
   registrationId: doc.registrationId,
+  teamId: doc.teamId || doc.registrationId,
+  room: doc.room || '',
+  seat: doc.seat || '',
   teamName: doc.teamName,
   varsityName: doc.varsityName,
   status: normaliseStatus(doc.registrationStatus),
