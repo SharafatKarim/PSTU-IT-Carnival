@@ -934,6 +934,35 @@ export default function AdminDashboard({ user }) {
                     >
                       Export Paid Teams PDF ({paidHackathonTeams.length} paid)
                     </button>
+                    <button
+                      onClick={() => {
+                        if (paidHackathonTeams.length === 0) {
+                          alert('No paid hackathon teams found!');
+                          return;
+                        }
+                        const emails = paidHackathonTeams
+                          .flatMap((team) => (team.members || []).map((m) => m.email))
+                          .filter(Boolean);
+                        if (emails.length === 0) {
+                          alert('No emails found for paid teams!');
+                          return;
+                        }
+                        const uniqueEmails = [...new Set(emails)];
+                        const blob = new Blob([uniqueEmails.join('\n')], { type: 'text/plain;charset=utf-8' });
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = `hackathon_paid_emails.txt`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(url);
+                      }}
+                      disabled={paidHackathonTeams.length === 0}
+                      className="px-2.5 py-1 text-[11px] font-semibold rounded bg-emerald-600/20 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-600/30 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      Export Paid Team Emails ({paidHackathonTeams.length} paid)
+                    </button>
                     <span className="text-[11px] text-mist-500">
                       Paid teams only
                     </span>
