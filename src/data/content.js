@@ -335,6 +335,41 @@ export const TIMELINE = [
   },
 ];
 
+export const CARNIVAL_SCHEDULE = [
+  {
+    day: 'DAY 01',
+    date: '27 AUGUST',
+    events: [
+      { time: '9:00 AM – 9:45 AM', name: 'Cake Cutting', location: 'Faculty' },
+      { time: '9:45 AM – 10:30 AM', name: 'Opening Ceremony', location: 'TSC' },
+      { time: '10:30 AM – 12:00 PM', name: 'Project Showcasing', location: 'EEE Lab' },
+      { time: '11:00 AM – 3:00 PM', name: 'Free Fire', location: 'TSC Conf.' },
+      { time: '4:30 PM – 5:30 PM', name: "Rubik's Cube", location: 'CSIT-301' },
+      { time: '5:30 PM – 9:00 PM', name: 'PES', location: 'TSC Conf.' },
+    ],
+  },
+  {
+    day: 'DAY 02',
+    date: '28 AUGUST',
+    events: [
+      { time: '9:30 AM – 10:30 AM', name: 'IT Quiz', location: 'TSC Conf.' },
+      { time: '10:30 AM – 1:00 PM', name: 'Ludo', location: '5th Floor CSE Building (501/502)' },
+      { time: '11:00 AM – 3:00 PM', name: 'PUBG', location: 'TSC Conf.' },
+      { time: '2:00 PM – 5:00 PM', name: 'Chess', location: 'EEE - 601' },
+    ],
+  },
+  {
+    day: 'DAY 03',
+    date: '29 AUGUST',
+    events: [
+      { time: '9:00 AM – 2:00 PM', name: 'IUPC', location: 'CSE Building (301, ACL, Networking, Mobile Apps, 502)' },
+      { time: '9:00 AM – 5:00 PM', name: 'Hackathon', location: 'TSC Conf.' },
+      { time: '2:00 PM – 5:00 PM', name: 'App Challenge', location: 'Virtual Room' },
+      { time: '6:00 PM – 8:00 PM', name: 'Prize Giving & Closing Ceremony', location: 'TSC Conf.' },
+    ],
+  },
+];
+
 
 
 export const FAQS = [

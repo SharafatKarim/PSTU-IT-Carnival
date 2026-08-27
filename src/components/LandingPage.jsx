@@ -19,7 +19,7 @@ import {
   UsersIcon,
   AlertIcon,
 } from './landing/Icons';
-import { EVENT, EVENTS, STATS, TIMELINE, word } from '@/data/content';
+import { EVENT, EVENTS, STATS, TIMELINE, CARNIVAL_SCHEDULE, word } from '@/data/content';
 import { getEventDetail } from '@/data/events';
 import { ROUTES, iupcRegistration } from '@/lib/routes';
 import { currentStop } from '@/lib/schedule';
@@ -578,58 +578,126 @@ const HowToEnter = () => {
    the page does not go stale on 1 August. */
 const Schedule = () => {
   const now = useNow();
-  /* -1 until the client knows what day it is, which marks every stop neutral.
-     Guessing here would bake the build-time marker into the prerendered HTML,
-     and React does not patch mismatched attributes — it would stay there. */
   const stop = now === null ? -1 : currentStop(TIMELINE, now);
+  const [selectedDay, setSelectedDay] = useState(0);
 
   return (
-    <Section id="timeline" eyebrow="Schedule" title="The road to carnival day">
-      <ol className="grid gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
-        {TIMELINE.map((item, i) => {
-          const done = i < stop;
-          const current = i === stop;
+    <Section id="timeline" eyebrow="Schedule & Timetable" title="Carnival Event Schedule">
+      <div className="space-y-12">
+        {/* Timeline stops */}
+        <ol className="grid gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+          {TIMELINE.map((item, i) => {
+            const done = i < stop;
+            const current = i === stop;
 
-          return (
-            <li key={item.phase} className="relative pt-6">
-              <span
-                aria-hidden="true"
-                className={`absolute left-0 top-0 h-px w-full ${
-                  done ? 'bg-aqua-400/40' : 'bg-white/10'
-                }`}
-              />
-              <span
-                aria-hidden="true"
-                className={`absolute -top-[5px] left-0 h-2.5 w-2.5 rounded-full ${
-                  current
-                    ? 'bg-gold-400 ring-4 ring-gold-400/20'
-                    : done
-                      ? 'bg-aqua-400'
-                      : 'border border-white/25 bg-ink-950'
-                }`}
-              />
+            return (
+              <li key={item.phase} className="relative pt-6">
+                <span
+                  aria-hidden="true"
+                  className={`absolute left-0 top-0 h-px w-full ${
+                    done ? 'bg-aqua-400/40' : 'bg-white/10'
+                  }`}
+                />
+                <span
+                  aria-hidden="true"
+                  className={`absolute -top-[5px] left-0 h-2.5 w-2.5 rounded-full ${
+                    current
+                      ? 'bg-gold-400 ring-4 ring-gold-400/20'
+                      : done
+                        ? 'bg-aqua-400'
+                        : 'border border-white/25 bg-ink-950'
+                  }`}
+                />
 
-              <p
-                className={`text-[11px] font-bold uppercase tracking-wide tabular-nums ${
-                  current ? 'text-gold-300' : 'text-mist-400'
-                }`}
-              >
-                {item.date}
-              </p>
-              <h3
-                className={`mt-1.5 text-base font-bold ${
-                  done ? 'text-mist-300' : 'text-white'
-                }`}
-              >
-                {item.phase}
-              </h3>
-              <p className="mt-1.5 max-w-[46ch] text-sm leading-relaxed text-mist-400">
-                {item.text}
-              </p>
-            </li>
-          );
-        })}
-      </ol>
+                <p
+                  className={`text-[11px] font-bold uppercase tracking-wide tabular-nums ${
+                    current ? 'text-gold-300' : 'text-mist-400'
+                  }`}
+                >
+                  {item.date}
+                </p>
+                <h3
+                  className={`mt-1.5 text-base font-bold ${
+                    done ? 'text-mist-300' : 'text-white'
+                  }`}
+                >
+                  {item.phase}
+                </h3>
+                <p className="mt-1.5 max-w-[46ch] text-sm leading-relaxed text-mist-400">
+                  {item.text}
+                </p>
+              </li>
+            );
+          })}
+        </ol>
+
+        {/* Day-by-Day Event Timetable */}
+        <div className="rounded-2xl border border-white/10 bg-ink-900/40 p-6 sm:p-8 backdrop-blur">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6 mb-6">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-gold-400">Official Schedule</span>
+              <h3 className="mt-1 text-2xl font-extrabold text-white">Event Timetable by Day</h3>
+            </div>
+
+            {/* Day Selector Buttons */}
+            <div className="flex flex-wrap gap-2">
+              {CARNIVAL_SCHEDULE.map((dayData, idx) => (
+                <button
+                  key={dayData.day}
+                  onClick={() => setSelectedDay(idx)}
+                  className={`px-4 py-2 text-xs font-bold rounded-xl transition ${
+                    selectedDay === idx
+                      ? 'bg-gold-400 text-ink-950 shadow-md'
+                      : 'bg-white/5 border border-white/10 text-mist-300 hover:bg-white/10 hover:text-white'
+                  }`}
+                >
+                  {dayData.day}: {dayData.date}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Timetable view */}
+          {CARNIVAL_SCHEDULE[selectedDay] && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-sm font-semibold text-aqua-300 mb-2">
+                <CalendarIcon className="h-4 w-4" />
+                <span>{CARNIVAL_SCHEDULE[selectedDay].day} — {CARNIVAL_SCHEDULE[selectedDay].date}</span>
+              </div>
+
+              <div className="overflow-x-auto rounded-xl border border-white/5 bg-ink-950/60">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-white/10 bg-white/[0.02] text-xs font-bold uppercase tracking-wider text-mist-400">
+                      <th className="px-5 py-3.5">Time</th>
+                      <th className="px-5 py-3.5">Event</th>
+                      <th className="px-5 py-3.5">Location</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5 text-sm">
+                    {CARNIVAL_SCHEDULE[selectedDay].events.map((ev, i) => (
+                      <tr key={i} className="hover:bg-white/[0.02] transition">
+                        <td className="px-5 py-4 font-mono text-xs font-semibold text-gold-300 whitespace-nowrap">
+                          {ev.time}
+                        </td>
+                        <td className="px-5 py-4 font-bold text-white whitespace-nowrap">
+                          {ev.name}
+                        </td>
+                        <td className="px-5 py-4 text-xs text-mist-300">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/5 border border-white/10">
+                            <MapPinIcon className="h-3.5 w-3.5 text-aqua-400 shrink-0" />
+                            {ev.location}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </Section>
   );
 };
