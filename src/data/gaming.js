@@ -974,8 +974,9 @@ export const GAMES = [
       },
     ],
 
-    stage: "open",
+    stage: "published",
     registrationOpen: false,
+    registrationClosed: true,
     closedHeading: "Registration has closed",
     closedNote: "Registration for the Free Fire tournament is now closed. The fixture and schedule will be announced soon.",
     registration: {

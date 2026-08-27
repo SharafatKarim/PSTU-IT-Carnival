@@ -802,9 +802,9 @@ const LandingPage = () => (
     <Navbar />
     <main>
       <Hero />
+      <Schedule />
       <LineupSection />
       <HowToEnter />
-      <Schedule />
       <FaqSection />
       <FinalCta />
     </main>
