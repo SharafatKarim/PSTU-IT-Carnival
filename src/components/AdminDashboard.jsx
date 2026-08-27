@@ -5,7 +5,7 @@ import Navbar from './landing/Navbar';
 import Footer from './landing/Footer';
 import { AlertIcon, CheckIcon } from './landing/Icons';
 import VolunteerTable from './admin/VolunteerTable';
-import printTable, { printSeatPlan } from './admin/printTable';
+import printTable, { printSeatPlan, printEvaluationForm } from './admin/printTable';
 import { REGISTRATION_PRINT, IUPC_KIT_PRINT, HACKATHON_KIT_PRINT, tshirtCounts, tshirtDistributionPrintConfig } from './admin/registrationPrint';
 import { SECTION_FILTERS } from './admin/sectionFilters';
 import { HACKATHON_ACCEPTED_TEAMS } from '@/data/events';
@@ -823,6 +823,15 @@ export default function AdminDashboard({ user }) {
                         className="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition"
                       >
                         Export Emails
+                      </button>
+                    )}
+                    {activeTab === 'project-showcase' && (
+                      <button
+                        onClick={() => printEvaluationForm({ title: 'Project Showcasing Evaluation Form', teams: visibleList })}
+                        disabled={visibleList.length === 0}
+                        className="px-4 py-2 text-xs font-bold rounded-lg bg-amber-600 hover:bg-amber-500 text-white transition disabled:opacity-40"
+                      >
+                        Download Evaluation Form ({visibleList.length})
                       </button>
                     )}
                     {activeTab !== 'iupc' && (

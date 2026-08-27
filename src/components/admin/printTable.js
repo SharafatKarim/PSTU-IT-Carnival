@@ -312,3 +312,150 @@ export function printSeatPlan({ title = 'IUPC Seat Plan Bench Cards', teams = []
   activeFrame = frame;
   document.body.appendChild(frame);
 }
+
+export function printEvaluationForm({ title = 'Project Showcasing Evaluation Form', teams = [] }) {
+  if (typeof document === 'undefined') return;
+
+  const generatedAt = new Date().toLocaleString('en-GB', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+
+  const body = teams.length
+    ? teams
+        .map((t, i) => {
+          const regId = t.registrationId || t.teamId || '—';
+          const teamName = t.teamName || '—';
+          const membersList = (t.members || [])
+            .map((m) => `${m.name}${m.academicId ? ` (${m.academicId})` : ''}`)
+            .join(', ');
+          const projectTitle = t.projectTitle || t.projectName || '';
+          const projectDetails = projectTitle
+            ? `<strong>Project:</strong> ${esc(projectTitle)}<br/><strong>Members:</strong> ${esc(membersList)}`
+            : esc(membersList);
+
+          return `
+            <tr>
+              <td class="num">${i + 1}</td>
+              <td class="mono">${esc(regId)}</td>
+              <td class="name">${esc(teamName)}</td>
+              <td class="wrap">${projectDetails}</td>
+              <td class="comment-box"></td>
+            </tr>
+          `;
+        })
+        .join('')
+    : `<tr><td colspan="5" class="empty">No teams found to evaluate.</td></tr>`;
+
+  const doc = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>${esc(title)} — PSTU IT Carnival 2026</title>
+<style>
+  @page { size: A4 portrait; margin: 10mm; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    color: #111;
+    font-size: 11px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  header { border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 14px; }
+  h1 { margin: 0; font-size: 18px; letter-spacing: -0.01em; }
+  .sub { margin: 3px 0 0; font-size: 11px; color: #444; }
+  .judge-info {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border: 1.5px solid #222;
+    border-radius: 6px;
+    background: #fafafa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .judge-line {
+    border-bottom: 1.5px solid #222;
+    min-width: 200px;
+    display: inline-block;
+    height: 16px;
+  }
+  .meta {
+    margin-top: 8px; display: flex; justify-content: space-between;
+    font-size: 10px; color: #555;
+  }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  thead { display: table-header-group; }
+  tr { page-break-inside: avoid; }
+  th, td { border: 1px solid #666; padding: 8px 8px; text-align: left; vertical-align: top; }
+  th {
+    background: #eaeaea; font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.05em; white-space: nowrap;
+  }
+  td.num { text-align: center; font-weight: bold; width: 30px; }
+  td.mono { font-family: "SFMono-Regular", Consolas, monospace; font-size: 10.5px; font-weight: bold; width: 130px; white-space: nowrap; }
+  td.name { font-weight: bold; width: 140px; }
+  td.wrap { width: 220px; word-break: break-word; }
+  td.comment-box { height: 50px; background: #ffffff; }
+  td.empty { text-align: center; padding: 20px; color: #666; }
+  tbody tr:nth-child(even) { background: #fdfdfd; }
+  footer { margin-top: 14px; font-size: 9px; color: #666; text-align: right; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>PSTU IT Carnival 2026 — ${esc(title)}</h1>
+    <p class="sub">Official Judge Evaluation & Scoring Sheet</p>
+    <div class="judge-info">
+      <div>Judge's Name: <span class="judge-line"></span></div>
+      <div>Signature: <span class="judge-line" style="min-width: 140px;"></span></div>
+      <div>Date: <span class="judge-line" style="min-width: 90px;"></span></div>
+    </div>
+    <div class="meta">
+      <span>Total Teams: <strong>${teams.length}</strong></span>
+      <span>Generated: <strong>${esc(generatedAt)}</strong></span>
+    </div>
+  </header>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 30px;">#</th>
+        <th style="width: 130px;">Reg ID</th>
+        <th style="width: 140px;">Team Name</th>
+        <th style="width: 220px;">Project & Members</th>
+        <th>Judge Score & Comments</th>
+      </tr>
+    </thead>
+    <tbody>${body}</tbody>
+  </table>
+  <footer>PSTU IT Carnival 2026 · Project Showcasing Evaluation Sheet</footer>
+</body>
+</html>`;
+
+  if (activeFrame) {
+    activeFrame.remove();
+    activeFrame = null;
+  }
+
+  const frame = document.createElement('iframe');
+  frame.setAttribute('aria-hidden', 'true');
+  frame.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
+  frame.srcdoc = doc;
+  frame.onload = () => {
+    const win = frame.contentWindow;
+    if (!win) return;
+    win.onafterprint = () => {
+      if (activeFrame === frame) activeFrame = null;
+      frame.remove();
+    };
+    win.focus();
+    win.print();
+  };
+
+  activeFrame = frame;
+  document.body.appendChild(frame);
+}
