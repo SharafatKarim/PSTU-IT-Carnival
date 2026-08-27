@@ -6,6 +6,7 @@ import { generateRegistrationId } from '@/server/events/project-showcase/ids';
 import { checkWriteLimits, clientKey } from '@/server/rateLimit';
 import { verifyTurnstile } from '@/server/turnstile';
 import { listTeams } from '@/server/events/project-showcase/teams';
+import { getEventDetail } from '@/data/events';
 
 const MAX_BODY_BYTES = 16 * 1024;
 
@@ -36,6 +37,13 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
+    if (!getEventDetail('project-showcase')?.registrationOpen) {
+      return NextResponse.json(
+        { success: false, message: 'Registration for Project Showcasing is closed' },
+        { status: 409 }
+      );
+    }
+
     const limit = checkWriteLimits(req, 'project-showcase:register');
     if (!limit.ok) {
       return NextResponse.json(

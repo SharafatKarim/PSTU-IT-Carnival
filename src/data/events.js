@@ -476,7 +476,7 @@ export const EVENT_DETAILS = [
       },
     ],
 
-    stage: 'open',
+    stage: 'published',
     registrationOpen: false,
     registrationClosed: true,
     closedHeading: 'Registration has closed',
@@ -572,8 +572,9 @@ export const EVENT_DETAILS = [
     tagline: '🚀 The Only National-Level Event of PSTU IT Carnival 2026',
     blurb:
         'Challenge yourself by solving real-world industry problems, collaborate with talented innovators, and compete for exciting prizes.',
-    stage: 'open',
-    registrationOpen: true,
+    stage: 'published',
+    registrationOpen: false,
+    registrationClosed: true,
 
     /* Phase 1 costs nothing, so this form takes no payment details at all —
        no transaction ID, no screenshot. The ৳2,000 applies at final
@@ -787,8 +788,9 @@ export const EVENT_DETAILS = [
       },
     ],
 
-    stage: 'open',
-    registrationOpen: true,
+    stage: 'published',
+    registrationOpen: false,
+    registrationClosed: true,
 
     entry: {
       kind: 'solo',
@@ -858,8 +860,9 @@ export const EVENT_DETAILS = [
     tagline: 'Step into the spotlight and showcase your engineering prowess!',
     blurb:
         'Whether it\'s an intelligent IoT system, an automated microcontroller-based circuit using Arduino or Raspberry Pi, or any innovative hardware prototype, this is your platform to bring your ideas to life.',
-    stage: 'open',
-    registrationOpen: true,
+    stage: 'published',
+    registrationOpen: false,
+    registrationClosed: true,
 
     tournament: {
       date: '27 August 2026',

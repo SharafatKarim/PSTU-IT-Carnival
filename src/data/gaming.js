@@ -587,9 +587,10 @@ export const GAMES = [
       },
     ],
 
-    stage: "open",
+    stage: "published",
     /* Flip to false to close entries without deleting the form. */
-    registrationOpen: true,
+    registrationOpen: false,
+    registrationClosed: true,
     payment: {
       number: "bKash: 01833054648\nRocket: 018330546482\nNagad: 01560051844",
       accountType: "Personal",
@@ -674,8 +675,9 @@ export const GAMES = [
         a: "When you register. Send ৳100 per player to the number shown on the form using Send Money, then enter the transaction ID to complete your entry. Nothing is collected at the venue.",
       },
     ],
-    stage: "open",
-    registrationOpen: true,
+    stage: "published",
+    registrationOpen: false,
+    registrationClosed: true,
   },
 
   // -------------------------------------------------------------------------
@@ -1103,8 +1105,9 @@ export const GAMES = [
       },
     ],
 
-    stage: "open",
-    registrationOpen: true,
+    stage: "published",
+    registrationOpen: false,
+    registrationClosed: true,
     payment: {
       number: "01824090676",
       accountType: "Personal",
@@ -1244,8 +1247,9 @@ export const GAMES = [
       },
     ],
 
-    stage: 'open',
-    registrationOpen: true,
+    stage: 'published',
+    registrationOpen: false,
+    registrationClosed: true,
 
     /* PROVISIONAL — the carnival's gaming-wing bKash, already published on
        this site for PUBG, Free Fire and eFootball, so money sent there reaches
@@ -1429,8 +1433,9 @@ export const GAMES = [
       },
     ],
 
-    stage: "open",
-    registrationOpen: true,
+    stage: "published",
+    registrationOpen: false,
+    registrationClosed: true,
     payment: {
       number: "01790876259",
       accountType: "Personal",

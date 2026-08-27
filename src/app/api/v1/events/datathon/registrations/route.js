@@ -6,6 +6,7 @@ import { generateRegistrationId } from '@/server/events/datathon/ids';
 import { checkWriteLimits, clientKey } from '@/server/rateLimit';
 import { verifyTurnstile } from '@/server/turnstile';
 import { listTeams } from '@/server/events/datathon/teams';
+import { getEventDetail } from '@/data/events';
 
 const MAX_BODY_BYTES = 16 * 1024;
 
@@ -36,6 +37,13 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
+    if (!getEventDetail('datathon')?.registrationOpen) {
+      return NextResponse.json(
+        { success: false, message: 'Registration for Datathon is closed' },
+        { status: 409 }
+      );
+    }
+
     const limit = checkWriteLimits(req, 'datathon:register');
     if (!limit.ok) {
       return NextResponse.json(
