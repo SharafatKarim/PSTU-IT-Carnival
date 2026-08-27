@@ -801,7 +801,7 @@ export default function AdminDashboard({ user }) {
                         </button>
                       </>
                     )}
-                    {(activeTab === 'hackathon' || activeTab === 'datathon') && (
+                    {(activeTab === 'hackathon' || activeTab === 'datathon' || activeTab === 'project-showcase') && (
                       <button
                         onClick={() => {
                           const emailKey = activeTab === 'datathon' ? 'kaggleEmail' : 'email';
@@ -810,7 +810,8 @@ export default function AdminDashboard({ user }) {
                             alert('No emails to export!');
                             return;
                           }
-                          const blob = new Blob([emails.join('\n')], { type: 'text/plain;charset=utf-8' });
+                          const uniqueEmails = [...new Set(emails)];
+                          const blob = new Blob([uniqueEmails.join('\n')], { type: 'text/plain;charset=utf-8' });
                           const url = URL.createObjectURL(blob);
                           const link = document.createElement('a');
                           link.href = url;
