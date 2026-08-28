@@ -495,7 +495,7 @@ export function printBalloonText({ title = 'IUPC Balloon Text Strips', teams = [
 <meta charset="utf-8" />
 <title>${esc(title)} — PSTU IT Carnival 2026</title>
 <style>
-  @page { size: A4 landscape; margin: 10mm 12mm; }
+  @page { size: A4 landscape; margin: 8mm 10mm; }
   * { box-sizing: border-box; }
   body {
     margin: 0;
@@ -507,7 +507,7 @@ export function printBalloonText({ title = 'IUPC Balloon Text Strips', teams = [
   }
   .header {
     border-bottom: 2px solid #000;
-    padding-bottom: 4px;
+    padding-bottom: 6px;
     margin-bottom: 8px;
     display: flex;
     justify-content: space-between;
@@ -515,14 +515,15 @@ export function printBalloonText({ title = 'IUPC Balloon Text Strips', teams = [
   }
   .header h1 {
     margin: 0;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
   .header .meta {
-    font-size: 10px;
-    color: #444;
+    font-size: 11px;
+    font-weight: 600;
+    color: #333;
   }
   .strips-container {
     display: flex;
@@ -532,42 +533,43 @@ export function printBalloonText({ title = 'IUPC Balloon Text Strips', teams = [
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding: 7px 8px;
-    border-bottom: 1.5px dashed #444444;
+    gap: 14px;
+    padding: 13px 12px;
+    border-bottom: 2px dashed #333333;
     page-break-inside: avoid;
-    min-height: 11mm;
+    height: 21mm;
+    box-sizing: border-box;
   }
   .strip-num {
-    font-size: 11px;
-    font-weight: 700;
-    color: #555;
-    min-width: 22px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #333;
+    min-width: 28px;
   }
   .strip-content {
     flex: 1;
-    font-size: 13px;
-    line-height: 1.3;
+    font-size: 15px;
+    line-height: 1.35;
     color: #111;
   }
   .team-name {
-    font-size: 14px;
-    font-weight: 800;
+    font-size: 17px;
+    font-weight: 900;
     color: #000;
   }
   .strip-meta {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     flex-shrink: 0;
   }
   .meta-tag {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
-    border: 1px solid #222;
-    padding: 2px 6px;
-    border-radius: 3px;
-    background: #f9f9f9;
+    border: 1.5px solid #222;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: #f8f8f8;
     white-space: nowrap;
   }
   .meta-tag.mono {
@@ -576,7 +578,7 @@ export function printBalloonText({ title = 'IUPC Balloon Text Strips', teams = [
   .empty {
     text-align: center;
     padding: 40px;
-    font-size: 14px;
+    font-size: 15px;
     color: #666;
   }
 </style>
