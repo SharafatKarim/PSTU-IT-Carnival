@@ -474,7 +474,7 @@ export function printBalloonText({ title = 'IUPC Balloon Text Strips', teams = [
           return `
             <div class="strip">
               <div class="strip-content">
-                <span class="message">We hope <strong class="team-name">${esc(teamName)}</strong>${esc(varsity)} can solve at least a problem. Good luck!</span>
+                <span class="message">Good luck Balloon for team <strong class="team-name">${esc(teamName)}</strong>${esc(varsity)}.</span>
               </div>
               ${(teamIdStr || roomSeat) ? `
                 <div class="strip-meta">
