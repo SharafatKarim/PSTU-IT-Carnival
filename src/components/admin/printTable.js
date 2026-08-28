@@ -650,21 +650,41 @@ export function printBaggageTags({ title = 'IUPC Contestant Baggage Tokens', tea
     ? tokens
         .map((tok) => `
           <div class="baggage-card">
-            <div class="baggage-header">
-              <span>PSTU IT CARNIVAL 2026 · BAGGAGE TOKEN</span>
-              <span class="baggage-token-code">${esc(tok.tokenCode)}</span>
-            </div>
-            <div class="baggage-body">
-              <div class="team-title">${esc(tok.teamName)}</div>
-              <div class="varsity-title">${esc(tok.varsity)}</div>
-              <div class="owner-info">
-                <div>Owner: <span class="owner-name">${esc(tok.memberName)}</span>${tok.isLeader ? ' (Leader)' : ''}</div>
-                ${tok.memberPhone ? `<div class="owner-phone">Phone: ${esc(tok.memberPhone)}</div>` : ''}
+            <!-- TOP HALF: BAG ATTACHMENT TAG -->
+            <div class="bag-tag-section">
+              <div class="baggage-header">
+                <span>PSTU IT CARNIVAL 2026 · BAG STORAGE TAG</span>
+                <span class="baggage-token-code">${esc(tok.tokenCode)}</span>
+              </div>
+              <div class="baggage-body">
+                <div class="team-title">${esc(tok.teamName)}</div>
+                <div class="varsity-title">${esc(tok.varsity)}</div>
+                <div class="owner-info">
+                  <div>Contestant: <span class="owner-name">${esc(tok.memberName)}</span>${tok.isLeader ? ' (Leader)' : ''}</div>
+                  ${tok.memberPhone ? `<div class="owner-phone">Phone: ${esc(tok.memberPhone)}</div>` : ''}
+                </div>
+              </div>
+              <div class="baggage-footer">
+                <span class="loc-badge">${esc(tok.room)} · ${esc(tok.seat)}</span>
+                <span class="bag-num-tag">Bag ${tok.bagNum} of ${tok.totalBags}</span>
               </div>
             </div>
-            <div class="baggage-footer">
-              <span class="loc-badge">${esc(tok.room)} · ${esc(tok.seat)}</span>
-              <span class="bag-num-tag">Bag ${tok.bagNum} of ${tok.totalBags}</span>
+
+            <!-- CUT DIVIDER -->
+            <div class="cut-divider">
+              <span>✂ CUT & HAND CLAIM TOKEN BELOW TO CONTESTANT</span>
+            </div>
+
+            <!-- BOTTOM HALF: CONTESTANT CLAIM TOKEN -->
+            <div class="claim-token-section">
+              <div class="claim-header">
+                <span>CONTESTANT BAGGAGE CLAIM TOKEN</span>
+                <span class="claim-token-code">${esc(tok.tokenCode)}</span>
+              </div>
+              <div class="claim-body">
+                <div class="claim-team">${esc(tok.teamName)} <span class="claim-owner">(${esc(tok.memberName)})</span></div>
+                <div class="claim-note">Present this token at the baggage counter after contest to retrieve your bag.</div>
+              </div>
             </div>
           </div>
         `)
@@ -693,36 +713,42 @@ export function printBaggageTags({ title = 'IUPC Contestant Baggage Tokens', tea
     gap: 6mm 8mm;
   }
   .baggage-card {
-    border: 2px dashed #000000;
+    border: 2px solid #000000;
     border-radius: 8px;
-    padding: 9px 11px;
+    padding: 8px 10px;
     background: #ffffff;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 48mm;
+    height: 62mm;
     page-break-inside: avoid;
+  }
+  .bag-tag-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
   .baggage-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     font-size: 8px;
-    font-weight: 700;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: #222222;
+    letter-spacing: 0.05em;
+    color: #000000;
     border-bottom: 1.5px solid #000000;
-    padding-bottom: 3px;
-    margin-bottom: 4px;
+    padding-bottom: 2px;
+    margin-bottom: 3px;
   }
   .baggage-token-code {
     font-family: "SFMono-Regular", Consolas, monospace;
-    font-size: 9.5px;
-    font-weight: 800;
+    font-size: 10px;
+    font-weight: 900;
     color: #000000;
-    border: 1px solid #000000;
-    padding: 1px 6px;
+    border: 1.5px solid #000000;
+    padding: 1px 5px;
     border-radius: 3px;
     background: #ffffff;
   }
@@ -733,57 +759,112 @@ export function printBaggageTags({ title = 'IUPC Contestant Baggage Tokens', tea
     justify-content: center;
   }
   .team-title {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 900;
     color: #000000;
     line-height: 1.2;
     word-break: break-word;
   }
   .varsity-title {
-    font-size: 11px;
+    font-size: 10.5px;
     color: #111111;
     font-weight: 600;
     margin-top: 1px;
   }
   .owner-info {
-    margin-top: 5px;
-    padding: 3px 6px;
+    margin-top: 4px;
+    padding: 3px 5px;
     border: 1px solid #000000;
     border-radius: 4px;
-    font-size: 10.5px;
+    font-size: 10px;
     background: #ffffff;
   }
   .owner-name {
     font-weight: 800;
   }
   .owner-phone {
-    font-size: 10px;
+    font-size: 9.5px;
     font-family: "SFMono-Regular", Consolas, monospace;
     font-weight: 700;
-    margin-top: 1px;
   }
   .baggage-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 6px;
-    margin-top: auto;
-    padding-top: 4px;
-    border-top: 1.5px solid #000000;
+    gap: 4px;
+    margin-top: 4px;
+    padding-top: 3px;
+    border-top: 1px solid #000000;
   }
   .loc-badge {
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 800;
-    border: 1.5px solid #000000;
-    padding: 1px 6px;
-    border-radius: 4px;
+    border: 1px solid #000000;
+    padding: 1px 5px;
+    border-radius: 3px;
   }
   .bag-num-tag {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 900;
-    border: 2px solid #000000;
-    padding: 1px 8px;
-    border-radius: 4px;
+    border: 1.5px solid #000000;
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+  .cut-divider {
+    border-top: 1.5px dashed #000000;
+    margin: 5px 0 3px 0;
+    position: relative;
+    text-align: center;
+  }
+  .cut-divider span {
+    font-size: 7.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: #ffffff;
+    padding: 0 4px;
+    position: relative;
+    top: -6px;
+  }
+  .claim-token-section {
+    padding-top: 1px;
+  }
+  .claim-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 7.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #000000;
+    margin-bottom: 2px;
+  }
+  .claim-token-code {
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 9.5px;
+    font-weight: 900;
+    border: 1px solid #000000;
+    padding: 0 5px;
+    border-radius: 3px;
+  }
+  .claim-team {
+    font-size: 10.5px;
+    font-weight: 900;
+    color: #000000;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .claim-owner {
+    font-size: 9.5px;
+    font-weight: 600;
+  }
+  .claim-note {
+    font-size: 8px;
+    color: #222222;
+    margin-top: 1px;
+    font-style: italic;
   }
   .empty {
     text-align: center;
