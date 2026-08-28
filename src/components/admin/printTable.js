@@ -459,3 +459,157 @@ export function printEvaluationForm({ title = 'Project Showcasing Evaluation For
   activeFrame = frame;
   document.body.appendChild(frame);
 }
+
+export function printBalloonText({ title = 'IUPC Balloon Text Strips', teams = [] }) {
+  if (typeof document === 'undefined') return;
+
+  const stripsHtml = teams.length
+    ? teams
+        .map((t, idx) => {
+          const teamIdStr = t.teamId || t.registrationId || '';
+          const teamName = t.teamName || 'Team';
+          const varsity = t.varsityName ? ` (${t.varsityName})` : '';
+          const roomSeat = [t.room, t.seat ? (String(t.seat).toLowerCase().startsWith('seat') ? t.seat : `Seat ${t.seat}`) : ''].filter(Boolean).join(' · ');
+
+          return `
+            <div class="strip">
+              <div class="strip-num">${idx + 1}</div>
+              <div class="strip-content">
+                <span class="message">We hope <strong class="team-name">${esc(teamName)}</strong>${esc(varsity)} can solve at least a problem. Good luck!</span>
+              </div>
+              ${(teamIdStr || roomSeat) ? `
+                <div class="strip-meta">
+                  ${teamIdStr ? `<span class="meta-tag mono">${esc(teamIdStr)}</span>` : ''}
+                  ${roomSeat ? `<span class="meta-tag">${esc(roomSeat)}</span>` : ''}
+                </div>
+              ` : ''}
+            </div>
+          `;
+        })
+        .join('')
+    : '<div class="empty">No teams to print balloon text for.</div>';
+
+  const doc = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>${esc(title)} — PSTU IT Carnival 2026</title>
+<style>
+  @page { size: A4 landscape; margin: 10mm 12mm; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    color: #000000;
+    background: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .header {
+    border-bottom: 2px solid #000;
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .header h1 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .header .meta {
+    font-size: 10px;
+    color: #444;
+  }
+  .strips-container {
+    display: flex;
+    flex-direction: column;
+  }
+  .strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 7px 8px;
+    border-bottom: 1.5px dashed #444444;
+    page-break-inside: avoid;
+    min-height: 11mm;
+  }
+  .strip-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: #555;
+    min-width: 22px;
+  }
+  .strip-content {
+    flex: 1;
+    font-size: 13px;
+    line-height: 1.3;
+    color: #111;
+  }
+  .team-name {
+    font-size: 14px;
+    font-weight: 800;
+    color: #000;
+  }
+  .strip-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .meta-tag {
+    font-size: 10px;
+    font-weight: 700;
+    border: 1px solid #222;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: #f9f9f9;
+    white-space: nowrap;
+  }
+  .meta-tag.mono {
+    font-family: "SFMono-Regular", Consolas, monospace;
+  }
+  .empty {
+    text-align: center;
+    padding: 40px;
+    font-size: 14px;
+    color: #666;
+  }
+</style>
+</head>
+<body>
+  <div class="header">
+    <h1>PSTU IT CARNIVAL 2026 · IUPC Balloon Encouragement Strips</h1>
+    <div class="meta">Total teams: ${teams.length}</div>
+  </div>
+  <div class="strips-container">${stripsHtml}</div>
+</body>
+</html>`;
+
+  if (activeFrame) {
+    activeFrame.remove();
+    activeFrame = null;
+  }
+
+  const frame = document.createElement('iframe');
+  frame.setAttribute('aria-hidden', 'true');
+  frame.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
+  frame.srcdoc = doc;
+  frame.onload = () => {
+    const win = frame.contentWindow;
+    if (!win) return;
+    win.onafterprint = () => {
+      if (activeFrame === frame) activeFrame = null;
+      frame.remove();
+    };
+    win.focus();
+    win.print();
+  };
+
+  activeFrame = frame;
+  document.body.appendChild(frame);
+}
