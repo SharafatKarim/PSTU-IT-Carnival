@@ -473,7 +473,6 @@ export function printBalloonText({ title = 'IUPC Balloon Text Strips', teams = [
 
           return `
             <div class="strip">
-              <div class="strip-num">${idx + 1}</div>
               <div class="strip-content">
                 <span class="message">We hope <strong class="team-name">${esc(teamName)}</strong>${esc(varsity)} can solve at least a problem. Good luck!</span>
               </div>
@@ -539,12 +538,6 @@ export function printBalloonText({ title = 'IUPC Balloon Text Strips', teams = [
     page-break-inside: avoid;
     height: 21mm;
     box-sizing: border-box;
-  }
-  .strip-num {
-    font-size: 13px;
-    font-weight: 800;
-    color: #333;
-    min-width: 28px;
   }
   .strip-content {
     flex: 1;
