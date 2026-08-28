@@ -5,7 +5,7 @@ import Navbar from './landing/Navbar';
 import Footer from './landing/Footer';
 import { AlertIcon, CheckIcon } from './landing/Icons';
 import VolunteerTable from './admin/VolunteerTable';
-import printTable, { printSeatPlan, printEvaluationForm, printBalloonText } from './admin/printTable';
+import printTable, { printSeatPlan, printEvaluationForm, printBalloonText, printBaggageTags } from './admin/printTable';
 import { REGISTRATION_PRINT, IUPC_KIT_PRINT, HACKATHON_KIT_PRINT, tshirtCounts, tshirtDistributionPrintConfig } from './admin/registrationPrint';
 import { SECTION_FILTERS } from './admin/sectionFilters';
 import { HACKATHON_ACCEPTED_TEAMS } from '@/data/events';
@@ -800,6 +800,13 @@ export default function AdminDashboard({ user }) {
                           Print Balloon Text ({visibleList.length})
                         </button>
                         <button
+                          onClick={() => printBaggageTags({ title: 'IUPC Contestant Baggage Tokens', teams: mergeIupcAllocation(visibleList) })}
+                          disabled={visibleList.length === 0}
+                          className="px-4 py-2 text-xs font-bold rounded-lg bg-amber-600 hover:bg-amber-500 text-white transition disabled:opacity-40"
+                        >
+                          Print Baggage Tokens ({visibleList.length})
+                        </button>
+                        <button
                           onClick={() => exportIupcTeamsCsv(visibleList)}
                           disabled={visibleList.length === 0}
                           className="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition disabled:opacity-40"
@@ -884,6 +891,13 @@ export default function AdminDashboard({ user }) {
                       className="px-2.5 py-1 text-[11px] font-semibold rounded bg-aqua-600/30 border border-aqua-500/40 text-aqua-200 hover:bg-aqua-600/50 hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
                     >
                       Print Balloon Text ({paidIupcTeams.length} paid)
+                    </button>
+                    <button
+                      onClick={() => printBaggageTags({ title: 'IUPC Contestant Baggage Tokens (Paid Teams)', teams: mergeIupcAllocation(paidIupcTeams) })}
+                      disabled={paidIupcTeams.length === 0}
+                      className="px-2.5 py-1 text-[11px] font-semibold rounded bg-amber-600/30 border border-amber-500/40 text-amber-200 hover:bg-amber-600/50 hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      Print Baggage Tokens ({paidIupcTeams.length} paid)
                     </button>
                     <button
                       onClick={() => handlePrintTshirtDistribution(paidIupcTeams, 'IUPC')}

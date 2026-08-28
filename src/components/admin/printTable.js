@@ -608,3 +608,216 @@ export function printBalloonText({ title = 'IUPC Balloon Text Strips', teams = [
   activeFrame = frame;
   document.body.appendChild(frame);
 }
+
+export function printBaggageTags({ title = 'IUPC Contestant Baggage Tokens', teams = [] }) {
+  if (typeof document === 'undefined') return;
+
+  const tokens = [];
+  teams.forEach((t) => {
+    const teamIdStr = t.teamId || t.registrationId || '';
+    const teamName = t.teamName || 'Team';
+    const varsity = t.varsityName || 'University';
+    const room = t.room ? t.room : 'Room TBD';
+    const seat = t.seat ? (String(t.seat).toLowerCase().startsWith('seat') ? t.seat : `Seat ${t.seat}`) : 'Seat TBD';
+
+    const members = (t.members && Array.isArray(t.members) && t.members.length > 0)
+      ? t.members
+      : [{ name: 'Contestant 1' }, { name: 'Contestant 2' }, { name: 'Contestant 3' }];
+
+    members.forEach((m, idx) => {
+      const memberName = typeof m === 'string' ? m : (m.name || `Contestant ${idx + 1}`);
+      const memberPhone = typeof m === 'object' && m.phone ? m.phone : '';
+      const isLeader = typeof m === 'object' && m.isTeamLeader;
+      const tokenCode = `${teamIdStr}-B${idx + 1}`;
+
+      tokens.push({
+        teamIdStr,
+        teamName,
+        varsity,
+        room,
+        seat,
+        memberName,
+        memberPhone,
+        isLeader,
+        tokenCode,
+        bagNum: idx + 1,
+        totalBags: members.length,
+      });
+    });
+  });
+
+  const cardsHtml = tokens.length
+    ? tokens
+        .map((tok) => `
+          <div class="baggage-card">
+            <div class="baggage-header">
+              <span>PSTU IT CARNIVAL 2026 · BAGGAGE TOKEN</span>
+              <span class="baggage-token-code">${esc(tok.tokenCode)}</span>
+            </div>
+            <div class="baggage-body">
+              <div class="team-title">${esc(tok.teamName)}</div>
+              <div class="varsity-title">${esc(tok.varsity)}</div>
+              <div class="owner-info">
+                <div>Owner: <span class="owner-name">${esc(tok.memberName)}</span>${tok.isLeader ? ' (Leader)' : ''}</div>
+                ${tok.memberPhone ? `<div class="owner-phone">Phone: ${esc(tok.memberPhone)}</div>` : ''}
+              </div>
+            </div>
+            <div class="baggage-footer">
+              <span class="loc-badge">${esc(tok.room)} · ${esc(tok.seat)}</span>
+              <span class="bag-num-tag">Bag ${tok.bagNum} of ${tok.totalBags}</span>
+            </div>
+          </div>
+        `)
+        .join('')
+    : '<div class="empty">No baggage tokens to print.</div>';
+
+  const doc = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>${esc(title)} — PSTU IT Carnival 2026</title>
+<style>
+  @page { size: A4 portrait; margin: 8mm; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    color: #000000;
+    background: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6mm 8mm;
+  }
+  .baggage-card {
+    border: 2px dashed #000000;
+    border-radius: 8px;
+    padding: 9px 11px;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 48mm;
+    page-break-inside: avoid;
+  }
+  .baggage-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #222222;
+    border-bottom: 1.5px solid #000000;
+    padding-bottom: 3px;
+    margin-bottom: 4px;
+  }
+  .baggage-token-code {
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 9.5px;
+    font-weight: 800;
+    color: #000000;
+    border: 1px solid #000000;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: #ffffff;
+  }
+  .baggage-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .team-title {
+    font-size: 15px;
+    font-weight: 900;
+    color: #000000;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+  .varsity-title {
+    font-size: 11px;
+    color: #111111;
+    font-weight: 600;
+    margin-top: 1px;
+  }
+  .owner-info {
+    margin-top: 5px;
+    padding: 3px 6px;
+    border: 1px solid #000000;
+    border-radius: 4px;
+    font-size: 10.5px;
+    background: #ffffff;
+  }
+  .owner-name {
+    font-weight: 800;
+  }
+  .owner-phone {
+    font-size: 10px;
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-weight: 700;
+    margin-top: 1px;
+  }
+  .baggage-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: auto;
+    padding-top: 4px;
+    border-top: 1.5px solid #000000;
+  }
+  .loc-badge {
+    font-size: 11px;
+    font-weight: 800;
+    border: 1.5px solid #000000;
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+  .bag-num-tag {
+    font-size: 11px;
+    font-weight: 900;
+    border: 2px solid #000000;
+    padding: 1px 8px;
+    border-radius: 4px;
+  }
+  .empty {
+    text-align: center;
+    padding: 40px;
+    font-size: 14px;
+    color: #666;
+  }
+</style>
+</head>
+<body>
+  <div class="grid">${cardsHtml}</div>
+</body>
+</html>`;
+
+  if (activeFrame) {
+    activeFrame.remove();
+    activeFrame = null;
+  }
+
+  const frame = document.createElement('iframe');
+  frame.setAttribute('aria-hidden', 'true');
+  frame.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
+  frame.srcdoc = doc;
+  frame.onload = () => {
+    const win = frame.contentWindow;
+    if (!win) return;
+    win.onafterprint = () => {
+      if (activeFrame === frame) activeFrame = null;
+      frame.remove();
+    };
+    win.focus();
+    win.print();
+  };
+
+  activeFrame = frame;
+  document.body.appendChild(frame);
+}
