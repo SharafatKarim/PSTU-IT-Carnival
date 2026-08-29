@@ -800,7 +800,7 @@ export default function AdminDashboard({ user }) {
                           Print Balloon Text ({visibleList.length})
                         </button>
                         <button
-                          onClick={() => printBaggageTags({ title: 'IUPC Contestant Baggage Tokens', teams: mergeIupcAllocation(visibleList) })}
+                          onClick={() => printBaggageTags({ title: 'IUPC Team Baggage Tokens', teams: mergeIupcAllocation(visibleList) })}
                           disabled={visibleList.length === 0}
                           className="px-4 py-2 text-xs font-bold rounded-lg bg-amber-600 hover:bg-amber-500 text-white transition disabled:opacity-40"
                         >
@@ -893,7 +893,7 @@ export default function AdminDashboard({ user }) {
                       Print Balloon Text ({paidIupcTeams.length} paid)
                     </button>
                     <button
-                      onClick={() => printBaggageTags({ title: 'IUPC Contestant Baggage Tokens (Paid Teams)', teams: mergeIupcAllocation(paidIupcTeams) })}
+                      onClick={() => printBaggageTags({ title: 'IUPC Team Baggage Tokens (Paid Teams)', teams: mergeIupcAllocation(paidIupcTeams) })}
                       disabled={paidIupcTeams.length === 0}
                       className="px-2.5 py-1 text-[11px] font-semibold rounded bg-amber-600/30 border border-amber-500/40 text-amber-200 hover:bg-amber-600/50 hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
                     >

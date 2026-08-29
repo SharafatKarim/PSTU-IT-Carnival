@@ -609,7 +609,7 @@ export function printBalloonText({ title = 'IUPC Balloon Text Strips', teams = [
   document.body.appendChild(frame);
 }
 
-export function printBaggageTags({ title = 'IUPC Contestant Baggage Tokens', teams = [] }) {
+export function printBaggageTags({ title = 'IUPC Team Baggage Tokens', teams = [] }) {
   if (typeof document === 'undefined') return;
 
   const tokens = [];
@@ -622,27 +622,27 @@ export function printBaggageTags({ title = 'IUPC Contestant Baggage Tokens', tea
 
     const members = (t.members && Array.isArray(t.members) && t.members.length > 0)
       ? t.members
-      : [{ name: 'Contestant 1' }, { name: 'Contestant 2' }, { name: 'Contestant 3' }];
+      : [];
 
-    members.forEach((m, idx) => {
-      const memberName = typeof m === 'string' ? m : (m.name || `Contestant ${idx + 1}`);
-      const memberPhone = typeof m === 'object' && m.phone ? m.phone : '';
-      const isLeader = typeof m === 'object' && m.isTeamLeader;
-      const tokenCode = `${teamIdStr}-B${idx + 1}`;
+    let contactName = '';
+    let contactPhone = '';
+    if (members.length > 0) {
+      const leader = members.find((m) => typeof m === 'object' && m.isTeamLeader) || members[0];
+      contactName = typeof leader === 'string' ? leader : (leader.name || '');
+      contactPhone = typeof leader === 'object' && leader.phone ? leader.phone : '';
+    }
 
-      tokens.push({
-        teamIdStr,
-        teamName,
-        varsity,
-        room,
-        seat,
-        memberName,
-        memberPhone,
-        isLeader,
-        tokenCode,
-        bagNum: idx + 1,
-        totalBags: members.length,
-      });
+    const tokenCode = teamIdStr ? `${teamIdStr}-BAG` : `BAG-${t.id || ''}`;
+
+    tokens.push({
+      teamIdStr,
+      teamName,
+      varsity,
+      room,
+      seat,
+      contactName,
+      contactPhone,
+      tokenCode,
     });
   });
 
@@ -659,31 +659,32 @@ export function printBaggageTags({ title = 'IUPC Contestant Baggage Tokens', tea
               <div class="baggage-body">
                 <div class="team-title">${esc(tok.teamName)}</div>
                 <div class="varsity-title">${esc(tok.varsity)}</div>
+                ${tok.contactName ? `
                 <div class="owner-info">
-                  <div>Contestant: <span class="owner-name">${esc(tok.memberName)}</span>${tok.isLeader ? ' (Leader)' : ''}</div>
-                  ${tok.memberPhone ? `<div class="owner-phone">Phone: ${esc(tok.memberPhone)}</div>` : ''}
-                </div>
+                  <div>Contact: <span class="owner-name">${esc(tok.contactName)}</span></div>
+                  ${tok.contactPhone ? `<div class="owner-phone">Phone: ${esc(tok.contactPhone)}</div>` : ''}
+                </div>` : ''}
               </div>
               <div class="baggage-footer">
                 <span class="loc-badge">${esc(tok.room)} · ${esc(tok.seat)}</span>
-                <span class="bag-num-tag">Bag ${tok.bagNum} of ${tok.totalBags}</span>
+                <span class="bag-num-tag">Team Token</span>
               </div>
             </div>
 
             <!-- CUT DIVIDER -->
             <div class="cut-divider">
-              <span>✂ CUT & HAND CLAIM TOKEN BELOW TO CONTESTANT</span>
+              <span>✂ CUT & HAND CLAIM TOKEN BELOW TO TEAM</span>
             </div>
 
             <!-- BOTTOM HALF: CONTESTANT CLAIM TOKEN -->
             <div class="claim-token-section">
               <div class="claim-header">
-                <span>CONTESTANT BAGGAGE CLAIM TOKEN</span>
+                <span>TEAM BAGGAGE CLAIM TOKEN</span>
                 <span class="claim-token-code">${esc(tok.tokenCode)}</span>
               </div>
               <div class="claim-body">
-                <div class="claim-team">${esc(tok.teamName)} <span class="claim-owner">(${esc(tok.memberName)})</span></div>
-                <div class="claim-note">Present this token at the baggage counter after contest to retrieve your bag.</div>
+                <div class="claim-team">${esc(tok.teamName)} ${tok.contactName ? `<span class="claim-owner">(${esc(tok.contactName)})</span>` : ''}</div>
+                <div class="claim-note">Present this token at the baggage counter after contest to retrieve your team's bags.</div>
               </div>
             </div>
           </div>
