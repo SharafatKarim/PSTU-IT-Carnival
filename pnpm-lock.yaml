@@ -14,19 +14,19 @@ importers:
     dependencies:
       '@vercel/analytics':
         specifier: ^2.0.1
-        version: 2.0.1(next@16.2.12(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+        version: 2.0.1(next@16.3.6(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       '@vercel/speed-insights':
         specifier: ^2.0.0
-        version: 2.0.0(next@16.2.12(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+        version: 2.0.0(next@16.3.6(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       mongoose:
         specifier: ^9.8.1
         version: 9.8.1
       next:
-        specifier: 16.2.12
-        version: 16.2.12(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^16.3.6
+        version: 16.3.6(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-auth:
         specifier: ^4.24.15
-        version: 4.24.15(next@16.2.12(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(nodemailer@9.0.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 4.24.15(next@16.3.6(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(nodemailer@9.0.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       nodemailer:
         specifier: ^9.0.3
         version: 9.0.3
@@ -47,8 +47,8 @@ importers:
         specifier: ^10.8.0
         version: 10.8.0(jiti@2.7.0)
       eslint-config-next:
-        specifier: 16.2.12
-        version: 16.2.12(@typescript-eslint/parser@8.65.0(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3)
+        specifier: ^16.3.6
+        version: 16.3.6(@typescript-eslint/parser@8.65.0(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3)
       postcss:
         specifier: '>=8.5.18'
         version: 8.5.24
@@ -147,6 +147,12 @@ packages:
 
   '@eslint-community/eslint-utils@4.10.1':
     resolution: {integrity: sha512-cuadcxVFE8sDK6iWJbs8Sn0av2Nrh2QSGQhVlBW9AaAHqHwjWsZHT8LJ4hFGPh7ASBV2deFdM7H/DPjulmh8rg==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    peerDependencies:
+      eslint: ^6.0.0 || ^7.0.0 || >=8.0.0
+
+  '@eslint-community/eslint-utils@4.9.1':
+    resolution: {integrity: sha512-phrYmNiYppR7znFEdqgfWHXR6NCkZEK7hwWDHZUjit/2/U0r6XvkDl0SYnoM51Hq7FhCGdLDT6zxCCOY1hexsQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     peerDependencies:
       eslint: ^6.0.0 || ^7.0.0 || >=8.0.0
@@ -382,60 +388,60 @@ packages:
       '@emnapi/core': ^1.7.1
       '@emnapi/runtime': ^1.7.1
 
-  '@next/env@16.2.12':
-    resolution: {integrity: sha512-d0Z5Bc13Fa4nR8pFAKx2jay2yhJM16vlfHbTzYnUQAxlNb6B6lmn4hjt69lYNt4kRtyYP6gEM49lPRHNbIyneg==}
+  '@next/env@16.3.6':
+    resolution: {integrity: sha512-x9Vblze1EbtltQYnNH38xCPWU3TVfBd1eXqA3+w9+BTpedkkdNpAaltXlGQ/nsc1+E0mVTNrtcbX3GoO09zeLQ==}
 
-  '@next/eslint-plugin-next@16.2.12':
-    resolution: {integrity: sha512-uF2z/qAK2q7B5/6CpnFcBRX6jOq5iCO+Uqh1UkJhXljX1JwLarLYhhoJadO6dPb6moTprOKewMXheBcbIoSbug==}
+  '@next/eslint-plugin-next@16.3.6':
+    resolution: {integrity: sha512-jowwDX+7DOlDIjJLgTMxudw+k37QnWu1JkZLkSi9MaJBfDYcfhAPMKBhXL0idYzFN/AGg//axnOR4cLkHX/Rng==}
 
-  '@next/swc-darwin-arm64@16.2.12':
-    resolution: {integrity: sha512-0W1R0teHWJrqKX0FH20IzzIWAOuGtBxPGuObrxy1lE8hQvCFj49KE8a3WUg0D7sq6rn6zkM4c7YGUnhudBS6oA==}
+  '@next/swc-darwin-arm64@16.3.6':
+    resolution: {integrity: sha512-E/7GEqaUkt8mk/T8v9lAnrhzR06kdq1ZBkC12F8tAMkdIadwNp3H1KqHynDHrpcTlGCUdq/qu6vUL2aYVyYBdw==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
 
-  '@next/swc-darwin-x64@16.2.12':
-    resolution: {integrity: sha512-Hy5Ls099+aFUmOLmIgPfLqNi6iCwhL3uQCssz5rWk+5Nkc6TUKCE83DY5BbNylfm3+mfwcSFnLRfrZDJhVxdtw==}
+  '@next/swc-darwin-x64@16.3.6':
+    resolution: {integrity: sha512-yBE893/nDWTlaiBD1p+qgt7NUen4U5R6FXyH0s67Npq1S3E0cVSef1WIXC2xBRgQvwAvJq6DnS6Y6PrY0cy4Ew==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [darwin]
 
-  '@next/swc-linux-arm64-gnu@16.2.12':
-    resolution: {integrity: sha512-+YqU2h1cQkHsGfvjAsrSmst8UIFBibBGm5x3Xgel8NLMiDQtNOM4sM2GOEMvG5YiOBNeN/Ykk8cQC2S0Xrqljg==}
+  '@next/swc-linux-arm64-gnu@16.3.6':
+    resolution: {integrity: sha512-KJDpjBqBPYlvkivmyrp+Qys6k/7ksbqGQvRVc6ZEGfR+cjQxx+nUkJaWmNZJsmoOrqYNbaXByF8wa0lBwDhB3Q==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@next/swc-linux-arm64-musl@16.2.12':
-    resolution: {integrity: sha512-0qjhiYBaKAqF63LA1ZWAAnKTzFUguAaZiRa5etMLGGPj/B6uEVjtIZldIzFEp3wHlB0koK6aTzqPtSdplTCjoA==}
+  '@next/swc-linux-arm64-musl@16.3.6':
+    resolution: {integrity: sha512-mqNg2K+hvWskSRb/QM+Ix412DvBsuSF0XV+frTSw5vmoucNnIlynFwKYew8D01bfATErMOM7Bujrf0BA5DRKFA==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@next/swc-linux-x64-gnu@16.2.12':
-    resolution: {integrity: sha512-7A3q26W+h7gnA15uqBToNuDqBEFZZcqh0mW2mn4AJh/G5pdg2RVE3n4slzLEliASZFG3NmsbEzng/x2Sh09mBg==}
+  '@next/swc-linux-x64-gnu@16.3.6':
+    resolution: {integrity: sha512-nFncBNGAYouRHjRVaITs9beZRfhX4ssVwpnvPIAbkZVH6LtGoAVlH4bJ8Cnf9SOo9bsXgPFer/GdHtEE3JNOkw==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@next/swc-linux-x64-musl@16.2.12':
-    resolution: {integrity: sha512-qSjL/uppm+cbh21s72Ss8gkiOhQ4dExWHNGOWy6eZV7STj5WsKehgxT61beSsOj+YYQuTplL376lOCdMQU5T8w==}
+  '@next/swc-linux-x64-musl@16.3.6':
+    resolution: {integrity: sha512-5Mf3cHDGR/Iz0ng2Bj3zUR3p5QS9YK3Hn2QiAfavFmyF48zwThAjpFoiTKNIcOHLYS4zEk+gzyJ/9deQ2ZB8yQ==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@next/swc-win32-arm64-msvc@16.2.12':
-    resolution: {integrity: sha512-X6hzsOUJac/e7AWSbn9gQ9nzHld1xWP5iyjHpYWvud8pufB679O1xg4JDyKr8Xd69Jvd+kM2Der6uftiZCmjYA==}
+  '@next/swc-win32-arm64-msvc@16.3.6':
+    resolution: {integrity: sha512-0jkJy0C2kbrJWTk4YLa3xk80pVBpx8FCHJym7CnUfDAXe/FWv5qT7SQJbR0KuemyxaEDlEx5WT4VQJoTW+/9Qw==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [win32]
 
-  '@next/swc-win32-x64-msvc@16.2.12':
-    resolution: {integrity: sha512-F6fakeHuFTLOPt0bslQJdf+xtT+WIP9DVn/m4y1w1mRnVPyh3D/cNvzlRkxM444xfm+IvvYNSOrKiA2CDJ0Uxw==}
+  '@next/swc-win32-x64-msvc@16.3.6':
+    resolution: {integrity: sha512-/YXjI1e5OXcZ7YpxRwgP/1jAV/SBKTzeVKqN2mk7mLpcICsyn3Gl5+dIfDTJp70M0ccMhyMMRso4v6mPDCGepg==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
@@ -465,8 +471,8 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
-  '@swc/helpers@0.5.15':
-    resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
+  '@swc/helpers@0.5.23':
+    resolution: {integrity: sha512-5lSsMOTXURePglDfvuAQUqkGek9Hg2kksOYay2m0+XR++b2NWYL/4sWyuvVBIs8oKnJaxkdi9whaL/sqN13afw==}
 
   '@tailwindcss/node@4.3.3':
     resolution: {integrity: sha512-/T8IKEsf9VTU6tLjgC7+sv2mOPtQxzE2jMw7u4Tt40Tx+QSZxpzh95/H6cMKoja9XuW7iMdLJYBB0o9G1CaAgg==}
@@ -1056,8 +1062,8 @@ packages:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
 
-  eslint-config-next@16.2.12:
-    resolution: {integrity: sha512-iaaf4vvKo5h2LBdGt0JuRv7t0Ysqr9FMCiFxbptDg8LqOE//mIKR80DdpOnSVM7qjLH3jT8P0aFiwXxBEGZRXw==}
+  eslint-config-next@16.3.6:
+    resolution: {integrity: sha512-1Upt3U7BDwU+ilpe2byZjAfts9oNq4d4fv/zXEvs8/4yS+cwOQW/WCxUNy8gCDquX67SzeehDvKblVC6ZBMocQ==}
     peerDependencies:
       eslint: '>=9.0.0'
       typescript: '>=3.3.1'
@@ -1683,8 +1689,8 @@ packages:
       nodemailer:
         optional: true
 
-  next@16.2.12:
-    resolution: {integrity: sha512-iD59eYQWmbFcEbX7v/acG5DRym9iw1DdaPoD0WTA920naWsE25wShzJW4+UvAs8MK9EC2kBfIH6vtto1H1PHGw==}
+  next@16.3.6:
+    resolution: {integrity: sha512-L+otWM/aQbYTx98aZhgEoMb4bZAXx1YVW4UMA/vuCyCoWG5HJyZUili8QAkqzrcC+5///tsz3s0M+SlyB5bLMw==}
     engines: {node: '>=20.9.0'}
     hasBin: true
     peerDependencies:
@@ -2276,6 +2282,11 @@ snapshots:
       eslint: 10.8.0(jiti@2.7.0)
       eslint-visitor-keys: 3.4.3
 
+  '@eslint-community/eslint-utils@4.9.1(eslint@10.8.0(jiti@2.7.0))':
+    dependencies:
+      eslint: 10.8.0(jiti@2.7.0)
+      eslint-visitor-keys: 3.4.3
+
   '@eslint-community/regexpp@4.12.2': {}
 
   '@eslint/config-array@0.23.5':
@@ -2454,34 +2465,37 @@ snapshots:
       '@tybys/wasm-util': 0.10.3
     optional: true
 
-  '@next/env@16.2.12': {}
+  '@next/env@16.3.6': {}
 
-  '@next/eslint-plugin-next@16.2.12':
+  '@next/eslint-plugin-next@16.3.6(eslint@10.8.0(jiti@2.7.0))':
     dependencies:
+      '@eslint-community/eslint-utils': 4.9.1(eslint@10.8.0(jiti@2.7.0))
       fast-glob: 3.3.1
+    transitivePeerDependencies:
+      - eslint
 
-  '@next/swc-darwin-arm64@16.2.12':
+  '@next/swc-darwin-arm64@16.3.6':
     optional: true
 
-  '@next/swc-darwin-x64@16.2.12':
+  '@next/swc-darwin-x64@16.3.6':
     optional: true
 
-  '@next/swc-linux-arm64-gnu@16.2.12':
+  '@next/swc-linux-arm64-gnu@16.3.6':
     optional: true
 
-  '@next/swc-linux-arm64-musl@16.2.12':
+  '@next/swc-linux-arm64-musl@16.3.6':
     optional: true
 
-  '@next/swc-linux-x64-gnu@16.2.12':
+  '@next/swc-linux-x64-gnu@16.3.6':
     optional: true
 
-  '@next/swc-linux-x64-musl@16.2.12':
+  '@next/swc-linux-x64-musl@16.3.6':
     optional: true
 
-  '@next/swc-win32-arm64-msvc@16.2.12':
+  '@next/swc-win32-arm64-msvc@16.3.6':
     optional: true
 
-  '@next/swc-win32-x64-msvc@16.2.12':
+  '@next/swc-win32-x64-msvc@16.3.6':
     optional: true
 
   '@nodelib/fs.scandir@2.1.5':
@@ -2504,7 +2518,7 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@swc/helpers@0.5.15':
+  '@swc/helpers@0.5.23':
     dependencies:
       tslib: 2.8.1
 
@@ -2757,14 +2771,14 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.12.2':
     optional: true
 
-  '@vercel/analytics@2.0.1(next@16.2.12(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)':
+  '@vercel/analytics@2.0.1(next@16.3.6(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)':
     optionalDependencies:
-      next: 16.2.12(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      next: 16.3.6(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react: 19.2.8
 
-  '@vercel/speed-insights@2.0.0(next@16.2.12(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)':
+  '@vercel/speed-insights@2.0.0(next@16.3.6(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)':
     optionalDependencies:
-      next: 16.2.12(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      next: 16.3.6(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react: 19.2.8
 
   acorn-jsx@5.3.2(acorn@8.17.0):
@@ -3101,9 +3115,9 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
-  eslint-config-next@16.2.12(@typescript-eslint/parser@8.65.0(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3):
+  eslint-config-next@16.3.6(@typescript-eslint/parser@8.65.0(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3):
     dependencies:
-      '@next/eslint-plugin-next': 16.2.12
+      '@next/eslint-plugin-next': 16.3.6(eslint@10.8.0(jiti@2.7.0))
       eslint: 10.8.0(jiti@2.7.0)
       eslint-import-resolver-node: 0.3.10
       eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@10.8.0(jiti@2.7.0))
@@ -3757,13 +3771,13 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  next-auth@4.24.15(next@16.2.12(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(nodemailer@9.0.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+  next-auth@4.24.15(next@16.3.6(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(nodemailer@9.0.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
       '@babel/runtime': 7.29.7
       '@panva/hkdf': 1.2.1
       cookie: 0.7.2
       jose: 4.15.9
-      next: 16.2.12(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      next: 16.3.6(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       oauth: 0.9.15
       openid-client: 5.7.1
       preact: 10.29.7(preact-render-to-string@5.2.6)
@@ -3774,10 +3788,10 @@ snapshots:
     optionalDependencies:
       nodemailer: 9.0.3
 
-  next@16.2.12(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+  next@16.3.6(@babel/core@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
-      '@next/env': 16.2.12
-      '@swc/helpers': 0.5.15
+      '@next/env': 16.3.6
+      '@swc/helpers': 0.5.23
       baseline-browser-mapping: 2.11.4
       caniuse-lite: 1.0.30001806
       postcss: 8.5.24
@@ -3785,14 +3799,14 @@ snapshots:
       react-dom: 19.2.8(react@19.2.8)
       styled-jsx: 5.1.6(@babel/core@7.29.7)(react@19.2.8)
     optionalDependencies:
-      '@next/swc-darwin-arm64': 16.2.12
-      '@next/swc-darwin-x64': 16.2.12
-      '@next/swc-linux-arm64-gnu': 16.2.12
-      '@next/swc-linux-arm64-musl': 16.2.12
-      '@next/swc-linux-x64-gnu': 16.2.12
-      '@next/swc-linux-x64-musl': 16.2.12
-      '@next/swc-win32-arm64-msvc': 16.2.12
-      '@next/swc-win32-x64-msvc': 16.2.12
+      '@next/swc-darwin-arm64': 16.3.6
+      '@next/swc-darwin-x64': 16.3.6
+      '@next/swc-linux-arm64-gnu': 16.3.6
+      '@next/swc-linux-arm64-musl': 16.3.6
+      '@next/swc-linux-x64-gnu': 16.3.6
+      '@next/swc-linux-x64-musl': 16.3.6
+      '@next/swc-win32-arm64-msvc': 16.3.6
+      '@next/swc-win32-x64-msvc': 16.3.6
       sharp: 0.35.3
     transitivePeerDependencies:
       - '@babel/core'
